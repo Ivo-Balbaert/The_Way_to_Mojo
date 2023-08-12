@@ -1,4 +1,4 @@
-# The Book Of Mojo
+# The Way to Mojo
 
 A gradual guide to discover and learn the Mojo programming language.  
 At the moment, these are mostly notes from all Mojo material (website, GitHub, videos, articles, social media, examples) I am working through.
