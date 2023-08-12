@@ -1,62 +1,54 @@
-# 1 – What is Roc?
+# 1 – What is Mojo?
 
-## Roc is F(ast), F(riendly) and F(unctional)
-Roc is also safe and reliable.
+Mojo is a new general purpose programming language*, the first which is based on the [MLIR compiler infrastructure](https://mlir.llvm.org/), so it can run on all hardware.
+("we don’t plan to stop at AI, the north star is for Mojo to support the whole gamut of general-purpose programming over time.")
 
-Roc is a new purely functional programming language built for speed and ergonomics.
-This means all Roc functions are [pure functions](https://en.wikipedia.org/wiki/Pure_function). A function is not pure if it has an *effect* or *side effect*, that is: if it modifies some state outside its local environment instead of only returning a value. The simplest example of an effect is displaying a value on standard output.
+It combines the usability of Python with the performance of Rust/C++/C.
 
-In Roc all effects are [managed effects](https://medium.com/@kaw2k/managed-effects-and-elm-36b7fcd246a9) instead of side effects.
-It is a language to help anyone create delightful software, besides being a high performance and general-purpose language.  
+It uses the *Python syntax* model, and will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
+    Why? 
+    - Because Python is one of the most (if not the) popular languages (2023 Aug: the  
+    number one language in the [Tiobe index](https://www.tiobe.com/tiobe-index/))
+    - Because Python is the number one language used in machine learning and AI-       
+    projects. 
 
-## 1.1 The philosophy behind Roc
-The next paradigm shift in software development is FP (functional programming).  
-This is portrayed in how nearly all popular (OO) languages these days advertise themselves as also being functional.
-FP programming and style is all about:  
-* composition (not inheritance)
-* modules
-* first-class functions (not bound to classes)
-* records (data-oriented design)
-* avoiding mutation and side-effects (like I/O, networking, and so on)
+Its initial focus is on AI applications: to solve the two-language problem in current AI-research and industry. 
 
-Pure FP and style even don't support mutation and side-effects.  
-Instead of side-effects, a great FP language should support **managed effects**:  
-- managed effects are a *description* of what the side-effects need to do (building upon the concept of Tasks and pipe-operators |>)
-- executing the actual side-effects is the responsibility of a 'runtime' (the 'platform').   
-*Roc takes the runtime, and separates it as it were from the language*
+## 1.1 Addressing the two-language problem in AI
+(?? cfr. Julia)
 
-Because of first-class immutability and managed effects, the order of definitions does not matter.  
-Another important consequence is that reorganizing (refactoring) code is much less error-prone.
+* Data scientists and AI-ML researchers want to model in Python, because Python makes prototyping and modelling easy. When an AI project goes into , but Python can't deliver the necessary performance in a production environment.
+* For that reason, product engineers want to deploy an AI project in C++ / CUDA. This often entails rewriting large parts of the project in C++ and/or CUDA.
 
-A Roc application consists of:  
-* a Roc part (which is purely functional), 
-* a platform part (which uses a low-level language like C, Rust, Zig or Swift and some Roc glue code).  
-The platform part is responsible for executing the side-effects.
+Mojo is created to solve this problem:
+* it has the usability and intuitiveness of Python for model development, adding meta-programming features, like a truly high-level language.
+* it has the performance and system programming capabilities of a low-level language like C++ or Rust.
+
+    **Write everything in one language**
+
+This will lead to accelerated development and use in production of AI technologies.
 
 ## 1.2 Targets/Characteristics of the language - Guiding design goals and priorities
+*Mojo is F(ast), - S(calable), A(ccelerated)*. Let's analyze each of these characteristics.
 
-Roc has characteristics of a high-level language:  
-- it has automatic memory management (mainly through reference counting, or even transparent arena allocation).
-but also characteristics of a low-level language:  
-- compiles to machine code
-- it avoids using heap memory (also called 'boxing') as much as possible: Roc only boxes things the size of which is unknown at compile-time.
+### 1.2.1 A Fast language
+- Mojo compiles to *machine code* specific to the target platform. It uses the MLIR compiler toolchain to achieve that.
 
-### 1.2.1 A Friendly language
-The aim is for Roc to be a user-friendly language with a friendly community of users.
+- Mojo doesn't use GC (garbage collection), so it doesn't suffer from GC pauses, and can be used in real-time domains. Instead, it has automatic memory management: it implements ownership-checking and lifetime concepts like Rust, but simplifies the syntax requirements.
 
-The Roc compiler is user-friendly and helpful. This shows in the following features:
-* Understandable help and error messages (aiming to meet the bar set by Elm); the compiler speaks of itself as a person, using I or me.
-  It only shows the text of the warnings when there are no errors anymore.
-* Let code execute if possible, even if there are still type checking errors.
-* Complete type inference, no need for type annotations.
-* Written in Rust, the compiler is very fast. Together with the editor (which is also written in Rust), this ensures fast interaction and a quick feedback loop. 
-* Automatic serialization and deserialization using schemas determined by type inference.
-* (?? not yet achieved 2023 May) Reliable hot code loading that's always enabled and requires no configuration to set up. Accessibility features in the included editor.
+Mojo is also *safe and reliable* because of:   
+* Its statically typed (AOT - ahead of time) compilation. Mojo prefers compile-time errors to runtime errors, because solving bugs at runtime is so much more painful (as developers in dynamic languages like Python and Ruby know well): this gives developers more confidence in their codebase.
+* Its automatic memory management prevents memory errors (segfaults) and memory-leakage, a common cause for bugs in C++ applications.
+
+### 1.2.2 A Scalable language
+-----------------------------------------------------
+
+
 * Compiles to a single binary asset: this makes for easy deployment, just copy the executable to the target machine and run it.
 * The LLVM compiler toolchain targets a wide diversity of OS platforms, so Roc can run almost everywhere.
 
-Roc is also *safe and reliable* because of: 
-* Full statically typed compilation. Prefer compile-time errors to runtime errors, because solving bugs at runtime is so much more painful (as developers in dynamic languages like Python and Ruby know well): this gives developers more confidence in their codebase.
+
+
 Roc being an FP language: if it compiles, you know your code is going to run, and it’s going to run without errors. So the tests are primarily there to make sure it’s actually solving the problem that was intended. Writing tests is much easier in an FP language, because data and behavior are separate.
 * no null / nil / undefined (see https://github.com/roc-lang/roc/blob/main/FAQ.md#why-doesnt-roc-have-a-maybe-or-option-or-optional-type-or-null-or-nil-or-undefined).
 * Roc does bounds checking

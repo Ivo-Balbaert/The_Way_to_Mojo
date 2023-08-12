@@ -51,6 +51,11 @@ The examples/ folders only contain the Mojo source files. In order to be able to
 
 I want to express my sincere admiration to **Chris Lattner and his team** for creating this superb language. Welcome to the wonderful world of developing in Mojo!
 
+**One-liners**
+* Python++
+* "It's time to get your Mojo 🔥 back!"
+* Mojo was created to integrate Python’s usability with C’s performance
+* Mojo is as simple as Python and as fast as Rust.
 
 **This book is dedicated to the memory of Jef Inghelbrecht, a close friend who passed away too soon.
 He was also a great software developer, adhering to conservative and noble principles of software development.
