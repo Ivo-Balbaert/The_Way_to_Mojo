@@ -31,7 +31,8 @@ Let's analyze each of these characteristics.
 
 - Mojo has no GC (garbage collection), so it doesn't suffer from GC pauses, and can be used in real-time domains. Instead, it has *automatic memory management*: it implements ownership-checking and lifetime concepts similar to Rust, simplifying the syntax.
 
-- Early ![benchmark comparisons](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/performance.png) show out that Mojo has the performance level of C/C++ (or faster) and Rust.
+- Early benchmark comparisons show that Mojo has the performance level of C/C++ (or faster) and Rust:
+![benchmark comparisons](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/performance.png) 
 It uses the whole range of possibilities offered by modern compiler optimizations, including automatic parallel processing across multiple cores. This is nicely illustrated in this section of the Keynote speech (??) which announced Mojo to the world.
 
 ### 1.2.2 A Scalable language
