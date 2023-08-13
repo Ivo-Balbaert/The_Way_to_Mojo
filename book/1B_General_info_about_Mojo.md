@@ -1,7 +1,9 @@
 # 1B – General info about Mojo
 Mojo is developed inside a company called *Modular*.  
-The company's assets are based on two pillars:
-1- the *Modular Inference Engine*, the fastest unified AI execution engineDevelop and commercialize 
+The company's assets are based on two pillars:  
+
+1- the *Modular Inference Engine*, the fastest unified AI execution engineDevelop and commercialize   
+
 2- *Mojo*, as the next generation AI software development platform. All the kernels that power the Modular Inference Engine are written in Mojo.
 
 Mojo is designed and developed by **Chris Lattner** (the creator of the Swift programming language and LLVM Compiler Infrastructure - CEO of Modular) and Tim Davis (MLIR Product Manager at Google - Chief Product Officer of Modular), together with their team at Modular.
@@ -23,7 +25,7 @@ Mojo’s source files have the fire emoticon extension like hello.🔥, or alter
 To search on internet for info on Mojo, use the search terms  "Mojo programming language" or "mojolang". 
 
 ## 1B.2 Website, community and communication channels
-Here is the Mojo [portal - website](https://mojolang.org/) (at current moment it is only a frontpage).
+Here is the Mojo [portal - website](https://mojolang.org/) (at the current moment it is only a frontpage).
 
 Much more information can be found at the Modular/Mojo [Website](https://www.modular.com/mojo), particularly in the [Docs section](https://docs.modular.com/mojo/).
 
