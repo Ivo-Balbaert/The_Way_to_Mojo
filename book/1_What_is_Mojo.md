@@ -5,10 +5,9 @@ Mojo is a new general purpose programming language*, with an initial focus on AI
 It combines the usability of Python with the performance of C++/C and the safety of Rust.
 
 It uses the *Python syntax* model, and will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
-    Why? 
-    - Because Python is one of the most (if not the) popular languages (2023 Aug: the  
-    number one language in the [Tiobe index](https://www.tiobe.com/tiobe-index/))
-    - Because Python is the number one language used in machine learning and AI- projects. 
+    Why?   
+    - Because Python is one of the most (if not the) popular languages (2023 Aug: the number one language in the [Tiobe index](https://www.tiobe.com/tiobe-index/))  
+    - Because Python is the number one language used in machine learning and AI- projects.   
 
 ## 1.1 Write everything in one language
 Mojo aims to to solve the two-language problem in current AI-research and industry. 
@@ -19,19 +18,20 @@ Mojo aims to to solve the two-language problem in current AI-research and indust
 
 Mojo is created to solve this problem:
 * It has the usability and intuitiveness of Python for model development, adding meta-programming features, like a truly high-level language. The entire Python ecosystem is made available to Mojo through CPython. 
-* Tt has the performance and system programming capabilities of a low-level language like C++ or Rust.
+* It has the performance and system programming capabilities of a low-level language like C++ or Rust.
 
 This will lead to accelerated development and use in production of AI technologies.
 
 ## 1.2 Targets and Characteristics of the language
-*Mojo is F(ast), - S(calable), A(ccelerated)*. Let's analyze each of these characteristics.
+*Mojo is F(ast), - S(calable), A(ccelerated)*.  
+Let's analyze each of these characteristics.
 
 ### 1.2.1 A Fast language
 - Mojo compiles to *machine code* specific to the target platform. It uses the MLIR compiler toolchain (which is itself based on LLVM) to achieve that. That way it harnesses all of LLVM execution speed optimizations.
 
-- Mojo doesn't use GC (garbage collection), so it doesn't suffer from GC pauses, and can be used in real-time domains. Instead, it has *automatic memory management*: it implements ownership-checking and lifetime concepts similar to Rust, simplifying the syntax.
+- Mojo has no GC (garbage collection), so it doesn't suffer from GC pauses, and can be used in real-time domains. Instead, it has *automatic memory management*: it implements ownership-checking and lifetime concepts similar to Rust, simplifying the syntax.
 
-- Early [benchmark comparisons](performance.png) show out that Mojo has the performance level of C/C++ (or faster) and Rust.
+- Early ![benchmark comparisons](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/performance.png) show out that Mojo has the performance level of C/C++ (or faster) and Rust.
 It uses the whole range of possibilities offered by modern compiler optimizations, including automatic parallel processing across multiple cores. This is nicely illustrated in this section of the Keynote speech (??) which announced Mojo to the world.
 
 ### 1.2.2 A Scalable language
@@ -65,14 +65,16 @@ Mojo code can be mixed with Python, and can also call all Python libraries from 
 ?? Interaction with C/C++, ...
 
 ## 1.4 Languages that influenced Mojo
-Mojo belongs to the Python dynamic languages family (Python, CPython, Numpy, PyPy, and so on). It is a direct descendant of Python, but extends its use greatly. Mojo picks up where Python stops, helping in use cases that are out of Python's scope, mostly high-performance applications. 
+Mojo belongs to the Python dynamic languages family (Python, CPython, Numpy, PyPy, and so on).  
+It is a direct descendant of Python, but extends its use greatly. Mojo picks up where Python stops, helping in use cases that are out of Python's scope, mostly high-performance applications.  
+It also builds on Rust, Swift, ??
 
 ## 1.5 Summary 
 Here are the killer features of Mojo:  
-?? 1- fast compilation  
+1- fast compilation  (?? )
 2- fast execution (runtime performance)  
-3- automatic memory management
-4- seamless use of Python code
-5- adaptability to custom hardware through MLIR
+3- automatic memory management  
+4- seamless use of Python code  
+5- adaptability to custom hardware through MLIR  
 
 Mojo is also better to tackle climate-change: a Mojo program uses only 10% of the energy usage of an equivalent Python program.
