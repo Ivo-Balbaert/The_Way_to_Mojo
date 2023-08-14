@@ -4,7 +4,7 @@ This tutorial is meant to help people to hit the ground running when the Mojo pr
 That's why it is called **"The Way to Mojo"**.  
 We'll make sure this text and the accompanying code stays up to date with every new version of the language and its tooling.  
 
-Chris Lattner is the creator of the Mojo language, and also an excellent speaker.  
+*Chris Lattner* is the creator of the Mojo language, and also an excellent speaker.  
 This text is based upon notes taken while watching videos of his talks, and from primers and tutorials that appeared over time.
 
 This tutorial is intended for novice programmers who want to learn this fascinating and promising language. We will try to explain from the ground up how Mojo is elegantly constructed to attain its goals, and how it works internally, with an emphasis on insight and best practices. 
