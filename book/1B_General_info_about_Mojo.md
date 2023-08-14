@@ -1,6 +1,6 @@
 # 1B – General info about Mojo
-Mojo is developed inside a company called *Modular*.  
-The company's assets are based on two pillars:  
+Mojo is developed inside a company called *Modular*, which was established in Jan 2022.    
+The company's goals are based on two pillars:  
 
 1- the *Modular Inference Engine*, the fastest unified AI execution engineDevelop and commercialize   
 
@@ -46,6 +46,7 @@ To come into contact with other Mojo users or the Modular team:
 * 2022 - work on design started
     Sep 7 : first patch published
 * 2023 May 2 - Product Keynote Launch
+    Chris Lattner considers Mojo to be at v 0.1
 
 Goals / Roadmap:
 
@@ -64,4 +65,5 @@ The company *Modular* is funded by VC (Venture Capital).
 * Python++
 * Mojo was created to integrate Python’s usability with C’s performance
 * Mojo is as simple as Python and as fast as Rust.
+* Mojo: a super-charged Python for AI.
 * "It's time to get your Mojo 🔥 back!"
