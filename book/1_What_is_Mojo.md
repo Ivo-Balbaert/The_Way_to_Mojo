@@ -47,7 +47,7 @@ It also offers control over memory storage: struct field values are inline-alloc
 - Early benchmark comparisons show that Mojo has the performance level of C/C++ (or faster) and Rust:
 ![benchmark comparisons](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/performance.png) 
 It easily beats Python performance with 4 orders of magnitude.
-It uses the whole range of possibilities offered by modern compiler optimizations, including automatic parallel processing across multiple cores. This is nicely illustrated in this section of the Keynote speech (??) which announced Mojo to the world.
+It uses the whole range of possibilities offered by modern compiler optimizations, including automatic parallel processing across multiple cores. This is nicely illustrated in the section starting at 33:08 by Jeremy Howard of the [Keynote speech](https://www.youtube.com/watch?v=-3Kf2ZZU-dg) which announced Mojo to the world.
 
 ### 1.2.2 A Scalable language
 Starting with writing code like Python, you can scale all the way down to the metal and enabling you to program the multitude of low-level AI hardware. 
