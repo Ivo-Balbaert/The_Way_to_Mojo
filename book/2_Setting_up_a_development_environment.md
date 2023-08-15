@@ -3,7 +3,15 @@
 ## 2.1 The Mojo online playground
 Mojo works in a REPL environment, like a Jupyter notebooks. To do that, it is interpreted, or JIT (Just In Time) compiled.  
 Use the [online playground](https://playground.modular.com/) to try out the language without local installation (In the Playground Mojo is running Mojo on a hosted JupyterLab server). Access is granted after signing in with your email-address.  
-This is a collection of Jupyter notebooks, which you can execute. You can also save them under a different name, and change or add new code. 
+This is a collection of Jupyter notebooks which you can execute. They are run by a Mojo kernel. You can also save them under a different name, and change or add new code.
+
+When working with Jupyter notebooks, it's not allowed to mix Python and Mojo code in one cell. A Python cell must be started with a `%%python` header. Every code snippet needs to be in its own cell. 
+
+To install Jupyter notebooks locally:
+* First install Python from `https://www.python.org/downloads/`
+* pip install notebook
+Then the `jupyter notebook` command starts up a new notebook.
+
 
 ## 2.2 Architectures and compilers
 
