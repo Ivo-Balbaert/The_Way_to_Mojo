@@ -7,8 +7,9 @@
 ### 1.2.2 A Scalable language
 ### 1.2.3 An Accelerated language
 ## 1.3 Use cases of the language
-**Interop with other languages and migration strategy**  
 ## 1.4 Languages that influenced Mojo
+**Interop with other languages and migration strategy** 
+**Interaction with C/C++** 
 ## 1.5 Summary 
 
 # 1B – General info about Mojo

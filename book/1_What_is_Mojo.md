@@ -1,28 +1,27 @@
 # 1 – What is Mojo?
-Mojo is a new general purpose programming language*, with an initial focus on AI applications. It is the first language which is based on the [MLIR compiler infrastructure](https://mlir.llvm.org/), so it can run on all hardware.
-("CL: we don’t plan to stop at AI, the north star is for Mojo to support the whole gamut of general-purpose programming over time.")
+Mojo is a new general purpose programming language*, with an initial focus on AI applications. Over time, the whole spectrum of general-purpose programming will be covered.
+It is the first language which is based on the [MLIR compiler infrastructure](https://mlir.llvm.org/), so it can run on all hardware.
 
 It combines the usability of Python with the performance of C++/C and the safety of Rust.
 
-It uses the *Python syntax* model, and will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
+It uses the *Python syntax* model: it already can run a lot of Python code. It will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
     Why?   
-    - Because Python is one of the most (if not the) popular languages (2023 Aug: the number one language in the [Tiobe index](https://www.tiobe.com/tiobe-index/))  
-    - Because Python is the number one language used in machine learning and AI- projects.   
+    - Because Python is one of the (if not the) most popular language(s) (2023 Aug: the number one language in the [Tiobe index](https://www.tiobe.com/tiobe-index/), and it was the Tiobe top language in 2020-21).  
+    - Because Python is the number one language used in machine learning and AI projects.   
 
 ## 1.1 Write everything in one language
 Mojo aims to to solve the three-language problem in current AI-research and industry. 
-(?? cfr. Julia)
 
-* Data scientists and AI-ML researchers want to model in Python, because Python makes prototyping and modelling easy. When an AI project goes into , but Python can't deliver the necessary performance in a production environment.
-* For that reason, product engineers want to deploy an AI project in a low-level language. This often entails rewriting large parts of the project in C++
-* To get access to GPU's and other accelerators, often parts of the model have to be rewritten in CUDA, which is even lower-level.
+* Data scientists and AI-ML researchers want to model in Python, because Python makes prototyping and modelling easy. But when an AI project goes into production, Python often can't deliver the necessary performance.
+* For that reason, product engineers want to deploy an AI project in a low-level language. This often entails rewriting large parts of the project in C++.
+* To get access to GPU's and other accelerators, often parts of the model have to be rewritten in CUDA, or accelerator languages required for CPUs, GPUs, TPUs, and so on, which are even lower-level.
 
 Mojo is created to solve this problem:
 * It has the usability and intuitiveness of Python for model development, adding meta-programming features, like a truly high-level language. The entire Python ecosystem is made available to Mojo through CPython. 
 * It has the performance and system programming capabilities of a low-level language like C++ or Rust.
 * MLIR removes the necessity to use CUDA at the lowest level.
 
-This will lead to accelerated development and use in production of AI technologies.
+This will lead to accelerated development and production-use of AI technologies.
 
 ## 1.2 Targets and Characteristics of the language
 *Mojo is F(ast), - S(calable), A(ccelerated)*.  
@@ -70,23 +69,26 @@ MLIR stands for "Multi-Level Intermediate Representation".
 (https://llvm.org/devmtg/2020-09/slides/MLIR_Tutorial.pdf)
 
 ## 1.3 Use cases of the language
-Mojo is designed in the first place for AI development (?? elaborate). But it is also a general purpose language, suitable for building high-quality servers, CLI's (command-line applications), graphical native desktop UI's (user interfaces), database extensions, editor plugins, robotics, embedded applications, and so on.
+Mojo is designed in the first place for AI development (?? elaborate). But it is also a general purpose language, suitable for building high-quality servers, CLI's (command-line applications), graphical native desktop UI's (user interfaces), database extensions, editor plugins, robotics, embedded applications, and so on.  
+It is used to develop AI algorithms and can also be used for other tasks like high-performance computing (HPC), data transformations, writing pre/post-processing operations, and more.
 As a kind of *Python++*, Mojo could serve the whole software industry.
-
-**Interop with other languages and migration strategy**  
-Mojo code can be mixed with Python. Iy can also call all Python libraries from its vast ecosystem, which are executed through the CPython interpreter, which talks to Mojo. This gives you a way to incrementally transition a legacy code base from Python to Mojo, making migration of Python easy.
-
-?? Interaction with C/C++, ...
 
 ## 1.4 Languages that influenced Mojo
 Mojo belongs to the Python dynamic languages family (Python, CPython, Numpy, PyPy, and so on).  
 It is a direct descendant of Python, but extends its use greatly. Mojo picks up where Python stops, helping in use cases that are out of Python's scope, mostly high-performance applications.  
 It also builds on Rust, Swift, ??
-In one aspect, Mojo is to Python like TypeScript is to JavaScript.
+
+**Interop with other languages and migration strategy**  
+Mojo code can be mixed with Python. It can also call all Python libraries from its vast ecosystem, which are executed through the CPython interpreter, which talks to Mojo. This gives you a way to incrementally transition a legacy code base from Python to Mojo, making migration of Python easy.
+
+The Mojo runtime also has a built-in GC to clean up Python objects, based on reference counting.
+
+**Interaction with C/C++:**
+It is on the roadmap.  Currently, you can use Python's C++ interop libraries like ctypes (https://docs.python.org/3/library/ctypes.html) or Cython (https://cython.org/) to call your C++ code from Python, and then use Mojo's Python integration to work with the results.
 
 ## 1.5 Summary 
 Here are the killer features of Mojo:  
-1- fast compilation  (?? )
+1- fast compilation  
 2- fast execution (runtime performance)  
 3- automatic memory management  
 4- seamless use of Python code  
