@@ -79,12 +79,12 @@ This is useful when:
 Mojo works in a REPL environment, like a Jupyter notebooks. To do that, it is interpreted, or JIT (Just In Time) compiled. 
 In the Playground Mojo is running on a hosted JupyterLab server. Access is granted after signing in with your email-address.  
 
-To get entrance:  
+**To get entrance:**  
 1- Go to the [official Modular Get Started form](https://www.modular.com/get-started)
 2- Fill out the form, tick Mojo and press submit
 3- In a few hours/days you'll get an email with a button "Access the Mojo Playground"
 
-Alternative way:  
+**Alternative way:**   
 In general the PlayGround's URL is `https://playground.modular.com/user/<your_email>`.
 You need a token for initial entry, and for subsequent accesses after expiration of the tokens. The token is sent to you by email, but you can generate one [here](https://playground.modular.com/hub/token) too.
 Then change the email address and token in the following URL:
@@ -99,7 +99,8 @@ Example:
 When the Playground is started up, start a new notebook with:  
 > File > New Notebook
 
-Then add some code and push the run button  "▶" and the computation result is shown below the cell. See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Mojo%20Playground.png)
+Then add some code and push the run button  "▶" and the computation result is shown below the cell.  
+See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Mojo%20Playground.png)
 
 To install Jupyter notebook locally:  
 * First install Python from `https://www.python.org/downloads/`
@@ -119,19 +120,19 @@ There is also another plugin [Mojo-lang](https://marketplace.visualstudio.com/it
 #### 2.7.2.1 An easy way to execute code 
 (?? this works only after local installation)  
 
-Install the [vs-code-runner](https://marketplace.visualstudio.com/items?itemName=HarryHopkinson.vs-code-runner).
-File, Preferences, Settings:
-	Search for:  code-runner: 
-    Click on the "edit in settings.json" button.
-    Now a .json-file should've opened. Add the "Mojo" line to the Executor map:
+Install the [vs-code-runner](https://marketplace.visualstudio.com/items?itemName=HarryHopkinson.vs-code-runner).  
+File, Preferences, Settings:  
+	Search for:  code-runner:   
+    Click on the "edit in settings.json" button.  
+    Now a .json-file should've opened. Add the "Mojo" line to the Executor map:  
     "code-runner.executorMap": {
         "Mojo": "Mojo $fileName",
     ...
     }
-    Close Settings
-    Restart VSCode.
+    Close Settings  
+    Restart VSCode.  
 
-Now F1 + select "Run Custom Command" or "CTRL+ALT+N" compiles and executes the source code in the editor. See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/vscode.png).
+Now F1 + select "Run Custom Command" or "CTRL+ALT+N" compiles and executes the source code in the editor. See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_Playground_in_VSCode.png).
 
 
 #### 2.7.2.2 How to work with a Jupyter notebook in VS Code
@@ -146,7 +147,7 @@ running Jupyter Server.
 Enter: `https://playground.modular.com/user/<your_email>/?token=<your_token>`
 It'll prompt for your username and password, then choose the Mojo kernel.
 (It'll prompt for you to enter a server name, you can set it as Mojo Playground or whatever you like ??).
-Now you can write Mojo code and run it within a cell of the notebook!
+Now you can write Mojo code and run it within a cell of the notebook!  
 See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_Playground_in_VSCode.png).
 
 
