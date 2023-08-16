@@ -162,7 +162,7 @@ See:
 * https://github.com/microsoft/vscode-jupyter/wiki/Connecting-to-a-remote-Jupyter-server-from-vscode.dev
 
 #### 2.7.2.3 Compiling and executing a simple program
-To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_Playground_in_VSCode.png) are two simple snippets:  
+To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  
 
 
 You can find the code in `first_code.ipynb`, or in the Mojo source files `hello.mojo` and `using_main.mojo`.
