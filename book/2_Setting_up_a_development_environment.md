@@ -2,7 +2,7 @@
 
 ## 2.1 Architectures and compilers
 
-**Target OS’s and platforms**
+**Target OS’s and platforms**  
 Because Mojo has an LLVM/MLIR compiler infrastructure, it can target a very wide spectrum of operating systems, computation environments and hardware platforms.
 
 **Compiler**  
@@ -10,13 +10,11 @@ By default, Mojo code is AOT (Ahead Of Time) compiled.
 But Mojo can also be interpreted or JIT-compiled, as in the Mojo Playground (see ??) or the Mojo REPL.
 If the Mojo app contains dynamic (Python) code, this is executed by running the dynamic code at compile time with an embedded CPython interpreter. This mechanism also makes possible compile-time meta-programming.
 
-**Standard library** 
+**Standard library**   
 Mojo has a growing standard library called ?? , which already contains a growing number of *modules*, such as Atomic, Benchmark, List, OS, Tensor, Testing, and so on (see § ??).
 
 ## 2.2 Using a Mojo binary release
 ?? These can be downloaded from [here]().
-
-============================================================================
 
 ### 2.2.1 On Windows
 This is currently (??) still in a testing phase.
@@ -30,15 +28,15 @@ When the WSL terminal doesn’t start up, disable Windows Hypervisor in Windows 
 (Alternatively, you can do wsl --terminate and wsl --update)   
 See also: [Troubleshooting Windows Subsystem for Linux | Microsoft Docs](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting)
 
-### 2.2.4 On MacOS
+### 2.2.3 On MacOS
 
-## 2.4 Testing the installation - Mojo's option flags
+## 2.3 Testing the installation - Mojo's option flags
 
-## 2.5 How to install Mojo platform dependencies
+## 2.4 How to install Mojo platform dependencies
 
-## 2.6 Building Mojo from source
+## 2.5 Building Mojo from source
 
-### 2.6.1 Downloading the Mojo source code
+### 2.5.1 Downloading the Mojo source code
 For this you need the `git` tool.  
 If you don't already have git installed:  
 * On Windows: Install via chocolatey:
@@ -66,9 +64,9 @@ Receiving objects: 100% (208673/208673), 88.53 MiB | 11.05 MiB/s, done.d 203795
 Resolving deltas: 100% (142374/142374), done.
 ```
 
-### 2.6.6  Building Mojo
+### 2.5.2  Building Mojo
 
-### 2.6.7  Running the Mojo test suite
+## 2.6  Running the Mojo test suite
 
 ## 2.7  Editors
 
@@ -81,12 +79,12 @@ This is useful when:
 Mojo works in a REPL environment, like a Jupyter notebooks. To do that, it is interpreted, or JIT (Just In Time) compiled. 
 In the Playground Mojo is running on a hosted JupyterLab server. Access is granted after signing in with your email-address.  
 
-To get entrance:
+To get entrance:  
 1- Go to the [official Modular Get Started form](https://www.modular.com/get-started)
 2- Fill out the form, tick Mojo and press submit
 3- In a few hours/days you'll get an email with a button "Access the Mojo Playground"
 
-Alternative way:
+Alternative way:  
 In general the PlayGround's URL is `https://playground.modular.com/user/<your_email>`.
 You need a token for initial entry, and for subsequent accesses after expiration of the tokens. The token is sent to you by email, but you can generate one [here](https://playground.modular.com/hub/token) too.
 Then change the email address and token in the following URL:
@@ -103,7 +101,7 @@ When the Playground is started up, start a new notebook with:
 
 Then add some code and push the run button  "▶" and the computation result is shown below the cell. See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Mojo_Playground.png)
 
-To install Jupyter notebook locally:
+To install Jupyter notebook locally:  
 * First install Python from `https://www.python.org/downloads/`
 * pip install notebook
 Then `jupyter notebook` command starts up a local browser page where you can start a new notebook with the `.ipynb` extension.
@@ -119,7 +117,8 @@ There is also another plugin [Mojo-lang](https://marketplace.visualstudio.com/it
 
 
 #### 2.7.2.1 An easy way to execute code 
-(?? this works only after local installation)
+(?? this works only after local installation)  
+
 Install the [vs-code-runner](https://marketplace.visualstudio.com/items?itemName=HarryHopkinson.vs-code-runner).
 File, Preferences, Settings:
 	Search for:  code-runner: 
@@ -138,7 +137,7 @@ Now F1 + select "Run Custom Command" or "CTRL+ALT+N" compiles and executes the s
 #### 2.7.2.2 How to work with a Jupyter notebook in VS Code
 You can also use the Mojo Playground (§ 2.7.1) to run a notebook from within VS Code.
 
-Here are the steps:
+Here are the steps:  
 1- Install the [Jupyter VS Code extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)
 2- From the Command Palette (CTRL+SHIFT+P or CMD+SHIFT+P) select "Create: New Jupyter Notebook"
 3- Then from the Command Palette again select Notebook: "Select Notebook Kernel" and follow the options:
@@ -151,15 +150,14 @@ Now you can write Mojo code and run it within a cell of the notebook!
 See [screenshot]((https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_Playground_in_VSCode.png)).
 
 
-**Tips and Troubleshooting:**  
+**Tips and Troubleshooting:**    
 Every time you want to use it, you'll need to start the server from your browser. But you can the add the link without your username and it'll remember your session via cookies through the command: `open 'https://playground.modular.com'`.
 
 You'll likely need to restart the kernel at some point, you can use:
 Command Palette > Jupyter: Restart Kernel
 
-See:
+See:  
 * https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter
 * https://github.com/microsoft/vscode-jupyter/wiki/Connecting-to-a-remote-Jupyter-server-from-vscode.dev
 
 
-## 2.7.3 Benchmarks

@@ -74,3 +74,4 @@ The company *Modular* is funded by VC (Venture Capital).
 * Mojo: a super-charged Python for AI.
 * "It's time to get your Mojo 🔥 back!"
 * Mojo is to Python like TypeScript is to JavaScript.
+

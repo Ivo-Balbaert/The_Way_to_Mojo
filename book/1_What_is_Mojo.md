@@ -43,6 +43,7 @@ It also offers control over memory storage: struct field values are inline-alloc
 
 - Mojo also doesn't suffer from Python's GIL (Global Interpreter Lock), so it can put to use multiple threads and concurrency much better.
 
+**Benchmarks**
 - Early benchmark comparisons show that Mojo has the performance level of C/C++ (or faster) and Rust:
 ![benchmark comparisons](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/performance.png) 
 It easily beats Python performance with 4 orders of magnitude.
