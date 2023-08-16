@@ -99,7 +99,7 @@ Example:
 When the Playground is started up, start a new notebook with:  
 > File > New Notebook
 
-Then add some code and push the run button  "▶" and the computation result is shown below the cell. See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Mojo_Playground.png)
+Then add some code and push the run button  "▶" and the computation result is shown below the cell. See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Mojo%20Playground.png)
 
 To install Jupyter notebook locally:  
 * First install Python from `https://www.python.org/downloads/`
@@ -147,7 +147,7 @@ Enter: `https://playground.modular.com/user/<your_email>/?token=<your_token>`
 It'll prompt for your username and password, then choose the Mojo kernel.
 (It'll prompt for you to enter a server name, you can set it as Mojo Playground or whatever you like ??).
 Now you can write Mojo code and run it within a cell of the notebook!
-See [screenshot]((https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_Playground_in_VSCode.png)).
+See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_Playground_in_VSCode.png).
 
 
 **Tips and Troubleshooting:**    
