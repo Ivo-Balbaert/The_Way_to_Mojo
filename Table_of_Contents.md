@@ -21,32 +21,31 @@
 ## 1B.6 Some one-liners
 
 # 2 - Setting up a development environment
-## 2.1 The Mojo online playground
-## 2.2 Architectures and compilers
-Target OS’s and platforms:
+## 2.1 Architectures and compilers
+**Target OS’s and platforms**  
 **Compiler**  
-**Standard library**  
-## 2.3 Using a Mojo binary release
-?? These can be downloaded from [here]().
-### 2.3.1 On Windows
-### 2.3.2 On Linux (or WSL2 on Windows)
+**Standard library**   
+## 2.2 Using a Mojo binary release
+### 2.2.1 On Windows
+### 2.2.2 On Linux (or WSL2 on Windows)
 **Some info on WSL**  
-### 2.3.4 On MacOS
-## 2.4 Testing the installation - Mojo's option flags
-## 2.5 How to install Mojo platform dependencies
-### 2.5.1 On Windows
-### 2.5.2 On Linux (or WSL2 on Windows)
-### 2.5.3 On MacOS
-## 2.6 Building Mojo from source
-### 2.6.1 Downloading the Mojo source code
-### 2.6.2 Building Mojo
-### 2.6.3 Running the Mojo test suite
+### 2.2.3 On MacOS
+## 2.3 Testing the installation - Mojo's option flags
+## 2.4 How to install Mojo platform dependencies
+## 2.5 Building Mojo from source
+### 2.5.1 Downloading the Mojo source code
+### 2.5.2  Building Mojo
+## 2.6  Running the Mojo test suite
 ## 2.7  Editors
-### 2.7.1 Vim
+## 2.7.1 The Mojo online playground
+**To get entrance:**  
+**Alternative way:**   
 ### 2.7.2 Visual Studio Code (VS Code)
-#### 2.7.2.1 An easy way to execute code
-## 2.8 Benchmarks
-
+#### 2.7.2.1 An easy way to execute code 
+#### 2.7.2.2 How to work with a Jupyter notebook in VS Code 
+**Here are the steps:**     
+**Tips and Troubleshooting:**    
+#### 2.7.2.3 Compiling and executing a simple program
 
 
 

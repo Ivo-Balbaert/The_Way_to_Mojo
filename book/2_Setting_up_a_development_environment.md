@@ -100,6 +100,7 @@ When the Playground is started up, start a new notebook with:
 > File > New Notebook
 
 Then add some code and push the run button  "▶" and the computation result is shown below the cell.  
+Don't worry about the program code, that will all be explained in the coming sections.
 See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Mojo%20Playground.png)
 
 To install Jupyter notebook locally:  
@@ -135,21 +136,20 @@ File, Preferences, Settings:
 Now F1 + select "Run Custom Command" or "CTRL+ALT+N" compiles and executes the source code in the editor. See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_Playground_in_VSCode.png).
 
 
-#### 2.7.2.2 How to work with a Jupyter notebook in VS Code
+#### 2.7.2.2 How to work with a Jupyter notebook in VS Code 
 You can also use the Mojo Playground (§ 2.7.1) to run a notebook from within VS Code.
 
-Here are the steps:  
-1- Install the [Jupyter VS Code extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)
-2- From the Command Palette (CTRL+SHIFT+P or CMD+SHIFT+P) select "Create: New Jupyter Notebook"
-3- Then from the Command Palette again select Notebook: "Select Notebook Kernel" and follow the options:
+**Here are the steps:**     
+1- Install the [Jupyter VS Code extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)  
+2- From the Command Palette (CTRL+SHIFT+P or CMD+SHIFT+P) select "Create: New Jupyter Notebook"  
+3- Then from the Command Palette again select Notebook: "Select Notebook Kernel" and follow the options:  
 Select another kernel > Existing Jupyter Server > Enter the URL of a 
-running Jupyter Server. 
-Enter: `https://playground.modular.com/user/<your_email>/?token=<your_token>`
-It'll prompt for your username and password, then choose the Mojo kernel.
-(It'll prompt for you to enter a server name, you can set it as Mojo Playground or whatever you like ??).
+running Jupyter Server.   
+Enter: `https://playground.modular.com/user/<your_email>/?token=<your_token>`  
+It'll prompt for your username and password, then choose the Mojo kernel.  
+(It'll prompt for you to enter a server name, you can set it as Mojo Playground or whatever you like ??).  
 Now you can write Mojo code and run it within a cell of the notebook!  
-See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_Playground_in_VSCode.png).
-
+See next section for a screenshot of code in this environment.
 
 **Tips and Troubleshooting:**    
 Every time you want to use it, you'll need to start the server from your browser. But you can the add the link without your username and it'll remember your session via cookies through the command: `open 'https://playground.modular.com'`.
@@ -161,4 +161,24 @@ See:
 * https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter
 * https://github.com/microsoft/vscode-jupyter/wiki/Connecting-to-a-remote-Jupyter-server-from-vscode.dev
 
+#### 2.7.2.3 Compiling and executing a simple program
+To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_Playground_in_VSCode.png) are two simple snippets:  
 
+
+You can find the code in `first_code.ipynb`, or in the Mojo source files `hello.mojo` and `using_main.mojo`.
+The first is the usual "Hello World!" program, which is in Mojo exactly the same as in Python:
+```py
+print("Hello World! from Mojo") # => Hello World! from Mojo
+```
+
+(To show the output of statements in code sections, we'll show them in a comment that starts with `# =>`.)
+
+The second snippet shows a main function, which declares an integer x, increments it and then prints it out. The function is then called with main().  
+```py
+fn main():
+    var x: Int = 1
+    x += 1
+    print(x)  # => 2
+
+main()
+```
