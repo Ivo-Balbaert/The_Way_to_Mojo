@@ -165,15 +165,22 @@ See:
 To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  
 
 
-You can find the code in `first_code.ipynb`, or in the Mojo source files `hello.mojo` and `using_main.mojo`.
-The first is the usual "Hello World!" program, which is in Mojo exactly the same as in Python:
+You can find the code in `first_code.ipynb`, or in the corresponding Mojo source files.
+The first is the usual "Hello World!" program, which is in Mojo exactly the same as in Python, because Mojo is a superset of Python:
+
+See `hello_world.mojo`:
 ```py
-print("Hello World! from Mojo") # => Hello World! from Mojo
+fn main():
+    print("Hello World from Mojo!") # => Hello World! from Mojo
 ```
+
+In a source file however we have to use a starting point function called `main` (see § 3.1).
 
 (To show the output of statements in code sections, we'll show them in a comment that starts with `# =>`.)
 
-The second snippet shows a main function, which declares an integer x, increments it and then prints it out. The function is then called with main().  
+The second snippet shows a main function, which declares an integer x, increments it and then prints it out. The function is then called with main().
+
+See `using_main.mojo`:
 ```py
 fn main():
     var x: Int = 1
@@ -182,3 +189,5 @@ fn main():
 
 main()
 ```
+
+We'll dive deeper into this code at the start of the next chapter.
