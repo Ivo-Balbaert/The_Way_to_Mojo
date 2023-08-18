@@ -195,6 +195,69 @@ What do you see?
 -- gives a compile time error
 
 ## 3.5 Python integration
+
+### 3.5.1 Running Python code
+To execute a Python expression, you can use the `evaluate` method:  
+See `python.mojo`:
+```py
+x = Python.evaluate('5 + 10')   # 1
+print(x)   # => 15
+```
+
+The rhs (right hand side) of line 1 is of type `PythonObject`.  
+The above code is equivalent to:
+
+```py
+%%python
+x = 5 + 10
+print(x)
+```
+
+which is used in a Jupyter notebook running Mojo (see § 2). In the Mojo playground, using %%python at the top of a cell will run code through Python instead of Mojo.  
+Python objects are all allocated on the heap, so x is a heap reference.
+
+All the Python keywords can be accessed by importing `builtins`:
+```py
+let py = Python.import_module("builtins")
+py.print("this uses the python print keyword")
+```
+
+Now we can use the `type` builtin from Python to see what the dynamic type of x is:
+```py
+py.print(py.type(x))  # => <class 'int'>
+```
+
+The address where the value of x is stored on the heap is given by the Python builtin `id`. This address itself is stored on the stack. (?? schema)
+
+```py
+py.print(py.id(x))   # =>  139787831339296
+```
+
+When Mojo uses a PythonObject, accessing the value actually uses the address in the stack to lookup the data on the heap, even for a simple integer. The heap object contains a reference count, and the runtime will free the object's memory when the count reaches 0. 
+A Python object also can change its type dynamically, which is also stored in the heap object:
+```py
+x = "mojo"            
+print(x)              # => mojo
+```
+
+All this makes programming easier, but comes with a performance cost.
+
+The equivalent Mojo code is (see `equivalent.mojo`):
+```py
+x = 5 + 10
+print(x)            # => 15
+```
+
+We've just unlocked our first Mojo optimization! Instead of looking up an object on the heap via an address, x is now just a value on the stack with 64 bits that can be passed through registers.
+
+This has numerous performance implications:
+* All the expensive allocation, garbage collection, and indirection is no longer required
+* The compiler can do huge optimizations when it knows what the numeric type is
+* The value can be passed straight into registers for mathematical operations
+* There is no overhead associated with compiling to bytecode and running through an interpreter
+* The data can now be packed into a vector for huge performance gains
+
+### 3.5.3 Working with Python modules
 Importing and using a Python package in Mojo is very easy.  
 Here's an example of how to import the NumPy package (see `numpy.mojo`):
 
@@ -207,10 +270,14 @@ fn main():
     array = np.array([1, 2, 3])              # 3
     print(array)  # => [1  2  3]
 
+    arr = np.ndarray([5])
+    print(arr)  # => [0.   0.25 0.5  0.75 1.  ]
+    arr = "this will work fine"
+    print(arr)  # => this will work fine
+
     ar = np.arange(15).reshape(3, 5)
     print(ar)
     print(ar.shape)                          # 4
-```
 
 # =>
 # [[ 0  1  2  3  4]
@@ -225,3 +292,64 @@ Then you can use the `Python.import_module()` function with the module name (see
 Now you can use numpy as if writing in Python, see lines 3-4.
 
 You can import any other Python module in a similar manner. Keep in mind that you must import the whole Python module.  However, you cannot import individual members (such as a single Python class or function) directly - you must import the whole Python module and then access members through the module name.
+
+## 3.6 if else and Bool values
+`guess.mojo` shows an example of a def type of function, that returns a Bool value (line 1). We define a temporary variable of type `StringLiteral` in line 2. Lines 3 and 4 then contain the if-else condition:  
+`guess == luckyNumber` compares the values of guess and luckyNumber with `==`. It returns a Bool value: if the values guess and luckyNumber are equal, the expression is `True` and the first block is executed, else its value is `False`, and the else block runs.
+`!=` is the inverse of `==`.
+
+See `guess.mojo`:
+```py
+fn main():
+    guessLuckyNumber(37)
+
+def guessLuckyNumber(guess) -> Bool:    # 1
+    let luckyNumber: Int = 37
+    var result: StringLiteral = ""      # 2
+    if guess == luckyNumber:            # 3
+        result = "You guessed right!"   # => You guessed right!
+        print(result)
+        return True
+    else:                               # 4
+        result = "You guessed wrong!"
+        print(result)
+        return False
+```
+
+## 3.7 Basic types
+Mojo's basic types are defined in the Built-in modules, which are automatically imported in code.
+
+
+
+
+## 3.8 Improving performance with SIMD
+Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance. Here is some code using this feature (see simd.mojo):
+
+```py
+from DType import DType                 # 1
+
+y = SIMD[DType.uint8, 4](1, 2, 3, 4)    # 2
+print(y)  # => [1, 2, 3, 4]
+
+y *= 10                                 # 3
+print(y)  # => [10, 20, 30, 40]
+
+z = SIMD[DType.uint8, 4](1)             # 4
+print(z)  # => [1, 1, 1, 1]
+
+from TargetInfo import simdbitwidth
+print(simdbitwidth())  # => 512         # 5
+```
+
+SIMD is a pre-defined type (??) in Mojo. In order to use it, we need to import the `DType` module (see line 1).  
+SIMD is also a generic type, indicated with the [ ] braces. We need to indicate the item type and the number of items, as is done in line 2 when declaring the SIMD-vector y.  
+DType.uint8 and 4 are known as *parameters* (??); they must be known at compile-time. (1, 2, 3, 4) are the *arguments*, which can be compile-time or runtime known (for example: user input or data retrieved from an API).
+
+y is now a vector of 8 bit numbers that are packed into 32 bits. We can perform a single instruction across all of it instead of 4 separate instructions, like *= shown in line 3.  
+If all items have the same value, use the shorthand notation as for z in line 4.  
+
+To show the SIMD register size on the current machine, use the function `simdbitwidth` from module `TargetInfo` as in line 5. The result `512` means that we can pack 64 x 8bit numbers together and perform a calculation on all of these with a single instruction!
+
+
+
+
