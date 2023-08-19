@@ -47,6 +47,29 @@
 **Tips and Troubleshooting:**    
 #### 2.7.2.3 Compiling and executing a simple program
 
+# 3 Basic building blocks
+## 3.1 The main function, def and fn, variables and types
+## 3.2 Function arguments and return type
+## 3.3 Can a function change its arguments?
+## 3.3.1 inout 
+## 3.3.2 owned
+## 3.3.3 owned and transferred with ^
+## 3.4 Structs
+## 3.5 Python integration
+### 3.5.1 Running Python code
+### 3.5.3 Working with Python modules
+## 3.6 if else and Bool values
+## 3.7 Basic types
+## 3.7.1 Scalar values
+### 3.7.1.2 The Bool type
+### 3.7.1.3 The numerical types
+## 3.8 Improving performance with SIMD
+
+
+
+
+
+
 
 
 

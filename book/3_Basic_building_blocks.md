@@ -61,8 +61,19 @@ What happens when?
 ?? Int is omitted
 
 Finally, we see a convention here:  
-* variable and function names start with a lowercase letter
-* types (like `Int`) start with an uppercase letter, and follow PascalCase style.
+* variable and function names start with a lowercase letter, and follow camelCase style (example: luckyNumber).
+* types (like `Int`) start with an uppercase letter, and follow PascalCase style (example: IntPair).
+
+Mojo is also a *strongly-typed language", contrary to Python, which is *loosely typed* (see `change_type.mojo`):
+```py
+var x = UInt8(1)
+x = "will cause an error" # error
+
+# error: Expression [14]:20:9: cannot implicitly convert 'StringLiteral' value to 'SIMD[ui8, 1]' in assignment
+#     x = "will cause an error"
+#         ^~~~~~~~~~~~~~~~~~~~~
+```
+Trying to change a variable's type as in the code above leads to a compiler error.
 
 ## 3.2 Function arguments and return type
 Functions declared as `fn` in Mojo must specify the types of their arguments. If a value is returned, its type must be specified after a `->` and before the body of the function.
@@ -135,7 +146,7 @@ Our variable to be owned is of type `String`. This type and its methods(??) are 
 `set_fire` takes ownership of variable a in line 2 as parameter `text`, which it changes and returns.  
 From the output, we see that the return value b has the changed value, while the original value of a still exists. Mojo made a copy of a to pass this as the text argument.
 
-## 3.3.3  owned and transferred with ^
+## 3.3.3 owned and transferred with ^
 If however you want to give the function ownership of the value and do NOT want to make a copy (which can be an expensive operation for some types), then you can add the *transfer* operator `^` when you pass variable a to the function.  
 The transfer operator effectively destroys the local variable name - any attempt to call it later causes a compiler error.  
 
@@ -270,9 +281,9 @@ fn main():
     array = np.array([1, 2, 3])              # 3
     print(array)  # => [1  2  3]
 
-    arr = np.ndarray([5])
+    arr = np.ndarray([5])        # arr is a PythonObject
     print(arr)  # => [0.   0.25 0.5  0.75 1.  ]
-    arr = "this will work fine"
+    arr = "this will work fine"  # Python is loosely typed
     print(arr)  # => this will work fine
 
     ar = np.arange(15).reshape(3, 5)
@@ -317,10 +328,168 @@ def guessLuckyNumber(guess) -> Bool:    # 1
 ```
 
 ## 3.7 Basic types
-Mojo's basic types are defined in the Built-in modules, which are automatically imported in code.
+Mojo's basic types are defined in the Built-in modules, which are automatically imported in code. This includes Bool, Int, FloatLiteral, StringLiteral and StringRef, which we'll discuss in this section.
+
+## 3.7.1 Scalar values
+*Scalar* just means a single value, you'll notice in Mojo all the numerics are SIMD (see § 3.7.3) scalars, as well as the Bool type (see § 3.7.2).  
+
+### 3.7.1.2 The Bool type
+We already used this in § 3.6.
+Defined in the module Bool, it has only 2 values True and False, and the dunder (__...__) methods bool, invert, eq, ne, and, or, xor, rand, ror, rxor. 
+
+### 3.7.1.3 The numeric types
+Here are the currently defined numerical types:
+* Int  
+* Int8
+* Int16
+* Int32
+* Int64
+* UInt8
+* UInt16
+* UInt32
+* UInt64
+* Float32
+* Float64
+
+In `change_type.mojo` (line 1) we see two things:  
+* The type name is used to convert a value to the type (if possible):  
+`UInt8(1)`
+* from the error that results in assigning a StringLiteral value: `cannot implicitly convert 'StringLiteral' value to 'SIMD[ui8, 1]' in assignment`  
+we see that UInt8 is just a *type alias* for SIMD[DType.uint8, 1], which is the same as SIMD[ui8, 1].  
+Indeed, it is defined in the `SIMD` module as `UInt8 = SIMD[ui8, 1]`, just as all other numeric types.
+The integer types are defined in module `Int`, while the floating point types live in module `FloatLiteral`.
+
+**The `Int` type**:  
+This is defined in module Int, together with a lot of useful methods, which we'll use in future examples.
+Int is the same size as your architecture, so on a 64 bit machine it's 64 bits wide.
+
+See `numerical_types`:
+```py
+let i: Int = 2 
+print(i)
+
+# use as indexes:
+var vec_2 = DynamicVector[Int]()
+vec_2.push_back(2)
+vec_2.push_back(4)
+vec_2.push_back(6)
+
+print(vec_2[i])  # => 6
+```
+
+Integers can also be used as index, like in the following example (see ``)
 
 
+**The `FloatLiteral` type and Conversions**:
 
+```py
+    let float: FloatLiteral = 3.3
+    print(float)  # => 3.2999999999999998
+    let f32 = Float32(float)  # 1
+    print(f32) # => 3.2999999523162842
+
+    let f2 = FloatLiteral(i)
+    print(f2) # => 2.0
+    let f3 = Float32(i)
+    print(f3) # => 2.0
+
+    let i: Int = 2 
+    print(i)
+    # let j: Int = 3.14    # 2 - error: cannot implicitly convert 'FloatLiteral' value to 'Int'
+    # let j = Int(3.14)    # 3 - error: cannot construct 'Int' from 'FloatLiteral' value in 'let' 
+    # let i2 = Int(float) # convert error
+    # let i2 = Int(f32) # convert error
+    # let i2 = Int(float) # convert error
+    # let i2 = Int(f32) # convert error
+```
+
+A FloatLiteral also takes the machine word-size (here 64 bit) as default type. 
+Conversions in Mojo are performed by using the constructor as a conversion function as in: `Float32(value_to_convert)`. 
+We see that a conversion from a 64bit FloatLiteral to a Float32 works, but already looses some precision.
+As shown above conversion from an Int to Float works, but from FloatLiteral to an Int is not that easy. (How ??)
+
+### 3.7.1.3 The String types
+Mojo has no equivalent of a char type.
+It has a `StringLiteral` type, which is built-in. In `strings.mojo` a value of that type is made in line 1. (Predict the error when you try to give it the value 20 and test it out.)  
+It is written directly into the data segment of the binary. When the program starts, it's loaded into read-only memory, which means it's constant and lives for the duration of the program.
+String literals are all null-terminated for compatibility with C APIs (but this is subject to change). String literals store their length as an integer, and this does not include the null terminator.
+
+See `strings.mojo`:
+```py
+fn main():
+    # StringLiteral:
+    var lit = "This is my StringLiteral"   # 1
+    print(lit)  # => This is my StringLiteral
+
+    # lit = 20  # => error: Expression [9]:26:11: cannot implicitly convert 'Int' value to 'StringLiteral' in assignment
+```
+
+The `String` type is not imported by default (see line 2); it represents a ]mutable string*. The `String` module contains basic methods for working with strings.
+The string value is heap-allocated, but the String itself is actually a pointer to heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture ??)
+
+```py
+# String:
+    from String import String   # 2
+    from String import ord
+
+    s = String("Mojo🔥")       # 3
+    print(s)            # => Mojo🔥
+    print(s[0])         # 4 => M
+    print(ord(s[0]))    # => 77
+```
+
+One way to make a String is to convert a StringLiteral value with 
+`String(value)`, as in line 3.  
+Strings are 0-index based, and the i-th ASCII character  can be read with  
+`s[i]` (see line 4). The `ord` function gives the corresponding ASCII value of the character. (?? Doesn't work with Unicode characters).
+
+This works because a String has an underlying datastructure known as `DynamicVector[SIMD[si8, 1]]`. This is similar to a Python list, here it's storing multiple int8's that represent the characters.  
+You can build a string starting from a DynamicVector, see line 5, and add two ASCII characters to it. 
+To display it, print(vec) doesn't work. To do that, we can use a `StringRef` to get a pointer to the same location in memory, but with the methods required to output the numbers as text, see lines 6-7.
+
+```py
+# building a string with a DynamicVector:
+    from Vector import DynamicVector
+    let vec = DynamicVector[Int8](2)    # 5
+    vec.push_back(78)
+    vec.push_back(79)
+
+    from Pointer import DTypePointer
+    from DType import DType
+    # 6:
+    let vec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
+    print(vec_str_ref) # 7 => NO
+```
+
+Because it points to the same location in heap memory, changing the original vector will also change the value retrieved by the reference:
+
+```py
+vec[1] = 78
+print(vec_str_ref)  # 8 => NN
+```
+
+In line (9) we make a deep copy `vec_str` of the string
+Having made a copy of the data to a new location in heap memory, we can now modify the original and it won't effect our copy (see line 10):
+
+```py
+let vec_str = String(vec_str_ref)  # 9
+print(vec_str)      # => NN
+
+vec[0] = 65
+vec[1] = 65
+print(vec_str_ref)  # => AA
+print(vec_str)      # 10 => NN
+```
+
+A value of type `StringRef` represents a constant reference to a string, namely: a sequence of characters and a length, which need not be null terminated.
+
+Emojis are actually four bytes, so we need a slice of 4 to have it print correctly (see line 11):
+
+```py
+emoji = String("🔥😀")
+print("fire:", emoji[0:4])    # 11 => fire: 🔥
+print("smiley:", emoji[4:8])  # => smiley: 😀
+```
 
 ## 3.8 Improving performance with SIMD
 Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance. Here is some code using this feature (see simd.mojo):

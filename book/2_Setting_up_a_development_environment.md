@@ -11,7 +11,7 @@ But Mojo can also be interpreted or JIT-compiled, as in the Mojo Playground (see
 If the Mojo app contains dynamic (Python) code, this is executed by running the dynamic code at compile time with an embedded CPython interpreter. This mechanism also makes possible compile-time meta-programming.
 
 **Standard library**   
-Mojo has a growing standard library called ?? , which already contains a growing number of *modules*, such as Atomic, Benchmark, List, OS, Tensor, Testing, and so on (see § ??).
+Mojo has a growing standard library called `MojoStdlib` , which already contains a growing number of *modules*, such as Atomic, Benchmark, List, OS, Tensor, Testing, and so on (see § ??).
 
 ## 2.2 Using a Mojo binary release
 ?? These can be downloaded from [here]().
@@ -146,8 +146,8 @@ You can also use the Mojo Playground (§ 2.7.1) to run a notebook from within VS
 Select another kernel > Existing Jupyter Server > Enter the URL of a 
 running Jupyter Server.   
 Enter: `https://playground.modular.com/user/<your_email>/?token=<your_token>`  
-It'll prompt for your username and password, then choose the Mojo kernel.  
-(It'll prompt for you to enter a server name, you can set it as Mojo Playground or whatever you like ??).  
+
+It is often easier to first restart the Mojo Playground server is you still have a browser session open with it. Then you can connect to it from within VS Code.  
 Now you can write Mojo code and run it within a cell of the notebook!  
 See next section for a screenshot of code in this environment.
 
