@@ -5,6 +5,8 @@
 **Target OS’s and platforms**  
 Because Mojo has an LLVM/MLIR compiler infrastructure, it can target a very wide spectrum of operating systems, computation environments and hardware platforms.
 
+    the MLIR/LLVM repo uses bazel: https://bazel.build/start/cpp
+
 **Compiler**  
 By default, Mojo code is AOT (Ahead Of Time) compiled.  
 But Mojo can also be interpreted or JIT-compiled, as in the Mojo Playground (see ??) or the Mojo REPL.
@@ -165,7 +167,6 @@ See:
 To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  
 
 
-You can find the code in `first_code.ipynb`, or in the corresponding Mojo source files.
 The first is the usual "Hello World!" program, which is in Mojo exactly the same as in Python, because Mojo is a superset of Python:
 
 See `hello_world.mojo`:
@@ -175,8 +176,11 @@ fn main():
 ```
 
 In a source file however we have to use a starting point function called `main` (see § 3.1).
+To compile and run this source code, use the command: 
+`mojo hello_world.mojo` or `mojo hello_world.🔥`.
+Then the console displays: `Hello World! from Mojo`.
 
-(To show the output of statements in code sections, we'll show them in a comment that starts with `# =>`.)
+To show the output of statements in code sections, we'll show them in a comment that starts with `# =>`.
 
 The second snippet shows a main function, which declares an integer x, increments it and then prints it out. The function is then called with main().
 

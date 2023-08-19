@@ -491,7 +491,24 @@ print("fire:", emoji[0:4])    # 11 => fire: 🔥
 print("smiley:", emoji[4:8])  # => smiley: 😀
 ```
 
-## 3.8 Improving performance with SIMD
+## 3.8 Using for loops
+The following program shows how to use a for in range-loop:
+
+See `for_range.mojo`:
+```py
+def main():
+    for x in range(9, 0, -3):   # 1
+        print(x)
+
+# =>
+# 9
+# 6
+# 3
+```
+
+The loop in line 1 goes from start 9 to end 0, step -3. The end value is not included.
+
+## 3.9 Improving performance with SIMD
 Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance. Here is some code using this feature (see simd.mojo):
 
 ```py
