@@ -379,6 +379,8 @@ print(vec_2[i])  # => 6
 
 Integers can also be used as index, like in the following example (see ``)
 
+A small handy detail about spelling: _ can separate thousands:
+10_000_000
 
 **The `FloatLiteral` type and Conversions**:
 
