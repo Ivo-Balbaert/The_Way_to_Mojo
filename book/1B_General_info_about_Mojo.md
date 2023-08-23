@@ -47,7 +47,7 @@ To come into contact with other Mojo users or the Modular team:
 ## 1B.3 A brief history, status and roadmap 
 * 2022 - work on design started
     Sep 7 : first patch published
-* 2023 May 2 - Product Keynote Launch
+* 2023 May 2 - Product Keynote Launch Modular engine/Mojo
     Chris Lattner considers Mojo to be at v 0.1
 
 Goals / Roadmap:

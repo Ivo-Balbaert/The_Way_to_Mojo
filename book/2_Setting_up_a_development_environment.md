@@ -3,7 +3,7 @@
 ## 2.1 Architectures and compilers
 
 **Target OS’s and platforms**  
-Because Mojo has an LLVM/MLIR compiler infrastructure, it can target a very wide spectrum of operating systems, computation environments and hardware platforms.
+The LLVM/MLIR compiler infrastructure together form a cutting-edge compiler and code generation system. Because Mojo uses this system, it can target a very wide spectrum of operating systems, computation environments and hardware platforms.
 
     the MLIR/LLVM repo uses bazel: https://bazel.build/start/cpp
 
@@ -11,6 +11,11 @@ Because Mojo has an LLVM/MLIR compiler infrastructure, it can target a very wide
 By default, Mojo code is AOT (Ahead Of Time) compiled.  
 But Mojo can also be interpreted or JIT-compiled, as in the Mojo Playground (see ??) or the Mojo REPL.
 If the Mojo app contains dynamic (Python) code, this is executed by running the dynamic code at compile time with an embedded CPython interpreter. This mechanism also makes possible compile-time meta-programming.
+
+**Runtime**
+- to call the CPython interpreter and call with the Mojo compiler ??
+- a built-in GC to clean up Python objects, based on reference counting
+
 
 **Standard library**   
 Mojo has a growing standard library called `MojoStdlib` , which already contains a growing number of *modules*, such as Atomic, Benchmark, List, OS, Tensor, Testing, and so on (see § ??).

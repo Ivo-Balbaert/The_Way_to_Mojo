@@ -1,6 +1,9 @@
 # 3 Basic building blocks
 We'll start by discussing the last code snippet of § 2.
 
+For a list of keywords, see keywords.txt  
+Keywords normally cannot be used as identifiers. If it really is necessary, you can enclose them in backticks `` to force the use of a keyword as an identifier (see error.mojo).
+
 ## 3.1 The main function, def and fn, variables and types
 Mojo is a compiled language, and thus when code is stored in `.mojo` files, a `main()` function is required as the entry point to a program. 
 
@@ -20,9 +23,49 @@ Like in Python, `main()` has no parameters and no return value.
 
 From line 1, we see that Mojo also uses indentation to define code blocks, instead of the { } found in C-type languages. Mojo also knows `print`, as well as control-flow syntax such as `if` conditions and `for` loops.
 
-We also declare a variable `n` with the keyword `var`, which means it is a real mutable variable whose value can change. If you need to define an immutable variable (a constant), use `let` instead.
+We also declare a variable `n` with the keyword `var`, which means it is a real mutable variable whose value can change. If you need to define an immutable variable (a constant), use `let` instead, benefiting type-safety and performance.
+
+Why is this also useful? Because Python doesn't give you an error if you mistype a variable name in an assignment, while Mojo does when declared with var/let.
+
+>Note: A def used in Mojo allows to declare untyped variables just by assigning them a value. But you can also use var and let inside defs!
 
 >Note: Take care to only use var when really needed!
+
+Another example:
+see `let2.mojo`:
+```py
+def your_function(a, b):
+    let c = a
+    # Uncomment to see an error:
+    # c = b  # error: c is immutable
+
+    if c != b:
+        let d = b
+        print(d)  # => 3
+
+your_function(2, 3)
+```
+
+let and var declarations support type specifiers as well as patterns, and late initialization as in lines 1-3::
+
+see `let3.mojo`:
+```py
+def your_function():
+    let x: Int = 42
+    let y: Float64 = 17.0
+
+    let z: Float32   # 1
+    if x != 0:
+        z = 1.0      # 2
+    else:
+        z = foo()    # 3
+    print(z)      # => 1.0
+
+def foo() -> Float32:
+    return 3.14
+
+your_function()
+```
 
 What happens when you change var to let? You get a compiler error:  
 ```
@@ -63,6 +106,8 @@ What happens when?
 Finally, we see a convention here:  
 * variable and function names start with a lowercase letter, and follow camelCase style (example: luckyNumber).
 * types (like `Int`) start with an uppercase letter, and follow PascalCase style (example: IntPair).
+
+>Note: When using Mojo in a REPL environment (such as a Jupyter notebook), top-level variables (variables that live outside a function or struct) are treated like variables in a def, so they allow implicit value type declarations (they do not require var or let declarations, nor type declarations). This matches the Python REPL behavior.
 
 Mojo is also a *strongly-typed language", contrary to Python, which is *loosely typed* (see `change_type.mojo`):
 ```py
@@ -167,7 +212,8 @@ If you delete or comment out print(a), then it works fine.
 >Note: At this time (Aug 2023), Mojo doesn't have the concept of "class", equivalent to that in Python; but it is on the roadmap.
 
 You can build high-level abstractions for types (or "objects") in a *struct*. A struct in Mojo is similar to a class in Python: they both support methods, fields, operator overloading, decorators for metaprogramming, and so on. 
-However, Mojo structs are completely static - they are bound at compile-time, so they do not allow dynamic dispatch or any runtime changes to the structure.
+
+>Note: Python classes are dynamic: they allow for dynamic dispatch, monkey-patching (or “swizzling”), and dynamically binding instance properties at runtime. However, Mojo structs are completely static - they are bound at compile-time and you cannot add methods at runtime, so they do not allow dynamic dispatch or any runtime changes to the structure. Structs allow you to trade flexibility for performance while being safe and easy to use.
 
 Here is a basic struct example (see `struct1.mojo`):  
 ```py
@@ -178,6 +224,11 @@ struct IntPair:
     fn __init__(inout self, first: Int, second: Int):   # 3
         self.first = first
         self.second = second
+
+    fn __lt__(self, rhs: IntPair) -> Bool:
+        return self.first < rhs.first or
+              (self.first == rhs.first and
+               self.second < rhs.second)
     
     fn dump(inout self):
         print(self.first)
@@ -187,6 +238,10 @@ def pair_test() -> Bool:
     let p = IntPair(1, 2)   # 4 
     dump(p)                 # => 1
                             # => 2
+    let q = IntPair(2, 3)
+    # does this work?
+    if p < q:  # this is automatically translated to __lt__
+        print("p < q")
     return True
 
 fn main():
@@ -304,6 +359,12 @@ Now you can use numpy as if writing in Python, see lines 3-4.
 
 You can import any other Python module in a similar manner. Keep in mind that you must import the whole Python module.  However, you cannot import individual members (such as a single Python class or function) directly - you must import the whole Python module and then access members through the module name.
 
+**Exercises**
+1- Use the Python interpreter to calculate 2 to the power of 8 in a PythonObject and print it
+(see `exerc3.1.🔥`)
+2- Using the Python math module, return pi to Mojo and print it
+(see `exerc3.2.🔥`)
+
 ## 3.6 if else and Bool values
 `guess.mojo` shows an example of a def type of function, that returns a Bool value (line 1). We define a temporary variable of type `StringLiteral` in line 2. Lines 3 and 4 then contain the if-else condition:  
 `guess == luckyNumber` compares the values of guess and luckyNumber with `==`. It returns a Bool value: if the values guess and luckyNumber are equal, the expression is `True` and the first block is executed, else its value is `False`, and the else block runs.
@@ -329,13 +390,88 @@ def guessLuckyNumber(guess) -> Bool:    # 1
 
 ## 3.7 Basic types
 Mojo's basic types are defined in the Built-in modules, which are automatically imported in code. This includes Bool, Int, FloatLiteral, StringLiteral and StringRef, which we'll discuss in this section.
+*All* the "standard types" like `Int`, `Bool`, `String` and even `Tuple` are made using structs.
 
 ## 3.7.1 Scalar values
 *Scalar* just means a single value, you'll notice in Mojo all the numerics are SIMD (see § 3.7.3) scalars, as well as the Bool type (see § 3.7.2).  
 
 ### 3.7.1.2 The Bool type
-We already used this in § 3.6.
-Defined in the module Bool, it has only 2 values True and False, and the dunder (__...__) methods bool, invert, eq, ne, and, or, xor, rand, ror, rxor. 
+We already used this in § 3.6, and shown in `struct1.mojo`.
+
+Defined in the module Bool as a struct, it has only 2 values True and False, and the dunder (__...__) methods bool, invert, eq, ne, and, or, xor, rand, ror, rxor. 
+
+Here are some declarations:
+see `bools.mojo`;
+```py
+fn main():
+    var x : Bool = True
+    print(x)    # => True
+
+    x = False
+    print(x)    # => False
+
+    print(x.value)  # 1 => False
+
+    # 2 - Invert:
+    print(True.__invert__())  # => False
+    print(~False)             # => True
+
+    # 3 Eq and ne
+    print(True.__eq__(True))  # => True
+    print(True == False)      # => False
+
+    print(True.__ne__(True))  # => False
+    print(True != False)      # => True
+
+    # 4 - and, or and xor
+    print(True.__and__(True)) # => True
+    print(True & False)       # => False
+    print(True.__or__(False)) # => True
+    print(False or False)     # => False
+    print(True.__xor__(True)) # => False
+    print(True ^ False)       # => True
+    print(False ^ True)       # => True
+    print(False ^ False)      # => False
+
+    # 5 - ror, rand and rxor
+    let my_number = MyNumber(1.0) # => Called MyNumber's __rand__ function
+    print(True & my_number)   # => True
+
+```
+The value method gives its value (see line 1).
+
+Reversing the value is done with the `invert` method (see line 2). De dunder-version can be called as a method on the value. `~` is the equivalent prefix operator.
+
+Equality is tested with the `__eq__` method or the `==` operator. Non-equalitiy is tested with the  `__ne__` method or the `!=` operator.
+The `__and__` method is True only if both values are True, its operator is `&`.
+The `__or__` method is True only if one of both values are True, its operator is `or`.
+The xor (Exclusive or), outputs True if exactly one of two inputs is True.
+Its method is written as `__xor__` and its infix operator as `^` (ALT+^).
+
+The ror, rand and rxor methods are quite special. Here is an example:  
+
+You normally can't compare a Bool with an FloatLiteral (instance of the MyNumber here):
+```py
+struct MyNumber:
+    var value: FloatLiteral
+    fn __init__(inout self, num: FloatLiteral):
+        self.value = num
+```
+
+But we can if we implement the `__rand__` method on it:
+```py
+    fn __rand__(self, other: Bool) -> Bool:
+        print("Called MyNumber's __rand__ function")
+        if self.value > 0.0 and other:
+            return True
+        return False
+```
+
+Now we can execute the following code as in line 5:
+```py
+    let my_number = MyNumber(1.0) # => Called MyNumber's __rand__ function
+    print(True & my_number)   # => True
+```
 
 ### 3.7.1.3 The numeric types
 Here are the currently defined numerical types:
@@ -363,7 +499,7 @@ The integer types are defined in module `Int`, while the floating point types li
 This is defined in module Int, together with a lot of useful methods, which we'll use in future examples.
 Int is the same size as your architecture, so on a 64 bit machine it's 64 bits wide.
 
-See `numerical_types`:
+See `numerical_types.mojo`:
 ```py
 let i: Int = 2 
 print(i)
@@ -403,6 +539,60 @@ A small handy detail about spelling: _ can separate thousands:
     # let i2 = Int(f32) # convert error
     # let i2 = Int(float) # convert error
     # let i2 = Int(f32) # convert error
+```
+
+Equality is checked with ==, the inverse is !=
+The following normal operators exist:
+-, <, >, <=, >=, + (add), - (sub), *, 
+/ (returns a Float)
+// (floordiv): Returns lhs divided by rhs rounded down to the next whole number - 5.0 // 2.0 => 2.0
+% (mod): Returns the remainder of lhs divided by rhs - print(5.0 % 2.0) => 1.0
+** (pow)
+
+**The r operations**  
+radd, rsub, rmul, rtruediv, rfloordiv, rmod, rpow:
+These operations allow to define the base operations for types that by default don't work with them.
+Think of the r as reversed, for example in a + b, if a doesn't implement __add__, then b.__radd__(a) will run instead.
+
+Example: see `radd.mojo`:
+```py
+struct MyNumber:
+    var value: FloatLiteral
+
+    fn __init__(inout self, num: FloatLiteral):
+        self.value = num
+
+    fn __radd__(self, rhs: FloatLiteral) -> FloatLiteral:
+        print("running MyNumber 'radd' implementation") # => running MyNumber 'radd' implementation
+        return self.value + rhs
+
+fn main():
+    let num = MyNumber(40.0)
+    print(2.0 + num) # => 42.0
+```
+
+**The i in-place operations**  
+iadd, isub, imul, itruediv, ifloordiv, imod, ipow
+i stands for in-place, the lhs becomes the result of the operation and a new object is not created.
+
+```py
+var a = 40.0
+a += 2.0
+print(a)  # => 42.0
+```
+
+Same for: -=, *=, /=, %=, //=, **=
+
+If an Int or a Float value does not equal 0 or 0.0, it returns true in an if statement:
+```py
+if 1.0:
+    print("not 0.0")  # => not 0.0
+
+if not 0.0:
+    print("is 0.0")   # => is 0.0
+
+if 0:       # or 0.0
+    print("this does not print!")
 ```
 
 A FloatLiteral also takes the machine word-size (here 64 bit) as default type. 
@@ -538,6 +728,137 @@ If all items have the same value, use the shorthand notation as for z in line 4.
 
 To show the SIMD register size on the current machine, use the function `simdbitwidth` from module `TargetInfo` as in line 5. The result `512` means that we can pack 64 x 8bit numbers together and perform a calculation on all of these with a single instruction!
 
+**Exercises**
+1- Initialize two single floats with 64 bits of data and the value 2.0, using the full SIMD version, and the shortened alias version, then multiply them together and print the result.
+(see `exerc3.3.🔥`)
+2- Create a loop using SIMD that prints four rows of data that looks like this:
+    [1,0,0,0]
+    [0,1,0,0]
+    [0,0,1,0]
+    [0,0,0,1]
+
+Use a loop like this: for i in range(4):
+                        pass
+(see `exerc3.4.🔥`)
+
+
+## 3.10 The ListLiteral type
+This is implemented in module `BuiltinList`.  
+A list consists of zero or more possibly heterogeneous values, separated by commas and enclosed in []. Because list items can be of any type, their type is `AnyType`. The types can be explicitly specified, also between [].
+The items are immutable, it only includes getter methods for accessing them, nothing can be modified post-initialization.
+
+When you initialize the list the types can be inferred (as shown in line 1), however when retrieving an item with `get` you need to provide the item's index as well as the type as parameters (lines 2A,2B):
+
+See `listliteral.mojo`:
+```py
+    let list: ListLiteral[Int, FloatLiteral, StringLiteral] = [1, 5.0, "Mojo🔥"]  # 1
+    print(list.get[2, StringLiteral]())  # 2A => Mojo🔥
+
+    # much simpler:
+    let list2 = [1, 5.0, "Mojo🔥"]
+    print(list2.get[2, StringLiteral]())  # 2B => Mojo🔥
+```
+
+`storage` is the MLIR type that stores the literals (!pop.pack<[!kgen.declref<_"$Builtin"::_"$Int"::_Int>, !kgen.declref<_"$Builtin"::_"$FloatLiteral"::_FloatLiteral>, !kgen.declref<_"$Builtin"::_"$String"::_String>]>)
+
+
+The `List` module, which is not built-in, provides methods for working with static and variadic lists.
+
+## 3.11 The Tuple type
+This is implemented in the built-in module `Tuple`.  
+A tuple consists of zero or more possibly heterogeneous values, separated by commas and enclosed in (). Het get method together with an index and a type allows you to extract the item at that index.
+
+See `tuple.mojo`:
+```py
+    let tup = (42, "Mojo", 3)
+    print(tup.get[0, Int]())  # => 42
+```
+
+## 3.12 The Slice type
+Slices are defined in the built-in module `BuiltinSlice`. They are the way to get substrings out of a string, or ?? sublists out of Lists.
+A slice expression follows the Python convention of [start:end:step].
+If we don't specify a start, it will default to 0. We can initialize slices by specifying where it should stop. The step is the number of elements to skip between each element. If we don't specify a step, it will default to 1. 
+So for example using Python syntax, you could write as in line 1:
+
+See ``slice.mojo`:
+```py
+    from String import String
+
+    let original = String("MojoDojo")
+    print(original[0:4])  # => Mojo
+    print(original[0:8])  # => MojoDojo
+    print(original[1:8:2])  # => oooo
+    print(original[0:4:2])  # => Mj
+
+    print(original[slice(0, 4)])      # => Mojo
+    let slice_expression = slice(0, 4)
+    print(original[slice_expression]) # => Mojo
+```
+
+[0:4] can also be written as slice(0,4). [1:8:2] as slice(1, 8, 2). This syntax is used in the bottom examples:
+
+```py
+    print(original[slice(0, 4)])      # => Mojo
+    let slice_expression = slice(0, 4)
+    print(original[slice_expression]) # => Mojo
+
+    var x = String("slice it!")
+    var a : slice = slice(5)
+    var b : slice = slice(5, 9)
+    var c : slice = slice(1, 4, 2)
+
+    print(x[a])  # => slice
+    print(x[b])  # =>  it!
+    print(x[c])  # => lc
+```
+
+## 3.13 The Error type
+The Error type (defined in built-in module Error) is used to handle errors in Mojo.
+Code can raise an error with the `Error` type, which accepts a String message. When raise is executed, "Error: error_message" is displayed:
+
+See `error.mojo`:
+```py
+fn main():
+    return_error()
+
+def return_error():
+    raise Error("This returns an Error type") 
+    # => Error: This returns an Error type
+```
+
+Errors can be initialized as empty, with custom messages, or even with string references:
+
+```py
+var err : Error = Error()
+raise err
+
+var custom_err : Error = Error("my custom error")
+raise custom_err
+
+var `ref` : StringRef = StringRef("hello")
+var errref : Error = Error(`ref`)
+
+raise errref
+```
+
+If the program still contains code after raising the error, you get the: `warning: unreachable code after raise statement`
+
+The `value` field is the error message itself (see line 1).
+
+```py
+var err2 : Error = Error("something is wrong")
+print(err2.value) # 1 => something is wrong
+```
+
+An internal method __copyinit__ allows an error to be copied:
+
+```py
+var err3 : Error = Error("hey")
+var other : Error = err3
+raise other  # => Error: hey
+```
+
+## 3.10 Overloaded functions and methods
 
 
 
