@@ -22,7 +22,8 @@ Its logo is the ![fire emoticon](??).
 
 Mojo’s source files have the fire emoticon extension like hello.🔥, or alternatively *.mojo*, as in *hello.mojo*.
 
-Mojo users are called mojicians 🪄.
+Mojo users are called *mojicians 🪄*.
+Its univers is called the *Modverse*.
 
 To search on internet for info on Mojo, use the search terms  "Mojo programming language" or "mojolang". 
 
@@ -64,7 +65,9 @@ Goals / Roadmap:
 GH = GitHub
 
 ## 1B.5 Business and support model
-The company *Modular* is funded by VC (Venture Capital).
+The company *Modular* is funded by VC (Venture Capital).  
+* June 30, 2022: Modular raised $30M from GV (Google Ventures), Greylock, Factory, SV Angel and notable angels who are backing us.    
+* Aug 24, 2023: Modular raised $100 million in new funding, led by General Catalyst and filled by existing investors GV (Google Ventures), SV Angel, Greylock, and Factory.   
 
 
 ## 1B.6 Some one-liners

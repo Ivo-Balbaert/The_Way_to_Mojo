@@ -248,8 +248,10 @@ fn main():
     pair_test()
 ```
 
-The fields of a struct (here lines 1-2) need to be defined as var when they are not initialized (?? are let fields allowed), and a type is necessary.  
-The `fn __init__` function (line 3) is an "initializer" - it behaves like a constructor in other languages. It is called in line 4. All methods like it that start and end with __ are called *dunder* methods.  
+The fields of a struct (here lines 1-2) need to be defined as var when they are not initialized (?? are let fields allowed), and a type is necessary. 
+To make a struct, you need an __init__ method (see however § 11.1). 
+The `fn __init__` function (line 3) is an "initializer" - it behaves like a constructor in other languages. It is called in line 4. 
+All methods like it that start and end with __ are called *dunder* methods. They are widely used in internal code in MojoStdLib. They can be used directly (always ??) as a method call, but there are often shortcuts or operators to call them (see the StringLiteral examples in strings.mojo).  
 `self` refers to the current instance of the struct, it is similar to the `this` keyword used in some other languages.
 
 ?? fn dump(inout self):    inout is not needed?
@@ -259,6 +261,11 @@ Add the following line just after instantiating the struct:
 `return p < 4`          
 What do you see?
 -- gives a compile time error
+
+**Exercise**
+Define a struct Point for a 3 dimensional point in space. Declare a point variable origin, and print out its items.
+(see *exerc3.5.mojo*)
+
 
 ## 3.5 Python integration
 
@@ -364,6 +371,26 @@ You can import any other Python module in a similar manner. Keep in mind that yo
 (see `exerc3.1.🔥`)
 2- Using the Python math module, return pi to Mojo and print it
 (see `exerc3.2.🔥`)
+
+
+### 3.5.4 Running Python code in the interpreter mode or in the Mojo mode
+There is a great difference between running Python inside Mojo (through a Python object or %%python), and running Mojo code, although the Mojo code may be exactly the same as the Python code.  
+
+Concrete example:
+```py
+x = 5 + 10
+print(x)
+```
+
+In the 1st case, the Python code is interpreted at compile-time through a CPython interpreter, which communicates with the Mojo compiler.
+In the 2nd case, the code is compiled to native code, and then run, which is obviously a lot faster. More in detail, here are the performance optimizations in this case:
+This has numerous performance implications:
+* All the expensive allocation, garbage collection, and indirection of looking up an object on the heap via an address is no longer required: a lot of Mojo values can just reside on the stack, and possibly as 64 bits chunks passed through registers.  
+* The compiler can do huge optimizations when it knows what the numeric type is
+* Numerical values can be passed straight into registers for mathematical operations
+* There is no overhead associated with compiling to bytecode and running through an interpreter
+* The data can now be packed into a vector for huge performance gains, perhaps using SIMD optimizations.
+
 
 ## 3.6 if else and Bool values
 `guess.mojo` shows an example of a def type of function, that returns a Bool value (line 1). We define a temporary variable of type `StringLiteral` in line 2. Lines 3 and 4 then contain the if-else condition:  
@@ -605,6 +632,7 @@ Mojo has no equivalent of a char type.
 It has a `StringLiteral` type, which is built-in. In `strings.mojo` a value of that type is made in line 1. (Predict the error when you try to give it the value 20 and test it out.)  
 It is written directly into the data segment of the binary. When the program starts, it's loaded into read-only memory, which means it's constant and lives for the duration of the program.
 String literals are all null-terminated for compatibility with C APIs (but this is subject to change). String literals store their length as an integer, and this does not include the null terminator.
+They can be converted to a Bool value (see lines 1B-C): an empty string is False, an non-empty is True. (Bool() doesn't work here).
 
 See `strings.mojo`:
 ```py
@@ -614,7 +642,54 @@ fn main():
     print(lit)  # => This is my StringLiteral
 
     # lit = 20  # => error: Expression [9]:26:11: cannot implicitly convert 'Int' value to 'StringLiteral' in assignment
+
+    # Conversion to Bool:
+    var x = ""
+    print(x.__bool__())  # 1B => False
+    var y = "a"
+    print(y.__bool__())  # 1C => True
+
+    var x = "abc"
+    var y = "abc"
+    var z = "ab"
+    print(x.__eq__(y))  # 1D => True  
+    print(x.__eq__(z))  # => False
+    print(x == y)       # 1E => True
+
+    var x = "abc"
+    var y = "abc"
+    var z = "ab"
+    print(x.__ne__(y))  # => False
+    print(x.__ne__(z))  # => True
+    print(x != y)       # => False
+
+    let x = "hello "
+    let y = "world"
+    var c = x.__add__(y)
+    var d = x + y
+    print(c)  # => hello world
+    print(d)  # => hello world
+
+    var x = "string"
+    print(x.__len__())  # => 6
+    print(len(x))       # => 6
+
+    var x = "string"
+    var y = x.data()
+    x = "alo"
+    print(y)  # => string
+    print(x)  # => alo
+    print(y)  # => string
 ```
+
+Equality is tested with the dunder method __eq__ or the == operator. (1D-E). Not equality with __ne__ or != .
+You can join or concatenate two two StringLiterals with __add__ or the + operator.
+The length of a string is given by the __len__ method or len() function.
+
+data get the raw pointer to the underlying data.
+pointer<scalar<si8>> is the return type of the method. It means that the method returns a pointer to the underlying data of the string literal. The `si8`` indicates that the data is a sequence of 8-bit signed integers, which is a common way to represent characters in a string.
+
+So, if you have a StringLiteral object, you can call data() on it to get a pointer to its underlying data. This could be useful if you need to pass the string data to a function that requires a pointer, or if you want to perform low-level operations on the string data.
 
 The `String` type is not imported by default (see line 2); it represents a ]mutable string*. The `String` module contains basic methods for working with strings.
 The string value is heap-allocated, but the String itself is actually a pointer to heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture ??)
@@ -635,7 +710,7 @@ One way to make a String is to convert a StringLiteral value with
 Strings are 0-index based, and the i-th ASCII character  can be read with  
 `s[i]` (see line 4). The `ord` function gives the corresponding ASCII value of the character. (?? Doesn't work with Unicode characters).
 
-This works because a String has an underlying datastructure known as `DynamicVector[SIMD[si8, 1]]`. This is similar to a Python list, here it's storing multiple int8's that represent the characters.  
+This works because a String has an underlying data structure known as `DynamicVector[SIMD[si8, 1]]`. This is similar to a Python list, here it's storing multiple int8's that represent the characters.  
 You can build a string starting from a DynamicVector, see line 5, and add two ASCII characters to it. 
 To display it, print(vec) doesn't work. To do that, we can use a `StringRef` to get a pointer to the same location in memory, but with the methods required to output the numbers as text, see lines 6-7.
 
@@ -674,6 +749,46 @@ print(vec_str)      # 10 => NN
 ```
 
 A value of type `StringRef` represents a constant reference to a string, namely: a sequence of characters and a length, which need not be null terminated.
+See the code examples for how this can be used, directly or by using the pointer .data(), optionally with the length:  
+* data: A pointer to the beginning of the string data being referenced
+* length: The length of the string being referenced.
+It has the methods getitem, equal, not equal and length:  
+* getitem: gets the string value at the specified position. It receives the index of the character to get, using the brackets notation.  
+* equal: compares two strings for equality
+
+```py
+    var isref = StringRef("i")
+    # var isref : StringRef = StringRef("a")
+    print(isref.data)      # => i
+    print(isref.length)    # => 1
+    print(isref)           # => i
+
+    ## by using the pointer:
+    let x = "Mojo"
+    let ptr = x.data()
+    let str_ref = StringRef(ptr)
+    print(str_ref) # => Mojo
+
+    let y = "string_2"
+    let ptry = y.data()
+    let length = len(y)
+    let str_ref2 = StringRef(ptry, length)
+    print(str_ref2.length) # => 8
+    print(str_ref2)        # => string_2
+
+    var x2 = StringRef("hello")
+    print(x2.__getitem__(0)) # => h
+    print(x2[0])             # => h
+
+    var s1 = StringRef("Mojo")
+    var s2 = StringRef("Mojo")
+    print(s1.__eq__(s2))  # => True
+    print(s1 == s2)       # => True
+    print(s1.__ne__(s2))  # => False
+    print(s1 != s2)       # => False
+    print(s1.__len__())   # => 4
+    print(len(s1))        # => 4
+```
 
 Emojis are actually four bytes, so we need a slice of 4 to have it print correctly (see line 11):
 
@@ -766,13 +881,35 @@ The `List` module, which is not built-in, provides methods for working with stat
 
 ## 3.11 The Tuple type
 This is implemented in the built-in module `Tuple`.  
-A tuple consists of zero or more possibly heterogeneous values, separated by commas and enclosed in (). Het get method together with an index and a type allows you to extract the item at that index.
+A tuple consists of zero or more, possibly heterogeneous (of different type) values, separated by commas and enclosed in ().  
+The len function returns the number of items.
+The get method together with an index and a type allows you to extract the item at that index.
 
 See `tuple.mojo`:
 ```py
-    let tup = (42, "Mojo", 3)
-    print(tup.get[0, Int]())  # => 42
+    @value
+    struct Coord:
+        var x: Int
+        var y: Int
+
+
+fn main():
+    let t1 = (1, 2, 3)
+    # let t1 = Tuple(1, 2, 3)  # type is inferred because of ()
+    let tup = (42, "Mojo", 3.14)
+    # let tup: Tuple[Int, StringLiteral, FloatLiteral] = (42, "Mojo", 3)
+    print(tup.get[0, Int]())    # => 42
+    print("Length of the tuple:", len(tup))   # => 3
+
+    var x = (Coord(5, 10), 5.5) # 4
+    # Exercise:
+    print(return_tuple().get[1, Int]())  # => 2
+    
+fn return_tuple() -> (Int, Int):
+    return (1, 2)
 ```
+
+    A tuple can contain struct instances, as shown in line 4.
 
 ## 3.12 The Slice type
 Slices are defined in the built-in module `BuiltinSlice`. They are the way to get substrings out of a string, or ?? sublists out of Lists.

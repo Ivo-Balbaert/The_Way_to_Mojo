@@ -91,6 +91,8 @@ In the Playground Mojo is running on a hosted JupyterLab server. Access is grant
 2- Fill out the form, tick Mojo and press submit
 3- In a few hours/days you'll get an email with a button "Access the Mojo Playground"
 
+A Mojo kernel then runs a Jupyter notebook in a server at `/user/<your_email>/`
+
 **Alternative way:**   
 In general the PlayGround's URL is `https://playground.modular.com/user/<your_email>`.
 You need a token for initial entry, and for subsequent accesses after expiration of the tokens. The token is sent to you by email, but you can generate one [here](https://playground.modular.com/hub/token) too.
@@ -180,7 +182,10 @@ fn main():
     print("Hello World from Mojo!") # => Hello World! from Mojo
 ```
 
-In a source file however we have to use a starting point function called `main` (see § 3.1).
+In a source file however we have to use a starting point function called `main()` (see § 3.1).
+
+>Note: Don't forget the () after main, and also the () containing the value to print out after print!
+
 To compile and run this source code, use the command: 
 `mojo hello_world.mojo` or `mojo hello_world.🔥`.
 Then the console displays: `Hello World! from Mojo`.
