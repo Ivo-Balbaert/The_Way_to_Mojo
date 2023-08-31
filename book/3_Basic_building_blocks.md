@@ -2,10 +2,39 @@
 We'll start by discussing the last code snippet of § 2.
 
 For a list of keywords, see keywords.txt  
-Keywords normally cannot be used as identifiers. If it really is necessary, you can enclose them in backticks `` to force the use of a keyword as an identifier (see error.mojo).
+Keywords normally cannot be used as identifiers. It is not recommended, but if it really is necessary, you can enclose them in backticks `` to force the use of a keyword as an identifier (see error.mojo).
+
+`print_no_newline("[")`
+
+
+* "parameter" and "parameter expression" to represent a compile-time value in Mojo                * "argument" and "expression" refer to runtime values
+
+## 3.0 Comments and Doc comments
+As in Python, code comments start with the `#` symbol.
+
+You can also define doc comments with `""" ... """`:  
+```py
+fn __init__(inout self, x: Float32):
+    """Construct a complex number given a real number."""
+    self.re = x
+    self.im = 0.0
+```
 
 ## 3.1 The main function, def and fn, variables and types
 Mojo is a compiled language, and thus when code is stored in `.mojo` files, a `main()` function is required as the entry point to a program. 
+
+If we leave out fn main(): from hello_world.mojo and do: mojo hello_world.mojo, we get the error:  
+```
+hello_world.mojo:1:1: error: TODO: expressions are not yet supported at the file scope level
+print("Hello World from Mojo!")
+^
+mojo: error: failed to parse the provided Mojo
+```
+
+or:
+```
+mojo: error: module does not `@export` any symbols; nothing to codegen
+```
 
 See `first.mojo`:
 ```py
@@ -100,6 +129,8 @@ fn do_math():
 In line 2, the type of variable `y` is also inferred to be Int.
 (?? What happens when you leave out fn main())
 
+>Note: Mojo warns you when a variable is declared as var for no reason, suggesting to change it to let.
+
 What happens when?
 ?? Int is omitted
 
@@ -138,14 +169,18 @@ By default, a function cannot modify its arguments values. They are immutable re
 
 ?? Try out: let sum change x
 
-Arguments are only *borrowed* by convention. You can make this explicit by writing:  
+The default argument convention for fn functions is *borrowed*. You can make this explicit by writing:  
 
 ```py
 fn sum(borrowed x: Int, borrowed y: Int) -> Int:  
     return x + y
 ```
 
-## 3.3 Can a function change its arguments?
+## 3.3 Can a function change its arguments? - Argument passing control and memory ownership
+* All values passed into a Python def function use reference semantics. This means the function can modify mutable objects passed into it and those changes are visible outside the function. 
+* All values passed into a Mojo def function use value semantics by default. Compared to Python, this is an important difference: A Mojo def function receives a copy of all arguments—it can modify arguments inside the function, but the changes are not visible outside the function.
+* All values passed into a Mojo fn function are immutable references by default. This means the function can read the original object (it is not a copy), but it cannot modify the object at all: this is called *borrowing*.
+
 ## 3.3.1 inout 
 For a function's the arguments to be mutable, you need to declare them as *inout*. This means that changes made to the arguments inside the function are visible outside the function.  
 This is illustrated in the following example (see `inout.mojo`):  
@@ -168,7 +203,7 @@ fn sum_inout(inout x: Int, inout y: Int) -> Int:  # 1
 This is a potential source of bugs, that's why Mojo forces you to be explicit about it with *inout*
 
 ## 3.3.2 owned
-An even stronger option is to declared an argument as *owned*. Then the function gets full ownership of the value, so that it’s mutable and but also guaranteed unique. This means the function can modify the value and not worry about affecting variables outside the function.  
+An even stronger option is to declared an argument as *owned*. Then the function gets full ownership of the value, so that it’s mutable, but also guaranteed unique. This means the function can modify the value and not worry about affecting variables outside the function.  
 For example (see `owned.mojo`):  
 ```py
 from String import String   # 1
@@ -194,6 +229,7 @@ From the output, we see that the return value b has the changed value, while the
 ## 3.3.3 owned and transferred with ^
 If however you want to give the function ownership of the value and do NOT want to make a copy (which can be an expensive operation for some types), then you can add the *transfer* operator `^` when you pass variable a to the function.  
 The transfer operator effectively destroys the local variable name - any attempt to call it later causes a compiler error.  
+    The ^ operator ends the lifetime of a value binding and transfers the value ownership to something else
 
 If you change in the example above the call to set_fire() to look like this:
 
@@ -213,7 +249,9 @@ If you delete or comment out print(a), then it works fine.
 
 You can build high-level abstractions for types (or "objects") in a *struct*. A struct in Mojo is similar to a class in Python: they both support methods, fields, operator overloading, decorators for metaprogramming, and so on. 
 
->Note: Python classes are dynamic: they allow for dynamic dispatch, monkey-patching (or “swizzling”), and dynamically binding instance properties at runtime. However, Mojo structs are completely static - they are bound at compile-time and you cannot add methods at runtime, so they do not allow dynamic dispatch or any runtime changes to the structure. Structs allow you to trade flexibility for performance while being safe and easy to use.
+>Note: Python classes are dynamic: they allow for dynamic dispatch, monkey-patching (or "swizzling"), and dynamically binding instance properties at runtime. However, Mojo structs are completely static - they are bound at compile-time and you cannot add methods at runtime, so they do not allow dynamic dispatch or any runtime changes to the structure. Structs allow you to trade flexibility for performance while being safe and easy to use.
+
+Example § 4: inout2.mojo - two ways to declare struct instance: A and B
 
 Here is a basic struct example (see `struct1.mojo`):  
 ```py
@@ -251,7 +289,7 @@ fn main():
 The fields of a struct (here lines 1-2) need to be defined as var when they are not initialized (?? are let fields allowed), and a type is necessary. 
 To make a struct, you need an __init__ method (see however § 11.1). 
 The `fn __init__` function (line 3) is an "initializer" - it behaves like a constructor in other languages. It is called in line 4. 
-All methods like it that start and end with __ are called *dunder* methods. They are widely used in internal code in MojoStdLib. They can be used directly (always ??) as a method call, but there are often shortcuts or operators to call them (see the StringLiteral examples in strings.mojo).  
+All methods like it that start and end with __ are called *dunder*  (double-underscore) methods. They are widely used in internal code in MojoStdLib. They can be used directly (always ??) as a method call, but there are often shortcuts or operators to call them (see the StringLiteral examples in strings.mojo).  
 `self` refers to the current instance of the struct, it is similar to the `this` keyword used in some other languages.
 
 ?? fn dump(inout self):    inout is not needed?
@@ -323,6 +361,7 @@ print(x)            # => 15
 
 We've just unlocked our first Mojo optimization! Instead of looking up an object on the heap via an address, x is now just a value on the stack with 64 bits that can be passed through registers.
 
+### 3.5.2 Running Python code in the interpreter mode or in the Mojo mode
 This has numerous performance implications:
 * All the expensive allocation, garbage collection, and indirection is no longer required
 * The compiler can do huge optimizations when it knows what the numeric type is
@@ -330,12 +369,17 @@ This has numerous performance implications:
 * There is no overhead associated with compiling to bytecode and running through an interpreter
 * The data can now be packed into a vector for huge performance gains
 
+There is a great difference between running Python inside Mojo (through a Python object or %%python), and running Mojo code, although the Mojo code may be exactly the same as the Python code.  
+
+In the 1st case, the Python code is interpreted at compile-time through a CPython interpreter, which communicates with the Mojo compiler.
+In the 2nd case, the code is compiled to native code, and then run, which is obviously a lot faster. More in detail, here are the performance optimizations in this case:
+
 ### 3.5.3 Working with Python modules
 Importing and using a Python package in Mojo is very easy.  
 Here's an example of how to import the NumPy package (see `numpy.mojo`):
 
 ```py
-from PythonInterface import Python           # 1
+from python import Python           # 1
 
 fn main():
     let np = Python.import_module("numpy")   # 2
@@ -366,30 +410,30 @@ Now you can use numpy as if writing in Python, see lines 3-4.
 
 You can import any other Python module in a similar manner. Keep in mind that you must import the whole Python module.  However, you cannot import individual members (such as a single Python class or function) directly - you must import the whole Python module and then access members through the module name.
 
+### 3.5.4 Mojo types in Python
+Mojo primitive types implicitly convert into Python objects. Today we support lists, tuples, integers, floats, booleans, and strings.
+
+
+See `mojo_types.mojo`: (works only in a cell in Jupyter notebook)
+```py
+%%python
+def type_printer(my_list, my_tuple, my_int, my_string, my_float):
+    print(type(my_list))
+    print(type(my_tuple))
+    print(type(my_int))
+    print(type(my_string))
+    print(type(my_float))
+
+type_printer([0, 3], (False, True), 4, "orange", 3.4)
+```
+
+## 3.5.5 Importing local Python modules
+
 **Exercises**
 1- Use the Python interpreter to calculate 2 to the power of 8 in a PythonObject and print it
 (see `exerc3.1.🔥`)
 2- Using the Python math module, return pi to Mojo and print it
 (see `exerc3.2.🔥`)
-
-
-### 3.5.4 Running Python code in the interpreter mode or in the Mojo mode
-There is a great difference between running Python inside Mojo (through a Python object or %%python), and running Mojo code, although the Mojo code may be exactly the same as the Python code.  
-
-Concrete example:
-```py
-x = 5 + 10
-print(x)
-```
-
-In the 1st case, the Python code is interpreted at compile-time through a CPython interpreter, which communicates with the Mojo compiler.
-In the 2nd case, the code is compiled to native code, and then run, which is obviously a lot faster. More in detail, here are the performance optimizations in this case:
-This has numerous performance implications:
-* All the expensive allocation, garbage collection, and indirection of looking up an object on the heap via an address is no longer required: a lot of Mojo values can just reside on the stack, and possibly as 64 bits chunks passed through registers.  
-* The compiler can do huge optimizations when it knows what the numeric type is
-* Numerical values can be passed straight into registers for mathematical operations
-* There is no overhead associated with compiling to bytecode and running through an interpreter
-* The data can now be packed into a vector for huge performance gains, perhaps using SIMD optimizations.
 
 
 ## 3.6 if else and Bool values
@@ -524,7 +568,9 @@ The integer types are defined in module `Int`, while the floating point types li
 
 **The `Int` type**:  
 This is defined in module Int, together with a lot of useful methods, which we'll use in future examples.
-Int is the same size as your architecture, so on a 64 bit machine it's 64 bits wide.
+Int is the same size as your architecture, so on a 64 bit machine it's 64 bits wide. Internally it is defined as a struct.
+
+>Note: it is different from the Python int type (see: https://docs.modular.com/mojo/programming-manual.html#int-vs-int)
 
 See `numerical_types.mojo`:
 ```py
@@ -816,7 +862,15 @@ def main():
 The loop in line 1 goes from start 9 to end 0, step -3. The end value is not included.
 
 ## 3.9 Improving performance with SIMD
+Mojo’s SIMD type ID defined as a struct and exposes the common SIMD operations in its methods, making the SIMD data type and size values parametric. This allows you to directly map your data to the SIMD vectors on any hardware.
+
+SIMD struct is a generic type definition (see § ??)
+
 Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance. Here is some code using this feature (see simd.mojo):
+
+General format: SIMD[DType.type, size]  
+* type specifies the data type, for example: uint8, float32 
+* the `len` is the size ( which must be a power of 2), and it specifies the length of the SIMD vector, for example 1, 2, 4, and so on
 
 ```py
 from DType import DType                 # 1
@@ -995,7 +1049,53 @@ var other : Error = err3
 raise other  # => Error: hey
 ```
 
-## 3.10 Overloaded functions and methods
 
 
+## 3.13 Overloaded functions and methods
+Like in Python, you can define functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs and let *dynamic dispatch* decide how to handle the data. However, when you want to ensure type safety, as discussed above, Mojo also offers full support for overloaded functions and methods.  
+This allows you to define multiple functions with the same name but with different arguments. This is a common feature called *overloading*, as seen in many languages, such as C++, Java, and Swift.  
+When resolving a function call, Mojo tries each candidate and uses the one that works (if only one works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous if it can’t figure out which one to pick. In the latter case, you can resolve the ambiguity by adding an explicit cast on the call site.  
+
+See `overloading.mojo`:
+```py
+struct Complex:
+    var re: Float32
+    var im: Float32
+
+    fn __init__(inout self, x: Float32):
+        """Construct a complex number given a real number."""
+        self.re = x
+        self.im = 0.0
+
+    fn __init__(inout self, r: Float32, i: Float32):
+        """Construct a complex number given its real and imaginary components."""
+        self.re = r
+        self.im = i
+```
+
+Here we see how the __init__ constructor is overloaded.
+
+You can overload methods in structs and classes and overload module-level functions.
+
+Mojo doesn’t support overloading solely on result type, and doesn’t use result type or contextual type information for type inference, keeping things simple, fast, and predictable.  
+Again, if you leave your argument names without type definitions, then the function behaves just like Python with dynamic types. As soon as you define a single argument type, Mojo will look for overload candidates and resolve function calls as described above.
+
+Although we haven’t discussed parameters yet (they’re different from function arguments), you can also overload functions and methods based on parameters.  
+
+## 3.15 Difference between fn and def
+`def` is defined by necessity to be very dynamic, flexible and generally compatible with Python: arguments are mutable, local variables are implicitly declared on first use, and scoping isn’t enforced. This is great for high level programming and scripting, but is not always great for systems programming.  
+To complement this, Mojo provides an `fn` declaration which is like a "strict mode" for def.
+
+fns have a number of limitations compared to def functions:
+* Argument values default to being immutable in the body of the function (like a let), instead of mutable (like a var). This catches accidental mutations, and permits the use of non-copyable types as arguments.
+* Argument values require a type specification (except for self in a method), catching accidental omission of type specifications. Similarly, a missing return type specifier is interpreted as returning `None` instead of an unknown return type. Note that both can be explicitly declared to return `object`, which allows one to opt-in to the behavior of a def if desired.
+* Implicit declaration of local variables is disabled, so all locals must be declared. This catches name typos and dovetails(??) with the scoping provided by let and var.
+* Both support raising exceptions, but this must be explicitly declared on a fn with the `raises` keyword.
+
+**Functions parameters and arguments**
+FunctionName[parameters](arguments)
+Example: 
+`SIMD[DType.uint8, 4](1, 2, 3, 4)`
+The parameters serve to define which type(s) are used in a generic type.
+The arguments are used as values within the function
 

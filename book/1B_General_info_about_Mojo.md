@@ -18,7 +18,7 @@ Mojo's community, supported by the Modular Mojo team, is also very helpful and w
 ## 1B.1 Some info about the name and logo.
 The name of the language is **Mojo**, meaning "a magical charm" or "magical powers", which are applied to Python. 
 
-Its logo is the ![fire emoticon](??).
+Its logo is the ![fire emoticon](??), the U+1F525 Unicode character.
 
 Mojo’s source files have the fire emoticon extension like hello.🔥, or alternatively *.mojo*, as in *hello.mojo*.
 
@@ -30,12 +30,14 @@ To search on internet for info on Mojo, use the search terms  "Mojo programming 
 ## 1B.2 Website, community and communication channels
 Here is the Mojo [portal - website](https://mojolang.org/) (at the current moment it is only a frontpage).
 
+Closed Beta Local SDK:
+[Developer portal](https://developer.modular.com)
+
 Much more information can be found at the Modular/Mojo [Website](https://www.modular.com/mojo), particularly in the [Docs section](https://docs.modular.com/mojo/).
 
-The source code repository of the language (GitHub repo, currently contains no source yet) is at [here]https://github.com/modularml/mojo). 
+The source code repository of the language (GitHub repo, currently contains no source yet) is at [here](https://github.com/modularml/mojo). 
 
-(Currently there is no Wikipedia page yet.) 
-
+[Wikipedia page:](https://en.wikipedia.org/wiki/Mojo_(programming_language))
 
 To come into contact with other Mojo users or the Modular team: 
 * [GitHub discussions](https://github.com/modularml/mojo/discussions)
@@ -44,12 +46,19 @@ To come into contact with other Mojo users or the Modular team:
 * [Mojo Discord channel](https://discord.com/invite/modular or https://discord.gg/modular)
 * [Twitter channel](https://twitter.com/modular_ai)
 
+A tutorial site:
+    [mojodojo](https://mojodojo.dev/) created by https://github.com/Lorenzobattistela   (mojodojodev@gmail.com)
+
 
 ## 1B.3 A brief history, status and roadmap 
+?? 2019
 * 2022 - work on design started
     Sep 7 : first patch published
 * 2023 May 2 - Product Keynote Launch Modular engine/Mojo
     Chris Lattner considers Mojo to be at v 0.1
+* 2023 Aug 26: Early release Closed Beta Local SDK: Mojo release v 0.2.0
+Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native support for Windows is coming.
+
 
 Goals / Roadmap:
 * 2023 Jun 21 - "We expect that Mojo will be open-sourced. However, Mojo is still young, so we will continue to incubate it within Modular until more of its internal architecture is fleshed out. We don’t have an established plan for open-sourcing yet."
@@ -64,6 +73,9 @@ Goals / Roadmap:
 | 2023 Aug 13  | 175      | 9200  |  188  |  82    |  /             |   4          |  18465  |   10400 | 
 GH = GitHub
 
+2023 Aug 24: in the 4 months since the product keynote, the Modular community has grown to more than 120K+ developers, including tens of thousands of enterprises.
+
+
 ## 1B.5 Business and support model
 The company *Modular* is funded by VC (Venture Capital).  
 * June 30, 2022: Modular raised $30M from GV (Google Ventures), Greylock, Factory, SV Angel and notable angels who are backing us.    
@@ -77,4 +89,4 @@ The company *Modular* is funded by VC (Venture Capital).
 * Mojo: a super-charged Python for AI.
 * "It's time to get your Mojo 🔥 back!"
 * Mojo is to Python like TypeScript is to JavaScript.
-
+* If mojo can defeat Go in terms of parallelism, Rust in terms of stability, Julia in terms of affinity, it will reach unprecedented popularity among developers.

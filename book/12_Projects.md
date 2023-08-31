@@ -1,6 +1,6 @@
-# 4 – Projects
+# 12 – Projects
 
-## 4.1 - Calculating the Euclidean distance between two vectors - Parameters and arguments to a generic type
+## 12.1 - Calculating the Euclidean distance between two vectors - Parameters and arguments to a generic type
 (See [ref](https://www.modular.com/blog/an-easy-introduction-to-mojo-for-python-programmers))
 
 For the algorithm: see the article.

@@ -51,26 +51,58 @@
 ## 3.1 The main function, def and fn, variables and types
 ## 3.2 Function arguments and return type
 ## 3.3 Can a function change its arguments?
-## 3.3.1 inout 
+## 3.3.1 inout
 ## 3.3.2 owned
 ## 3.3.3 owned and transferred with ^
+
 ## 3.4 Structs
+
 ## 3.5 Python integration
 ### 3.5.1 Running Python code
 ### 3.5.3 Working with Python modules
+### 3.5.4 Running Python code in the interpreter mode or in the Mojo mode
+
 ## 3.6 if else and Bool values
 ## 3.7 Basic types
 ## 3.7.1 Scalar values
 ### 3.7.1.2 The Bool type
-### 3.7.1.3 The numerical types
-## 3.8 Improving performance with SIMD
+### 3.7.1.3 The numeric types
+### 3.7.1.3 The String types
+## 3.8 Using for loops
+
+## 3.9 Improving performance with SIMD
+## 3.10 The ListLiteral type
+## 3.11 The Tuple type
+## 3.12 The Slice type
+
+## 3.13 Overloaded functions and methods
 
 
+Many types are defines as structs
+Parametric types / functions
+        SIMD
+AnyType
+None : when a function returns nothing
+    def main():, without the explicit None type, can now be used to define the entry point to a Mojo program.
 
+object
 
+%%python
+import numpy as np
+from timeit import timeit
 
+from .. import .. as
 
+variadic *T  : a variable number of values of type T
 
+alias declaration: a way to define a compile-time temporary value.
+    alias UInt8 = SIMD[DType.uint8, 1]
+    var n : UInt8 
+
+    both None and AnyType are defined as type aliases.
+
+struct Matrix in Matmul:
+    __init__ and __del__ as destructor
 
 
 

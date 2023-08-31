@@ -1,8 +1,19 @@
 # 11 – Decorators
 
+`@adaptive`     see matmul
+`@always_inline` see matmul
+`@noncapturing`
+`@parameter` if   : an if statement that runs at compile-time.
+- `@register_passable` --> 11.2
+`@staticmethod`
+- `@value` --> 11.1
+
 
 ## 11.1 - @value
+The @value decorator makes defining simple aggregates of fields very easy.
 You cannot make a struct instance without having defined an __init_ method. If you try, you get the error: `'Coord' does not implement any '__init__' methods in 'let' initializer`
+
+@value generates a member-wise initializer, a move constructor, and(or) a copy constructor for you.
 
 See `value.mojo`:
 ```py
@@ -27,6 +38,9 @@ fn main():
 ```
 
 ## 11.2 - @register_passable
+The @register_passable("trivial") decorator tells Mojo that the type should be copyable and movable but that it has no user-defined logic for doing this. It also tells Mojo to prefer to pass the value in CPU registers, which can lead to efficiency benefits.  
+Small values like Int, Float, and SIMD are passed directly in machine registers instead of through an extra indirection. This is because they are declared with the `@register_passable` decorator
+
 In § 3.11 we saw an example of a tuple that contains a struct instance.  
 You can't get items from such a tuple however: 
 
@@ -55,3 +69,8 @@ struct Coord:
 var x = (Coord(5, 10), 5.5)
 print(x.get[0, Coord]().x) # => 5
 ```
+
+
+
+
+
