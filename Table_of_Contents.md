@@ -47,35 +47,45 @@
 **Tips and Troubleshooting:**    
 #### 2.7.2.3 Compiling and executing a simple program
 
+XYZ
 # 3 Basic building blocks
 ## 3.1 The main function, def and fn, variables and types
+
+# 4 Basic types
+## 3.7.1 Scalar values
+### 3.7.1.2 The Bool type
+### 3.7.1.3 The numeric types
+### 3.7.1.3 The String types
+
+# 5 Control flow
+## 3.6 if else and Bool values
+## 3.8 Using for loops
+
+# 6 Functions
 ## 3.2 Function arguments and return type
 ## 3.3 Can a function change its arguments?
 ## 3.3.1 inout
 ## 3.3.2 owned
 ## 3.3.3 owned and transferred with ^
+## 3.13 Overloaded functions and methods
 
+# 7 Structs
 ## 3.4 Structs
 
+- Modules / imports
+
+# 8
 ## 3.5 Python integration
 ### 3.5.1 Running Python code
 ### 3.5.3 Working with Python modules
 ### 3.5.4 Running Python code in the interpreter mode or in the Mojo mode
 
-## 3.6 if else and Bool values
-## 3.7 Basic types
-## 3.7.1 Scalar values
-### 3.7.1.2 The Bool type
-### 3.7.1.3 The numeric types
-### 3.7.1.3 The String types
-## 3.8 Using for loops
-
+# 9 
 ## 3.9 Improving performance with SIMD
 ## 3.10 The ListLiteral type
 ## 3.11 The Tuple type
 ## 3.12 The Slice type
 
-## 3.13 Overloaded functions and methods
 
 
 Many types are defines as structs
@@ -105,6 +115,5 @@ struct Matrix in Matmul:
     __init__ and __del__ as destructor
 
 
-
-
+* "parameter" and "parameter expression" to represent a compile-time value in Mojo                * "argument" and "expression" refer to runtime values
 

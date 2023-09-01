@@ -51,9 +51,6 @@ Version 0.2.0 ships with the following packages:
 * time
 * utils
 
-
-
-
 ## 2.2 Using a Mojo binary release
 ?? These can be downloaded from [here]().
 
@@ -423,9 +420,6 @@ modular auth mut_e793ec8f3c514c5c9e794607eec73c84
 modular install mojo
 ```
 
-
-
-
 **Some info on WSL**  
 You can view Linux folders in Explorer by giving the following command in WSL: `explorer.exe .`
 When having trouble starting a remote WSL window in VSCode, uninstall and reinstall the Remote WSL Window extension in VSCode; restart VSCode.
@@ -474,6 +468,9 @@ Resolving deltas: 100% (142374/142374), done.
 ## 2.6  Running the Mojo test suite
 
 ## 2.7  Editors
+
+## 2.7.0 A vim plugin
+See https://github.com/czheo/mojo.vim for Mojo syntax highlighting.
 
 ## 2.7.1 The Mojo online playground
 Mojo has an [online playground](https://playground.modular.com/), which you can access by admission and a token. 
@@ -547,7 +544,8 @@ File, Preferences, Settings:
     Close Settings  
     Restart VSCode.  
 
-Now F1 + select "Run Custom Command" or "CTRL+ALT+N" compiles and executes the source code in the editor. See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_Playground_in_VSCode.png).
+Now F1 + select "Run Custom Command" or "CTRL+ALT+N" compiles and executes the source code in the editor. This is most easily used by clicking the RIGHT mouse button, and selecting the first option "Run Code".
+See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_in_VSCode.png).
 
 
 #### 2.7.2.2 How to work with a Jupyter notebook in VS Code 
@@ -610,3 +608,4 @@ main()
 ```
 
 We'll dive deeper into this code at the start of the next chapter.
+

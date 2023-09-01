@@ -6,6 +6,7 @@
 `@parameter` if   : an if statement that runs at compile-time.
 - `@register_passable` --> 11.2
 `@staticmethod`
+`@unroll`
 - `@value` --> 11.1
 
 
