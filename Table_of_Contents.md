@@ -47,9 +47,22 @@
 **Tips and Troubleshooting:**    
 #### 2.7.2.3 Compiling and executing a simple program
 
+# 3 Starting to program
+## 3.1 Some preliminary remarks
+## 3.2 Comments and Doc comments
+## 3.2.1 Normal comments with #
+## 3.2.2 Doc comments with """
+## 3.3 The main function
+## 3.3.1 The main function is necessary
+## 3.3.2 print and print_no_newline
+## 3.3.3 Building a Mojo source file
+## 3.4  Variables and types - def and fn
+## 3.5  Typing in Mojo
+## 3.6 Importing modules
+## 3.6.1 Mojo modules
+## 3.6.2 Python modules
+
 XYZ
-# 3 Basic building blocks
-## 3.1 The main function, def and fn, variables and types
 
 # 4 Basic types
 ## 3.7.1 Scalar values
@@ -62,17 +75,16 @@ XYZ
 ## 3.8 Using for loops
 
 # 6 Functions
+A fn that calls a def
 ## 3.2 Function arguments and return type
+fn func2() -> Float32:     # 3
+    return 3.14
 ## 3.3 Can a function change its arguments?
 ## 3.3.1 inout
 ## 3.3.2 owned
 ## 3.3.3 owned and transferred with ^
 ## 3.13 Overloaded functions and methods
 
-# 7 Structs
-## 3.4 Structs
-
-- Modules / imports
 
 # 8
 ## 3.5 Python integration

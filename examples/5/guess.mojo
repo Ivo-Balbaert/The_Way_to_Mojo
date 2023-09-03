@@ -1,8 +1,8 @@
 
 fn main():
-    guessLuckyNumber(37)
+    print(guessLuckyNumber(37)) # => True
 
-def guessLuckyNumber(guess) -> Bool:    # 1
+fn guessLuckyNumber(guess: Int) -> Bool:    # 1
     let luckyNumber: Int = 37
     var result: StringLiteral = ""      # 2
     if guess == luckyNumber:            # 3

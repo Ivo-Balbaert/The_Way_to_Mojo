@@ -1,4 +1,4 @@
-# 3 Basic building blocks
+# 3 Starting to program
 
 ## 3.1 Some preliminary remarks
 * Mojo source code files must have the extension **.mojo** or **.🔥**. Otherwise, the compiler gives you an `error: no such command 'sourcefile'`.
@@ -12,7 +12,6 @@
 * Code file names are written usually in lowercase, separated by _ if needed, like *deviceinfo.mojo* or *simple_interop.mojo*. Never use space characters in a Mojo filename, several OS's don't like that!  
   > Note:
   > If you really need to work with a source file containing spaces (like in *space invaders.mojo*), you can use "" on Windows to compile the source like this: `mojo "space invaders.mojo"`.  
-
   
 * For a list of keywords, see *keywords.txt*. Keywords normally cannot be used as identifiers. It is not recommended, but if it is really necessary, you can enclose a keyword in backticks `` to force its use as an identifier (see error.mojo).
 
@@ -22,7 +21,6 @@ Documenting your code is crucial for maintenance. This can be done in Mojo with 
 
 ## 3.2.1 Normal comments with #
 As in Python, code comments start with the `#` symbol. This can be used for a single-line comment, at the start of the line or in the middle of a line. Subsequent uses of # at the start of lines form a multi-line comment.   
-
 
 ## 3.2.2 Doc comments with """
 Use `docstrings` if you need more structured comments that can be gathered by the mojo tool.
@@ -61,6 +59,7 @@ In Mojo syntax, this looks like:
 fn main(): 
 ```
 This is simply a *function* with name `main`.
+>Note: This can also be a `def main():`.
 
 Not only is the main function a starting point, it also envelops the complete program execution from start to end.  
 () is the parameter list, which is empty for main. We also don't see a -> after the ) brace. This means main has no return value, unlike C.  
@@ -250,3 +249,51 @@ UInt8 is an unsigned, 1 byte integer value.
 Finally, here is a naming convention:  
 * variable and function names start with a lowercase letter, and follow camelCase style (example: luckyNumber).
 * types (like `Int`) start with an uppercase letter, and follow PascalCase style (example: IntPair).
+
+## 3.6 Importing modules
+Mojo can import Python modules as well as modules written in Mojo itself. Here we show you the general syntax for doing so. We'll encounter many more concrete examples later on.
+
+## 3.6.1 Mojo modules
+The code of the standard library is written in *modules*. Modules are sometimes bundled together in *packages*. Module- and package names are written in all lowercase, like in Python.  
+The most common code is stored in the package  `builtin`, like bool, int and dtype. Their code is automatically imported, so the types and functions of these modules are always available in your Mojo programs. 
+Other modules can be imported like this:
+
+```py
+from benchmark import Benchmark
+```
+
+Then you can use the type Benchmark with the dot-notation to access its members like this:  
+`Benchmark.num_warmup`
+
+To avoid name-clashes or simply to shorten the name, you can use `as` to define an alias:  
+```py
+from benchmark import Benchmark as bm
+```
+
+Then access its members with: `bm.num_warmup`
+
+`memory` is a package, containing the modules buffer, memory and unsafe. To import something from the unsafe module, write the following:
+
+```py
+from memory.unsafe import Pointer
+```
+
+>Note: These from ... statements can be written everywhere in code. Code clarity can be enhanced by grouping them at the start of a code file.
+
+For some examples see:
+
+## 3.6.2 Python modules
+Mojo can access the whole Python ecosystem by importing Python modules.
+Importing and using a Python package in Mojo is very easy.  
+Here's an example (from a Jupiter notebook cell) of how to import the NumPy package:
+
+```py
+from python import Python                   # 1
+
+let np = Python.import_module("numpy")      # 2
+```
+
+First you have to import the Python module as in line 1: `from python import Python`.  
+Then you can use the `Python.import_module()` function with the module name (see line 2). You give it a constant name (here `np`), which can be used later to call module methods.
+(The equivalent of this line in Python would be: `import numpy as np`.) 
+For some concrete examples see:
