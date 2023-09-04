@@ -12,6 +12,14 @@ struct Complex:
         self.re = r
         self.im = i
 
+fn main():
+    let c1 = Complex(7)
+    print (c1.re)  # => 7.0
+    print (c1.im)  # => 0.0
+    var c2 = Complex(42.0, 1.0)
+    c2.im = 3.14
+    print (c2.re)  # => 42.0
+    print (c2.im)  # => 3.1400001049041748
 
     
 

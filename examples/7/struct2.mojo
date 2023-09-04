@@ -11,22 +11,22 @@ struct IntPair:
               (self.first == rhs.first and
                self.second < rhs.second)
     
-    fn dump(inout self):
+    fn dump(self):
         print(self.first)
         print(self.second)
 
-def pair_test() -> Bool:
+fn pair_test() -> Bool:
     let p = IntPair(1, 2)   # 4 
-    # dump(p)               # => 1
+    return p < 4
+    p.dump()                # => 1
                             # => 2
     let q = IntPair(2, 3)
-    # does this work?
     if p < q:  # this is automatically translated to __lt__
-        print("p < q")
+        print("p < q")  # => p < q
 
     return True
 
 fn main():
-    pair_test()
+   print(pair_test()) # => True
 
     

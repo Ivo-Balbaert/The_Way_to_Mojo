@@ -10,7 +10,9 @@ fn concat[ty: DType, len1: Int, len2: Int](
 
 fn main():
     let a = SIMD[DType.float32, 2](1, 2)
-    let x = concat[DType.float32, 2, 2](a, a)
+    let b = SIMD[DType.float32, 2](3, 4)
+    let x = concat[DType.float32, 2, 2](a, b)
+    print(x) # => [1.0, 2.0, 3.0, 4.0]
 
     print('result type:', x.element_type, 'length:', len(x))
     # => result type: float32 length: 4

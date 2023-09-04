@@ -9,7 +9,7 @@ fn main():
     let bigger_vec = (big_vec + big_vec).cast[DType.float32]()
 
     # You can write types out explicitly if you want of course.
-    let bigger_vec2 : SIMD[DType.float32, 32] = bigger_vec
+    let bigger_vec2: SIMD[DType.float32, 32] = bigger_vec
 
     print('small_vec type:', small_vec.element_type, 'length:', len(small_vec))
     # => small_vec type: float32 length: 4

@@ -9,6 +9,24 @@ Often an equivalent infix or prefix operator can act as 'syntax sugar' for calli
 
 A *scalar* just means a single value in Mojo. The scalar types include the Bool type (see § 4.1.2), as well as the numerical types, which are all based on SIMD (see § ??).
 
+The `DType` class defined in module `dtype` is kind of an umbrella type for the bool and numeric types. It has the following aliases:  
+* invalid = invalid: Represents an invalid or unknown data type.
+* bool = bool: Represents a boolean data type.
+* int8 = si8: Represents a signed integer type whose bitwidth is 8.
+* uint8 = ui8: Represents an unsigned integer type whose bitwidth is 8.
+* int16 = si16: Represents a signed integer type whose bitwidth is 16.
+* uint16 = ui16: Represents an unsigned integer type whose bitwidth is 16.
+* int32 = si32: Represents a signed integer type whose bitwidth is 32.
+* uint32 = ui32: Represents an unsigned integer type whose bitwidth is 32.
+* int64 = si64: Represents a signed integer type whose bitwidth is 64.
+* uint64 = ui64: Represents an unsigned integer type whose bitwidth is 64.
+* bfloat16 = bf16: Represents a brain floating point value whose bitwidth is 16.
+* float16 = f16: Represents an IEEE754-2008 binary16 floating point value.
+* float32 = f32: Represents an IEEE754-2008 binary32 floating point value.
+* float64 = f64: Represents an IEEE754-2008 binary64 floating point value.
+* index = index: Represents an integral type whose bitwidth is the maximum integral value on the system.
+* address = address: Represents a pointer type whose bitwidth is the same as the bitwidth of the hardware’s pointer type (32-bit on 32-bit machines and 64-bit on 64-bit machines).
+
 ## 4.1 The Bool type
 Defined in the module `bool` as a struct, `Bool` has only 2 values: `True` and `False`. Among its methods are bool, invert, eq, ne, and, or, xor, rand, ror, rxor. 
 
@@ -55,7 +73,6 @@ The xor (Exclusive or), outputs True if exactly one of two inputs is True.
 Its method is written as `__xor__` and its infix operator as `^` (ALT+^).
 
 There are also rhs (right-hand-side) equivalents of __and__ and so on, like __rand__, __ror__, __rxor__. Here the bool value is automatically used as the rhs of the operator (see for example § 7.2).
-
 
 ### 4.2 The numerical types
 These are the numerical types:
