@@ -64,28 +64,6 @@
 
 XYZ
 
-# 4 Basic types
-## 3.7.1 Scalar values
-### 3.7.1.2 The Bool type
-### 3.7.1.3 The numeric types
-### 3.7.1.3 The String types
-
-# 5 Control flow
-## 3.6 if else and Bool values
-## 3.8 Using for loops
-
-# 6 Functions
-A fn that calls a def
-## 3.2 Function arguments and return type
-fn func2() -> Float32:     # 3
-    return 3.14
-## 3.3 Can a function change its arguments?
-## 3.3.1 inout
-## 3.3.2 owned
-## 3.3.3 owned and transferred with ^
-## 3.13 Overloaded functions and methods
-
-
 # 8
 ## 3.5 Python integration
 ### 3.5.1 Running Python code

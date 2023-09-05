@@ -427,6 +427,15 @@ When the WSL terminal doesn’t start up, disable Windows Hypervisor in Windows 
 (Alternatively, you can do wsl --terminate and wsl --update)   
 See also: [Troubleshooting Windows Subsystem for Linux | Microsoft Docs](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting)
 
+**How to update the installation**
+1- Execute the command:         `modular clean`
+2- Then do a fresh install:     `modular install mojo`
+displaying:
+```
+# Found release for https://packages.modular.com/mojo @ 0.2.1, installing to /home/ivo/.modular/pkg/packages.modular.com_mojo
+# ...
+```
+
 ### 2.2.3 On MacOS
 
 ## 2.3 Testing the installation - Mojo's option flags

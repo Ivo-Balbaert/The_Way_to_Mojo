@@ -8,7 +8,6 @@ def type_printer(my_list, my_tuple, my_int, my_string, my_float):
     print(type(my_float))
 
 type_printer([0, 3], (False, True), 4, "orange", 3.4)
-
 # =>
 # <class 'list'>
 # <class 'tuple'>

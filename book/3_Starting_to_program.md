@@ -9,7 +9,9 @@
     each new level of code is indented with 4 spaces 
     (?? other noteworthy conventions)
 
-* Code file names are written usually in lowercase, separated by _ if needed, like *deviceinfo.mojo* or *simple_interop.mojo*. Never use space characters in a Mojo filename, several OS's don't like that!  
+* Code file names are written usually in lowercase, separated by _ if needed, like *deviceinfo.mojo* or *simple_interop.mojo*. 
+Never use Python or Mojo or their keywords as a filename, this will result in an error by confusing the Mojo compiler!
+Never use space characters in a Mojo filename, several OS's don't like that!  
   > Note:
   > If you really need to work with a source file containing spaces (like in *space invaders.mojo*), you can use "" on Windows to compile the source like this: `mojo "space invaders.mojo"`.  
   
@@ -288,7 +290,7 @@ Importing and using a Python package in Mojo is very easy.
 Here's an example (from a Jupiter notebook cell) of how to import the NumPy package:
 
 ```py
-from python import Python                   # 1
+from python import Python            # 1
 
 let np = Python.import_module("numpy")      # 2
 ```
