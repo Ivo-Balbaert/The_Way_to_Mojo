@@ -15,7 +15,7 @@ Never use space characters in a Mojo filename, several OS's don't like that!
   > Note:
   > If you really need to work with a source file containing spaces (like in *space invaders.mojo*), you can use "" on Windows to compile the source like this: `mojo "space invaders.mojo"`.  
   
-* For a list of keywords, see *keywords.txt*. Keywords normally cannot be used as identifiers. It is not recommended, but if it is really necessary, you can enclose a keyword in backticks `` to force its use as an identifier (see error.mojo).
+* For a list of keywords, see *keywords.txt*. Keywords normally cannot be used as identifiers. It is not recommended, but if it is really necessary, you can enclose a keyword in backticks `` to force its use as an identifier (see error.mojo in § 9.4 where keyword ref is used as a variable name).
 
 
 ## 3.2 Comments and Doc comments

@@ -1,5 +1,5 @@
 # 4 Basic types
-Mojo's basic types are defined as built-ins, which means they are automatically imported in code. These include Bool, Int, FloatLiteral, StringLiteral, StringRef and String, which we'll discuss in this section. Underneath, they are all defined as a struct (see § ??).
+Mojo's basic types are defined as built-ins, defined in the package `builtin`. They are automatically imported in code. These include Bool, Int, FloatLiteral, StringLiteral, StringRef and String, which we'll discuss in this section. Underneath, they are all defined as a struct (see § ??).
 
 These structs mostly contain so-called *dunder* (__...__) methods. Common examples are:
 * the `__init__` method: this acts as a constructor, creating an instance of the struct.

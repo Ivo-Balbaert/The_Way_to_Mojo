@@ -282,7 +282,41 @@ Here the function `concat[ty: DType, len1: Int, len2: Int](lhs: SIMD[ty, len1], 
 * parameters: type ty is float32, len1 and len2 are both 2
 * arguments: lhs and rhs are resp. a and b, len1 and len2 are both 2
 
+## 7.8.3 How to create a custom parametric type: Array
+In the following example you see the code for a parametric type Array, with parameter `AnyType` (line 1). It has an __init__ constructor (line 2), which takes the size and a value as arguments.
+Line 3 shows how to construct the array: 
+`let v = Array[Float32](4, 3.14)`  
+* parameter T = Float32
+* arguments size is 4 and value is 3.14
 
- 
+See `parametric_array.mojo`:
+```py
+struct Array[T: AnyType]:                           # 1
+    var data: Pointer[T]
+    var size: Int
+    var cap: Int
+
+    fn __init__(inout self, size: Int, value: T):   # 2
+        self.cap = size * 2
+        self.size = size
+        self.data = Pointer[T].alloc(self.cap)      # 4
+        for i in range(self.size):
+            self.data.store(i, value)               # 5
+              
+    fn __getitem__(self, i: Int) -> T:
+        return self.data.load(i)            # 7
+
+    fn __del__(owned self):
+        self.data.free()                    # 6
+
+fn main():
+    let v = Array[Float32](4, 3.14)         # 3
+    print(v[0], v[1], v[2], v[3])
+    # => 3.1400001049041748 3.1400001049041748 3.1400001049041748 3.1400001049041748
+```
+   
+In line 4, memory space is allocated with: `self.data = Pointer[T].alloc(self.cap)`, and the value is stored in the for-loop in line 5.
+A destructor `__del__` is also provided, which executes  `self.data.free()` and is called automatically when the variable is no longer needed in code execution.
+A `__getitem__` method is also shown which takes an index i and returns the value on that position with `self.data.load(i)` (line 7).
 
 
