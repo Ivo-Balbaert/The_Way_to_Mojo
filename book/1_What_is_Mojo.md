@@ -4,10 +4,12 @@ It is the first language which is based on the [MLIR compiler infrastructure](ht
 
 It combines the usability of Python with the performance of C++/C and the safety of Rust.
 
-It uses the *Python syntax* model: it already can run a lot of Python code. It will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
+It uses the *Python syntax and semantics* model: it already can run a lot of Python code. It will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
     Why?   
     - Because Python is one of the (if not the) most popular language(s) (2023 Aug: the number one language in the [Tiobe index](https://www.tiobe.com/tiobe-index/), and it was the Tiobe top language in 2020-21).  
     - Because Python is the number one language used in machine learning and AI projects.   
+This makes it easy for Python-savvy developers to learn and use it almost immediately.
+
 
 ## 1.1 Write everything in one language
 Mojo aims to to solve the three-language problem in current AI-research and industry. 
@@ -19,12 +21,16 @@ Mojo aims to to solve the three-language problem in current AI-research and indu
 Mojo is created to solve this problem:
 * It has the usability and intuitiveness of Python for model development, adding meta-programming features, like a truly high-level language. The entire Python ecosystem is made available to Mojo through CPython. 
 * It has the performance and system programming capabilities of a low-level language like C++ or Rust.
-* MLIR removes the necessity to use CUDA at the lowest level.
+* Mojo is built on top of next-generation compiler technologies. By taking advantage of MLIR, Mojo code can access a variety of AI-tuned hardware features, such as TensorCores and AMX extensions. 
+MLIR removes the necessity to use CUDA at the lowest level. This compatibility allows the same code to be compiled for different devices *without modifications*.
 
 This will lead to accelerated development and production-use of AI technologies.
 
 ## 1.2 Targets and Characteristics of the language
 *Mojo is F(ast), - S(calable), A(ccelerated)*.  
+
+Mojo combines the parts of Python that researchers love with the systems programming features that require the use of C, C++ and CUDA
+
 Let's analyze each of these characteristics.
 
 ### 1.2.1 A Fast language
@@ -36,9 +42,10 @@ By progressively using types in code, performance can be enhanced.
 
 - Tiling optimization: Mojo includes a built-in tiling optimization tool that effectively caches and reuses data, which helps optimize performance by using memory located near each other at a given time and reusing it.  
 
-- Parallel computing: Mojo introduces inbuilt parallelization, enabling multithreaded code execution, which can increase execution speed by 2,000x."
+- Parallel computing: Mojo introduces inbuilt parallelization, enabling multithreaded code execution, which can increase execution speed by 2,000x. It simplifies writing of efficient, parallel code through automatic parallelization across multiple hardware backends, without requiring low-level parallelization knowledge.
 
-- Mojo has no GC (garbage collection), so it doesn't suffer from GC pauses, and can be used in real-time domains. Instead, it has *automatic memory management*: it implements ownership and borrow-checking and lifetime concepts similar to Rust, simplifying the syntax.  
+- Mojo has no GC (garbage collection), so it doesn't suffer from GC pauses, and can be used in real-time domains. Instead, it has *automatic memory management*: it implements ownership and borrow-checking and lifetime concepts similar to Rust, but simplifying the syntax. Mojo's compiler tracks the lifetime of a variable using static analysis and destroys data as soon as it is no longer in use.
+
 It also offers control over memory storage: struct field values are inline-allocated values.
 
 - Mojo also doesn't suffer from Python's GIL (Global Interpreter Lock), so it can put to use multiple threads and concurrency much better.
@@ -50,8 +57,8 @@ It easily beats Python performance with 4 orders of magnitude.
 It uses the whole range of possibilities offered by modern compiler optimizations, including automatic parallel processing across multiple cores. This is nicely illustrated in the section starting at 33:08 by Jeremy Howard of the [Keynote speech](https://www.youtube.com/watch?v=-3Kf2ZZU-dg) which announced Mojo to the world.
 
 ### 1.2.2 A Scalable language
-Starting with writing code like Python, you can scale all the way down to the metal and enabling you to program the multitude of low-level AI hardware. 
-You can program the multitude of low-level AI hardware thanks to Mojo's MLIR foundation. Because of its LLVM fundament, it targets a wide diversity of OS platforms. MLIR itself has great adaptability to new kinds of hardware stacks and allows Mojo to scale to new exotic hardware types and domains.
+Mojo offers native support for multiple hardware backends: Mojo allows for utilization of CPUs, GPUs, TPUs, and custom ASICs, catering to the strengths of each hardware type.
+Starting with writing code like Python, you can scale all the way down to the metal and enabling you to program the multitude of low-level AI hardware, thanks to Mojo's MLIR foundation. Because of its LLVM fundament, it targets a wide diversity of OS platforms. MLIR itself has great adaptability to new kinds of hardware stacks and allows Mojo to scale to new exotic hardware types and domains.
 
 Conclusion: Mojo can run almost everywhere.
 
@@ -61,7 +68,12 @@ A Mojo project compiles to a single executable: this makes for easy deployment, 
 Mojo has been specifically designed to run AI-projects on diverse hardware, for example: GPUs for running CUDA, TCPU's, xCPUS's and so on.
 
 Mojo is also *safe and reliable* because of:   
-* It has a statically typed (AOT - ahead of time) compilation. Mojo prefers compile-time errors to runtime errors, because solving bugs at runtime is so much more painful (as developers in dynamic languages like Python and Ruby know well): this gives developers more confidence in their codebase.
+* It has a statically typed (AOT - ahead of time) compilation, resulting in faster execution times and better optimization. 
+>Note: When running a Mojo kernel in a Jupyter notebook, JIT (Just In Time) compilation is used.
+(See also § 2.1)
+
+Mojo prefers compile-time errors to runtime errors, because solving bugs at runtime is so much more painful (as developers in dynamic languages like Python and Ruby know well): this gives developers more confidence in their codebase.
+* It offers *type inference* in many cases to make development easier.
 
 * Its automatic memory management prevents memory errors (segfaults) and memory-leakage, a common cause for bugs in C++ applications.
 
@@ -89,7 +101,7 @@ As a kind of *Python++*, Mojo could serve the whole software industry.
 ## 1.4 Languages that influenced Mojo
 Mojo belongs to the Python dynamic languages family (Python, CPython, Numpy, PyPy, and so on).  
 It is a direct descendant of Python, but extends its use greatly. Mojo picks up where Python stops, helping in use cases that are out of Python's scope, mostly high-performance applications.  
-It also builds on Rust and Swift.
+It also builds on Rust, Swift and Julia, for which it certainly is seen as a competitor.    
 
 **Interop with other languages and migration strategy**  
 Mojo code can be mixed with Python. It can also call all Python libraries from its vast ecosystem, which are executed through the CPython interpreter, which talks to Mojo. This gives you a way to incrementally transition a legacy code base from Python to Mojo, making migration of Python easy.
@@ -101,12 +113,14 @@ It is on the roadmap.  Currently, you can use Python's C++ interop libraries lik
 
 ## 1.5 Summary 
 Here are the killer features of Mojo: 
-0- progressive/static typing 
+0- PROGRESSIVE/STATIC TYPING: Leverage types for better performance and error checking.
 1- fast compilation  
-2- fast execution (runtime performance)  
-3- automatic memory management  
+2- fast execution (runtime performance): ZERO COST ABSTRACTIONS: Take control of storage by inline-allocating values into structures.  
+3- automatic memory management:  OWNERSHIP + BORROW CHECKER: Take advantage of memory safety without the rough edges.
 4- seamless use of Python code (a superset of Python)  
-5- adaptability to custom hardware through MLIR  
+5- adaptability to custom hardware through MLIR: 
+    PORTABLE PARAMETRIC ALGORITHMS: Leverage compile-time meta-programming to write hardware-agnostic algorithms and reduce boilerplate. 
+    AUTO-TUNNING: Automatically find the best values for your parameters to take advantage of target hardware.
 6- built-in support for SIMD 
 7- built-in support for concurrency/parallelism (the `parallelize` function)
 8- ease of use, readability

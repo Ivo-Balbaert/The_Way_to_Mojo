@@ -369,3 +369,15 @@ Emojis are actually four bytes, so we need a slice of 4 to have it print correct
     print("fire:", emoji[0:4])    # 11 => fire: 🔥
     print("smiley:", emoji[4:8])  # => smiley: 😀
 ```
+
+### 4.4 Defining alias types
+You can easily define a synonym or shorthand for a type with the alias keyword:
+
+See `alias1.mojo`:
+```py
+fn main():
+    alias MojoArr = Float32   # 1
+    alias my_debug_build = 1  # 2
+```
+
+Line 2 works also (??).

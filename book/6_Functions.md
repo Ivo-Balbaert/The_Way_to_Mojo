@@ -1,5 +1,7 @@
 # 6 Functions
 
+A key trick in Mojo is that you can opt in at any time to a faster 'mode' as a developer, by using `fn` instead of `def` to create your function. In this mode, you have to declare exactly what the type of every variable is, and as a result Mojo can create optimized machine code to implement your function.
+
 ## 6.1 Difference between fn and def
 `def` is defined by necessity to be very dynamic, flexible and generally compatible with Python: arguments are mutable, local variables are implicitly declared on first use, and scoping isn’t enforced. This is great for high level programming and scripting, but is not always great for systems programming.  
 To complement this, Mojo provides an `fn` declaration which is like a "strict mode" for def.

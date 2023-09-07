@@ -6,6 +6,8 @@ A struct in Mojo is similar to a class in Python: they both support methods, fie
 
 >Note: Python classes are dynamic: they allow for dynamic dispatch, monkey-patching (or "swizzling"), and dynamically binding instance properties at runtime. However, Mojo structs are completely static - they are bound at compile-time and you cannot add methods at runtime, so they do not allow dynamic dispatch or any runtime changes to the structure. Structs allow you to trade flexibility for performance while being safe and easy to use.
 
+ By using a 'struct' (instead of 'class'), the attributes (fields) will be tightly packed into memory, such that they can even be used in data structures without chasing pointers around.
+
 ## 7.1 First example
 The following example demonstrates a struct MyInteger with one field called value. In line 2 an instance of the struct called myInt is made. This calls the constructor __init__ from line 1.
 In the following line, the fields is changed and then accessed with the dot-notation:
@@ -236,7 +238,10 @@ But it could also have been:
 
 A DynamicVector can be made for any type of items (type `AnyType`). The type is parametrized and indicated between the `[]`.
 
-Another example is the SIMD struct (see § 7.8).
+Another example is the SIMD struct (see § 7.8).  
+See also § 12.2.
+
+Parametric code gets compiled into multiple specialized versions parameterized by the concrete types used during program execution. 
 
 ## 7.8.2 Parametric functions and methods
 Here are some examples of parametric functions:

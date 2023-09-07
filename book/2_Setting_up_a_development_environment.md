@@ -17,7 +17,7 @@ The LLVM/MLIR compiler infrastructure together form a cutting-edge compiler and 
 **Compiler**  
 The compiler is written in C++.
 By default, Mojo code is AOT (Ahead Of Time) compiled.  
-But Mojo can also be interpreted or JIT-compiled, as in the Mojo Playground (see ??) or the Mojo REPL.
+But Mojo can also be interpreted for metaprogramming, or JIT-compiled, as in the Mojo Playground (see ??) or the Mojo REPL.
 If the Mojo app contains dynamic (Python) code, this is executed by running the dynamic code at compile time with an embedded CPython interpreter. This mechanism also makes possible compile-time meta-programming.
 
 **Runtime**
@@ -377,19 +377,133 @@ OPTIONS
 $ mojo -v
 mojo 0.2.0 (4c0ef274)
 
-Starting the Mojo REPL:
+**Info about debug options**
+$ mojo build -h
+
+This gives the following output:  
+```
+$ mojo build -h
+NAME
+        mojo-build — Builds an executable from a Mojo file.
+
+SYNOPSIS
+        mojo build [options] <path>
+
+DESCRIPTION
+        Compiles the Mojo file at the given path into an executable.
+
+        By default, the executable is saved to the current directory and named
+        the same as the input file, but without a file extension.
+
+OPTIONS
+    Output options
+        -o <PATH>
+            Sets the path and filename for the executable output. By default, it
+            outputs the executable to the same location as the Mojo file, with
+            the same name and no extension.
+
+    Compilation options
+        --no-optimization, -O0
+            Disables compiler optimizations. This might reduce the amount of time
+            it takes to compile the Mojo source file. It might also reduce the
+            runtime performance of the compiled executable.
+
+        --target-triple <TRIPLE>
+            Sets the compilation target triple. Defaults to the host target.
+
+        --target-cpu <CPU>
+            Sets the compilation target CPU. Defaults to the host CPU.
+
+        --target-features <FEATURES>
+            Sets the compilation target CPU features. Defaults to the host
+            features.
+
+        -march <ARCHITECTURE>
+            Sets the architecture to generate code for.
+        -mcpu <CPU>
+            Sets the CPU to generate code for.
+
+        -mtune <TUNE>
+            Sets the CPU to tune code for.
+
+        -I <PATH>
+            Appends the given path to the list of directories to search for
+            imported Mojo files.
+
+        -D <KEY=VALUE>
+            Defines a named value that can be used from within the Mojo source
+            file being executed. For example, `-D foo=42` defines a name `foo`
+            that, when queried with the `ParamEnv` module from within the Mojo
+            program, would yield the compile-time value `42`.
+
+        --parsing-stdlib
+            Parses the input file(s) as the Mojo standard library.
+
+    Diagnostic options
+        --warn-missing-doc-strings
+            Emits warnings for missing or partial docstrings.
+
+        --max-notes-per-diagnostic <INTEGER>
+            When the Mojo compiler emits diagnostics, it sometimes also prints
+            notes with additional information. This option sets an upper
+            threshold on the number of notes that can be printed with a
+            diagnostic. If not specified, the default maximum is 10.
+
+    Experimental compilation options
+        --debug-level <LEVEL>
+            Sets the level of debug info to use at compilation. The value must be
+            one of: `none` (the default value), `line-tables`, or `full`. Please
+            note that there are issues when generating debug info for some Mojo
+            programs that have yet to be addressed.
+
+        --sanitize <CHECK>
+            Turns on runtime checks. The following values are supported:
+            `address` (detects memory issues), and `thread` (detects
+            multi-threading issues). Please note that these checks are not
+            currently supported when executing Mojo programs.
+
+    Common options
+        --help, -h
+            Displays help information.
+
+
+
+**Starting the Mojo REPL**  
 ```
 $ mojo
 Welcome to Mojo! 🔥
 Expressions are delimited by a blank line.
 Type `:mojo help` for further assistance.
-1>
+1> let n = 3
+2. print(n)
+3.
+3
+(Int) n = {
+  (index) value = 3
+}
+3>
 ```
 
-The Mojo REPL is based on LLDB, the complete set of LLDB debugging commands is also available as described below.  
+If you want to run Python code, use %%python:  
+```
+1> %%python
+2. import sys
+3. print("Python version from python:", sys.version)
+4.
+Python version from python: 3.10.12 (main, Jun 11 2023, 05:26:28) [GCC 11.4.0]
+(PythonObject) sys = {
+  (PyObjectPtr) py_object = {
+    (pointer<scalar<si8>>) value = 0x00007fd70b6c6390
+  }
+}
+```
+
+Top-level python declarations are available in subsequent Mojo expressions (example ??).
+
+The Mojo REPL is based on LLDB, the complete set of LLDB debugging commands is also available as described below (?? examples).  
 Type :quit to leave the REPL.
 
-Test:  
+**Testing the CLI mojo command**  
 Create folder $HOME/mojo.  
 Copy in examples from § 2.
 

@@ -1,3 +1,4 @@
+alias
 as
 def
 fn

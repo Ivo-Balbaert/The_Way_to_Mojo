@@ -1,12 +1,9 @@
-# %%python in .Mojo file ??
-
-%%python
 import time
 import numpy as np
 from math import sqrt
 from timeit import timeit
 
-n = 10000000
+n = 10_000_000
 anp = np.random.rand(n)
 bnp = np.random.rand(n)
 
@@ -16,7 +13,6 @@ blist = bnp.tolist()
 def print_formatter(string, value):
     print(f"{string}: {value:5.5f}")
 
-%%python
 # Pure Python iterative implementation
 def python_naive_dist(a,b):
     s = 0.0
@@ -31,11 +27,10 @@ print("=== Pure Python Performance ===")
 print_formatter("python_naive_dist value:", python_naive_dist(alist,blist))
 print_formatter("python_naive_dist time (ms):", 1000*secs)
 
-// === Pure Python Performance ===
-// python_naive_dist value:: 1290.97584
-// python_naive_dist time (ms):: 754.38446
+# === Pure Python Performance ===
+# python_naive_dist value:: 1290.35102
+# python_naive_dist time (ms):: 370.72698
 
-%%python
 # Numpy's vectorized linalg.norm implementation 
 def python_numpy_dist(a,b):
     return np.linalg.norm(a-b)
@@ -45,7 +40,7 @@ print("=== Python+NumPy Performance ===")
 print_formatter("python_numpy_dist value:", python_numpy_dist(anp,bnp))
 print_formatter("python_numpy_dist time (ms):", 1000*secs)
 
-// === Python+NumPy Performance ===
-// python_numpy_dist value:: 1290.97584
-// python_numpy_dist time (ms):: 23.18503 - 32.5 x faster than pure Python
+# === Python+NumPy Performance ===
+# python_numpy_dist value:: 1290.35102
+# python_numpy_dist time (ms):: 18.48048
 

@@ -130,6 +130,9 @@ The command `mojo source.mojo` compiles and then runs the compiled code. It work
 If you want to get a compiled binary, use `mojo build source.mojo`.
 For example: `mojo build hello_world.mojo`
 Now an executable `hello_world` is build, with is quite small in size (some 23 Kb). This can be run with: `./hello_world` (on Linux) or ?? , producing the same output as above.
+```
+A Mojo app can be compiled into a small, standalone, fast-launching binary, making it easy to deploy while taking advantage of available cores and acceleration. 
+```
 
 In development the simple `mojo` command is just fine. But when you want to deploy your program to another environment, you need the executable. Luckily, this is only one binary with a small size, so easily deployable to cloud or embedded environments.
 

@@ -90,3 +90,5 @@ The company *Modular* is funded by VC (Venture Capital).
 * "It's time to get your Mojo 🔥 back!"
 * Mojo is to Python like TypeScript is to JavaScript.
 * If mojo can defeat Go in terms of parallelism, Rust in terms of stability, Julia in terms of affinity, it will reach unprecedented popularity among developers.
+* Faster than C++, more hackable than Nvidia’s CUDA, and as safe as Rust.
+* The best of multiple worlds: the ease of use and clear syntax of Python, with the speed and memory safety of Rust.
