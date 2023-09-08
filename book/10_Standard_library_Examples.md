@@ -52,7 +52,79 @@ When run as `mojo debug_assert.mojo` there is no output.
 
 >Note: debug_assert doesn't work in the Playground because this is not a debug build.
 
-## 10.2 Testing module
+## 10.2 Module testing 
 
 
-## 10.3 
+## 10.3 Module benchmark
+The class allows to benchmark a given function (passed as a parameter) and configure various benchmarking parameters, such as number of warmup iterations, maximum number of iterations, minimum and maximum elapsed time.
+Import it in your code through: `from benchmark import Benchmark`
+We'll benchmark the execution of the fibonacci function, defined as follows:
+(code: see `running_benchmark.mojo`)`
+
+```py
+from benchmark import Benchmark
+
+fn fib(n: Int) -> Int:
+    if n <= 1:
+       return n 
+    else:
+       return fib(n-1) + fib(n-2)
+```
+
+To benchmark it, create a nested fn (here called `closure`) that takes no arguments and doesn't return anything, then pass it in as a parameter:  `Benchmark().run[closure]()`.
+This returns the execution time in nanoseconds.
+
+```py
+fn bench():
+    fn closure():
+        let n = 35
+        for i in range(n):
+            _ = fib(i)
+
+    let nanoseconds = Benchmark().run[closure]()
+    print("Nanoseconds:", nanoseconds)
+    print("Seconds:", Float64(nanoseconds) / 1e9)
+
+fn main():
+    bench()`
+    
+# =>
+# Nanoseconds: 28052724
+# Seconds: 0.028052724000000001
+```
+
+Let us now compare this to the iterative version (fib_iterative):
+
+```py
+fn fib_iterative(n: Int) -> Int:
+    var count = 0
+    var n1 = 0
+    var n2 = 1
+
+    while count < n:
+       let nth = n1 + n2
+       n1 = n2
+       n2 = nth
+       count += 1
+    return n1
+
+fn bench_iterative():
+    fn iterative_closure():
+        for i in range(n):
+            _ = fib_iterative(i)
+
+    let iterative = Benchmark().run[iterative_closure]()
+    print("Nanoseconds iterative:", iterative)
+
+fn main():
+    bench_iterative()
+# => Nanoseconds iterative: 0
+```
+
+The compiler has optimized away everything that took time in the previous version.
+
+`bench_args()` demonstrates the maximum number of iterations (max_iters) here 5
+`bench_args2()` demonstrates how to limit the max running time(max_time_ns) here 0.001, so it will never run over 0.001 seconds
+
+As the 1st parameter, you can also set up the number of warmup iterations (num_warmup).  
+As the 3rd parameter, you can also set up the minimum running time (min_time_ns).

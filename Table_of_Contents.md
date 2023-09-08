@@ -62,8 +62,6 @@
 ## 3.6.1 Mojo modules
 ## 3.6.2 Python modules
 
-XYZ
-
 # 8
 ## 3.5 Python integration
 ### 3.5.1 Running Python code

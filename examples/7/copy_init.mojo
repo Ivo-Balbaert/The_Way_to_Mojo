@@ -1,4 +1,6 @@
-struct HeapArray:
+from memory.unsafe import Pointer
+
+struct HeapArray:                   # 1
     var data: Pointer[Int]
     var size: Int
     var cap: Int
@@ -15,7 +17,7 @@ struct HeapArray:
         for i in range(self.size):
             self.data.store(i, val)
 
-    fn __copyinit__(inout self, other: Self):
+    fn __copyinit__(inout self, other: Self):         # 1
         self.cap = other.cap
         self.size = other.size
         self.data = Pointer[Int].alloc(self.cap)
@@ -34,16 +36,10 @@ struct HeapArray:
         print("]")
 
 fn main():
-    var a = HeapArray(3, 1)
-    a.dump()   # Should print [1, 1, 1]
-    # This is no longer an error:
-    var b = a
+    let a = HeapArray(3, 1)
+    a.dump()   # => [1, 1, 1]
+    let b = a
 
-    b.dump()   # Should print [1, 1, 1]
-    a.dump()   # Should print [1, 1, 1]
-
-# =>
-# [1, 1, 1]
-# [1, 1, 1]
-# [1, 1, 1]
+    b.dump()   # => [1, 1, 1]
+    a.dump()   # => [1, 1, 1]
 

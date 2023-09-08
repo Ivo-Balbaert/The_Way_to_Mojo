@@ -201,8 +201,6 @@ if 0:       # or 0.0
     print("this does not print!")
 ```
 
-XYZ
-
 ## 4.3 The String types
 Mojo has no equivalent of a char type.
 

@@ -56,7 +56,6 @@ fn main():
 
 See also § 4.2.2
 
-XYZ
 ## 7.3 A second example
 See `struct2.mojo`:  
 ```py
@@ -148,6 +147,78 @@ Mojo doesn’t support overloading solely on result type, and doesn’t use resu
 Again, if you leave your argument names without type definitions, then the function behaves just like Python with dynamic types. As soon as you define a single argument type, Mojo will look for overload candidates and resolve function calls as described above.
 
 Although we haven’t discussed parameters yet (they’re different from function arguments), you can also overload structs, functions and methods based on parameters.  
+
+## 7.5 The __copyinit__ and __moveinit__ special methods
+For advanced use cases, Mojo allows you to define custom constructors (using Python’s existing __init__ special method), custom destructors (using the existing __del__ special method) and custom copy and move constructors using the new __copyinit__ and __moveinit__ special methods.  
+
+When a struct has no __copyinit__ method, an instance of that struct cannot be copied.
+In the following example a struct HeapArray is defined in line 1. If we try to copy it to another variable b (line 2), we get an `error: value of type 'HeapArray' cannot be copied into its destination`.
+
+See `copy_init.mojo`:
+```py
+from memory.unsafe import Pointer
+
+struct HeapArray:                   # 1
+    var data: Pointer[Int]
+    var size: Int
+    var cap: Int
+
+    fn __init__(inout self):
+        self.cap = 16
+        self.size = 0
+        self.data = Pointer[Int].alloc(self.cap)
+
+    fn __init__(inout self, size: Int, val: Int):
+        self.cap = size * 2
+        self.size = size
+        self.data = Pointer[Int].alloc(self.cap)
+        for i in range(self.size):
+            self.data.store(i, val)
+
+    fn __del__(owned self):
+        self.data.free()
+
+    fn dump(self):
+        print_no_newline("[")
+        for i in range(self.size):
+            if i > 0:
+                print_no_newline(", ")
+            print_no_newline(self.data.load(i))
+        print("]")
+
+fn main():
+    var a = HeapArray(3, 1)
+    a.dump()  
+    let b = a  # <-- copy error: value of type 'HeapArray' cannot be copied into its destination
+    b.dump()   
+    a.dump()   
+```
+
+HeapArray contains an instance of `Pointer` (which is equivalent to a low-level C pointer), and Mojo doesn’t know what kind of data it points to or how to copy it. More generally, some types (like atomic numbers) cannot be copied or moved around because their address provides an identity just like a class instance does.
+
+If we then provide that method (see line 2), all works fine:
+When executing `let b = a`, b gets substituted for self, and a for other.
+
+See `copy_init.mojo`:
+```py
+fn __copyinit__(inout self, other: Self):         # 2
+        self.cap = other.cap
+        self.size = other.size
+        self.data = Pointer[Int].alloc(self.cap)
+        for i in range(self.size):
+            self.data.store(i, other.data.load(i))
+
+fn main():
+    let a = HeapArray(3, 1)
+    a.dump()   # => [1, 1, 1]
+    let b = a
+    b.dump()   # => [1, 1, 1]
+    a.dump()   # => [1, 1, 1]
+```
+
+Mojo also supports the `__moveinit__` method which allows both Rust-style moves (which take a value when a lifetime ends) and C++-style moves (where the contents of a value is removed but the destructor still runs), and allows defining custom move logic.
+
+Mojo provides *full control over the lifetime of a value*, including the ability to make types copyable, move-only, and not-movable. This is more control than languages like Swift and Rust offer, which require values to at least be movable.
 
 ## 7.7 Improving performance with the SIMD struct
 Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance.

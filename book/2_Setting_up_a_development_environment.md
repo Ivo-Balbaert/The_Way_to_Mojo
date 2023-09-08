@@ -181,6 +181,14 @@ ivo@megaverse:~$ modular host-info
 ```
 
 4- Install the Mojo SDK:  
+
+What's contained in the Mojo SDK?  See A view of the Mojo SDK.png
+* mojo driver: provides a shell (for read-eval-print-loop or REPL), and allows you to build and run Mojo programs, package Mojo modules (including support for the 🔥 extension!), generate docs, and format code‍
+* Extension for Visual Studio Code (VS Code): supports various productivity features such as syntax highlighting, code completion, and more ‍
+* Jupyter kernel: supports building and running Mojo notebooks, including Python code‍
+* Debugging support (coming soon): step into and inspect running Mojo programs, even intermixing C++ and Mojo stack frames
+
+
 A. Via an installation script:
 
 `modular install mojo`
@@ -549,6 +557,8 @@ displaying:
 # Found release for https://packages.modular.com/mojo @ 0.2.1, installing to /home/ivo/.modular/pkg/packages.modular.com_mojo
 # ...
 ```
+
+The total size of the Mojo SDK is about 345 Mb.
 
 ### 2.2.3 On MacOS
 

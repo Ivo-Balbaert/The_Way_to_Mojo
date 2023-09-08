@@ -58,7 +58,7 @@ A tutorial site:
     Chris Lattner considers Mojo to be at v 0.1
 * 2023 Aug 26: Early release Closed Beta Local SDK: Mojo release v 0.2.0
 Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native support for Windows is coming.
-
+* 2023 Sep 7: First Mojo release for local download and execution (Linux - v 0.2.1 (64d14e85))
 
 Goals / Roadmap:
 * 2023 Jun 21 - "We expect that Mojo will be open-sourced. However, Mojo is still young, so we will continue to incubate it within Modular until more of its internal architecture is fleshed out. We don’t have an established plan for open-sourcing yet."
@@ -74,6 +74,8 @@ Goals / Roadmap:
 GH = GitHub
 
 2023 Aug 24: in the 4 months since the product keynote, the Modular community has grown to more than 120K+ developers, including tens of thousands of enterprises.
+2023 Sep: more than 120K+ developers have signed up to use the Mojo Playground and 19K+ developers actively discuss Mojo on Discord and GitHub.
+* See image mojo-eco.png
 
 
 ## 1B.5 Business and support model
