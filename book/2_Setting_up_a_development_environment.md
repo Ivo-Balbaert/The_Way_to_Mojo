@@ -57,8 +57,11 @@ Version 0.2.0 ships with the following packages:
 ### 2.2.1 On Windows
 This is currently (??) still in a testing phase.
 
-### 2.2.2 On Linux (or WSL2 on Windows)
+### 2.2.2 On Linux Ubuntu 20-22 (or WSL2 on Windows)
 2023 Aug 26: Mojo can be used on Windows with a Linux container or remote system.
+
+For installation on ArchLinux, see:
+https://gist.github.com/Sharktheone/79da849c96db13f21eefa2be9430d9ec
 
 STEPS:
 1- Install VS Code, the WSL extension, and the Mojo extension.
@@ -550,6 +553,8 @@ When the WSL terminal doesn’t start up, disable Windows Hypervisor in Windows 
 See also: [Troubleshooting Windows Subsystem for Linux | Microsoft Docs](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting)
 
 **How to update the installation**
+Simpler: `modular update mojo`
+
 1- Execute the command:         `modular clean`
 2- Then do a fresh install:     `modular install mojo`
 displaying:
@@ -719,6 +724,14 @@ fn main():
 ```
 
 In a source file however we have to use a starting point function called `main()` (see § 3.1).
+
+A version with `def` instead of `fn` is also a valid Mojo program:
+See `hello_world_def.mojo`:
+```py
+def main():
+    print("Hello World from Mojo!") # => Hello World! from Mojo
+```
+
 
 >Note: Don't forget the () after main, and also the () containing the value to print out after print!
 

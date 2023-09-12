@@ -74,7 +74,7 @@ Its method is written as `__xor__` and its infix operator as `^` (ALT+^).
 
 There are also rhs (right-hand-side) equivalents of __and__ and so on, like __rand__, __ror__, __rxor__. Here the bool value is automatically used as the rhs of the operator (see for example § 7.2).
 
-### 4.2 The numerical types
+## 4.2 The numerical types
 These are the numerical types:
 
 * Int  
@@ -85,7 +85,7 @@ These are the numerical types:
 
 The prefix U means the type is unsigned. The number at the end refers to the number of bits used for storage, so UInt32 is an unsigned 4 bytes integer number.
 
-#### 4.2.1 The Integer type
+### 4.2.1 The Integer type
 The integer types are defined in module `int`, while the floating point types live in module `float_literal`. Both are part of the `builtin` package.
 
 Int is the same size as your architecture, so on a 64 bit machine it's 64 bits wide. Internally it is defined as a struct.
@@ -115,7 +115,7 @@ fn main():
     print(vec[i])  # => 6
 ```
 
-#### 4.2.2 The FloatLiteral type and conversions
+### 4.2.2 The FloatLiteral type and conversions
 A FloatLiteral also takes the machine word-size (for example 64 bit) as default type. 
 Conversions in Mojo are performed by using the constructor as a conversion function as in: 
 `Float32(value_to_convert)`. 
@@ -215,7 +215,7 @@ See `strings.mojo`:
 ```py
 fn main():
     # StringLiteral:
-        let lit = "This is my StringLiteral"   # 1
+    let lit = "This is my StringLiteral"   # 1
     print(lit)  # => This is my StringLiteral
 
     # lit = 20  # => error: Expression [9]:26:11: cannot implicitly convert 'Int' value to 'StringLiteral' in assignment
@@ -279,7 +279,7 @@ The string value is heap-allocated, but the String itself is actually a pointer 
 One way to make a String is to convert a StringLiteral value with `String(value)`, as in line 3.  
 Strings are 0-index based, and the i-th ASCII character can be read with `s[i]` (see line 4). The `ord` function gives the corresponding ASCII value of the character. You can work with Unicode characters by working with slices (see line 11).
 
-This works because a String has an underlying data structure known as `DynamicVector[SIMD[si8, 1]]`. This is similar to a Python list, here it's storing multiple int8's that represent the characters.  
+This works because a String is backed by a data structure known as `DynamicVector[SIMD[si8, 1]]` or `DynamicVector[Int8]`. This is similar to a Python list, here it's storing multiple int8's that represent the characters.  
 You can build a string starting from a DynamicVector (see line 5), and add two ASCII characters to it. 
 To display it, print(vec) doesn't work. To do that, we can use a `StringRef` to get a pointer to the same location in memory, but with the methods required to output the numbers as text, see lines 6-7.
 
@@ -360,22 +360,50 @@ It has the methods `getitem`, equal, not equal and length:
     print(len(s1))        # => 4
 ```
 
-Emojis are actually four bytes, so we need a slice of 4 to have it print correctly (see line 11):
+### 4.3.4 Some String methods
+See `string_methods.mojo`:
+```py
 
+```
+
+Looping over a string is shown in line 1.  
+Using a slice to print part of the string (here: from 2 up to 4 non-inclusive) in line 2.
+Slice all characters starting from 1 (line 3).
+Slice all characters up to the second last (line 4).
+Only get every second item after the start position (line 5).
+
+Both slicing and indexing are on bytes, not characters, for example an emoji is 4 bytes so you need to use this slice of 4 bytes to print the character (see line 11):
 ```py
     let emoji = String("🔥😀")
     print("fire:", emoji[0:4])    # 11 => fire: 🔥
     print("smiley:", emoji[4:8])  # => smiley: 😀
 ```
 
-### 4.4 Defining alias types
+Appending: Returns a new string by copying memory (see line 6).
+The join function has a similar syntax to Python's join. You can join elements using the current string as a delimiter (see line 7).
+You can also use it to join elements of a StaticIntTuple (line 8).
+`atoi`: The term comes from the C stdlib for ASCII to long-integer, it converts a string to an Int (currently just works with base-10 / decimal).
+
+Use chr to convert an integer between 0 and 255 to a string containing the single character. ord stands for ordinal which means the position of the character in ASCII. Only 1 byte utf8 (ASCII) characters currently work, anything outside will currently wrap (see line 9).
+
+The `isdigit` function checks if the character passed in is a valid decimal between 0 and 9, which in ASCII is 48 to 57.
+
+
+
+
+
+## 4.4 Defining alias types
 You can easily define a synonym or shorthand for a type with the alias keyword:
 
 See `alias1.mojo`:
 ```py
 fn main():
     alias MojoArr = Float32   # 1
+    alias Float16 = SIMD[DType.float16, 1]
+    alias MojoArr2 = DTypePointer[DType.float32] 
+
     alias my_debug_build = 1  # 2
 ```
 
-Line 2 works also (??).
+Line 2 works, because alias is also a way to define a compile-time temporary value, just like var and let define resp. a runtime variable and constant. 
+Both None and AnyType are defined as type aliases.

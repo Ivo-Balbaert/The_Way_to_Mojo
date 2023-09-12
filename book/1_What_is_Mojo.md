@@ -40,7 +40,8 @@ By progressively using types in code, performance can be enhanced.
 
 " - Autotuning: With autotuning, Mojo can automatically find the best values for your parameters, which can drastically streamline the programming process  
 
-- Tiling optimization: Mojo includes a built-in tiling optimization tool that effectively caches and reuses data, which helps optimize performance by using memory located near each other at a given time and reusing it.  
+- Tiling optimization: Mojo includes a built-in tiling optimization tool that effectively caches and reuses data, which helps optimize performance by using memory located near each other at a given time and reusing it. 
+(Mojo has a built-in tiling optimization tool that improves cache locality and memory access patterns by dividing computations into smaller tiles that fit into fast cache memory.) 
 
 - Parallel computing: Mojo introduces inbuilt parallelization, enabling multithreaded code execution, which can increase execution speed by 2,000x. It simplifies writing of efficient, parallel code through automatic parallelization across multiple hardware backends, without requiring low-level parallelization knowledge.
 
@@ -117,6 +118,8 @@ Here are the killer features of Mojo:
 1- fast compilation  
 2- fast execution (runtime performance): ZERO COST ABSTRACTIONS: Take control of storage by inline-allocating values into structures.  
 3- automatic memory management:  OWNERSHIP + BORROW CHECKER: Take advantage of memory safety without the rough edges.
+>Note: if really needed, you could do manual memory management in Mojo. It provides a manual management system using pointers similar to C++ and Rust.
+
 4- seamless use of Python code (a superset of Python)  
 5- adaptability to custom hardware through MLIR: 
     PORTABLE PARAMETRIC ALGORITHMS: Leverage compile-time meta-programming to write hardware-agnostic algorithms and reduce boilerplate. 
@@ -126,6 +129,6 @@ Here are the killer features of Mojo:
 8- ease of use, readability
 9- specifically designed for AI hardware
 10- autotuning
-
+    The `autotune` module in Mojo offers interfaces for adaptive compilation. It helps you find the best parameters for your target hardware by automatically tuning your code.
 
 Mojo is also better to tackle climate-change: a Mojo program uses only 10% of the energy usage of an equivalent Python program.

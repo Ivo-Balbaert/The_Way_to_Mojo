@@ -10,10 +10,10 @@ To complement this, Mojo provides an `fn` declaration which is like a "strict mo
 * Argument values default to being immutable in the body of the function (like a let), instead of mutable (like a var). This catches accidental mutations, and permits the use of non-copyable types as arguments.
 * Argument values require a type specification (except for self in a method), catching accidental omission of type specifications. Similarly, a missing return type specifier is interpreted as returning `None` instead of an unknown return type. Note that both can be explicitly declared to return `object`, which allows one to opt-in to the behavior of a def if desired.
 * Implicit declaration of local variables is disabled, so all locals must be declared. This catches name typos with the scoping provided by let and var.
-* Both support raising exceptions, but this must be explicitly declared on a fn with the `raises` keyword.
+* Both support raising exceptions, but this must be explicitly declared on an fn with the `raises` keyword.
 
 ## 6.2  A fn that calls a def needs a try/except
-Consider the following example:
+Consider the following example: 
 
 See `try_except.mojo`:
 ```py
@@ -87,18 +87,19 @@ You are stopped by the following compiler errors:
     var x = 42    # => invalid redefinition of 'x'
 
 
-## 6.4 Argument passing control and memory ownership
+## 6.4 Argument passing: control and memory ownership
 
 ### 6.4.1 General rules for def and fn arguments
-* All values passed into a `Python def` function use reference semantics. This means the function can modify mutable objects passed into it and those changes are visible outside the function. 
-* All values passed into a `Mojo def` function use value semantics by default. Compared to Python, this is an important difference: a Mojo def function receives a copy of all arguments. So it can modify arguments inside the function, but the changes are not visible outside the function.
-* All values passed into a `Mojo fn` function are immutable references by default. This means it is not a copy and the function can read the original object, but it cannot modify the object at all: this is called *borrowing*.
+* All values passed into a `Python def` function use *reference semantics*. This means the function can modify mutable objects passed into it and those changes are visible outside the function. 
+* All values passed into a `Mojo def` function use *value semantics* by default. Compared to Python, this is an important difference: a Mojo def function receives a copy of all arguments. So it can modify arguments inside the function, but the changes are not visible outside the function.
+* All values passed into a `Mojo fn` function are *immutable references* by default. This means it is not a copy and the function can read the original object, but it cannot modify the object at all: this is called *borrowing*.
 The default argument convention for fn functions is *borrowed*. You can make this explicit by prefixing the argument's names with the word `borrowed`:  
 
 ```py
 fn sum(borrowed x: Int, borrowed y: Int) -> Int:  
     return x + y
 ```
+(See also § 7.6)
 
 But what if we want a function to be able to change its arguments?
 
@@ -121,6 +122,8 @@ fn sum_inout(inout x: Int, inout y: Int) -> Int:  # 1
     y += 1
     return x + y
 ```
+
+See also § 7.8, where inout is used with struct arguments.
 
 This behavior is a potential source of bugs, that's why Mojo forces you to be explicit about it with the keyword *inout*.
 
@@ -165,5 +168,7 @@ print(a)               # => error: use of uninitialized value 'a'
 we get the error: use of uninitialized value 'a'
 because the transfer operator effectively destroys the variable a, so when the following print() function tries to use a, that variable isn’t initialized anymore.
 If you delete or comment out print(a), then it works fine.
+
+See also § 7.8 for an example with a struct.
 
 >Note: Currently (Aug 17 2023), Mojo always makes a copy when a function returns a value.

@@ -1,6 +1,9 @@
 # 8 Python integration
 
-### 8.1 Running Python code
+## 8.0 Comparing the same program in Python and Mojo
+See `adding.py` and `adding.mojo`.
+
+## 8.1 Running Python code
 To execute a Python expression, you can use the `evaluate` method:  
 
 See `python1.mojo`:
@@ -10,6 +13,16 @@ from python import Python
 fn main() raises:
     var x = Python.evaluate('5 + 10')   # 1 - this is of type `PythonObject`
     print(x)   # => 15
+
+    let py = Python()
+    let py_string = py.evaluate("'This string was built' + ' inside of python'")
+    print(py_string)  # => This string was built inside of python
+ 
+    let pybt = Python.import_module("builtins")
+    _ = pybt.print("this uses the python print keyword") # => this uses the python print keyword
+
+    _ = pybt.print(pybt.type(x))  # => <class 'int'>
+    _ = pybt.print(pybt.id(x))    # => 139787831339296
 ```
 
 If you leave out the keyword `raises`, you get the error:  
@@ -22,6 +35,7 @@ python1.mojo(3, 1): or mark surrounding function as 'raises'
 Apparently, Mojo warns you that `Python.evaluate` could raise an error, that Mojo should catch.
 
 The rhs (right hand side) of line 1 is of type `PythonObject`.  
+(The _ = are needed to avoid the warning: 'PythonObject' value is unused)
 The above code is equivalent to the following when used in a Jupyter notebook running Mojo (see § 2):
 
 ```py
@@ -74,8 +88,23 @@ fn main():
 
 We've just unlocked our first Mojo optimization! Instead of looking up an object on the heap via an address, x is now just a value on the stack with 64 bits that can be passed through registers.
 
+Here is a simple example of using `matplotlib`:
+(If you first need to install this package, use the command: `sudo apt-get install python3-matplotlib`)
+See `simple_matplotlib.mojo`:
+```py
+from python import Python
 
-### 8.2 Running Python code in the interpreter mode or in the Mojo mode
+fn main() raises:
+    let plt = Python.import_module("matplotlib.pyplot")
+
+    let x = [1, 2, 3, 4]
+    let y = [30, 20, 50, 60]
+    _ = plt.plot(x, y)
+    _ = plt.show()
+```
+See image of plot: simple_plot.png
+
+## 8.2 Running Python code in the interpreter mode or in the Mojo mode
 The Mojo mode has numerous performance implications:
 * There is no overhead associated with compiling to bytecode and running through an interpreter
 * All the expensive allocation, garbage collection, and indirection is no longer required
@@ -89,7 +118,7 @@ In the 1st case, the Python code is interpreted at compile-time through a CPytho
 In the 2nd case, the code is compiled to native code, and then run, which is obviously a lot faster.
 
 
-### 8.3 Working with Python modules
+## 8.3 Working with Python modules
 As already indicated in § 3.6.2, here is how you import a Python module, in this case numpy. After importing it, we exercise a few basic functions from numpy, as if writing in Python, see lines 3-4. All variables created (ar, arr, array) are PythonObjects.
 
 See `numpy.mojo`:
@@ -140,6 +169,7 @@ def main():
 Because this could potentially raise an exception, the call to Python is enclosed in a `try: except:` statement.  
 The Python code imports numpy, printing a "hello" message and then a numpy array:
 
+See ``simple_interop.py`:
 ```py
 import importlib
 import sys
@@ -162,6 +192,8 @@ def test_interop_func():
 if __name__ == "__main__":
     print(timeit(lambda: test_interop_func(), number=1))
 ```
+
+If the .py file is somewhere in a different folder, instead of: `Python.add_to_path(".")` do `Python.add_to_path("path/to/module")`
 
 A subfolder `__pycache__` is created which contains the byte-compiled versions (.pyc) of the Python code.  
 For another example, see `matmul.mojo` and `pymatmul.py` with output:  

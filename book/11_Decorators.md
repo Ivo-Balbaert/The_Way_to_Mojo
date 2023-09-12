@@ -3,9 +3,7 @@
 `@adaptive`     see matmul
 `@always_inline` see matmul
 `@noncapturing`
-`@parameter` if   : an if statement that runs at compile-time.
 - `@register_passable` --> 11.2
-`@staticmethod`
 `@unroll`
 - `@value` --> 11.1
 
@@ -71,6 +69,25 @@ print(x.get[0, Coord]().x) # => 5
 The `@register_passable` decorator tells Mojo that the type should be copyable and movable but that it has no user-defined logic for doing this. It also tells Mojo to prefer to pass the value in CPU registers, which can lead to efficiency benefits.  
 Small values like Int, Float, and SIMD are passed directly in machine registers instead of through an extra indirection.
 
+## 11.3 - @parameter if
+`@parameter` if is an if statement that runs at compile-time.
+Some examples:
 
+You can use it to define a debug_only assert.  
+See `parameter1.mojo`:
+```py
+from testing import assert_true
 
+fn main():
+    alias my_debug_build = 1  # Set it to 0 for production
+    @parameter
+    if my_debug_build == 1:
+        _ = assert_true(1==2, "assertion failed")
+    # => ASSERT ERROR: assertion failed
+```
+
+see § 7.9.6 (ctime_logic.mojo).
+
+## 11.4 - @staticmethod
+`@staticmethod` can (only ??) be used in a struct that cannot be instantiated, for an example see § 7.10.1
 

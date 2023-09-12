@@ -47,6 +47,8 @@ fn main():
     print(ord(s[0]))    # => 77
 
     # building a string with a DynamicVector:
+   
+
     from utils.vector import DynamicVector
     var vec = DynamicVector[Int8](2)    # 5
     vec.push_back(78)
@@ -66,10 +68,6 @@ fn main():
     vec[1] = 65
     print(vec_str_ref)  # => AA
     print(vec_str)      # 10 => NN
-
-    let emoji = String("🔥😀")
-    print("fire:", emoji[0:4])    # 11 => fire: 🔥
-    print("smiley:", emoji[4:8])  # => smiley: 😀
 
     # StringRef:
     let isref = StringRef("i")

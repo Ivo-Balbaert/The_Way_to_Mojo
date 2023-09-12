@@ -4,6 +4,7 @@
 ## 12.1 - Calculating the sum of two vectors
 See https://codeconfessions.substack.com/p/mojo-the-future-of-ai-programming
 (code is image!)
+TODO!
 
 ## 12.2 - Calculating the Euclidean distance between two vectors
 (See [ref](https://www.modular.com/blog/an-easy-introduction-to-mojo-for-python-programmers))
@@ -160,3 +161,5 @@ Results:
 mojo_fn_dist value: 1291.0881564332019
 mojo_fn_dist time (ms): 11.135488
         <-- 33.3 x faster than naive Python implementation
+
+## 12.3 - Matrix multiplication (matmul)

@@ -25,7 +25,12 @@ fn main():
     print(mixed_list.get[0, Int]()) # => 1
 ```
 
-The `list` module, which is not built-in and is stored in package `utils`, provides methods for working with static and variadic (= a variable number of items) lists.
+The `list` module, which is not built-in and is stored in package `utils`, provides methods for working with static and variadic (= a variable number of items) lists. 
+variadic is written as `*T`, which is a variable number of values of type T. 
+Examples:  
+`fn f1[a: Int](*b: Int):`: this parametric function f1 has a variable number of arguments of type Int  
+`fn f2[*a: Int](b: Int)`:  
+this parametric function f2 has a variable number of parameters of type Int
 
 ## 9.2 The Tuple type
 This is implemented in the built-in module `tuple`. 

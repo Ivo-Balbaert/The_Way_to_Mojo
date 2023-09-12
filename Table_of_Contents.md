@@ -62,46 +62,83 @@
 ## 3.6.1 Mojo modules
 ## 3.6.2 Python modules
 
-# 8
-## 3.5 Python integration
-### 3.5.1 Running Python code
-### 3.5.3 Working with Python modules
-### 3.5.4 Running Python code in the interpreter mode or in the Mojo mode
+# 4 Basic types
+## 4.1 The Bool type
+## 4.2 The numerical types
+### 4.2.1 The Integer type
+### 4.2.2 The FloatLiteral type and conversions
+## 4.3 The String types
+### 4.3.1 The StringLiteral type
+### 4.3.2 The String type
+### 4.3.3 The StringRef type
+### 4.3.4 Some String methods
+## 4.4 Defining alias types
 
-# 9 
-## 3.9 Improving performance with SIMD
-## 3.10 The ListLiteral type
-## 3.11 The Tuple type
-## 3.12 The Slice type
+# 5 Control flow
+## 5.1 if else and Bool values
+## 5.2 Using for loops
+## 5.3 Catching exceptions with try-except-finally
+
+# 6 Functions
+## 6.1 Difference between fn and def
+## 6.2  A fn that calls a def needs a try/except
+## 6.3 Function arguments and return type
+## 6.4 Argument passing: control and memory ownership
+### 6.4.1 General rules for def and fn arguments
+### 6.4.2 Making arguments changeable with inout 
+### 6.4.2 Making arguments owned
+### 6.4.3 Making arguments owned and transferred with ^
+
+# 7 Structs
+## 7.1 First example
+## 7.2 Comparing a FloatLiteral and a Bool
+## 7.3 A second example
+## 7.4 Overloaded functions and methods
+## 7.5 The __copyinit__ and __moveinit__ special methods
+## 7.6 Using a large struct instance as function argument
+## 7.7 Using inout with structs
+## 7.8 Transfer struct arguments with owned and ^
+
+# 7.9 Compile-time metaprogramming in Mojo
+## 7.9.1 Parametric types in structs and functions
+## 7.9.2 Parametric structs
+## 7.9.3 Improving performance with the SIMD struct
+## 7.9.4 How to create a custom parametric type: Array
+## 7.9.5 Parametric functions and methods
+
+# 7.10 Lifetimes
+## 7.10.1 Types that cannot be instantiated
+## 7.10.2 Non-movable and non-copyable types
 
 
-
-Many types are defines as structs
-Parametric types / functions
-        SIMD
-AnyType
-None : when a function returns nothing
-    def main():, without the explicit None type, can now be used to define the entry point to a Mojo program.
-
-object
-
-%%python
-import numpy as np
-from timeit import timeit
-
-from .. import .. as
-
-variadic *T  : a variable number of values of type T
-
-alias declaration: a way to define a compile-time temporary value.
-    alias UInt8 = SIMD[DType.uint8, 1]
-    var n : UInt8 
-
-    both None and AnyType are defined as type aliases.
-
-struct Matrix in Matmul:
-    __init__ and __del__ as destructor
+# 8 Python integration
+## 8.1 Running Python code
+## 8.2 Running Python code in the interpreter mode or in the Mojo mode
+## 8.3 Working with Python modules
+## 8.4 Importing local Python modules
+## 8.5 Mojo types in Python
 
 
-* "parameter" and "parameter expression" to represent a compile-time value in Mojo                * "argument" and "expression" refer to runtime values
+# 9 - Other built-in types
+## 9.1 The ListLiteral type
+## 9.2 The Tuple type
+## 9.3 The slice type
+## 9.4 The Error type
+
+# 10 Standard library examples
+## 10.1 Assert statements
+### 10.1.1 constrained
+### 10.1.2 debug_assert
+?? ## 10.2 Module testing 
+## 10.3 Module benchmark
+## 10.4 Module buffer
+
+
+# 11 – Decorators
+## 11.1 - @value
+## 11.2 - @register_passable
+
+# 12 – Projects
+## 12.1 - Calculating the sum of two vectors
+## 12.2 - Calculating the Euclidean distance between two vectors
 

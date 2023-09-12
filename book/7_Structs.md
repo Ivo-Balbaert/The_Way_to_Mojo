@@ -104,8 +104,10 @@ What do you see?
 This returns a compile time error: invalid call to '__lt__': right side cannot be converted from 'Int' to 'IntPair'.
 
 **Exercise**
-Define a struct Point for a 3 dimensional point in space. Declare a point variable origin, and print out its items.
+1 -  Define a struct Point for a 3 dimensional point in space. Declare a point variable origin, and print out its items.
 (see *exerc7.1.mojo*)
+2 -  Define a struct Car with attributes speed and model. Define two __init__ functions, one which sets the speed and gives model the value "Base", and one which gives both speed and model a value; Declare a Car with only a speed, and print out its model.
+(see *car.mojo*)
 
 
 ## 7.4 Overloaded functions and methods
@@ -220,15 +222,192 @@ Mojo also supports the `__moveinit__` method which allows both Rust-style moves 
 
 Mojo provides *full control over the lifetime of a value*, including the ability to make types copyable, move-only, and not-movable. This is more control than languages like Swift and Rust offer, which require values to at least be movable.
 
-## 7.7 Improving performance with the SIMD struct
+## 7.6 Using a large struct instance as function argument
+Because a fn function gets its arguments only as immutable references, a large struct argument will never cause extensive memory copying.
+In the following example the SomethingBig a and b structs are not copied to the function fn use_something_big. This function only gets references (the addresses) to these instances.
+
+See `borrowed.mojo`:
+```py
+struct HeapArray:
+    var data: Pointer[Int]
+    var size: Int
+    var cap: Int
+
+    fn __init__(inout self):
+        self.cap = 16
+        self.size = 0
+        self.data = Pointer[Int].alloc(self.cap)
+
+    fn __init__(inout self, size: Int, val: Int):
+        self.cap = size * 2
+        self.size = size
+        self.data = Pointer[Int].alloc(self.cap)
+        for i in range(self.size):
+            self.data.store(i, val)
+
+    fn __copyinit__(inout self, other: Self):
+        self.cap = other.cap
+        self.size = other.size
+        self.data = Pointer[Int].alloc(self.cap)
+        for i in range(self.size):
+            self.data.store(i, other.data.load(i))
+            
+    fn __del__(owned self):
+        self.data.free()
+
+    fn dump(self):
+        print_no_newline("[")
+        for i in range(self.size):
+            if i > 0:
+                print_no_newline(", ")
+            print_no_newline(self.data.load(i))
+        print("]")
+
+struct SomethingBig:
+    var id_number: Int
+    var huge: HeapArray
+
+    fn __init__(inout self, id: Int):
+        self.huge = HeapArray(1000, 0)
+        self.id_number = id
+
+    # self is passed by-reference for mutation as described above.
+    fn set_id(inout self, number: Int):
+        self.id_number = number
+
+    # Arguments like self are passed as borrowed by default.
+    fn print_id(self):  # Same as: fn print_id(borrowed self):
+        print(self.id_number)
+
+fn use_something_big(borrowed a: SomethingBig, b: SomethingBig):
+    """'a' and 'b' are both immutable, because 'borrowed' is the default."""
+    a.print_id()  # => 10
+    b.print_id()  # => 20
+
+fn main():
+    let a = SomethingBig(10)
+    let b = SomethingBig(20)
+    use_something_big(a, b)
+```
+
+The Mojo compiler implements a *borrow checker* (similar to Rust) that prevents code from dynamically forming mutable references to a value when there are immutable references outstanding, and it prevents multiple mutable references to the same value (?? 2023 Sep 8: NOT yet implemented).
+
+## 7.7 Using inout with structs
+In the following example, we are able to do `x += 1` where x has type MyInt, because the method `__iadd__` is defined (+= is syntax sugar for __iadd__). But this could only work because in that function the self parameter is declared as `inout` (remove inout to see the error that results).
+
+See `inout2.mojo`:
+```py
+struct MyInt:
+    var value: Int
+    
+    fn __init__(inout self, v: Int):
+        self.value = v
+  
+    fn __copyinit__(inout self, other: MyInt):
+        self.value = other.value
+        
+    # self and rhs are both immutable in __add__.
+    fn __add__(self, rhs: MyInt) -> MyInt:
+        return MyInt(self.value + rhs.value)
+
+    # ... but this cannot work for __iadd__
+    # Comment to see the error: MyInt' does not implement the '__iadd__' method
+    fn __iadd__(inout self, rhs: Int):
+       self = self + rhs  
+
+fn main():
+    let m = MyInt(10)
+    let n = MyInt(20)
+    let o = n + m
+    print(o.value)  # => 30
+    
+    var x: MyInt = 42
+    x += 1         # 1
+    print(x.value) # => 43
+```
+
+**Exercise**
+Write a swap function that switches the values of variables x and y (see `swap.mojo`).
+
+## 7.8 Transfer struct arguments with owned and ^
+In the following example, we mimic the behavior of unique pointers. It has a __moveinit__ function, which moves the pointer (?? better wording).  
+In line 1 `take_ptr(p^)` the ownership of the `p` value is passed to another function take_ptr. Any subsequent use of p (as in line 2) gives the `error: use of uninitialized value 'p' - p is no longer valid here!`
+
+See `transfer_owner.mojo`:
+```py
+struct UniquePointer:
+    var ptr: Int
+    
+    fn __init__(inout self, ptr: Int):
+        self.ptr = ptr
+    
+    fn __moveinit__(inout self, owned existing: Self):
+        self.ptr = existing.ptr
+        
+    fn __del__(owned self):
+        self.ptr = 0
+
+
+fn take_ptr(owned p: UniquePointer):
+    print("take_ptr")  # => take_ptr
+    print(p.ptr)       # => 100
+
+fn use_ptr(borrowed p: UniquePointer):
+    print("use_ptr")  # => use_ptr
+    print(p.ptr)      # => 100
+    
+fn work_with_unique_ptrs():
+    let p = UniquePointer(100)
+    use_ptr(p)    # Pass to borrowing function.
+    take_ptr(p^)  # 1 
+
+    # Uncomment to see an error:
+    # use_ptr(p) # 2 
+
+fn main():
+    work_with_unique_ptrs()  
+```
+
+# 7.9 Compile-time metaprogramming in Mojo
+One of the great characteristics of Python is that you can change code at runtime, so-called *run-time metaprogramming*. This can do some amazing things, but it comes at a great performance cost.  
+The modern trend in programming languages is toward statically compiled languages, with *metaprogramming done at compile-time*! Think about Rust macros, Swift, Zig and Jai. Mojo as a compiled language fully embraces *compile-time metaprogramming*, built into the compiler as a separate stage of compilation - after parsing, semantic analysis, and IR generation, but before lowering to target-specific code. To do this, the same Mojo language is used for metaprograms as for runtime programs, and it also leverages MLIR. This is because Modular’s work in AI needs high-performance machine learning kernels, and accelerators, and high abstraction capabilities provided by advanced metaprogramming systems.  
+Currently the following techniques are used with metaprogramming:  
+1) Parametric types in structs and functions (see § 7.9.1)
+2) Overloading on parameters (see `overloading_params.mojo`)
+
+
+## 7.9.1 Parametric types in structs and functions
+A **parametric* (generic) struct or function where you can indicate your own type is a very useful concept. It allows you to write flexible code, that can be reused in many situations.
+
+The general format is: `StructOrFunctionName[parameters](arguments)`.  
+The parameters serve to define which type(s) are used in a generic type ("parameter" and "parameter expression" represent a compile-time value in Mojo).
+The arguments are used as values within the function ("argument" and "expression" refer to runtime values).
+
+Parametric code gets compiled (at compile-time, not JIT-TED at runtime) into multiple specialized versions parameterized by the concrete types used during program execution. 
+    
+## 7.9.2 Parametric structs
+We first encountered this concept in § 4.2.1, where we defined a DynamicVector as follows:  
+`var vec = DynamicVector[Int]()` 
+But it could also have been: 
+`var vec = DynamicVector[Float]()` 
+`var vec = DynamicVector[String]()` 
+
+A DynamicVector can be made for any type of items (type `AnyType`). The type is parametrized and indicated between the `[]`.
+
+Another example is the SIMD struct (see § 7.9.3).  
+See also § 12.2.
+
+
+## 7.9.3 Improving performance with the SIMD struct
 Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance.
 
 Mojo’s SIMD struct type is defined as a struct in the builtin `simd` module and exposes the common SIMD operations in its methods, making the SIMD data type and size values parametric. This allows you to directly map your data to the SIMD vectors on any hardware.
-The SIMD struct is a generic struct type definition (see § 7.8.1).
+The SIMD struct is a parametric struct type definition (see § 7.9.1).
 
 General format: `SIMD[DType.type, size]`  
+It has two parameters: 
 * type specifies the data type, for example: uint8, float32, it is given by the field `element_type` 
-* the `len` function gives the size (which must be a power of 2) of the SIMD vector, for example 1, 2, 4, and so on
+* size is given by the `len` function (size must be a power of 2) of the SIMD vector, for example 1, 2, 4, and so on
 
 `UInt8` is just a *type alias* for `SIMD[DType.uint8, 1]`, 
 which is the same as `SIMD[ui8, 1]`.  
@@ -245,7 +424,8 @@ All numeric types (see $ 4.2 and the DType class) are defined as aliases in term
 * Float32 = SIMD[f32, 1]
 * Float64 = SIMD[f64, 1]
 
-Here is an example of a simd struct with size 4: `SIMD[DType.uint8, 4](1, 2, 3, 4)`
+Here is an example of a simd struct with size 4:  
+`SIMD[DType.uint8, 4](1, 2, 3, 4)`
 
 Here is some code using this feature:
 See simd.mojo:
@@ -268,7 +448,7 @@ fn main():
     print(simdbitwidth())  # => 256         # 4  
 ```
 
-SIMD is also a generic type, indicated with the [ ] braces. We need to indicate the item type and the number of items, as is done in line 1 when declaring the SIMD-vector y.
+SIMD is a parametric (generic) type, indicated with the [ ] braces. We need to indicate the item type and the number of items, as is done in line 1 when declaring the SIMD-vector y.
 Line 0 initializes a SIMD vector with zeros as values.  
 DType.uint8 and 4 are called *parameters*. They must be known at compile-time.  
 (1, 2, 3, 4) are the *arguments*, which can be compile-time or runtime known (for example: user input or data retrieved from an API).
@@ -291,74 +471,11 @@ Hint: Use a loop: for i in range(4):
                         pass
 (see `exerc7.3.🔥`)
 
-Other example: see simd2.mojo,
+Other example: see `simd2.mojo`:
+`cast[DType.float32]()`
+	the cast() method is a generic method definition that gets instantiated at compile-time instead of runtime, based on the parameter value. cast is a SIMD specific method.
 
-## 7.8 Parametric types in structs and functions
-A **parametric* (generic) struct or function where you can indicate your own type is a very useful concept. It allows you to write flexible code, that can be reused in many situations.
-
-The general format is: `StructOrFunctionName[parameters](arguments)`.  
-The parameters serve to define which type(s) are used in a generic type.
-The arguments are used as values within the function.
-
-## 7.8.1 Parametric structs
-We first encountered this in § 4.2.1, where we defined a DynamicVector as follows:  
-`var vec = DynamicVector[Int]()` 
-But it could also have been: 
-`var vec = DynamicVector[Float]()` 
-`var vec = DynamicVector[String]()` 
-
-A DynamicVector can be made for any type of items (type `AnyType`). The type is parametrized and indicated between the `[]`.
-
-Another example is the SIMD struct (see § 7.8).  
-See also § 12.2.
-
-Parametric code gets compiled into multiple specialized versions parameterized by the concrete types used during program execution. 
-
-## 7.8.2 Parametric functions and methods
-Here are some examples of parametric functions:
-
-See `simd3.mojo`:
-```py
-from math import sqrt
-
-fn rsqrt[dt: DType, width: Int](x: SIMD[dt, width]) -> SIMD[dt, width]:   # 1
-    return 1 / sqrt(x)
-
-fn main():
-    print(rsqrt[DType.float16, 4](42))                                    # 2
-    # => [0.154296875, 0.154296875, 0.154296875, 0.154296875]
-```
-
-The function `rsqrt[dt: DType, width: Int](x: SIMD[dt, width])` in line 1 is a parametric function. In line 2, the dt type becomes Float16, the width takes the value 4. The argument x is the SIMD vector (42, 42, 42, 42).
-
-
-See `simd4.mojo`:
-```py
-fn concat[ty: DType, len1: Int, len2: Int](
-        lhs: SIMD[ty, len1], rhs: SIMD[ty, len2]) -> SIMD[ty, len1+len2]:
-
-    var result = SIMD[ty, len1 + len2]()
-    for i in range(len1):
-        result[i] = SIMD[ty, 1](lhs[i])
-    for j in range(len2):
-        result[len1 + j] = SIMD[ty, 1](rhs[j])
-    return result
-
-fn main():
-    let a = SIMD[DType.float32, 2](1, 2)
-    let b = SIMD[DType.float32, 2](3, 4)
-    let x = concat[DType.float32, 2, 2](a, b)
-    print(x) # => [1.0, 2.0, 3.0, 4.0]
-
-    print('result type:', x.element_type, 'length:', len(x))
-    # => result type: float32 length: 4
-```
-
-Here the function `concat[ty: DType, len1: Int, len2: Int](lhs: SIMD[ty, len1], rhs: SIMD[ty, len2])` is a parametric function, with:  
-* parameters: type ty is float32, len1 and len2 are both 2
-* arguments: lhs and rhs are resp. a and b, len1 and len2 are both 2
-
-## 7.8.3 How to create a custom parametric type: Array
+## 7.9.4 How to create a custom parametric type: Array
 In the following example you see the code for a parametric type Array, with parameter `AnyType` (line 1). It has an __init__ constructor (line 2), which takes the size and a value as arguments.
 Line 3 shows how to construct the array: 
 `let v = Array[Float32](4, 3.14)`  
@@ -395,4 +512,110 @@ In line 4, memory space is allocated with: `self.data = Pointer[T].alloc(self.ca
 A destructor `__del__` is also provided, which executes  `self.data.free()` and is called automatically when the variable is no longer needed in code execution.
 A `__getitem__` method is also shown which takes an index i and returns the value on that position with `self.data.load(i)` (line 7).
 
+## 7.9.5 Parametric functions and methods
+Here are some examples of parametric functions:
 
+See `simd3.mojo`:
+```py
+from math import sqrt
+
+fn rsqrt[dt: DType, width: Int](x: SIMD[dt, width]) -> SIMD[dt, width]:   # 1
+    return 1 / sqrt(x)
+
+fn main():
+    print(rsqrt[DType.float16, 4](42))                                    # 2
+    # => [0.154296875, 0.154296875, 0.154296875, 0.154296875]
+```
+
+The function `rsqrt[dt: DType, width: Int](x: SIMD[dt, width])` in line 1 is a parametric function. In line 2, the dt type becomes Float16, the width takes the value 4. The argument x is the SIMD vector (42, 42, 42, 42).
+
+In the following example, we see how parameters (len1 and len2) can be used to form a *parameter expression* len1 + len2:  
+
+See `simd4.mojo`:
+```py
+fn concat[ty: DType, len1: Int, len2: Int](
+        lhs: SIMD[ty, len1], rhs: SIMD[ty, len2]) -> SIMD[ty, len1+len2]:
+
+    var result = SIMD[ty, len1 + len2]()
+    for i in range(len1):
+        result[i] = SIMD[ty, 1](lhs[i])
+    for j in range(len2):
+        result[len1 + j] = SIMD[ty, 1](rhs[j])
+    return result
+
+fn main():
+    let a = SIMD[DType.float32, 2](1, 2)
+    let b = SIMD[DType.float32, 2](3, 4)
+    let x = concat[DType.float32, 2, 2](a, b)
+    print(x) # => [1.0, 2.0, 3.0, 4.0]
+
+    print('result type:', x.element_type, 'length:', len(x))
+    # => result type: float32 length: 4
+```
+
+Here the function `concat[ty: DType, len1: Int, len2: Int](lhs: SIMD[ty, len1], rhs: SIMD[ty, len2])` is a parametric function, with:  
+* parameters: type ty is float32, len1 and len2 are both Int
+* arguments: lhs and rhs are resp. a and b, len1 and len2 are both 2
+
+For:  
+    let a = SIMD[DType.float32, 2](1, 2)
+    let b = SIMD[DType.float32, 4](3, 4, 5, 6)
+we get as result:  
+    [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
+    result type: float32 length: 6
+
+## 7.9.6 Programming compile-time logic
+You can also write imperative compile-time logic with control flow, even  compile-time recursion. The following example makes use the of the `@parameter if` feature, which is an if statement that runs at compile-time. It requires that its condition be a valid parameter expression, and ensures that only the live branch of the if statement is compiled into the program.
+
+See `ctime_logic.mojo`:
+```py
+fn slice[ty: DType, new_size: Int, size: Int](
+        x: SIMD[ty, size], offset: Int) -> SIMD[ty, new_size]:
+    var result = SIMD[ty, new_size]()
+    for i in range(new_size):
+        result[i] = SIMD[ty, 1](x[i + offset])
+    return result
+
+fn reduce_add[ty: DType, size: Int](x: SIMD[ty, size]) -> Int:
+    @parameter
+    if size == 1:
+        return x[0].to_int()
+    elif size == 2:
+        return x[0].to_int() + x[1].to_int()
+
+    # Extract the top/bottom halves, add them, sum the elements.
+    alias half_size = size // 2
+    let lhs = slice[ty, half_size, size](x, 0)
+    let rhs = slice[ty, half_size, size](x, half_size)
+    return reduce_add[ty, half_size](lhs + rhs)
+    
+fn main():
+    let x = SIMD[DType.index, 4](1, 2, 3, 4)
+    print(x) # => [1, 2, 3, 4]
+    print("Elements sum:", reduce_add[DType.index, 4](x))
+    # => Elements sum: 10
+```
+
+# 7.10 Lifetimes
+
+## 7.10.1 Types that cannot be instantiated
+These are types from which you cannot create an instance because they have no initializer __init__. In order to get them, you need to define an __init__ method or use a decorator that synthesizes an initializer. 
+
+Without initializer, these types can be useful as "namespaces" for helper functions, because you can refer to static members like `NoInstances.my_int` or `NoInstances.print_hello()`.
+
+See `no_instance.mojo`:
+```py
+struct NoInstances:
+    var state: Int
+    alias my_int = Int
+
+    @staticmethod
+    fn print_hello():
+        print("hello world")
+
+fn main():
+    NoInstances.print_hello() # => hello world 
+```
+
+## 7.10.2 Non-movable and non-copyable types
+These can be instantiated, bot not copied or moved, because they have no no copy or move constructors. Useful to implement types like atomic operations. 

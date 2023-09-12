@@ -65,3 +65,19 @@ def main():
 ```
 
 The loop in line 1 goes from start 9 to end 0, step -3. The end value 0 is not included.
+
+## 5.3 Catching exceptions with try-except-finally
+?? better example
+?? better move to § 9.4
+
+If your code is expected to possibly raise an exception, either the enveloping function must be postfixed with `raises`, or you can enclose the code like this:  
+```py
+    try:
+        # possible dangerous code
+    except:
+        # what to do when an exception occurs
+    finally:
+        # optional: what to do in ant case, such as clean up resources.
+```
+
+For a concrete example, see `try_except.mojo` in § 6.2 
