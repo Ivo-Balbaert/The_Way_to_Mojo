@@ -1,5 +1,3 @@
-from timeit import timeit
-
 def add(x, y):
     return x + y
 

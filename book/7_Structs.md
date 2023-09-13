@@ -111,7 +111,7 @@ This returns a compile time error: invalid call to '__lt__': right side cannot b
 
 
 ## 7.4 Overloaded functions and methods
-Like in Python, you can define functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs and let *dynamic dispatch* decide how to handle the data. However, when you want to ensure type safety, Mojo also offers full support for overloaded functions and methods.  
+Like in Python, you can define functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs and let *dynamic dispatch* decide how to handle the data. However, when you want to ensure type safety, Mojo also offers full support for overloaded functions and methods, a feature that does not exist in Python.  
 This allows you to define multiple functions with the same name but with different arguments. This is a common feature called *overloading*, as seen in many languages, such as C++, Java, and Swift.  
 When resolving a function call, Mojo tries each candidate and uses the one that works (if only one works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous if it can’t figure out which one to pick. In the latter case, you can resolve the ambiguity by adding an explicit cast on the call site.  
 
@@ -330,8 +330,8 @@ fn main():
 Write a swap function that switches the values of variables x and y (see `swap.mojo`).
 
 ## 7.8 Transfer struct arguments with owned and ^
-In the following example, we mimic the behavior of unique pointers. It has a __moveinit__ function, which moves the pointer (?? better wording).  
-In line 1 `take_ptr(p^)` the ownership of the `p` value is passed to another function take_ptr. Any subsequent use of p (as in line 2) gives the `error: use of uninitialized value 'p' - p is no longer valid here!`
+In the following example, we mimic the behavior of unique pointers. It has a __moveinit__ function (see line 1), which moves the pointer (?? better wording).  
+In line 2 `take_ptr(p^)` the ownership of the `p` value is passed to another function take_ptr. Any subsequent use of p (as in line 3) gives the `error: use of uninitialized value 'p' - p is no longer valid here!`
 
 See `transfer_owner.mojo`:
 ```py
@@ -341,7 +341,7 @@ struct UniquePointer:
     fn __init__(inout self, ptr: Int):
         self.ptr = ptr
     
-    fn __moveinit__(inout self, owned existing: Self):
+    fn __moveinit__(inout self, owned existing: Self):    # 1
         self.ptr = existing.ptr
         
     fn __del__(owned self):
@@ -367,6 +367,14 @@ fn work_with_unique_ptrs():
 fn main():
     work_with_unique_ptrs()  
 ```
+
+Another example is a FileDescriptor type. These types are *unique* or *move-only* types. In Mojo, you define the __moveinit__ method to take ownership of a unique type. The consuming move constructor __moveinit__ takes ownership of an existing instance, and moves its internal implementation details over to a new instance.  
+You can also define custom __moveinit__ methods. If you want complete control, you should use define methods like copy() instead of using the dunder method. 
+
+**Summary**  
+* Copyable type:    var s2 = s1    # s2.__copyinit__(s1) runs here, so s2 is self, s1 is existing (or other)
+* Moveable type:    var s3 = s1^   # s3.__moveinit__(s1) runs here, so s3 is self, s1 is existing
+
 
 # 7.9 Compile-time metaprogramming in Mojo
 One of the great characteristics of Python is that you can change code at runtime, so-called *run-time metaprogramming*. This can do some amazing things, but it comes at a great performance cost.  

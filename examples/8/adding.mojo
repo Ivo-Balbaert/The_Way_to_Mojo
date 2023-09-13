@@ -1,5 +1,3 @@
-# compare time with python?
-
 fn add(x: Int, y: Int) -> Int:
     return x + y
 

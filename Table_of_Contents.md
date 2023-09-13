@@ -112,6 +112,7 @@
 
 
 # 8 Python integration
+## 8.0 Comparing the same program in Python and Mojo
 ## 8.1 Running Python code
 ## 8.2 Running Python code in the interpreter mode or in the Mojo mode
 ## 8.3 Working with Python modules

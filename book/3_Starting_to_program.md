@@ -227,7 +227,7 @@ error: expression must be mutable in assignment
 mojo: error: failed to parse the provided Mojo
 ```
 
-Lines 5-6 show late initialization.
+Lines 5-6 show late initialization, a feature that does not exist in Python.
 
 
 ## 3.5  Typing in Mojo

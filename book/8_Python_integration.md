@@ -1,7 +1,26 @@
 # 8 Python integration
 
 ## 8.0 Comparing the same program in Python and Mojo
-See `adding.py` and `adding.mojo`.
+See `adding.py`:
+```py
+def add(x, y):
+    return x + y
+
+z = add(3, 5)
+print(z) # => 8
+```
+versus `adding.mojo`:
+```py
+fn add(x: Int, y: Int) -> Int:
+    return x + y
+
+fn main():
+    let z = add(3, 5)
+    print(z) # => 8
+```
+
+Let's do a compute time comparison over 1_000_000 additions (see adding_timing.py and adding_timing.mojo).  
+Mojo is 2_422_525 times faster than Python!
 
 ## 8.1 Running Python code
 To execute a Python expression, you can use the `evaluate` method:  

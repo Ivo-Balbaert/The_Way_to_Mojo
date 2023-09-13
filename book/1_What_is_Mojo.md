@@ -43,7 +43,9 @@ By progressively using types in code, performance can be enhanced.
 - Tiling optimization: Mojo includes a built-in tiling optimization tool that effectively caches and reuses data, which helps optimize performance by using memory located near each other at a given time and reusing it. 
 (Mojo has a built-in tiling optimization tool that improves cache locality and memory access patterns by dividing computations into smaller tiles that fit into fast cache memory.) 
 
-- Parallel computing: Mojo introduces inbuilt parallelization, enabling multithreaded code execution, which can increase execution speed by 2,000x. It simplifies writing of efficient, parallel code through automatic parallelization across multiple hardware backends, without requiring low-level parallelization knowledge.
+- Parallel computing: 
+Python has the GIL (Global Interpreter Lock) limitation: even if your app is multithreaded, Python can only execute one thread (so use one of you machine's cores) at a time.
+Mojo introduces inbuilt parallelization, enabling multithreaded code execution, which can increase execution speed by 2,000x. It simplifies writing of efficient, parallel code through automatic parallelization across multiple hardware backends, without requiring low-level parallelization knowledge.
 
 - Mojo has no GC (garbage collection), so it doesn't suffer from GC pauses, and can be used in real-time domains. Instead, it has *automatic memory management*: it implements ownership and borrow-checking and lifetime concepts similar to Rust, but simplifying the syntax. Mojo's compiler tracks the lifetime of a variable using static analysis and destroys data as soon as it is no longer in use.
 
@@ -105,7 +107,7 @@ It is a direct descendant of Python, but extends its use greatly. Mojo picks up 
 It also builds on Rust, Swift and Julia, for which it certainly is seen as a competitor.    
 
 **Interop with other languages and migration strategy**  
-Mojo code can be mixed with Python. It can also call all Python libraries from its vast ecosystem, which are executed through the CPython interpreter, which talks to Mojo. This gives you a way to incrementally transition a legacy code base from Python to Mojo, making migration of Python easy.
+Mojo code can be mixed with Python. It can also call all Python libraries from its vast ecosystem, which are executed through the CPython interpreter, which talks to Mojo. This gives you a way to incrementally transition a legacy code base from Python to Mojo, making migration of Python easy. When Mojo becomes a superset of Python, all you have to do is to change the file extension from .py to .🔥(or .mojo), and you are running your code in Mojo!
 
 The Mojo runtime also has a built-in GC to clean up Python objects, based on reference counting.
 

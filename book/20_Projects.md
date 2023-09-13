@@ -1,6 +1,5 @@
 # 12 – Projects
 
-
 ## 12.1 - Calculating the sum of two vectors
 See https://codeconfessions.substack.com/p/mojo-the-future-of-ai-programming
 (code is image!)
