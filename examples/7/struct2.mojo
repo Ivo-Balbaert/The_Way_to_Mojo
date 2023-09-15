@@ -17,7 +17,7 @@ struct IntPair:
 
 fn pair_test() -> Bool:
     let p = IntPair(1, 2)   # 4 
-    return p < 4
+    # return p < 4          # => error
     p.dump()                # => 1
                             # => 2
     let q = IntPair(2, 3)

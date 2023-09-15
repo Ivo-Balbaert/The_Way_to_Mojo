@@ -6,7 +6,8 @@
 * Source files follow the Python syntax code conventions. For example:  
     no need for semi-colons to end lines, 
     no curly braces around functions or methods,
-    each new level of code is indented with 4 spaces 
+    each new level of code is indented with 4 spaces, 
+    use only spaces: convert all tabs to spaces if necessary 
     (?? other noteworthy conventions)
 
 * Code file names are written usually in lowercase, separated by _ if needed, like *deviceinfo.mojo* or *simple_interop.mojo*. 

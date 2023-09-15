@@ -77,7 +77,8 @@
 # 5 Control flow
 ## 5.1 if else and Bool values
 ## 5.2 Using for loops
-## 5.3 Catching exceptions with try-except-finally
+## 5.3 Using while loops
+## 5.4 Catching exceptions with try-except-finally
 
 # 6 Functions
 ## 6.1 Difference between fn and def

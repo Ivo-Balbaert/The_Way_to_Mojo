@@ -5,6 +5,6 @@ fn sum(x: Int, y: Int) -> Int:  # 1
     return x + y
 
 fn main():
-    sum(1, 2)
-    # let z = sum(1, 2)
+    _ = sum(1, 2)
+    let z = sum(1, 2)
     print(z)    # => 3

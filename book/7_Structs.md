@@ -151,6 +151,8 @@ Again, if you leave your argument names without type definitions, then the funct
 Although we haven’t discussed parameters yet (they’re different from function arguments), you can also overload structs, functions and methods based on parameters.  
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
+Mojo does not allow mutable references to overlap with other mutable references or with immutable borrows.
+
 For advanced use cases, Mojo allows you to define custom constructors (using Python’s existing __init__ special method), custom destructors (using the existing __del__ special method) and custom copy and move constructors using the new __copyinit__ and __moveinit__ special methods.  
 
 When a struct has no __copyinit__ method, an instance of that struct cannot be copied.
@@ -374,7 +376,12 @@ You can also define custom __moveinit__ methods. If you want complete control, y
 **Summary**  
 * Copyable type:    var s2 = s1    # s2.__copyinit__(s1) runs here, so s2 is self, s1 is existing (or other)
 * Moveable type:    var s3 = s1^   # s3.__moveinit__(s1) runs here, so s3 is self, s1 is existing
-
+__moveinit__ has as signature:  
+`fn __moveinit__(inout self, owned existing: Self):`
+    # Initializes a new `self` by consuming the contents of `existing`
+__del__ has as signature:  
+`fn __del__(owned self):`
+    # Destroys all resources in `self`
 
 # 7.9 Compile-time metaprogramming in Mojo
 One of the great characteristics of Python is that you can change code at runtime, so-called *run-time metaprogramming*. This can do some amazing things, but it comes at a great performance cost.  
@@ -605,6 +612,15 @@ fn main():
 ```
 
 # 7.10 Lifetimes
+
+Mojo implements eager destruction of variables, that is: the memory is released ASAP, destroying values immediately after last-use. 
+
+Int is a trivial type and Mojo reclaims this memory as soon as possible,without need for a __del__() method.
+String is a destructible (it has its own __del__() method) and Mojo destroys it as soon as it’s no longer used.
+    This means that a struct which has only String and Int fields doesn't need a destructor.
+A struct that contains a pointer (like Array in § 7.9.4 or HeapArray) needs a __del__.
+
+Mojo also has field-sensitive lifetime management: it keeps track separately of whether a "whole object" is fully or only partially initialized or destroyed.  But the "whole object" must be constructed with the aggregate type’s initializer (__init__) (not by initializing all individual fields) and destroyed with the aggregate destructor (__del__).
 
 ## 7.10.1 Types that cannot be instantiated
 These are types from which you cannot create an instance because they have no initializer __init__. In order to get them, you need to define an __init__ method or use a decorator that synthesizes an initializer. 

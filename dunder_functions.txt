@@ -1,0 +1,16 @@
+Name		Operator
+
+__init__	constructor
+__del__		destructor
+__copyinit__	b = a, to copy a value, a still exists after copy
+__moveinit__	b = a, to move a value, a doesn't exist anymore after copy
+__eq__		==, test if values are equal
+__neq__		!=, test if values are not equal 
+__lt__		<
+__gt__		>
+
+__add__		+
+
+__getitem__	a[i]
+__setitem__	a[i] = val
+

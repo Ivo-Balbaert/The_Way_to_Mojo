@@ -66,7 +66,19 @@ def main():
 
 The loop in line 1 goes from start 9 to end 0, step -3. The end value 0 is not included.
 
-## 5.3 Catching exceptions with try-except-finally
+## 5.3 Using while loops
+Just like in Python, you can make a loop with a condition through `while`:
+
+See `while.mojo`:
+```py
+fn main():
+    var n = 0
+    while n <= 10_000_000:
+        n += 1
+    print(n) # => 10_000_001
+```
+
+## 5.4 Catching exceptions with try-except-finally
 ?? better example
 ?? better move to § 9.4
 

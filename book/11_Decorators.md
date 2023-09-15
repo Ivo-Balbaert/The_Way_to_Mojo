@@ -82,6 +82,7 @@ print(x.get[0, Coord]())
 ```
 
 This gives the compiler `error: invalid call to 'get': result cannot bind generic !mlirtype to memory-only type 'Coord'`
+A memory-only type means it can't be passed through registers.
 
 Marking the struct with the decorator `@register_passable` solves this:
 
@@ -97,7 +98,7 @@ var x = (Coord(5, 10), 5.5)
 print(x.get[0, Coord]().x) # => 5
 ```
 
-The `@register_passable("trivial")` decorator tells Mojo that the type should be copyable and movable but that it has no user-defined logic for doing this. It also tells Mojo to prefer to pass the value in CPU registers, which can lead to efficiency benefits.  
+The `@register_passable("trivial")` decorator tells Mojo that the type should be copyable and movable but that it has no user-defined logic for doing this. It also tells Mojo to prefer to pass the value in CPU registers (instead of normal memory), which can lead to efficiency benefits.  
 Small values like Int, Float, and SIMD are passed directly in machine registers instead of through an extra indirection.
 
 ## 11.3 - @parameter if

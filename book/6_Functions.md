@@ -72,12 +72,13 @@ fn sum(x: Int, y: Int) -> Int:  # 1
     return x + y
 
 fn main():
+    _ = sum(1, 2).
     let z = sum(1, 2)
     print(z)    # => 3
 ```
 
 Change `let z = sum(1, 2)` to just `sum(1, 2)`. Now you don't use the return value of a function, so you get a  `warning: 'Int' value is unused`.
-You can print out the return value, or just discard the value with _ = sum(1, 2).
+You can print out the return value, or just discard the value with _ = sum(1, 2). `_ =` is called the *discard pattern*, and can be used for just that, to indicate that you receive the returned value, but that you don't want to use it.
 
 By default, a function cannot modify its arguments values. They are immutable (read-only) references. 
 
