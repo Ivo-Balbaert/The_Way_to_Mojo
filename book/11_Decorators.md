@@ -1,15 +1,19 @@
 # 11 – Decorators
 
+Decorators are a powerful feature in many programming languages that allow you to modify the behavior of a function, method, struct or class without changing its source code. This is known as metaprogramming, since a part of the program (the decorator) tries to modify another part of the program §the struct or class) at compile time.
+
+Mojo also uses decorators to modify the properties and behaviors of types (like structs) and functions.
+
+Currently, the following decorators exist:  
 `@adaptive`     see matmul
 `@always_inline` see matmul
 `@noncapturing`
-- `@register_passable` --> 11.2
+* `@register_passable` --> 11.2
 `@unroll`
-- `@value` --> 11.1
-
+* `@value` --> 11.1
 
 ## 11.1 - @value
-The @value decorator makes defining simple aggregates of fields very easy; it synthesizes a lot of boilerplate for you.
+The @value decorator makes defining simple aggregates of fields very easy; it synthesizes a lot of boilerplate code for you.
 You cannot make a struct instance without having defined an __init_ method. If you try, you get the error: `'Coord' does not implement any '__init__' methods in 'let' initializer`
 
 See `value.mojo`:
@@ -23,7 +27,7 @@ fn main():
 ```
 
 However, this is easily remedied by prefixing the struct with the `@value` decorator.
-@value generates a member-wise initializer, a move constructor, and(or) a copy constructor for you.
+@value generates a member-wise initializer, a move constructor, and(or ??) a copy constructor for you.
 
 ```py
 @value
@@ -68,6 +72,8 @@ You can still write your own versions of these, while leaving the generated ones
 
 
 ## 11.2 - @register_passable
+This decorator is used to specify that a struct can be passed in a register instead of passing through memory, which generates much more efficient code.
+
 In § 3.11 we saw an example of a tuple that contains a struct instance.  
 You can't get items from such a tuple however: 
 
@@ -98,8 +104,7 @@ var x = (Coord(5, 10), 5.5)
 print(x.get[0, Coord]().x) # => 5
 ```
 
-The `@register_passable("trivial")` decorator tells Mojo that the type should be copyable and movable but that it has no user-defined logic for doing this. It also tells Mojo to prefer to pass the value in CPU registers (instead of normal memory), which can lead to efficiency benefits.  
-Small values like Int, Float, and SIMD are passed directly in machine registers instead of through an extra indirection.
+The `@register_passable("trivial")` decorator is a variant of @register_passable for trivial types like like Int, Float, and SIMD. It indicates that the type is register passable, so the value is passed in CPU registers instead of through normal memory, which needs an extra indirection. But it also says that the value is be copyable and movable, although it has no user-defined copy/move/destroy logic.  
 
 ## 11.3 - @parameter if
 `@parameter` if is an if statement that runs at compile-time.

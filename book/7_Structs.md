@@ -27,7 +27,9 @@ fn main():
     print(myInt.value)              # => 42
 ```
 
-The `self` argument denotes the current instance of the struct. Inside its own methods, the struct's type can also be called `Self`.
+The `self` argument denotes the current instance of the struct. 
+A method has a signature like this: `fn method1(self, other parameters)` and when object1 is an instance of its type, the method is called as: `object1.method1(params)`. So `object1` is automatically used as `self`, the first parameter of the method.
+Inside its own methods, the struct's type can also be called `Self`.
 
 ## 7.2 Comparing a FloatLiteral and a Bool
 You normally cannot compare a Bool with a FloatLiteral (instance of the MyNumber here):
@@ -114,7 +116,13 @@ See also `planets.mojo`.
 Declare a car with all attributes and print these out. Declare a Car with only a speed, and print out its model.
 (see *car.mojo*)
 
-## 7.4 Overloaded functions and methods
+## 7.4 Overloading
++
+Overloading a function (or method) name occurs when two or more functions or methods have the same name, but different parameter lists. The Mojo compiler selects the version that most closely matches the argument types.
+
+
+
+### 7.4.1 Overloaded functions and methods
 Like in Python, you can define functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs and let *dynamic dispatch* decide how to handle the data. However, when you want to ensure type safety, Mojo also offers full support for overloaded functions and methods, a feature that does not exist in Python.  
 This allows you to define multiple functions with the same name but with different arguments. This is a common feature called *overloading*, as seen in many languages, such as C++, Java, and Swift.  
 When resolving a function call, Mojo tries each candidate and uses the one that works (if only one works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous if it can’t figure out which one to pick. In the latter case, you can resolve the ambiguity by adding an explicit cast on the call site.  
@@ -154,7 +162,59 @@ Again, if you leave your argument names without type definitions, then the funct
 
 Although we haven’t discussed parameters yet (they’re different from function arguments), you can also overload structs, functions and methods based on parameters.  
 
-For another example, which shows method and function overloading in the same program, see `employee.mojo`.
+For other examples, which shows method and function overloading in the same program, see `employee.mojo` and `overloading2.mojo`.
+(Use employee.mojo as an example of overloading normal methods or functions.)
+
+### 7.4.2 Overloaded operators
+(?? First make an exercise/example for Rectangle with the area and perimeter methods, then overloading_operators with only __add__).
+
+In the following code snippet, we define a method __add__ in our struct Rectangle (line 1). Then we can use + as in line 2, adding two rectangles, and this will automatically call the __add__ method. Line 3 shows that both calls have the same result.
+
+See `overloading_operators.mojo`:
+```py
+struct Rectangle:
+    var length: Float32
+    var width: Float32
+
+    fn __init__(inout self, length: Float32, width: Float32):
+        self.length = length
+        self.width = width
+        print("Rectangle created with length:", self.length, "and width:", self.width)
+
+    fn area(self) -> Float32:
+        let area: Float32 = self.length * self.width
+        print("The area of the rectangle is:", area)
+        return area
+    
+    fn area(self, side: Float32) -> Float32:
+        let area: Float32 = side * side
+        print("The area of the square is:", area)
+        return area
+
+    fn perimeter(self) -> Float32:
+        let perimeter: Float32 = 2 * (self.length + self.width)
+        print("The perimeter of the rectangle is:", perimeter)
+        return perimeter
+
+    fn __add__(self, other: Rectangle) -> Rectangle:    # 1
+        return Rectangle(self.length + other.length, 
+                self.width + other.width)
+
+fn main():
+    let square = Rectangle(10.0, 10.0)
+    # => Rectangle created with length: 10.0 and width: 10.0
+    let rect = Rectangle(5.0, 7.0)
+    # => Rectangle created with length: 5.0 and width: 7.0
+    let squareArea = square.area()
+    # => The area of the rectangle is: 100.0
+    let squareArea2 = square.area(10.0)
+    # => The area of the square is: 100.0
+    let rect2 = square + rect                   # 2
+    # => Rectangle created with length: 15.0 and width: 17.0
+    # this is the same as calling:              
+    let rect2b = square.__add__(rect)           # 3
+    # => Rectangle created with length: 15.0 and width: 17.0
+```
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
 Mojo does not allow mutable references to overlap with other mutable references or with immutable borrows.

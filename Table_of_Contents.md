@@ -96,7 +96,9 @@
 ## 7.1 First example
 ## 7.2 Comparing a FloatLiteral and a Bool
 ## 7.3 A second example
-## 7.4 Overloaded functions and methods
+## 7.4 Overloading
+### 7.4.1 Overloaded functions and methods
+### 7.4.2 Overloaded operators
 ## 7.5 The __copyinit__ and __moveinit__ special methods
 ## 7.6 Using a large struct instance as function argument
 ## 7.7 Using inout with structs
