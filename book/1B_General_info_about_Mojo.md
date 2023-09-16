@@ -71,6 +71,7 @@ Goals / Roadmap:
 |  Date        | GH watch | stars | forks | issues | open pull reqs | Contributors | Discord | Twitter | 
 |--------------|----------|-------|-------|--------|----------------|--------------|-------  |----------
 | 2023 Aug 13  | 175      | 9200  |  188  |  82    |  /             |   4          |  18465  |   10400 | 
+| 2023 Sep 15  | 224      | 13895 |  1408 |  199    |  5            |   8          |  20900  |   13100 | 
 GH = GitHub
 
 2023 Aug 24: in the 4 months since the product keynote, the Modular community has grown to more than 120K+ developers, including tens of thousands of enterprises.

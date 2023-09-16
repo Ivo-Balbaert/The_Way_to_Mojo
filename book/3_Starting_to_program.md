@@ -109,7 +109,8 @@ For clarity it is best to place the `main` function at the bottom of the code fi
 
 
 ## 3.3.2 print and print_no_newline
-The `print` function displays any string (enclosed in "") Try out if you can also use '' to envelop strings. This `print` function automatically adds a new line. If you don 't want that, use the function `print_no_newline`. This function can also be used to print a series of elements, joined by spaces (see the last line in the following example).
+The `print` function displays any string (enclosed in "") Try out if you can also use '' to envelop strings. This `print` function automatically adds a new line. So if you just want a newline, use `print()`.
+If you don 't want a newline, use the function `print_no_newline`. This function can also be used to print a series of elements, joined by spaces (see the last line in the following example).
 
 ```py
 fn main():
@@ -162,7 +163,29 @@ Why didn't we write the Python form `def main()`, instead of `fn main()`? It tur
 
 Supporting both `def` and `fn` makes it easier to port Python functions to Mojo.
 
-In line 1 a variable `n` is declared with the keyword `var`, which means it is a real mutable variable whose value can change. If you need to define an immutable variable (a constant), use `let` instead. This enhances type-safety and performance.
+In line 1 a variable `n` is declared with the keyword `var`, which means it is a real mutable variable whose value can change. If you need to define an immutable variable (a constant, read-only), use `let` instead. This enhances type-safety and performance.
+
+For both let and var the following is true:
+* They create a new scoped runtime value.
+* They support name shadowing, allowing variables in inner scopes to have the same name as variables in outer scopes.  
+So in a nested scope, you can create a variable with a name that already exists in an outer scope. These variables will be totally independent of each other. Shadowing prevents unintended interference between variables of the same name in different scopes.
+* They can include type specifiers, patterns, and late initialization.
+
+See `late_initialization.mojo`:
+```py
+fn main():
+    let discount_rate: Float64  # no initialization yet! 
+    let book_id: Int = 123      # typing and initialization
+    # Late initialization and pattern matching with if/else
+    if book_id == 123:
+        discount_rate = 0.2  # 20% discount for mystery books
+    else:
+        discount_rate = 0.05  # 5% discount for other book categories
+    print("Discount rate for Book with ID ", book_id, "is:", discount_rate)
+# => Discount rate for Book with ID  123 is: 0.20000000000000001
+```
+
+See also: bookstore.mojo
 
 >Note: In `fn` functions all variables need to be declared with var or let.
 
@@ -286,7 +309,11 @@ from memory.unsafe import Pointer
 
 >Note: These from ... statements can be written everywhere in code. Code clarity can be enhanced by grouping them at the start of a code file.
 
-For some examples see:
+To import all types and functions from a module (say math), use:  
+`from math import *`.  
+However, it is recommended to only import the things you need.
+
+For some examples see: ??
 
 ## 3.6.2 Python modules
 Mojo can access the whole Python ecosystem by importing Python modules.

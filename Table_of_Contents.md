@@ -67,12 +67,14 @@
 ## 4.2 The numerical types
 ### 4.2.1 The Integer type
 ### 4.2.2 The FloatLiteral type and conversions
+## 4.2.3 Random numbers
 ## 4.3 The String types
 ### 4.3.1 The StringLiteral type
 ### 4.3.2 The String type
 ### 4.3.3 The StringRef type
 ### 4.3.4 Some String methods
 ## 4.4 Defining alias types
+## 4.5 Sorting a DynamicVector
 
 # 5 Control flow
 ## 5.1 if else and Bool values
@@ -106,11 +108,9 @@
 ## 7.9.3 Improving performance with the SIMD struct
 ## 7.9.4 How to create a custom parametric type: Array
 ## 7.9.5 Parametric functions and methods
-
 # 7.10 Lifetimes
 ## 7.10.1 Types that cannot be instantiated
 ## 7.10.2 Non-movable and non-copyable types
-
 
 # 8 Python integration
 ## 8.0 Comparing the same program in Python and Mojo
@@ -140,7 +140,7 @@
 ## 11.1 - @value
 ## 11.2 - @register_passable
 
-# 12 – Projects
-## 12.1 - Calculating the sum of two vectors
-## 12.2 - Calculating the Euclidean distance between two vectors
+# 20 – Projects
+## 20.1 - Calculating the sum of two vectors
+## 20.2 - Calculating the Euclidean distance between two vectors
 

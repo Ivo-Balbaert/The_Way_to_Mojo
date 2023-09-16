@@ -14,3 +14,6 @@ __add__		+
 __getitem__	a[i]
 __setitem__	a[i] = val
 
+__iter__  	to implement a for loop
+
+

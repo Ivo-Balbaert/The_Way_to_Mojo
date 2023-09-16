@@ -1,4 +1,6 @@
 # 7 Structs
+A struct is a custom data structure that groups related variables of different data types into a single unit that holds multiple values.
+
 Structs exist in all lower-level languages like C/C++ and Rust. You can build high-level abstractions for types (or "objects") in a *struct*. 
 A struct in Mojo is similar to a class in Python: they both support methods, fields, operator overloading, decorators for metaprogramming, and so on. To gain performance structs are by default stored on the stack .
 
@@ -103,12 +105,14 @@ Add the following line just after instantiating the struct:
 What do you see?
 This returns a compile time error: invalid call to '__lt__': right side cannot be converted from 'Int' to 'IntPair'.
 
+See also `planets.mojo`.
+
 **Exercise**
 1 -  Define a struct Point for a 3 dimensional point in space. Declare a point variable origin, and print out its items.
 (see *exerc7.1.mojo*)
-2 -  Define a struct Car with attributes speed and model. Define two __init__ functions, one which sets the speed and gives model the value "Base", and one which gives both speed and model a value; Declare a Car with only a speed, and print out its model.
+2 -  Define a struct Car with attributes brand, model, year and price. Define two __init__ functions, one which sets the brand and gives model the value "Base", and one which sets all attributes. Make a method that prints all attributes.  
+Declare a car with all attributes and print these out. Declare a Car with only a speed, and print out its model.
 (see *car.mojo*)
-
 
 ## 7.4 Overloaded functions and methods
 Like in Python, you can define functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs and let *dynamic dispatch* decide how to handle the data. However, when you want to ensure type safety, Mojo also offers full support for overloaded functions and methods, a feature that does not exist in Python.  
@@ -149,6 +153,8 @@ Mojo doesn’t support overloading solely on result type, and doesn’t use resu
 Again, if you leave your argument names without type definitions, then the function behaves just like Python with dynamic types. As soon as you define a single argument type, Mojo will look for overload candidates and resolve function calls as described above.
 
 Although we haven’t discussed parameters yet (they’re different from function arguments), you can also overload structs, functions and methods based on parameters.  
+
+For another example, which shows method and function overloading in the same program, see `employee.mojo`.
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
 Mojo does not allow mutable references to overlap with other mutable references or with immutable borrows.
@@ -335,6 +341,8 @@ Write a swap function that switches the values of variables x and y (see `swap.m
 In the following example, we mimic the behavior of unique pointers. It has a __moveinit__ function (see line 1), which moves the pointer (?? better wording).  
 In line 2 `take_ptr(p^)` the ownership of the `p` value is passed to another function take_ptr. Any subsequent use of p (as in line 3) gives the `error: use of uninitialized value 'p' - p is no longer valid here!`
 
+>Note: to type a ^ on a NLD(Dutch) Belgian keyboard, tap 2x on the key next to the P-key.
+
 See `transfer_owner.mojo`:
 ```py
 struct UniquePointer:
@@ -374,8 +382,8 @@ Another example is a FileDescriptor type. These types are *unique* or *move-only
 You can also define custom __moveinit__ methods. If you want complete control, you should use define methods like copy() instead of using the dunder method. 
 
 **Summary**  
-* Copyable type:    var s2 = s1    # s2.__copyinit__(s1) runs here, so s2 is self, s1 is existing (or other)
-* Moveable type:    var s3 = s1^   # s3.__moveinit__(s1) runs here, so s3 is self, s1 is existing
+* Copyable type (type must have __copyinit__):    var s2 = s1    # s2.__copyinit__(s1) runs here, so s2 is self, s1 is existing (or other)
+* Moveable type (type must have __moveinit__):    var s3 = s1^   # s3.__moveinit__(s1) runs here, so s3 is self, s1 is existing
 __moveinit__ has as signature:  
 `fn __moveinit__(inout self, owned existing: Self):`
     # Initializes a new `self` by consuming the contents of `existing`
