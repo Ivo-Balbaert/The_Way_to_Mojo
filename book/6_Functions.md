@@ -92,8 +92,11 @@ You are stopped by the following compiler errors:
 
 ### 6.4.1 General rules for def and fn arguments
 * All values passed into a `Python def` function use *reference semantics*. This means the function can modify mutable objects passed into it and those changes are visible outside the function. 
+
 * All values passed into a `Mojo def` function use *value semantics* by default. Compared to Python, this is an important difference: a Mojo def function receives a copy of all arguments. So it can modify arguments inside the function, but the changes are not visible outside the function.
-* All values passed into a `Mojo fn` function are *immutable references* by default. This means it is not a copy and the function can read the original object, but it cannot modify the object at all: this is called *borrowing*.
+A def argument without an explicit type annotation defaults to object.
+
+* All values passed into a `Mojo fn` function are *immutable (read-only)references* by default. This means it is not a copy and the function can read the original object, but it cannot modify the object at all: this is called *borrowing*.
 The default argument convention for fn functions is *borrowed*. You can make this explicit by prefixing the argument's names with the word `borrowed`:  
 
 ```py

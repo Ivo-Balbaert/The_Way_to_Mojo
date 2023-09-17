@@ -394,6 +394,10 @@ fn main():
     print(x.value) # => 43
 ```
 
+inout is frequently used when a method needs to mutate self.
+
+See also `counter.mojo`
+
 **Exercise**
 Write a swap function that switches the values of variables x and y (see `swap.mojo`).
 
@@ -417,7 +421,6 @@ struct UniquePointer:
     fn __del__(owned self):
         self.ptr = 0
 
-
 fn take_ptr(owned p: UniquePointer):
     print("take_ptr")  # => take_ptr
     print(p.ptr)       # => 100
@@ -437,6 +440,8 @@ fn work_with_unique_ptrs():
 fn main():
     work_with_unique_ptrs()  
 ```
+
+This is useful when working with unique instances of some type, or when you want to avoid copies.
 
 Another example is a FileDescriptor type. These types are *unique* or *move-only* types. In Mojo, you define the __moveinit__ method to take ownership of a unique type. The consuming move constructor __moveinit__ takes ownership of an existing instance, and moves its internal implementation details over to a new instance.  
 You can also define custom __moveinit__ methods. If you want complete control, you should use define methods like copy() instead of using the dunder method. 

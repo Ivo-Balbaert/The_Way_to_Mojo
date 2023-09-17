@@ -129,7 +129,7 @@ The compiler has optimized away everything that took time in the previous versio
 As the 1st parameter, you can also set up the number of warmup iterations (num_warmup).  
 As the 3rd parameter, you can also set up the minimum running time (min_time_ns).
 
-## 10.4 Module buffer
+## 10.4 Type Buffer from module memory.buffer
 A buffer (defined in module memory.buffer) doesn't own the underlying memory, it's a view over data that is owned by another object.
 
 See `buffer1.mojo`:
@@ -195,7 +195,7 @@ Utilize SIMD to manipulate 32 bytes of data at the same time (see lines 6- ).
 `aligned_stack_allocation`: Allocate to the stack with a given alignment for extra padding
 `prefetch`: Specifies how soon until the data will be visited again and how the data will be used, to optimize for the cache.
 
-## 10.5 NDBuffer from module buffer
+## 10.5 Type NDBuffer from module memory.buffer
 This is an N-dimensional Buffer, that can be used both statically, and dynamically at runtime.  
 NDBuffer can be parametrized on rank, static dimensions and Dtype. It does not own its underlying pointer.
 
@@ -296,7 +296,37 @@ This is implemented in the get() method from line 10.
 *idx is a variadic list of Int, so you can pass in as many as you like.
 get() Creates a closure named check_dim decorated by @parameter so it runs at compile time, it's checking that each item in *idx is less then the same dimension in the static shape. unroll is used to run it at compile-time i amount of times. This is shown in line 11.
 
-## 10.6 
+## 10.6 Querying the host target info with module sys.info
+Methods for querying the host target info are implemented in module `sys.info`.
+
+See `target_info.mojo`:
+```py
+
+```
+
+To check the alignment of any type, use the alignof function. In the struct Foo (line 1) it returns 4 bytes. This means each instance of Foo will start at a memory address that is a multiple of 4 bytes. There will also be 3 bytes of padding to accommodate the UInt8.  
+bitwidthof in line 2 uses bits instead of bytes to show the width of the type in bits. Type Foo will take 24 bits of padding, as each object can only be placed at multiples of 64 in memory.
+
+simdwidthof is used to show how many of the type can fit into the targets SIMD register, e.g. to see how many uint64's can be processed with a single instruction. For our system, the SIMD register can process 4 UInt64 values at once (see line 3). 
+simd_bit_width is the total amount of bits that can be processed at the same time on the host systems SIMD register, line 4 shows 256.
+simd_byte_width is the total amount of bytes that can be processed at the same time on the host systems SIMD register, , line 5 shows 32.  
+The total size in bytes of an AnyType is given by the sizeof function. (line 6).
+
+The same module also contains the values os_is_linux, os_is_macos, os_is_windows, which can be used to conditionally compile code based on the operating system (see line 7).
+
+A number of other functions starting with has_ or is_ give info about the processor type/capabilities of the host system. (see line 8 and following).
+* has_sse4(): SSE4 is the older SIMD instruction extension for x86 processors (introduced in 2006).
+* has_avx(): AVX (Advanced Vector Extensions) are instructions for x86 SIMD support. They are commonly used in Intel and AMD chips (from 2011 onwards).
+* has_avx2(): AVX2 (Advanced Vector Extensions 2) are instructions for x86 SIMD support, expanding integer commands to 256 bits (from 2013 onwards).
+* has_avx512f(): AVX512 (Advanced Vector Extensions 512) added 512 bit support for x86 SIMD instructions (from 2016 onwards).
+* has_intel_amx(): AMX is an extension to x86 with instructions for special units designed for ML workloads such as TMUL which is a matrix multiply on BF16 (from 2023 onwards).
+* has_neon(): Neon also known as Advanced SIMD is an ARM extension for specialized instructions.
+* is_apple_m1(): The Apple M1 chip contains an ARM CPU that supports Neon 128 bit instructions and GPU accessible through Metal API.
+
+## 10.7 
+
+
+
 
 
 

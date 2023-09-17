@@ -339,6 +339,7 @@ Strings are 0-index based, and the i-th ASCII character can be read with `s[i]` 
 
 This works because a String is backed by a data structure known as `DynamicVector[SIMD[si8, 1]]` or `DynamicVector[Int8]`. This is similar to a Python list, here it's storing multiple int8's that represent the characters.  
 You can build a string starting from a DynamicVector (see line 5), and add two ASCII characters to it. 
+
 To display it, print(vec) doesn't work. To do that, we can use a `StringRef` to get a pointer to the same location in memory, but with the methods required to output the numbers as text, see lines 6-7.
 
 ```py
@@ -421,7 +422,53 @@ It has the methods `getitem`, equal, not equal and length:
 ### 4.3.4 Some String methods
 See `string_methods.mojo`:
 ```py
+fn main() raises:    # raised needed because of atoi
+    let s = String("abcde")
+    print(s) # => abcde
 
+    for i in range(len(s)):     # 1
+        print(s[i])
+    # a
+    # b
+    # c
+    # d
+    # e
+    # Slicing:
+    print(s[2:4]) # => cd       # 2
+    print(s[1:])  # => bcde     # 3
+    print(s[:-1]) # => abcd     # 4
+    print(s[::2]) # => ace      # 5
+    
+    let emoji = String("🔥😀")
+    print("fire:", emoji[0:4])    # 11 => fire: 🔥
+    print("smiley:", emoji[4:8])  # => smiley: 😀
+
+    # Appending:
+    let x = String("Left")
+    let y = String("Right")
+    var c = x + y
+    c += "🔥"
+    print(c) # => LeftRight🔥   # 6
+
+    # Join:
+    let j = String("🔥")
+    print(j.join('a', 'b')) # => a🔥b     # 7
+    print(j.join(40, 2))    # => 40🔥2 
+
+    let sit = StaticIntTuple[3](1,2,3)
+    print(j.join(sit)) # => 1🔥2🔥3       # 8
+
+    let n = atol("19")
+    print(n)                               # 9
+    # let e = atol("hi") # => Unhandled exception caught during execution: 
+    # String is not convertible to integer.
+    # print(e) 
+
+    print(chr(97))  # => a
+    print(ord('a')) # => 97
+    print(ord('🔥')) # 9 => -16
+    print(isdigit(ord('8'))) # => True
+    print(isdigit(ord('a'))) # => False
 ```
 
 Looping over a string is shown in line 1.  
@@ -430,7 +477,7 @@ Slice all characters starting from 1 (line 3).
 Slice all characters up to the second last (line 4).
 Only get every second item after the start position (line 5).
 
-Both slicing and indexing are on bytes, not characters, for example an emoji is 4 bytes so you need to use this slice of 4 bytes to print the character (see line 11):
+Both slicing and indexing work with bytes, not characters, for example an emoji is 4 bytes so you need to use this slice of 4 bytes to print the character (see line 11):
 ```py
     let emoji = String("🔥😀")
     print("fire:", emoji[0:4])    # 11 => fire: 🔥

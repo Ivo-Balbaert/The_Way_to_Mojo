@@ -6,7 +6,6 @@ Mojo also uses decorators to modify the properties and behaviors of types (like 
 
 Currently, the following decorators exist:  
 `@adaptive`     see matmul
-`@always_inline` see matmul
 `@noncapturing`
 * `@register_passable` --> 11.2
 `@unroll`
@@ -14,6 +13,8 @@ Currently, the following decorators exist:
 
 ## 11.1 - @value
 The @value decorator makes defining simple aggregates of fields very easy; it synthesizes a lot of boilerplate code for you.
+@value generates a member-wise initializer, a copy constructor and a move constructor.
+
 You cannot make a struct instance without having defined an __init_ method. If you try, you get the error: `'Coord' does not implement any '__init__' methods in 'let' initializer`
 
 See `value.mojo`:
@@ -27,7 +28,6 @@ fn main():
 ```
 
 However, this is easily remedied by prefixing the struct with the `@value` decorator.
-@value generates a member-wise initializer, a move constructor, and(or ??) a copy constructor for you.
 
 ```py
 @value
@@ -66,6 +66,11 @@ struct MyPet:
     fn __moveinit__(inout self, owned existing: Self):
         self.name = existing.name^
         self.age = existing.age
+```
+
+Here is a complete example with the Pet struct:
+See `value2.mojo`:
+```py
 ```
 
 You can still write your own versions of these, while leaving the generated ones in place.
@@ -123,8 +128,16 @@ fn main():
     # => ASSERT ERROR: assertion failed
 ```
 
-see § 7.9.6 (ctime_logic.mojo).
+The decorator is also used on nested functions that capture runtime values, creating “parametric” capturing closures (example ??).
+
+See also § 7.9.6 (ctime_logic.mojo), § 10.6 (os_is_linux)
 
 ## 11.4 - @staticmethod
 `@staticmethod` can (only ??) be used in a struct that cannot be instantiated, for an example see § 7.10.1
 
+## 11.5 - @always_inline
+This decorator suggests the compiler to always inline the decorated function, improving the runtime performance by reducing function call overhead.
+
+See matmul
+
+## 11.6 - 

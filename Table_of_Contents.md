@@ -135,7 +135,9 @@
 ### 10.1.2 debug_assert
 ?? ## 10.2 Module testing 
 ## 10.3 Module benchmark
-## 10.4 Module buffer
+## 10.4 Type Buffer from module memory.buffer
+## 10.5 Type NDBuffer from module memory.buffer
+## 10.6 Querying the host target info with module sys.info
 
 
 # 11 – Decorators

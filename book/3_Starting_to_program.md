@@ -309,6 +309,17 @@ from memory.unsafe import Pointer
 
 >Note: These from ... statements can be written everywhere in code. Code clarity can be enhanced by grouping them at the start of a code file.
 
+If you have many types to import, enclose them within (), like this:
+```py
+from sys.info import (
+    alignof,
+    bitwidthof,
+    simdwidthof,
+    simdbitwidth,
+    simd_byte_width,
+    sizeof
+)
+```
 To import all types and functions from a module (say math), use:  
 `from math import *`.  
 However, it is recommended to only import the things you need.
