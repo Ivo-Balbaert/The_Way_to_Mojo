@@ -323,7 +323,42 @@ A number of other functions starting with has_ or is_ give info about the proces
 * has_neon(): Neon also known as Advanced SIMD is an ARM extension for specialized instructions.
 * is_apple_m1(): The Apple M1 chip contains an ARM CPU that supports Neon 128 bit instructions and GPU accessible through Metal API.
 
-## 10.7 
+## 10.7 The time module
+
+See `timing.mojo`:
+```py
+from time import now, sleep, time_function
+
+fn sleep1ms():
+    sleep(0.001)
+
+fn measure():
+    fn closure():
+        sleep1ms()
+
+    let nanos = time_function[closure]()   # 3
+    print("sleeper took", nanos, "nanoseconds to run")
+    # => sleeper took 1066729 nanoseconds to run
+
+fn main():
+    print(now())    # 1 => 227897314188
+
+    # sleep()
+    let tic = now()     # 2
+    sleep(0.001)
+    let toc = now() - tic
+    print("slept for", toc, "nanoseconds")
+    # => slept for 1160397 nanoseconds
+
+    measure()   
+```
+
+The now() function (line 1) gets the current number of nanoseconds using the systems monotonic clock, which is generally the time elapsed since the machine was booted. Behavior will vary by platform for states like sleep etc.  
+The sleep() function can be used to make a thread sleep for the duration in seconds, here 1 ms (see lines 2 and following).  
+
+time_function() (used in line 3) tells you how long it takes (in nanoseconds) for a function closure to execute: pass in a nested function (also known as a closure that takes no arguments and returns None as a parameter), to time a function for example sleep1ms.
+
+## 10.8 
 
 
 

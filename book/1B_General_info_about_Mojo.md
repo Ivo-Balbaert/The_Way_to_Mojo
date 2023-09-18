@@ -23,7 +23,7 @@ Its logo is the ![fire emoticon](??), the U+1F525 Unicode character.
 Mojo’s source files have the fire emoticon extension like hello.🔥, or alternatively *.mojo*, as in *hello.mojo*.
 
 Mojo users are called *mojicians 🪄*.
-Its univers is called the *Modverse*.
+The universe of all things Mojo is called the *Modverse*.
 
 To search on internet for info on Mojo, use the search terms  "Mojo programming language" or "mojolang". 
 
@@ -34,6 +34,8 @@ Closed Beta Local SDK:
 [Developer portal](https://developer.modular.com)
 
 Much more information can be found at the Modular/Mojo [Website](https://www.modular.com/mojo), particularly in the [Docs section](https://docs.modular.com/mojo/).
+
+Weekly newsletter: https://www.modular.com/newsletters/modverse-weekly-1
 
 The source code repository of the language (GitHub repo, currently contains no source yet) is at [here](https://github.com/modularml/mojo). 
 
@@ -62,7 +64,6 @@ Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native suppo
 
 Goals / Roadmap:
 * 2023 Jun 21 - "We expect that Mojo will be open-sourced. However, Mojo is still young, so we will continue to incubate it within Modular until more of its internal architecture is fleshed out. We don’t have an established plan for open-sourcing yet."
-* Releasing a local Mojo SDK (closed beta)
 * a command-line REPL is coming soon
 * 2023 Jun 17 - A rough estimate mentioned by the team is that the language might be very usable for a lot of things in 18 months, so about 2024 Dec
 
