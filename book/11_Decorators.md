@@ -6,10 +6,7 @@ Mojo also uses decorators to modify the properties and behaviors of types (like 
 
 Currently, the following decorators exist:  
 `@adaptive`     see matmul
-`@noncapturing`
-* `@register_passable` --> 11.2
 `@unroll`
-* `@value` --> 11.1
 
 ## 11.1 - @value
 The @value decorator makes defining simple aggregates of fields very easy; it synthesizes a lot of boilerplate code for you.
@@ -18,7 +15,7 @@ The @value decorator makes defining simple aggregates of fields very easy; it sy
 You cannot make a struct instance without having defined an __init_ method. If you try, you get the error: `'Coord' does not implement any '__init__' methods in 'let' initializer`
 
 See `value.mojo`:
-```py
+```mojo
 struct Coord:
     var x: Int
     var y: Int
@@ -27,9 +24,16 @@ fn main():
     let p = Coord(0, 0)  # error!
 ```
 
+(https://mojodojo.dev/guides/decorators/value.html elaborates this further:
+- implement __init__ --> let pair = Pair(5, 10) works
+- let pair2 = pair doesn't work, error: not copyable
+- implement __moveinit__ and __copyinit__
+- now # Move object let pair2 = pair^ and # Copy object let pair3 = pair2 works
+- but you can achieve the same by just using @value)
+
 However, this is easily remedied by prefixing the struct with the `@value` decorator.
 
-```py
+```mojo
 @value
 struct Coord:
     var x: Int
@@ -41,7 +45,7 @@ fn main():
 ```
 
 So if you write the following:  
-```py
+```mojo
 @value
 struct MyPet:
     var name: String
@@ -50,7 +54,7 @@ struct MyPet:
 
 the compiler generates the following boilerplate code:
 
-```py
+```mojo
 struct MyPet:
     var name: String
     var age: Int
@@ -70,19 +74,54 @@ struct MyPet:
 
 Here is a complete example with the Pet struct:
 See `value2.mojo`:
-```py
+```mojo
+@value
+struct Pet:
+    var name: String
+    var age: Int
+
+fn main():
+    # Creating a new pet
+    let myCat = Pet("Wia", 6)
+    print("Original cat name: ", myCat.name)
+    print("Original cat age: ", myCat.age)
+    # Copying a pet
+    let copiedCat = Pet(myCat.name, 7)
+    print("Copied cat name: ", copiedCat.name)
+    print("Copied cat age: ", copiedCat.age)
+    let movedCat = myCat
+    print("Moved cat name: ", movedCat.name)
+    print("Moved cat age: ", movedCat.age)
+# =>
+# Original cat name:  Wia
+# Original cat age:  6
+# Copied cat name:  Wia
+# Copied cat age:  7
+# Moved cat name:  Wia
+# Moved cat age:  6
 ```
 
 You can still write your own versions of these, while leaving the generated ones in place.
 
 
 ## 11.2 - @register_passable
+A String contains a pointer that requires special constructor and destructor behavior to allocate and free memory, so it's memory only, it cannot be passed into registers.
+A UInt32 is just 32 bits for the actual value and can be directly copied into and out of machine registers.
+If you have a struct which contains only field values that can be passed into registers, mark the struct with @register_passable to enable this behavior for the whole struct, for example:
+
+```mojo
+@register_passable
+struct Pair:
+    var a: UInt32
+    var b: UInt32
+```
+
 This decorator is used to specify that a struct can be passed in a register instead of passing through memory, which generates much more efficient code.
 
 In § 3.11 we saw an example of a tuple that contains a struct instance.  
 You can't get items from such a tuple however: 
 
-```py
+```mojo
 @value
 struct Coord:
     var x: Int
@@ -98,7 +137,7 @@ A memory-only type means it can't be passed through registers.
 Marking the struct with the decorator `@register_passable` solves this:
 
 See `register_passable.mojo`:
-```py
+```mojo
 @value
 @register_passable
 struct Coord:
@@ -109,7 +148,17 @@ var x = (Coord(5, 10), 5.5)
 print(x.get[0, Coord]().x) # => 5
 ```
 
-The `@register_passable("trivial")` decorator is a variant of @register_passable for trivial types like like Int, Float, and SIMD. It indicates that the type is register passable, so the value is passed in CPU registers instead of through normal memory, which needs an extra indirection. But it also says that the value is be copyable and movable, although it has no user-defined copy/move/destroy logic.  
+The `@register_passable("trivial")` decorator is a variant of @register_passable for trivial types like like Int, Float, and SIMD.
+Trivial means: it is always pass by copy/value.
+Examples of trivial types:
+* Arithmetic types such as Int, Bool, Float64 etc.
+* Pointers (the address value is trivial, not the data being pointed to)
+* Arrays of other trivial types including SIMD
+* Struct types decorated with @register_passable("trivial"), that can only contain other trivial types:
+
+It indicates that the type is register passable, so the value is passed in CPU registers instead of through normal memory, which needs an extra indirection. But it also says that the value is be copyable and movable, you can't define __init__, __copyinit__, __moveinit__ and __del__.  
+
+>Note: mostly @value and @register_passable are used together.
 
 ## 11.3 - @parameter if
 `@parameter` if is an if statement that runs at compile-time.
@@ -117,7 +166,7 @@ Some examples:
 
 You can use it to define a debug_only assert.  
 See `parameter1.mojo`:
-```py
+```mojo
 from testing import assert_true
 
 fn main():
@@ -132,12 +181,46 @@ The decorator is also used on nested functions that capture runtime values, crea
 
 See also § 7.9.6 (ctime_logic.mojo), § 10.6 (os_is_linux)
 
-## 11.4 - @staticmethod
+## 11.4 - @parameter 
+**Using @parameter in a function**
+See `parameter2.mojo`:
+```mojo
+fn add_print[a: Int, b: Int](): 
+    @parameter
+    fn add[a: Int, b: Int]() -> Int:
+        return a + b
+
+    let x = add[a, b]()
+    print(x)
+
+fn main():
+    add_print[5, 10]()  # => 15
+```
+
+The above code will run at compile time, so that you pay no runtime price for anything inside the function. This translates at compile-time to:
+```mojo
+fn add_print(): 
+    let x = 15
+    print(x)
+
+add_print()
+```
+The add calculation ran at compile time, so those extra instructions don't happen at runtime!
+
+## 11.5 - @staticmethod
 `@staticmethod` can (only ??) be used in a struct that cannot be instantiated, for an example see § 7.10.1
 
-## 11.5 - @always_inline
-This decorator suggests the compiler to always inline the decorated function, improving the runtime performance by reducing function call overhead.
+## 11.6 - @always_inline
+Normally the compiler will do inlining automatically where it improves performance.
+But you can force this behavior with @always_inline:
+This decorator forces the compiler to always inline the decorated function, directly into the body of the calling function for the final binary.  
+
+This improves the runtime performance by reducing function call overhead (eliminates jumping to a new point in code). The downside is that it can increase the binary size for the duplicated functions.
+
+The version `@always_inline("nodebug")` works the same, but doesn't include debug information so you can't step into the function when debugging, but it will reduce debug build binary size.
 
 See matmul
 
-## 11.6 - 
+## 11.7 - @noncapturing
+Marks a closure as not capturing variables from the outer scope. See § 6.5.1
+

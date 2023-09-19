@@ -9,7 +9,7 @@ Both constrained and debug_assert are built-in.
 In the following example we ensure that the two parameters to `assert_positives` are both > 0:
 
 See `constrained.mojo`:
-```py
+```mojo
 fn add_positives[x: Int, y: Int]() -> UInt8:
     constrained[x > 0, "use a positive number"]()     # 1A
     constrained[y > 0]()     # 1B
@@ -38,7 +38,7 @@ constrained.mojo:2:23: note:               constraint failed: use a positive num
 `debug_assert[cond, err_msg]` checks that the condition is true, but only in debug builds. It is removed from the compilation process in release builds. It works like assert in C++.
 
 See `debug_assert.mojo`:
-```py
+```mojo
 fn test_debug_assert[x: Int](y: Int):
     debug_assert(x == 42, "x is not equal to 42")
     debug_assert(y == 42, "y is not equal to 42")
@@ -61,7 +61,7 @@ Import it in your code through: `from benchmark import Benchmark`
 We'll benchmark the execution of the fibonacci function, defined as follows:
 (code: see `running_benchmark.mojo`)`
 
-```py
+```mojo
 from benchmark import Benchmark
 
 fn fib(n: Int) -> Int:
@@ -74,7 +74,7 @@ fn fib(n: Int) -> Int:
 To benchmark it, create a nested fn (here called `closure`) that takes no arguments and doesn't return anything, then pass it in as a parameter:  `Benchmark().run[closure]()`.
 This returns the execution time in nanoseconds.
 
-```py
+```mojo
 fn bench():
     fn closure():
         let n = 35
@@ -95,7 +95,7 @@ fn main():
 
 Let us now compare this to the iterative version (fib_iterative):
 
-```py
+```mojo
 fn fib_iterative(n: Int) -> Int:
     var count = 0
     var n1 = 0
@@ -133,7 +133,7 @@ As the 3rd parameter, you can also set up the minimum running time (min_time_ns)
 A buffer (defined in module memory.buffer) doesn't own the underlying memory, it's a view over data that is owned by another object.
 
 See `buffer1.mojo`:
-```py
+```mojo
 from memory.buffer import Buffer
 from memory.unsafe import DTypePointer
 
@@ -200,7 +200,7 @@ This is an N-dimensional Buffer, that can be used both statically, and dynamical
 NDBuffer can be parametrized on rank, static dimensions and Dtype. It does not own its underlying pointer.
 
 See `ndbuffer1.mojo`:
-```py
+```mojo
 from utils.list import DimList
 from memory.unsafe import DTypePointer
 from memory.buffer import NDBuffer
@@ -300,8 +300,58 @@ get() Creates a closure named check_dim decorated by @parameter so it runs at co
 Methods for querying the host target info are implemented in module `sys.info`.
 
 See `target_info.mojo`:
-```py
+```mojo
+from sys.info import (
+    alignof,
+    bitwidthof,
+    simdwidthof,
+    simdbitwidth,
+    simd_byte_width,
+    sizeof,
+    os_is_linux,
+    os_is_macos,
+    os_is_windows
+)
+from sys.info import (
+    has_avx,
+    has_avx2,
+    has_avx512f,
+    has_intel_amx,
+    has_neon,
+    has_sse4,
+    is_apple_m1
+)
 
+struct Foo:
+    var a: UInt8
+    var b: UInt32
+
+fn main():
+    print(alignof[UInt64]())  # => 8
+    print(alignof[Foo]())     # 1 => 4
+    print(bitwidthof[Foo]())  # 2 => 64
+    print(simdwidthof[DType.uint64]()) # 3 => 4
+    print(simdbitwidth())     # 4 => 256
+    print(simd_byte_width())  # 5 => 32
+    print(sizeof[UInt8]())    # 6 => 1
+
+    @parameter                # 7
+    if os_is_linux():
+        print("this will be included in the binary")
+    # => this will be included in the binary
+    else:
+        print("this will be eliminated from compilation process")
+
+    print(os_is_macos())     # => False
+    print(os_is_windows())   # => False
+
+    print(has_sse4())        # => True
+    print(has_avx())         # => True
+    print(has_avx2())        # => True
+    print(has_avx512f())     # => False
+    print(has_intel_amx())   # => False
+    print(has_neon())        # => False
+    print(is_apple_m1())     # => False
 ```
 
 To check the alignment of any type, use the alignof function. In the struct Foo (line 1) it returns 4 bytes. This means each instance of Foo will start at a memory address that is a multiple of 4 bytes. There will also be 3 bytes of padding to accommodate the UInt8.  
@@ -326,7 +376,7 @@ A number of other functions starting with has_ or is_ give info about the proces
 ## 10.7 The time module
 
 See `timing.mojo`:
-```py
+```mojo
 from time import now, sleep, time_function
 
 fn sleep1ms():
@@ -358,10 +408,141 @@ The sleep() function can be used to make a thread sleep for the duration in seco
 
 time_function() (used in line 3) tells you how long it takes (in nanoseconds) for a function closure to execute: pass in a nested function (also known as a closure that takes no arguments and returns None as a parameter), to time a function for example sleep1ms.
 
-## 10.8 
+## 10.8 Vectors from the module utils.vector
 
+## 10.8.1 DynamicVector
+(see also § 4.2.1, 4.5, 7.9.2)
+This is a dynamically-allocated vector.
+It supports pushing and popping from the back resizing the underlying storage as needed. 
 
+See `dynamicvector1.mojo`:
+```mojo
+from utils.vector import DynamicVector
 
+fn main():
+    var vec = DynamicVector[Int](8)  # 1
 
+    vec.push_back(10)
+    vec.push_back(20)
+    print(len(vec))     # 2 => 2
+    print(vec.size)     # => 2
+
+    print(vec.capacity) # 3 => 8
+    print(vec.data[0])  # 4 => 10
+   
+    print(vec[0])       # 5 => 10
+    vec[1] = 42     
+    print(vec[1])       # => 42
+    print(len(vec))     # => 2
+    vec[6] = 10         # 6
+    print(len(vec))     # => 2
+
+    let vec2 = vec      # 7
+    vec[0] = 99
+    print(vec2[0])      # => 99
+
+    let vec3 = vec.deepcopy()  # 8
+    vec[1] = 100
+    print(vec3[1])      # => 42
+
+    print(len(vec))     # => 2
+    print(vec.pop_back()) # 9 => 
+    print(len(vec))     # => 1
+
+    vec.reserve(16)     # 10
+    print(vec.capacity) # => 16
+
+    vec.resize(10)      # 11
+    print(vec.size)     # => 10
+    
+    vec.clear()         # 12
+    print(vec[1])       # => 1  ??
+    print(vec.size)     # => 0
+    print(len(vec))     # => 0
+```
+
+You can reserve memory to add elements without the cost of copying everything if it grows too large. For example, we reserve 8 bytes in line 1 to store Int values.  
+Adding elements to the back is done with the push_back method, and len (line 2) gives the number of items, which is also given by vec.size. 
+(why are there two ways ??) 
+Other useful variables are:
+* capacity: the memory reserved for the vector
+* the `data` field, which gives access to the underlying storage by indexing. But you can also use indexing by using the vector's name directly as in line 5.
+
+>Notes: 
+> when setting new elements with vec[i]=  (as in line 6), len doesn't change. If you need len, only use push_back
+> ?? until now (2023 Sep 19) there is no bounds checking
+
+Copying a DynamicVector (line 7) will result in a shallow copy. vec2 will be a pointer to the same location in memory (schema ??). If we modify vec, then vec2 will also be updated.  
+
+Use a deep copy (line 8) to copy all the data to a different location in memory so it's independent from the original. Modifying the original then won't effect the new copy.
+
+The inverse to push_back is the method pop_back, which will access the last element, deallocate it, and reduce the element size by 1 (see line 9).
+
+The `reserve` method lets you change the capacity (line 10). If it's greater than the current capacity then data is reallocated and moved. If it's smaller, nothing happens. 
+
+The `resize` method discards elements if smaller than current size, or adds uninitialized data if larger (line 11) (why still need for reserve, difference, no reallocation ??). 
+
+The `clear` method deallocates all items in the vector (line 12, doesn't seem to work). The size is set to 0.
+
+## 10.8.2 InlinedFixedVector
+This type is a dynamically-allocated vector with small-vector optimization.
+It does not resize or implement bounds checks, it is initialized with both a small-vector size (statically known) and a dynamic (not known at compile time) number of slots, and when it is deallocated, it frees its memory.
+This data structure is useful for applications where the number of required elements is not known at compile time, but once known at runtime, is guaranteed to be equal to or less than a certain capacity.
+
+See `InlinedFixedvector.mojo`:
+```mojo
+from utils.vector import InlinedFixedVector
+
+fn main():
+    var vec = InlinedFixedVector[4, Int](8)  # 1
+
+    vec.append(10)      # 2
+    vec.append(20)
+    print(len(vec))     # => 2
+
+    print(vec.capacity)             # => 8
+    print(vec.current_size)         # => 2
+    print(vec.dynamic_data[0])      # => 1  (??)
+    print(vec.static_data[0])       # => 10
+
+    print(vec[0])       # => 10
+    vec[1] = 42
+    print(vec[1])       # => 42
+
+    print(len(vec))     # => 2
+    vec[6] = 10
+    print(len(vec))     # => 2
+```
+
+In line 1, we statically allocate 4 elements, and reserve a capacity of 8 elements. To add elements to the vector, use the append method (line 2).
+Access and assign elements using indexes. 
+
+>Notes: 
+> when setting new elements with vec[i]= , len doesn't change. If you need len, only use append
+> ?? until now (2023 Sep 19) there is no bounds checking
+
+To make a shallow or deep copy, or clear all elements, tee § 10.8.1
+
+## 10.8.3 UnsafeFixedVector
+This type is a dynamically-allocated vector that does not resize or implement bounds checks (see line 3).
+It is initialized with a dynamic (not known at compile time) number of slots.
+
+This data structure is useful for applications where the number of required elements is not known at compile time, but once known at runtime, is guaranteed to be equal to or less than a certain capacity.
+
+You index them as InlineFixedVector (with the same note). Only a shallow copy is possible.
+
+```mojo
+    var vec2 = UnsafeFixedVector[Int](8) # 3
+    vec2.append(10)
+    vec2.append(20)
+    print(len(vec))   # => 2
+
+    print(vec2.capacity)    # => 8
+    print(vec2.data[0])     # => 10
+    print(vec2.size)        # => 2
+
+    vec2.clear()
+    print(vec2[1])          # => 20 
+```
 
 

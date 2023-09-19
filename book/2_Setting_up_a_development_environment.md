@@ -655,11 +655,13 @@ See also: § 2.7.2 for how to work with a Jupyter notebook in VS Code.
 ### 2.7.2 Visual Studio Code (VS Code)
 This is one of the most popular programmer’s editors today (https://code.visualstudio.com/)
 
-The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo). It features (v 0.2.0):
+The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo). It features (v 0.2.1):
 * Syntax highlighting for .mojo and .🔥 files
 * Code completion
 * Code diagnostics and quick fixes
 * API docs on hover
+* Code formatting
+* Run Mojo File
 
 Another unofficial plugin is here:
  (mojo-lang) [here](https://marketplace.visualstudio.com/items?itemName=mojo-lang.mojo-lang&ssr=false#review-details) which is at v0.1.0 and provides syntax-highlighting. Later a LS (Language Server) will be added.
@@ -667,7 +669,7 @@ Another unofficial plugin is here:
 There is also another plugin [Mojo-lang](https://marketplace.visualstudio.com/items?itemName=CristianAdamo.mojo&ssr=false#review-details) by Cristian Adamo.
 
 
-#### 2.7.2.1 An easy way to execute code 
+#### 2.7.2.1 An easy way to execute code (not needed anymore!)
 (?? this works only after local installation)  
 
 Install the [vs-code-runner](https://marketplace.visualstudio.com/items?itemName=HarryHopkinson.vs-code-runner).  
@@ -711,6 +713,10 @@ See:
 * https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter
 * https://github.com/microsoft/vscode-jupyter/wiki/Connecting-to-a-remote-Jupyter-server-from-vscode.dev
 
+
+#### 2.7.2.2B Using a Docker file
+The repo website https://github.com/modularml/mojo/tree/main/examples/docker contains a Docker example file `Dockerfile.mojosdk`.
+
 #### 2.7.2.3 Compiling and executing a simple program
 To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  
 
@@ -718,7 +724,7 @@ To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to
 The first is the usual "Hello World!" program, which is in Mojo exactly the same as in Python, because Mojo is a superset of Python:
 
 See `hello_world.mojo`:
-```py
+```mojo
 fn main():
     print("Hello World from Mojo!") # => Hello World! from Mojo
 ```
@@ -727,7 +733,7 @@ In a source file however we have to use a starting point function called `main()
 
 A version with `def` instead of `fn` is also a valid Mojo program:
 See `hello_world_def.mojo`:
-```py
+```mojo
 def main():
     print("Hello World from Mojo!") # => Hello World! from Mojo
 ```
@@ -744,7 +750,7 @@ To show the output of statements in code sections, we'll show them in a comment 
 The second snippet shows a main function, which declares an integer x, increments it and then prints it out. The function is then called with main().
 
 See `using_main.mojo`:
-```py
+```mojo
 fn main():
     var x: Int = 1
     x += 1

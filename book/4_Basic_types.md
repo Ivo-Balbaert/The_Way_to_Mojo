@@ -32,7 +32,7 @@ Defined in the module `bool` as a struct, `Bool` has only 2 values: `True` and `
 
 Here are some declarations:
 See `bools.mojo`:
-```py
+```mojo
 fn main():
     var x : Bool = True
     print(x)    # => True
@@ -94,7 +94,7 @@ Int is the same size as your architecture, so on a 64 bit machine it's 64 bits w
 
 Here is a simple trick to work with Python int's (which can handle big integers!) in a Mojo program.
 See `intInt.mojo`:
-```py
+```mojo
 from python import PythonObject
 alias int = PythonObject
 
@@ -116,7 +116,7 @@ All numeric types are derived from a SIMD type for performance reasons (see § 7
 Integers can also be used as indexes, as shown in the following example. Here the parametrized type DynamicVector (from module utils.vector) takes Int as the parameter type of its elements:
 
 See `integers.mojo`:
-```py
+```mojo
 fn main():
     let i: Int = 2 
     print(i)   # => 2
@@ -138,7 +138,7 @@ We see that a conversion from a 64 bit FloatLiteral to a Float32 works, but alre
 As shown above conversion from an Int to Float works. Conversion from FloatLiteral to an Int is done with: `FloatLiteral.to_int`.
 
 See `floats.mojo`:
-```py
+```mojo
 fn main():
     let i: Int = 2
     let x = 10.0
@@ -176,7 +176,7 @@ Think of the r as reversed, for example:
 In the following example, we define _radd_ for the struct MyNumber, so that we can add its value to a FloatLiteral (note that the struct instance is the rhs in the expression `2.0 + num`):
 
 Example: see `radd.mojo`:
-```py
+```mojo
 struct MyNumber:
     var value: FloatLiteral
 
@@ -196,7 +196,7 @@ fn main():
 iadd (with operator +=), isub, imul, itruediv, ifloordiv, imod, ipow
 i stands for in-place, the lhs becomes the result of the operation and a new object is not created.
 
-```py
+```mojo
 var a = 40.0
 a += 2.0
 print(a)  # => 42.0
@@ -205,7 +205,7 @@ print(a)  # => 42.0
 Same for: -=, *=, /=, %=, //=, **=
 
 If an Int or a Float value does not equal 0 or 0.0, it returns True in an if statement:
-```py
+```mojo
 if 1.0:
     print("not 0.0")  # => not 0.0
 
@@ -220,7 +220,7 @@ if 0:       # or 0.0
 This functionality is implemented in the `random` package.
 
 See `random1.mojo`:
-```py
+```mojo
 from random import seed, rand, randint, random_float64, 
     random_si64, random_ui64
 from memory import memset_zero
@@ -270,7 +270,7 @@ String literals are all null-terminated for compatibility with C APIs (but this 
 They can be converted to a Bool value (see lines 1B-C): an empty string is False, an non-empty is True. (Bool() doesn't work here).
 
 See `strings.mojo`:
-```py
+```mojo
 fn main():
     # StringLiteral:
     let lit = "This is my StringLiteral"   # 1
@@ -326,7 +326,7 @@ So, if you have a StringLiteral object, you can call data() on it to get a point
 The `String` type represents a mutable string*. The `string` module contains basic methods for working with strings.
 The string value is heap-allocated, but the String itself is actually a pointer to heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture ??)
 
-```py
+```mojo
    # String:
     let s = String("Mojo🔥")       # 3
     print(s)            # => Mojo🔥
@@ -342,7 +342,7 @@ You can build a string starting from a DynamicVector (see line 5), and add two A
 
 To display it, print(vec) doesn't work. To do that, we can use a `StringRef` to get a pointer to the same location in memory, but with the methods required to output the numbers as text, see lines 6-7.
 
-```py
+```mojo
     # building a string with a DynamicVector:
     from utils.vector import DynamicVector
     var vec = DynamicVector[Int8](2)    # 5
@@ -357,14 +357,14 @@ To display it, print(vec) doesn't work. To do that, we can use a `StringRef` to 
 
 Because it points to the same location in heap memory, changing the original vector will also change the value retrieved by the reference:
 
-```py
+```mojo
     vec[1] = 78
     print(vec_str_ref)  # 8 => NN
 ```
 
 In line (9) we make a deep copy `vec_str` of the string. Having made a copy of the data to a new location in heap memory, we can now modify the original and it won't effect our copy (see line 10):
 
-```py
+```mojo
     let vec_str = String(vec_str_ref)  # 9
     print(vec_str)      # => NN
 
@@ -384,7 +384,7 @@ It has the methods `getitem`, equal, not equal and length:
 * `getitem`: gets the string value at the specified position. It receives the index of the character to get, using the brackets notation.  
 * equal: compares two strings for equality
 
-```py
+```mojo
     # StringRef:
     let isref = StringRef("i")
     # var isref : StringRef = StringRef("a")
@@ -421,7 +421,7 @@ It has the methods `getitem`, equal, not equal and length:
 
 ### 4.3.4 Some String methods
 See `string_methods.mojo`:
-```py
+```mojo
 fn main() raises:    # raised needed because of atoi
     let s = String("abcde")
     print(s) # => abcde
@@ -478,7 +478,7 @@ Slice all characters up to the second last (line 4).
 Only get every second item after the start position (line 5).
 
 Both slicing and indexing work with bytes, not characters, for example an emoji is 4 bytes so you need to use this slice of 4 bytes to print the character (see line 11):
-```py
+```mojo
     let emoji = String("🔥😀")
     print("fire:", emoji[0:4])    # 11 => fire: 🔥
     print("smiley:", emoji[4:8])  # => smiley: 😀
@@ -498,7 +498,7 @@ The `isdigit` function checks if the character passed in is a valid decimal betw
 You can easily define a synonym or shorthand for a type with the alias keyword:
 
 See `alias1.mojo`:
-```py
+```mojo
 fn main():
     alias MojoArr = Float32   # 1
     alias Float16 = SIMD[DType.float16, 1]
@@ -514,7 +514,7 @@ Both None and AnyType are defined as type aliases.
 The sort module in package algorithms implements different sorting functions. Here is an example of usage:  
 
 See `sorting1.mojo`:
-```py
+```mojo
 from algorithm.sort import sort
 
 fn main():

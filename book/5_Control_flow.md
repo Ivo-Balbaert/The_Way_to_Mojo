@@ -6,7 +6,7 @@ The general format follows the Python syntax: `if cond:  ... else:  ... `
 Here is a first example of using the if-else flow in Mojo, using several numerical types and two functions:
 
 See `if_else1.mojo`:
-```py
+```mojo
 fn func1():
     let x: Int = 42
     let y: Float64 = 17.0
@@ -32,7 +32,7 @@ The 2nd example `guess.mojo` shows function that returns a Bool value (line 1). 
 `!=` is the inverse of `==`.
 
 See `guess.mojo`:
-```py
+```mojo
 fn main():
     print(guessLuckyNumber(37)) # => True
 
@@ -53,7 +53,7 @@ fn guessLuckyNumber(guess: Int) -> Bool:    # 1
 The following program shows how to use a for in range-loop:
 
 See `for_range.mojo`:
-```py
+```mojo
 def main():
     for x in range(9, 0, -3):   # 1
         print(x)
@@ -70,7 +70,7 @@ The loop in line 1 goes from start 9 to end 0, step -3. The end value 0 is not i
 Just like in Python, you can make a loop with a condition through `while`:
 
 See `while.mojo`:
-```py
+```mojo
 fn main():
     var n = 0
     while n <= 10_000_000:
@@ -83,7 +83,7 @@ fn main():
 ?? better move to § 9.4
 
 If your code is expected to possibly raise an exception, either the enveloping function must be postfixed with `raises`, or you can enclose the code like this:  
-```py
+```mojo
     try:
         # possible dangerous code
     except:

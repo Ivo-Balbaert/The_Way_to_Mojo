@@ -91,6 +91,7 @@
 ### 6.4.2 Making arguments changeable with inout 
 ### 6.4.2 Making arguments owned
 ### 6.4.3 Making arguments owned and transferred with ^
+## 6.5 Closures
 
 # 7 Structs
 ## 7.1 First example
@@ -103,7 +104,6 @@
 ## 7.6 Using a large struct instance as function argument
 ## 7.7 Using inout with structs
 ## 7.8 Transfer struct arguments with owned and ^
-
 # 7.9 Compile-time metaprogramming in Mojo
 ## 7.9.1 Parametric types in structs and functions
 ## 7.9.2 Parametric structs
@@ -138,6 +138,12 @@
 ## 10.4 Type Buffer from module memory.buffer
 ## 10.5 Type NDBuffer from module memory.buffer
 ## 10.6 Querying the host target info with module sys.info
+## 10.7 The time module
+## 10.8 Vectors from the module utils.vector
+## 10.8.1 DynamicVector
+## 10.8.2 InlinedFixedVector
+## 10.8.3 UnsafeFixedVector
+
 
 
 # 11 – Decorators

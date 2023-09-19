@@ -12,7 +12,7 @@ For the algorithm: see the article.
 We first write a pure Python implementation, a naive one, and then one using numpy. :
 
 See `euclid_distance.py`:
-```py
+```mojo
 import time
 import numpy as np
 from math import sqrt
@@ -66,7 +66,7 @@ Run it as `python3 euclid_distance.py`.
 **Simple Mojo implementation**
 
 See `euclid_distance.mojo`:
-```py
+```mojo
 # Create numpy arrays anp and bnp:
 from python import Python      
 from tensor import Tensor
@@ -91,7 +91,7 @@ The Tensor parametric type declaration has this format:  `Tensor[DType.float64](
 In Mojo *parameters* represent a compile-time value. In this example we’re telling the compiler, Tensor is a container for 64-bit floating point values. And *arguments* in Mojo represent runtime values, in this case we’re passing n=10_000_000 to Tensor’s constructor to instantiate a 1-dimensional array of 10 million values.
 
 Calculation of Euclid distance:
-```py
+```mojo
 def mojo_naive_dist(a: Tensor[DType.float64], b: Tensor[DType.float64]) -> Float64:
     s = 0.0
     n = a.num_elements()
@@ -135,7 +135,7 @@ As a consequence: Tensor values are passed by reference so no copies are made.
 Strict typing and declaring all variables is now enforced.
 
 See `euclid_distance2.mojo`
-```py
+```mojo
 fn mojo_fn_dist(a: Tensor[DType.float64], b: Tensor[DType.float64]) -> Float64:
     var s: Float64 = 0.0
     let n = a.num_elements()

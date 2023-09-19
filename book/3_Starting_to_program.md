@@ -29,7 +29,7 @@ As in Python, code comments start with the `#` symbol. This can be used for a si
 Use `docstrings` if you need more structured comments that can be gathered by the mojo tool.
 These are defined with the symbol `""" ... """`, and can be multi-line comments. They are mostly written after the header of a function, like here for the __init__ function:
 
-```py
+```mojo
 fn __init__(inout self, x: Float32):
     """Construct a complex number given a real number."""
     self.re = x
@@ -58,7 +58,7 @@ After all, the computer needs to know where to start executing your program!
 
 In Mojo syntax, this looks like:
 
-```py
+```mojo
 fn main(): 
 ```
 This is simply a *function* with name `main`.
@@ -73,7 +73,7 @@ Now try `mojo hello_world.mojo`. As you probably expect, it doesn't produce any 
 Let's now add a Mojo statement:
 
 See `hello_world.mojo`:
-```py
+```mojo
 fn main(): 
     print("Hello World from Mojo!")
 ```
@@ -88,7 +88,7 @@ Hello World from Mojo!
 
 >Note: In Python main() is not necessary, and you can use stand-alone top-level statements. If you try this in Mojo:
 
-```py
+```mojo
 print("Hello World from Mojo!")
 ```
 
@@ -112,7 +112,7 @@ For clarity it is best to place the `main` function at the bottom of the code fi
 The `print` function displays any string (enclosed in "") Try out if you can also use '' to envelop strings. This `print` function automatically adds a new line. So if you just want a newline, use `print()`.
 If you don 't want a newline, use the function `print_no_newline`. This function can also be used to print a series of elements, joined by spaces (see the last line in the following example).
 
-```py
+```mojo
 fn main():
     print("Hello World from Mojo!")
     print_no_newline("  - starts at the same line as the following print: ")
@@ -148,7 +148,7 @@ Later (see ??) we'll see that code can also be run at compile-time, to do what i
 We'll now go back to discussing the last code snippet of § 2.
 
 See `first.mojo`:
-```py
+```mojo
 fn main():
     var n: Int = 1      # 1
     n += 1              # 2
@@ -172,7 +172,7 @@ So in a nested scope, you can create a variable with a name that already exists 
 * They can include type specifiers, patterns, and late initialization.
 
 See `late_initialization.mojo`:
-```py
+```mojo
 fn main():
     let discount_rate: Float64  # no initialization yet! 
     let book_id: Int = 123      # typing and initialization
@@ -217,7 +217,7 @@ Also in line 1, we see that the type of n is declared as `Int`, an integer. *Dec
 Here is an example snippet which uses `let` for declarations: 
 
 See `let.mojo`:
-```py
+```mojo
 fn do_math():
     let x: Int = 1   # 1
     let y = 2        # 2
@@ -261,7 +261,7 @@ If the type is omitted, it is inferred by the compiler, that is: derived from th
 Mojo is also a *strongly-typed language", contrary to Python, which is *loosely typed*:
 
 See `change_type.mojo`:
-```py
+```mojo
 fn main():
     var x = UInt8(1)          
     x = "will cause an error" # error
@@ -287,7 +287,7 @@ The code of the standard library is written in *modules*. Modules are sometimes 
 The most common code is stored in the package  `builtin`, like bool, int and dtype. Their code is automatically imported, so the types and functions of these modules are always available in your Mojo programs. 
 Other modules can be imported like this:
 
-```py
+```mojo
 from benchmark import Benchmark
 ```
 
@@ -295,7 +295,7 @@ Then you can use the type Benchmark with the dot-notation to access its members 
 `Benchmark.num_warmup`
 
 To avoid name-clashes or simply to shorten the name, you can use `as` to define an alias:  
-```py
+```mojo
 from benchmark import Benchmark as bm
 ```
 
@@ -303,14 +303,14 @@ Then access its members with: `bm.num_warmup`
 
 `memory` is a package, containing the modules buffer, memory and unsafe. To import something from the unsafe module, write the following:
 
-```py
+```mojo
 from memory.unsafe import Pointer
 ```
 
 >Note: These from ... statements can be written everywhere in code. Code clarity can be enhanced by grouping them at the start of a code file.
 
 If you have many types to import, enclose them within (), like this:
-```py
+```mojo
 from sys.info import (
     alignof,
     bitwidthof,
@@ -331,7 +331,7 @@ Mojo can access the whole Python ecosystem by importing Python modules.
 Importing and using a Python package in Mojo is very easy.  
 Here's an example (from a Jupiter notebook cell) of how to import the NumPy package:
 
-```py
+```mojo
 from python import Python            # 1
 
 let np = Python.import_module("numpy")      # 2

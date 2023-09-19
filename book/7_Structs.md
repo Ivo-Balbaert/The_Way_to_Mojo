@@ -15,7 +15,7 @@ The following example demonstrates a struct MyInteger with one field called valu
 In the following line, the fields is changed and then accessed with the dot-notation:
 
 See `struct1.mojo`:
-```py
+```mojo
 struct MyInteger:
     var value: Int
     fn __init__(inout self, num: Int):   # 1
@@ -37,7 +37,7 @@ But we can if we implement the `__rand__` method on the struct.
 Now we can execute the following code as in line 5:
 
 See `struct_compare_bool.mojo`:
-```py
+```mojo
 struct MyNumber:
     var value: FloatLiteral
     fn __init__(inout self, num: FloatLiteral):
@@ -62,7 +62,7 @@ See also § 4.2.2
 
 ## 7.3 A second example
 See `struct2.mojo`:  
-```py
+```mojo
 struct IntPair:   
     var first: Int          # 1
     var second: Int         # 2
@@ -130,7 +130,7 @@ When resolving a function call, Mojo tries each candidate and uses the one that 
 In the next example a struct Complex is defined for defining complex numbers, but it has two __init__ methods, one to define only the real part, and another to define both parts of a complex number: the __init__ constructor is overloaded.
 
 See `overloading.mojo`:
-```py
+```mojo
 struct Complex:
     var re: Float32
     var im: Float32
@@ -171,7 +171,7 @@ For other examples, which shows method and function overloading in the same prog
 In the following code snippet, we define a method __add__ in our struct Rectangle (line 1). Then we can use + as in line 2, adding two rectangles, and this will automatically call the __add__ method. Line 3 shows that both calls have the same result.
 
 See `overloading_operators.mojo`:
-```py
+```mojo
 struct Rectangle:
     var length: Float32
     var width: Float32
@@ -225,7 +225,7 @@ When a struct has no __copyinit__ method, an instance of that struct cannot be c
 In the following example a struct HeapArray is defined in line 1. If we try to copy it to another variable b (line 2), we get an `error: value of type 'HeapArray' cannot be copied into its destination`.
 
 See `copy_init.mojo`:
-```py
+```mojo
 from memory.unsafe import Pointer
 
 struct HeapArray:                   # 1
@@ -270,7 +270,7 @@ If we then provide that method (see line 2), all works fine:
 When executing `let b = a`, b gets substituted for self, and a for other.
 
 See `copy_init.mojo`:
-```py
+```mojo
 fn __copyinit__(inout self, other: Self):         # 2
         self.cap = other.cap
         self.size = other.size
@@ -295,7 +295,7 @@ Because a fn function gets its arguments only as immutable references, a large s
 In the following example the SomethingBig a and b structs are not copied to the function fn use_something_big. This function only gets references (the addresses) to these instances.
 
 See `borrowed.mojo`:
-```py
+```mojo
 struct HeapArray:
     var data: Pointer[Int]
     var size: Int
@@ -364,7 +364,7 @@ The Mojo compiler implements a *borrow checker* (similar to Rust) that prevents 
 In the following example, we are able to do `x += 1` where x has type MyInt, because the method `__iadd__` is defined (+= is syntax sugar for __iadd__). But this could only work because in that function the self parameter is declared as `inout` (remove inout to see the error that results).
 
 See `inout2.mojo`:
-```py
+```mojo
 struct MyInt:
     var value: Int
     
@@ -408,7 +408,7 @@ In line 2 `take_ptr(p^)` the ownership of the `p` value is passed to another fun
 >Note: to type a ^ on a NLD(Dutch) Belgian keyboard, tap 2x on the key next to the P-key.
 
 See `transfer_owner.mojo`:
-```py
+```mojo
 struct UniquePointer:
     var ptr: Int
     
@@ -482,7 +482,7 @@ But it could also have been:
 
 A DynamicVector can be made for any type of items (type `AnyType`). The type is parametrized and indicated between the `[]`.
 
-Another example is the SIMD struct (see § 7.9.3).  
+Another example of a parametric struct is the SIMD struct (see § 7.9.3).  
 See also § 12.2.
 
 
@@ -517,7 +517,7 @@ Here is an example of a simd struct with size 4:
 
 Here is some code using this feature:
 See simd.mojo:
-```py
+```mojo
 from sys.info import simdbitwidth
 
 fn main():
@@ -571,7 +571,7 @@ Line 3 shows how to construct the array:
 * arguments size is 4 and value is 3.14
 
 See `parametric_array.mojo`:
-```py
+```mojo
 struct Array[T: AnyType]:                           # 1
     var data: Pointer[T]
     var size: Int
@@ -601,10 +601,11 @@ A destructor `__del__` is also provided, which executes  `self.data.free()` and 
 A `__getitem__` method is also shown which takes an index i and returns the value on that position with `self.data.load(i)` (line 7).
 
 ## 7.9.5 Parametric functions and methods
+Better example: see parameter2.mojo in § 11.3
 Here are some examples of parametric functions:
 
 See `simd3.mojo`:
-```py
+```mojo
 from math import sqrt
 
 fn rsqrt[dt: DType, width: Int](x: SIMD[dt, width]) -> SIMD[dt, width]:   # 1
@@ -620,7 +621,7 @@ The function `rsqrt[dt: DType, width: Int](x: SIMD[dt, width])` in line 1 is a p
 In the following example, we see how parameters (len1 and len2) can be used to form a *parameter expression* len1 + len2:  
 
 See `simd4.mojo`:
-```py
+```mojo
 fn concat[ty: DType, len1: Int, len2: Int](
         lhs: SIMD[ty, len1], rhs: SIMD[ty, len2]) -> SIMD[ty, len1+len2]:
 
@@ -656,7 +657,7 @@ we get as result:
 You can also write imperative compile-time logic with control flow, even  compile-time recursion. The following example makes use the of the `@parameter if` feature, which is an if statement that runs at compile-time. It requires that its condition be a valid parameter expression, and ensures that only the live branch of the if statement is compiled into the program.
 
 See `ctime_logic.mojo`:
-```py
+```mojo
 fn slice[ty: DType, new_size: Int, size: Int](
         x: SIMD[ty, size], offset: Int) -> SIMD[ty, new_size]:
     var result = SIMD[ty, new_size]()
@@ -701,7 +702,7 @@ These are types from which you cannot create an instance because they have no in
 Without initializer, these types can be useful as "namespaces" for helper functions, because you can refer to static members like `NoInstances.my_int` or `NoInstances.print_hello()`.
 
 See `no_instance.mojo`:
-```py
+```mojo
 struct NoInstances:
     var state: Int
     alias my_int = Int
