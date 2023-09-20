@@ -168,6 +168,22 @@ fn main() raises:
 
 You can import any other Python module in a similar manner. Keep in mind that you must import the whole Python module.  You cannot import individual members (such as a single Python class or function) directly - you must import the whole Python module and then access members through the variable name you gave the module.
 
+Importing a module could give an error when that module is not locally installed. That's why we must indicate that fn main() could raise an error with: `fn main() raises`.  
+A better way to handle this is to use a try/except construct, as in the following program, where we assume the Python pandas module is not locally installed.
+
+See `importing_error.mojo`:
+```mojo
+from python import Python
+
+fn main():
+    try:
+        let pd = Python.import_module("pandas")
+        print(pd.DataFrame([1,2,3,4,5]))
+    except ImportError:
+        print('error importing pandas module')
+    # => error importing pandas module
+```
+
 ## 8.4 Importing local Python modules
 This works just like in the preceding §. In the following example, the local Python module `simple_interop.py` is imported through Mojo in line 1. Then in line 2, its `test_interop_func` is called:
 

@@ -122,6 +122,8 @@
 ## 8.4 Importing local Python modules
 ## 8.5 Mojo types in Python
 
+# 8B Modules and packages
+8B.1 Importing local Python modules
 
 # 9 - Other built-in types
 ## 9.1 The ListLiteral type
