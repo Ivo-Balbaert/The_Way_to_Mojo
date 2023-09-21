@@ -552,7 +552,7 @@ When the WSL terminal doesn’t start up, disable Windows Hypervisor in Windows 
 (Alternatively, you can do wsl --terminate and wsl --update)   
 See also: [Troubleshooting Windows Subsystem for Linux | Microsoft Docs](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting)
 
-**How to update the installation**
+**How to update Mojo**
 Simpler: `modular update mojo`
 
 1- Execute the command:         `modular clean`
@@ -562,6 +562,9 @@ displaying:
 # Found release for https://packages.modular.com/mojo @ 0.2.1, installing to /home/ivo/.modular/pkg/packages.modular.com_mojo
 # ...
 ```
+
+**How to remove Mojo**
+Issue the command: `modular uninstall`.
 
 The total size of the Mojo SDK is about 345 Mb.
 

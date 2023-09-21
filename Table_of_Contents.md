@@ -123,9 +123,6 @@
 ## 8.4 Importing local Python modules
 ## 8.5 Mojo types in Python
 
-# 8B Modules and packages
-8B.1 Importing local Python modules
-
 # 9 - Other built-in types
 ## 9.1 The ListLiteral type
 ## 9.2 The Tuple type
@@ -146,10 +143,30 @@
 ## 10.8.1 DynamicVector
 ## 10.8.2 InlinedFixedVector
 ## 10.8.3 UnsafeFixedVector
+## 10.9 Working with command-line arguments
 
 # 11 – Decorators
 ## 11.1 - @value
 ## 11.2 - @register_passable
+## 11.3 - @parameter if
+## 11.4 - @parameter 
+## 11.5 - @staticmethod
+## 11.6 - @always_inline
+## 11.7 - @noncapturing
+
+# 12 – Working with Pointers
+## 12.1 - What is a pointer?
+## 12.2 - Defining and using pointers
+## 12.3 - Writing safe pointer code
+## 12.4 - Working with DTypePointers
+
+# 13 Modules and packages
+## 13.1 What are modules and packages?
+## 13.2 Importing a local Mojo module
+## 13.3 Importing a local Mojo package
+## 13.3.1 Importing the package as source code
+## 13.3.2 Compiling the package to a package file
+## 13.3.3 The __init__ file
 
 # 20 – Projects
 ## 20.1 - Calculating the sum of two vectors
