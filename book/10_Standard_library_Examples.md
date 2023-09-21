@@ -58,7 +58,7 @@ When run as `mojo debug_assert.mojo` there is no output.
 ## 10.3 Module benchmark
 The class allows to benchmark a given function (passed as a parameter) and configure various benchmarking parameters, such as number of warmup iterations, maximum number of iterations, minimum and maximum elapsed time.
 Import it in your code through: `from benchmark import Benchmark`
-We'll benchmark the execution of the fibonacci function, defined as follows:
+We'll benchmark the execution of the Fibonacci function, defined as follows:
 (code: see `running_benchmark.mojo`)`
 
 ```mojo

@@ -119,6 +119,7 @@
 ## 8.1 Running Python code
 ## 8.2 Running Python code in the interpreter mode or in the Mojo mode
 ## 8.3 Working with Python modules
+### 8.3.2 How to do an HTTP-request from Python?
 ## 8.4 Importing local Python modules
 ## 8.5 Mojo types in Python
 
@@ -145,8 +146,6 @@
 ## 10.8.1 DynamicVector
 ## 10.8.2 InlinedFixedVector
 ## 10.8.3 UnsafeFixedVector
-
-
 
 # 11 – Decorators
 ## 11.1 - @value

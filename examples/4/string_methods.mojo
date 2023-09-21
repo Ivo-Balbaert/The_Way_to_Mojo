@@ -45,4 +45,7 @@ fn main() raises:    # raised needed because of atoi
     print(ord('🔥')) # 9 => -16
     print(isdigit(ord('8'))) # => True
     print(isdigit(ord('a'))) # => False
+
+    let s = String(42)
+    print(s) # => 42
     

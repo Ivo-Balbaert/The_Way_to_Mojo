@@ -74,6 +74,19 @@ Its method is written as `__xor__` and its infix operator as `^` (ALT+^).
 
 There are also rhs (right-hand-side) equivalents of __and__ and so on, like __rand__, __ror__, __rxor__. Here the bool value is automatically used as the rhs of the operator (see for example § 7.2).
 
+## 4.1.1 Converting a Boolean to an int
+
+See `convert_bool.mojo`:
+```py
+fn main():
+    let b1: Bool = True
+    let m = UInt8(b1)
+    print(m)  # => 1
+    let b2: Bool = False
+    let n = UInt8(b2)
+    print(n)  # => 0
+```
+
 ## 4.2 The numerical types
 These are the numerical types:
 
@@ -226,6 +239,10 @@ from random import seed, rand, randint, random_float64,
 from memory import memset_zero
 
 fn main():
+    print(random_float64(0.0, 1.0)) # 4 => 0.047464513386311948
+    print(random_si64(-10, 10)) # 5 => 5
+    print(random_ui64(0, 10)) # 6 => 3
+
     let p1 = DTypePointer[DType.uint8].alloc(8)    # 1
     let p2 = DTypePointer[DType.float32].alloc(8)
     memset_zero(p1, 8)
@@ -245,10 +262,6 @@ fn main():
     randint[DType.uint8](p1, 8, 0, 10)  # 3
     print(p1.simd_load[8](0))
     # => [9, 5, 1, 7, 4, 7, 10, 8]
-
-    print(random_float64(0.0, 1.0)) # 4 => 0.047464513386311948
-    print(random_si64(-10, 10)) # 5 => 5
-    print(random_ui64(0, 10)) # 6 => 3
 ```
 
 In lines 1 and following we create two variables to store new addresses on the heap and allocate space for 8 values, note the different DType, uint8 and float32 respectively. Zero out the memory to ensure we don't read garbage memory.
@@ -469,6 +482,9 @@ fn main() raises:    # raised needed because of atoi
     print(ord('🔥')) # 9 => -16
     print(isdigit(ord('8'))) # => True
     print(isdigit(ord('a'))) # => False
+
+    let s = String(42)
+    print(s) # => 42
 ```
 
 Looping over a string is shown in line 1.  
@@ -487,9 +503,12 @@ Both slicing and indexing work with bytes, not characters, for example an emoji 
 Appending: Returns a new string by copying memory (see line 6).
 The join function has a similar syntax to Python's join. You can join elements using the current string as a delimiter (see line 7).
 You can also use it to join elements of a StaticIntTuple (line 8).
+
 `atoi`: The term comes from the C stdlib for ASCII to long-integer, it converts a string to an Int (currently just works with base-10 / decimal).
 
-Use chr to convert an integer between 0 and 255 to a string containing the single character. ord stands for ordinal which means the position of the character in ASCII. Only 1 byte utf8 (ASCII) characters currently work, anything outside will currently wrap (see line 9).
+Use `chr` to convert an integer between 0 and 255 to a string containing the single character. ord stands for ordinal which means the position of the character in ASCII. Only 1 byte utf8 (ASCII) characters currently work, anything outside will currently wrap (see line 9).
+
+Use String(integer) to convert an integer to a string.
 
 The `isdigit` function checks if the character passed in is a valid decimal between 0 and 9, which in ASCII is 48 to 57.
 

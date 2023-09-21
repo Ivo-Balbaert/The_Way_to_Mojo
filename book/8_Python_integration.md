@@ -184,6 +184,25 @@ fn main():
     # => error importing pandas module
 ```
 
+### 8.3.2 How to do an HTTP-request from Python?
+(as an exercise??)
+
+See `http_request_from_py.mojo`:
+```py
+from python import Python
+
+fn main() raises:
+    let requests = Python.import_module("requests")
+    let response = requests.get("https://www.standaard.be/")
+    print(response.text)
+
+# =>
+# <!doctype html>
+# <html class="m_no-js oneplatform_renderFragmentServerSide_mostread conv_enableSegmentedOffer openam temp_liveFeedOnArticleDetail conv_activationwall oneplatform_renderFragmentServerSide_articlelist conv_subscriptionWall enableThirdPartySocialShareService video_enableSpark web_temp_enableWetterKontorIntegration temp_useScribbleLiveApi oneplatform_renderFragmentServerSide_particles paywall_porous_isEnabled temp_enableAddressServiceApi oneplatform_renderFragmentServerSide_articledetail temp_web_enableSeparateDfpScript video_enableAutoplay paywall_metering_v2 web_temp_enableNewGdpr temp_sportMappingViaDb conv_useConversionFlows oneplatform_renderFragmentServerSide_articlegrid oneplatform_fragment_enableMenus aboshop_pormax oneplatform_renderFragmentServerSide_singlearticle temp_useAMConfiguration oneplatform_renderFragmentServerSide_search accountConsent_showPopups conv_loginwall conv_passwordreset com_pushnotificationsOptinboxEnabled temp_newHeader enableReadLater paywall_bypassPaywallForBots PERF_DisableArticleUpdateCounters accountinfo_not_getidentity " dir="ltr" lang="nl-BE">
+# <head>
+#     <meta charset="utf-8">
+```
+
 ## 8.4 Importing local Python modules
 This works just like in the preceding §. In the following example, the local Python module `simple_interop.py` is imported through Mojo in line 1. Then in line 2, its `test_interop_func` is called:
 

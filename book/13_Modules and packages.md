@@ -1,12 +1,13 @@
-# 8B Modules and packages
-
+# 13 Modules and packages
 We talked about how to import modules from the standard libraries of Mojo and Python in § 3.6, and how to import a local custom Python module in § 8.4. 
-Now we'll see how we import a local custom Mojo module in § 8B.2.
+Now we'll see how we import a local custom Mojo module in § 13.2.
+Mojo provides a packaging system that allows you to organize and compile code libraries into importable files.  
+Here we'll learn how to organize your code into modules and packages (which is a lot like Python), and shows you how to create a packaged binary with the `mojo package` command.
 
-## 8B.1 What are modules and packages?
+## 13.1 What are modules and packages?
 We have seen that the Mojo standard library is organized in *packages*, each grouping 1 or more related *modules*.
 
-## 8B.2 Importing a local Mojo module
+## 13.2 Importing a local Mojo module
 Doing this is as easy as for Python modules.
 Suppose we have functionality around full names in module `full_name.mojo`. Here for brevity we have only 2 fields, an @value decorator and a print method.
 
@@ -36,3 +37,5 @@ fn main():
 ```
 
 The familiar syntax `from modname import type/method` us used. In line 2 we see that we can even rename the imported object with `as`, for shortness or to avoid name clashes. The code in main makes 2 FullName instances, and prints them out.
+
+This works when the module is in the same folder as use_module.mojo. Example other location??
