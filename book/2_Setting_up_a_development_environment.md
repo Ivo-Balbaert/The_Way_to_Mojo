@@ -553,8 +553,11 @@ When the WSL terminal doesn’t start up, disable Windows Hypervisor in Windows 
 See also: [Troubleshooting Windows Subsystem for Linux | Microsoft Docs](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting)
 
 **How to update Mojo**
-Simpler: `modular update mojo`
+Simpler: 
+1- `sudo apt-get update && sudo apt-get install modular`
+2- `modular update mojo`
 
+If there is an error about a missing lib, d:
 1- Execute the command:         `modular clean`
 2- Then do a fresh install:     `modular install mojo`
 displaying:

@@ -53,6 +53,51 @@ When run as `mojo debug_assert.mojo` there is no output.
 >Note: debug_assert doesn't work in the Playground because this is not a debug build.
 
 ## 10.2 Module testing 
+This module implements various testing utilities.  
+
+See `testing1.mojo`:
+```mojo
+from testing import *
+
+
+fn main():
+    let b1 = 3 < 5
+    print(assert_true(b1, "This is false!"))  # => True
+    print(assert_false(b1, "This is false!"))
+    # => ASSERT ERROR: This is false!
+    # => False
+    let b2 = 3 > 5
+    print(assert_true(b2, "This is false!"))
+    # => ASSERT ERROR: This is false!
+    # => False
+    print(assert_false(b2, "This is false!"))
+    # => True
+
+    let n = 41
+    let m = 42
+    print(assert_equal(n, m))  # => False
+    print(assert_not_equal(n, m))  # => True
+
+    let p = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
+    let q = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
+    print(assert_equal(p, q))  # => True
+
+    let p2 = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
+    let q2 = SIMD[DType.float16, 4](1.1, 2.2, 3.3, 4.4)
+    print(assert_almost_equal(p2, q2))
+    # => ASSERT ERROR: The input value [1.0, 2.099609375, 3.19921875, 4.30078125] is not close to
+    # [1.099609375, 2.19921875, 3.30078125, 4.3984375] with a diff of
+    # [0.099609375, 0.099609375, 0.1015625, 0.09765625]
+    # False
+```
+
+`assert_true(Boolean, message)` tests the Boolean expression which is its first argument. If True, nothing happens. If False, ASSERT ERROR: is printed, followed by message.
+`assert_false(Boolean, message)` works the other way around.
+Both have a Boolean return value.
+
+Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)`, where val1 and val2 must be both of type Int, String or SIMD[type, size].
+`assert_almost_equal(val1, val2)` checks whether both values are approximately equal (tolerance ??)
+
 
 
 ## 10.3 Module benchmark
