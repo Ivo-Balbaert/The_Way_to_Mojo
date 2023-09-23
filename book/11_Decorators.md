@@ -177,7 +177,7 @@ fn main():
     # => ASSERT ERROR: assertion failed
 ```
 
-The decorator is also used on nested functions that capture runtime values, creating “parametric” capturing closures (example ??).
+The decorator is also used on nested functions that capture runtime values, creating "parametric" capturing closures (example matmul1.mojo § 20.3).
 
 See also § 7.9.6 (ctime_logic.mojo), § 10.6 (os_is_linux)
 

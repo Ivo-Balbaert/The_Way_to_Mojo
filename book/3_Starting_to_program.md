@@ -253,6 +253,18 @@ mojo: error: failed to parse the provided Mojo
 
 Lines 5-6 show late initialization, a feature that does not exist in Python.
 
+Mojo also supports *global variables*:  
+See `global_vars.mojo`:
+```mojo
+var n = 42
+let str = "Hello from Mojo!"
+
+fn main():
+    print(n)  # => 42
+    print(str)  # => Hello from Mojo!
+```
+
+Also alias is heavily used at the global level (see § 4.4).
 
 ## 3.5  Typing in Mojo
 Mojo has so-called *progressive typing*: adding more types leads to better performance and error checking, the code becomes safer and more reliable.

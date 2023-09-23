@@ -312,7 +312,6 @@ fn main() raises:
 
     print(x.buffer.bytecount())    # => 8
     print(x.buffer.dim[0]())       # => 2
-    x.buffer.fill(10)
     print(x.buffer[1, 1, 1])       # => 10
     let y = x.buffer.flatten()
     print(y[7])                    # => 10    

@@ -9,7 +9,7 @@ Often an equivalent infix or prefix operator can act as 'syntax sugar' for calli
 
 A *scalar* just means a single value in Mojo. The scalar types include the Bool type (see § 4.1.2), as well as the numerical types, which are all based on SIMD (see § ??).
 
-The `DType` class defined in module `dtype` is kind of an umbrella type for the bool and numeric types. It has the following aliases:  
+The `DType` (data type) class defined in module `dtype` is kind of an umbrella type for the bool and numeric types. It has the following aliases:  
 * invalid = invalid: Represents an invalid or unknown data type.
 * bool = bool: Represents a boolean data type.
 * int8 = si8: Represents a signed integer type whose bitwidth is 8.
@@ -524,9 +524,12 @@ fn main():
     alias MojoArr2 = DTypePointer[DType.float32] 
 
     alias my_debug_build = 1  # 2
+    alias width = 960
+    alias height = 960
+    alias MAX_ITERS = 200
 ```
 
-Line 2 works, because alias is also a way to define a compile-time temporary value, just like var and let define resp. a runtime variable and constant. 
+Line 2 and following work, because alias is also a way to define a compile-time temporary value, just like var and let define resp. a runtime variable and constant. This is ideal to set parameter values of the problem at hand.
 Both None and AnyType are defined as type aliases. 
 
 ## 4.5 Sorting a DynamicVector

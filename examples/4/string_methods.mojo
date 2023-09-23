@@ -46,6 +46,6 @@ fn main() raises:    # raised needed because of atoi
     print(isdigit(ord('8'))) # => True
     print(isdigit(ord('a'))) # => False
 
-    let s = String(42)
-    print(s) # => 42
+    let s2 = String(42)
+    print(s2) # => 42
     
