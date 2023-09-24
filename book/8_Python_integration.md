@@ -290,5 +290,8 @@ type_printer([0, 3], (False, True), 4, "orange", 3.4)
 (see `exerc8.1.mojo`)
 2- Using the Python math module, return pi to Mojo and print it
 (see `exerc8.2.mojo`)
+3- Use the input() function from the Python builtins module to get user input, and then display it.
+(see `get_input.mojo`)
+
 
 

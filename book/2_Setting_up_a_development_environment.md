@@ -654,7 +654,7 @@ See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/image
 To install Jupyter notebook locally:  
 * First install Python from `https://www.python.org/downloads/`
 * pip install notebook
-Then `jupyter notebook` command starts up a local browser page where you can start a new notebook with the `.ipynb` extension.
+Then the `jupyter lab` or `jupyter notebook` command starts up a local browser page where you can start a new notebook with the `.ipynb` extension.
 
 See also: § 2.7.2 for how to work with a Jupyter notebook in VS Code.
 

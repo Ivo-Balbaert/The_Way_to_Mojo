@@ -521,7 +521,7 @@ See `alias1.mojo`:
 fn main():
     alias MojoArr = Float32   # 1
     alias Float16 = SIMD[DType.float16, 1]
-    alias MojoArr2 = DTypePointer[DType.float32] 
+    alias MojoArr2 = DTypePointer[DType.float32]  # 1B
 
     alias my_debug_build = 1  # 2
     alias width = 960
@@ -529,7 +529,7 @@ fn main():
     alias MAX_ITERS = 200
 ```
 
-Line 2 and following work, because alias is also a way to define a compile-time temporary value, just like var and let define resp. a runtime variable and constant. This is ideal to set parameter values of the problem at hand.
+Line 2 and following work, because alias is also a way to define a compile-time temporary value,  just like var and let define resp. a runtime variable and constant. alias is kind of a let at comptime. You can also make a user-defined type with it (see § 1B). All occurences of the alias name get substituted with the value at comptime, so it has a bit of a performance benifit. This is ideal to set parameter values of the problem at hand.
 Both None and AnyType are defined as type aliases. 
 
 ## 4.5 Sorting a DynamicVector

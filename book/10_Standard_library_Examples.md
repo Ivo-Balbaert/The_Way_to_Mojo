@@ -99,7 +99,6 @@ Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)
 `assert_almost_equal(val1, val2)` checks whether both values are approximately equal (tolerance ??)
 
 
-
 ## 10.3 Module benchmark
 The class allows to benchmark a given function (passed as a parameter) and configure various benchmarking parameters, such as number of warmup iterations, maximum number of iterations, minimum and maximum elapsed time.
 Import it in your code through: `from benchmark import Benchmark`
@@ -454,7 +453,7 @@ time_function() (used in line 3) tells you how long it takes (in nanoseconds) fo
 
 ## 10.8 Vectors from the module utils.vector
 
-## 10.8.1 DynamicVector
+### 10.8.1 DynamicVector
 (see also § 4.2.1, 4.5, 7.9.2)
 This is a dynamically-allocated vector.
 It supports pushing and popping from the back resizing the underlying storage as needed. 
@@ -528,7 +527,7 @@ The `resize` method discards elements if smaller than current size, or adds unin
 
 The `clear` method deallocates all items in the vector (line 12, doesn't seem to work). The size is set to 0.
 
-## 10.8.2 InlinedFixedVector
+### 10.8.2 InlinedFixedVector
 This type is a dynamically-allocated vector with small-vector optimization.
 It does not resize or implement bounds checks, it is initialized with both a small-vector size (statically known) and a dynamic (not known at compile time) number of slots, and when it is deallocated, it frees its memory.
 This data structure is useful for applications where the number of required elements is not known at compile time, but once known at runtime, is guaranteed to be equal to or less than a certain capacity.
@@ -567,7 +566,7 @@ Access and assign elements using indexes.
 
 To make a shallow or deep copy, or clear all elements, tee § 10.8.1
 
-## 10.8.3 UnsafeFixedVector
+### 10.8.3 UnsafeFixedVector
 This type is a dynamically-allocated vector that does not resize or implement bounds checks (see line 3).
 It is initialized with a dynamic (not known at compile time) number of slots.
 

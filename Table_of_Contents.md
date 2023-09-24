@@ -123,7 +123,7 @@
 ## 8.4 Importing local Python modules
 ## 8.5 Mojo types in Python
 
-# 9 - Other built-in types
+# 9 Other built-in types
 ## 9.1 The ListLiteral type
 ## 9.2 The Tuple type
 ## 9.3 The slice type
@@ -133,16 +133,16 @@
 ## 10.1 Assert statements
 ### 10.1.1 constrained
 ### 10.1.2 debug_assert
-?? ## 10.2 Module testing 
+## 10.2 Module testing 
 ## 10.3 Module benchmark
 ## 10.4 Type Buffer from module memory.buffer
 ## 10.5 Type NDBuffer from module memory.buffer
 ## 10.6 Querying the host target info with module sys.info
 ## 10.7 The time module
 ## 10.8 Vectors from the module utils.vector
-## 10.8.1 DynamicVector
-## 10.8.2 InlinedFixedVector
-## 10.8.3 UnsafeFixedVector
+### 10.8.1 DynamicVector
+### 10.8.2 InlinedFixedVector
+### 10.8.3 UnsafeFixedVector
 ## 10.9 Working with command-line arguments
 
 # 11 – Decorators
@@ -170,5 +170,22 @@
 
 # 20 – Projects
 ## 20.1 - Calculating the sum of two vectors
+### 20.1.1 - A naive Python implementation
+### 20.1.2 - Using Numpy
+### 20.1.3 - A Mojo version of the naive Python implementation
+### 20.1.4 - Using SIMD and vectorize
 ## 20.2 - Calculating the Euclidean distance between two vectors
+## 20.3 - Matrix multiplication (matmul)
+### 20.3.1 - Naive Python implementation
+### 20.3.2 - Importing the Python implementation to Mojo
+### 20.3.3 - Adding types to the implementation
+### 20.3.4 - Vectorizing the inner most loop
+#### 20.3.4.1 - Vectorizing the inner most loop
+#### 20.3.4.2 - Using the Mojo vectorize function
+### 20.3.5 - Parallelizing Matmul
+### 20.3.6 - Tiling Matmul
+### 20.3.7 - Unrolling the loops introduced by vectorize of the dot function
+### 20.3.8 - Searching for the tile_factor
+## 20.4 - Computing the Mandelbrot set
+
 

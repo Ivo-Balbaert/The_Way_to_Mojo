@@ -2,8 +2,182 @@
 
 ## 20.1 - Calculating the sum of two vectors
 See https://codeconfessions.substack.com/p/mojo-the-future-of-ai-programming
-(code is image!)
-TODO!
+
+A vector is an ordered collection of numbers, with the number of elements in a vector being its dimension. Adding two n-dimensional vectors involves adding each of their corresponding elements, resulting in another n-dimensional vector.
+
+### 20.1.1 - A naive Python implementation
+This implementation is based on Python list iteration. 
+
+See `calc_vecsum.py`:
+```py
+import numpy as np
+import timeit
+
+def benchmark_add(dim):
+    arr1 = np.random.random(dim).astype(np.float32).tolist()
+    arr2 = np.random.random(dim).astype(np.float32).tolist()
+    result = np.zeros(dim).tolist()
+    secs = timeit.timeit(lambda: naive_add(arr1, arr2, result, dim), number = 100_000)/100_000
+    gflops = (dim/secs) / 1e9
+    print(gflops, " Gflops/s")
+    return gflops
+
+def naive_add(arr1, arr2, result, dim):
+    for i in range(dim):
+        result[i] = arr1[i] + arr2[i]
+
+benchmark_add(1000)
+
+# 0.03696093458223865  Gflops/s  
+```
+
+Execute it with: `python3 calc_vecsum.py`.
+For adding two 1000-dimensional vectors, it achieves a throughput of about 0.037 Gflops/s.  
+
+### 20.1.2 - Using Numpy
+Here arr1 and arr2 are real Numpy vectors.
+
+See `calc_vecsum_np.py`:
+```py
+import numpy as np
+import timeit
+
+def benchmark_add(dim):
+    arr1 = np.array(np.random.random(dim), dtype = np.float32)
+    arr2 = np.array(np.random.random(dim), dtype = np.float32)
+    secs = timeit.timeit(lambda: add(arr1, arr2), number = 100_000)/100_000
+    print(secs, " seconds")
+    gflops = (dim/secs) / 1e9
+    print(gflops, " Gflops/s")
+    return gflops
+
+def add(arr1, arr2):
+    result = arr1 + arr2
+    
+benchmark_add(1000)
+
+# 5.636712099658326e-07  seconds
+# 1.774083867190265  Gflops/s
+```
+
+Execute it with: `python3 calc_vecsum_np.py`.
+For adding two 1000-dimensional vectors, it achieves a throughput of about 1.774083867190265  Gflops/s, some 48 x faster than the pure Python version.
+
+### 20.1.3 - A Mojo version of the naive Python implementation
+
+See `calc_vecsum.mojo`:
+```mojo
+from memory.unsafe import DTypePointer
+from random import rand
+from benchmark import Benchmark
+
+alias MojoArr = DTypePointer[DType.float32]
+
+fn add_naive(arr1: MojoArr, arr2: MojoArr, result: MojoArr, dim: Int):
+    for i in range(dim):
+        result.store(i, arr1.load(i) + arr2.load(i))
+
+fn create_mojo_arr(dim: Int) -> MojoArr:
+    let arr: MojoArr = MojoArr.alloc(dim)
+    rand[DType.float32](arr, dim)
+    return arr
+
+@always_inline
+fn benchmark[func: fn(MojoArr, MojoArr, MojoArr, Int) -> None]
+            (dim: Int) -> Float64:
+
+    let arr1: MojoArr = create_mojo_arr(dim)
+    let arr2: MojoArr = create_mojo_arr(dim)
+    let result: MojoArr = MojoArr.alloc(dim)
+
+    @always_inline
+    @parameter
+    fn call_add_fn():
+        _ = func(arr1, arr2, result, dim)
+
+    let secs = Float64(Benchmark().run[call_add_fn]()) / 1_000_000_000
+    print(secs, " seconds")
+    let gflops = dim/secs
+    arr1.free()
+    arr2.free()
+    result.free()
+    print(gflops, " Gflops/s")
+    return gflops
+
+fn main():
+    _ = benchmark[add_naive](1000)
+```
+
+Execution always results in: 
+```
+0.0  seconds
+inf  Gflops/s
+```
+>Note: Calculations are executed to quick by Mojo, we can't compare anymore.
+
+### 20.1.4 - Using SIMD and vectorize
+
+See `calc_vecsum_vectorized.mojo`:
+```mojo
+from memory.unsafe import DTypePointer
+from random import rand
+from benchmark import Benchmark
+from algorithm import vectorize
+from sys.info import simdwidthof
+
+alias MojoArr = DTypePointer[DType.float32]
+alias nelts = simdwidthof[DType.float32]()
+
+fn add_simd(arr1: MojoArr, arr2: MojoArr, result: MojoArr, dim: Int):
+    @parameter
+    fn add_simd[nelts: Int](n: Int):
+        result.simd_store[nelts](n, arr1.simd_load[nelts](n) + 
+                                    arr2.simd_load[nelts](n))
+
+    vectorize[nelts, add_simd](dim)
+
+fn create_mojo_arr(dim: Int) -> MojoArr:
+    let arr: MojoArr = MojoArr.alloc(dim)
+    rand[DType.float32](arr, dim)
+    return arr
+
+@always_inline
+fn benchmark[func: fn(MojoArr, MojoArr, MojoArr, Int) -> None]
+            (dim: Int) -> Float64:
+
+    let arr1: MojoArr = create_mojo_arr(dim)
+    let arr2: MojoArr = create_mojo_arr(dim)
+    let result: MojoArr = MojoArr.alloc(dim)
+
+    @always_inline
+    @parameter
+    fn call_add_fn():
+        _ = func(arr1, arr2, result, dim)
+
+    let secs = Float64(Benchmark().run[call_add_fn]()) / 1_000_000_000
+    print(secs, " seconds")
+    let gflops = dim/secs
+    arr1.free()
+    arr2.free()
+    result.free()
+    print(gflops, " Gflops/s")
+    return gflops
+
+fn main():
+    _ = benchmark[add_simd](1000)
+
+# 0.0  seconds
+# inf  Gflops/s
+```
+
+The main idea behind vectorizing code is to eliminate loops in our code, which is exactly what we have done by using the vectorize function here.
+
+Execution always results in: 
+```
+0.0  seconds
+inf  Gflops/s
+```
+>Note: Calculations are executed to quick by Mojo, we can't compare anymore.
 
 ## 20.2 - Calculating the Euclidean distance between two vectors
 (See [ref](https://www.modular.com/blog/an-easy-introduction-to-mojo-for-python-programmers))
