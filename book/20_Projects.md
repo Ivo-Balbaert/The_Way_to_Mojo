@@ -938,6 +938,7 @@ def mandelbrot_kernel(c):
     nv += 1
   return nv
 ```
+(for the complete program: see `mandelbrot.py`)
 
 Although Python code, this works unaltered in Mojo! We will gradually port this code to Mojo.
 A NumPy implementation is only 5x faster than Python.
@@ -948,7 +949,7 @@ The first thing we can do is to annotate the def mandelbrot_kernel with types:
 The body of the def is unaltered.
 
 See `mandelbrot_0.mojo`:
-(46 x speedup)
+(23.9 x speedup)
 ```mojo
 def mandelbrot_kernel_0(c: ComplexFloat64) -> Int:
     z = c
@@ -965,7 +966,7 @@ The complete code to run it and display the resulting graph with matplotlib is s
 
 ### 20.5.3 Changing to an fn function
 We can opt into the Mojo "strict" mode, by using fn instead of def and declaring the local variables z and nv. This will enable Mojo to perform more aggressive optimizations since the compiler can discern certain properties about the program. 
-(46 x speedup)
+(24.2 x speedup)
 
 See `mandelbrot_1.mojo`:
 ```mojo
@@ -1016,7 +1017,7 @@ fn mandelbrot_2(c: ComplexFloat64) -> Int:
     return nv
 ```
 
-The complete code to run it and display the resulting graph with matplotlib is stored in mojo `mandelbrot_2.mojo`. (Executed in in 0.192 seconds)
+The complete code to run it and display the resulting graph with matplotlib is stored in mojo `mandelbrot_2.mojo`. (43 x speedup comparing to Python)
 
 ### 20.5.5 Adding supporting code
 We need some supporting declarations and code to iterate through the pixels in the image and compute the membership in the set:

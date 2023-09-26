@@ -3,12 +3,13 @@ from math import abs
 from complex import ComplexSIMD, ComplexFloat64
 from tensor import Tensor
 from utils.index import Index
+from benchmark import Benchmark
 
 alias float_type = DType.float64
 
 alias width = 960
 alias height = 960
-alias MAX_ITERS = 200
+alias MAX_ITERS = 1000
 
 alias min_x = -2.0
 alias max_x = 0.6
@@ -69,7 +70,24 @@ def show_plot(tensor: Tensor[float_type]):
     plt.axis("off")
     plt.show()
 
+def benchmark_mandelbrot(python_secs: Float64):
+    @parameter  # this makes test_fn capture C, A and B
+    fn test_fn():
+        try:
+            _ = compute_mandelbrot()
+        except:
+            pass
+
+    let mojo_secs = Benchmark().run[test_fn]() / 1e9
+    print("mojo seconds:", mojo_secs)
+    print("speedup:", python_secs / mojo_secs)
+
 
 fn main() raises:
-    # _ = compute_mandelbrot()
-    _ = show_plot(compute_mandelbrot())
+    let python_secs = 11.530147033001413
+    _ = benchmark_mandelbrot(python_secs)
+
+    # _ = show_plot(compute_mandelbrot())
+
+# mojo seconds: 0.47594900800000001
+# speedup: 24.225593160604745
