@@ -1,5 +1,9 @@
 # 8 Python integration
 
+Mojo allows us to leverage the huge Python ecosystem of libraries and tools.
+You can use Python for what it's good at, especially graph plotting and GUIs and for things that do not yet exist or are more difficult to rewrite in Mojo.
+That way, a Python project can be gradually migrated to Mojo.
+
 ## 8.0 Comparing the same program in Python and Mojo
 See `adding.py`:
 ```mojo

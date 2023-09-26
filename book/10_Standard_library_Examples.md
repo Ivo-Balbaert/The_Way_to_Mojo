@@ -588,7 +588,50 @@ You index them as InlineFixedVector (with the same note). Only a shallow copy is
     print(vec2[1])          # => 20 
 ```
 
-## 10.9 Working with command-line arguments
+## 10.9 The Tensor type from module tensor
+A tensor is a higher-dimensional matrix, its type Tensor is defined in module tensor (see line 1).  
+The tensor type manages its own data (unlike NDBuffer and Buffer which are just views). Therefore, the tensor type performs its own memory allocation and freeing. Here is a simple example of using the tensor type to represent an RGB image and convert it to grayscale:
+
+See `tensor0.mojo`:
+```mojo
+from tensor import Tensor
+
+fn main():
+    let t = Tensor[DType.int32](2, 2)
+    print(t.simd_load[4](0, 1, 2, 3)) # => 
+```
+
+See `tensor1.mojo`:
+```mojo
+from tensor import Tensor, TensorSpec, TensorShape
+from utils.index import Index
+from random import rand
+
+let height = 256
+let width = 256
+let channels = 3
+
+fn main():
+    # Create the tensor of dimensions height, width, channels
+    # and fill with random values.
+    let image = rand[DType.float32](height, width, channels)
+
+    # Declare the grayscale image.
+    let spec = TensorSpec(DType.float32, height, width)
+    var gray_scale_image = Tensor[DType.float32](spec)
+
+    # Perform the RGB to grayscale transform.
+    for y in range(height):
+        for x in range(width):
+            let r = image[y,x,0]
+            let g = image[y,x,1]
+            let b = image[y,x,2]
+            gray_scale_image[Index(y,x)] = 0.299 * r + 0.587 * g + 0.114 * b
+
+    print(gray_scale_image.shape().__str__()) # => 256x256
+```
+
+## 10.10 Working with command-line arguments
 This is done with module arg from the sys package.
 
 See `cmdline_args.mojo`:

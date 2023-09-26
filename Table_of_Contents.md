@@ -143,7 +143,8 @@
 ### 10.8.1 DynamicVector
 ### 10.8.2 InlinedFixedVector
 ### 10.8.3 UnsafeFixedVector
-## 10.9 Working with command-line arguments
+## 10.9 The Tensor type from module tensor
+## 10.10 Working with command-line arguments
 
 # 11 – Decorators
 ## 11.1 - @value

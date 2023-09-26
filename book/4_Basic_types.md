@@ -516,6 +516,7 @@ The `isdigit` function checks if the character passed in is a valid decimal betw
 ## 4.4 Defining alias types
 You can easily define a synonym or shorthand for a type with the alias keyword:
 
+### 4.4.1 Usage of alias
 See `alias1.mojo`:
 ```mojo
 fn main():
@@ -531,6 +532,30 @@ fn main():
 
 Line 2 and following work, because alias is also a way to define a compile-time temporary value,  just like var and let define resp. a runtime variable and constant. alias is kind of a let at comptime. You can also make a user-defined type with it (see § 1B). All occurences of the alias name get substituted with the value at comptime, so it has a bit of a performance benifit. This is ideal to set parameter values of the problem at hand.
 Both None and AnyType are defined as type aliases. 
+
+### 4.4.2 Defining an enum type using alias
+(?? After ch 7 on structs)
+You can create an enum-like structure using the alias declaration, used to name compile-time values.
+
+See `enum_type.mojo`:
+```mojo
+struct enum_type:
+    alias invalid = 0
+    alias bool = 1
+    alias int8 = 2
+    alias uint8 = 3
+    alias int16 = 4
+    alias uint16 = 5
+    alias float32 = 15
+
+fn main():
+    let en = enum_type.bool
+    print(en)  # => 1
+```
+
+In this example, enum_type is a struct that implements a simple enum using aliases for the enumerators. This allows clients to use enum_type.float32 as a parameter expression, which also works as a runtime value.
+
+
 
 ## 4.5 Sorting a DynamicVector
 The sort module in package algorithms implements different sorting functions. Here is an example of usage:  

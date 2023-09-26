@@ -722,6 +722,7 @@ See:
 
 #### 2.7.2.2B Using a Docker file
 The repo website https://github.com/modularml/mojo/tree/main/examples/docker contains a Docker example file `Dockerfile.mojosdk`. The following [article](https://medium.com/@1ce.mironov/how-to-install-mojo-locally-using-docker-5346bc23a9fe) goes into detail of how to create and use a Docker image.
+See also the following [video](https://www.youtube.com/watch?v=cHyYmF-RhUk).
 
 #### 2.7.2.3 Compiling and executing a simple program
 To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  

@@ -767,10 +767,285 @@ Best candidate idx: 0
 
 All optimization methods (except autotune) are combined in matmul.mojo
 
+## 20.4 - Sudoku solver
+For the Python version see `sudoku_solver.py`. This is the time it took:  
+`python seconds: 2.96649886877276e-06`.
 
-## 20.4 - Computing the Mandelbrot set
+Here is the Mojo version:
+See `sudoku_solver.mojo`:
+```mojo
+from memory.unsafe import Pointer
+from memory.buffer import NDBuffer
+from utils.list import DimList
+from random import randint
+from utils.list import VariadicList
+from math import sqrt
+from math import FPUtils
+from benchmark import Benchmark
+
+alias board_size = 9 
+alias python_secs = 2.96649886877276e-06
+
+struct Board[grid_size: Int]:
+    var data: DTypePointer[DType.uint8]
+    var sub_size: Int
+    alias elements = grid_size**2
+
+    fn __init__(inout self, *values: Int) raises:
+        let args_list = VariadicList(values)
+        if len(args_list) != self.elements:
+            raise Error(
+                "The amount of elements must be equal to the grid_size parameter"
+                " squared"
+            )
+
+        let sub_size = sqrt(Float64(grid_size))
+        if sub_size - sub_size.cast[DType.int64]().cast[DType.float64]() > 0:
+            raise Error(
+                "The square root of the grid grid_size must be a whole number 9 = 3,"
+                " 16 = 4"
+            )
+        self.sub_size = sub_size.cast[DType.int64]().to_int()
+
+        self.data = DTypePointer[DType.uint8].alloc(grid_size**2)
+        for i in range(len(args_list)):
+            self.data.simd_store[1](i, args_list[i])
+
+    fn __getitem__(self, row: Int, col: Int) -> UInt8:
+        return self.data.simd_load[1](row * grid_size + col)
+
+    fn __setitem__(self, row: Int, col: Int, data: UInt8):
+        self.data.simd_store[1](row * grid_size + col, data)
+
+    fn print_board(inout self):
+        for i in range(grid_size):
+            print(self.data.simd_load[grid_size](i * grid_size))
+
+    fn is_valid(self, row: Int, col: Int, num: Int) -> Bool:
+        # Check the given number in the row
+        for x in range(grid_size):
+            if self[row, x] == num:
+                return False
+
+        # Check the given number in the col
+        for x in range(grid_size):
+            if self[x, col] == num:
+                return False
+
+        # Check the given number in the box
+        let start_row = row - row % self.sub_size
+        let start_col = col - col % self.sub_size
+        for i in range(self.sub_size):
+            for j in range(self.sub_size):
+                if self[i + start_row, j + start_col] == num:
+                    return False
+        return True
+
+    fn solve(self) -> Bool:
+        for i in range(grid_size):
+            for j in range(grid_size):
+                if self[i, j] == 0:
+                    for num in range(1, 10):
+                        if self.is_valid(i, j, num):
+                            self[i, j] = num
+                            if self.solve():
+                                return True
+                            # If this number leads to no solution, then undo it
+                            self[i, j] = 0
+                    return False
+        return True
+
+fn bench(python_secs: Float64):
+    @parameter
+    fn init_board() raises -> Board[board_size]:
+        return Board[board_size](
+            5, 3, 0, 0, 7, 0, 0, 0, 0,
+            6, 0, 0, 1, 9, 5, 0, 0, 0,
+            0, 9, 8, 0, 0, 0, 0, 6, 0,
+            8, 0, 0, 0, 6, 0, 0, 0, 3,
+            4, 0, 0, 8, 0, 3, 0, 0, 1,
+            7, 0, 0, 0, 2, 0, 0, 0, 6,
+            0, 6, 0, 0, 0, 0, 2, 8, 0,
+            0, 0, 0, 4, 1, 9, 0, 0, 5,
+            0, 0, 0, 0, 8, 0, 0, 7, 9
+        )
+
+    fn solve():
+        try:
+            let board = init_board()
+            _ = board.solve()
+        except:
+            pass
+
+    let mojo_secs = Benchmark().run[solve]() / 1e9
+    print("mojo seconds:", mojo_secs)
+    print("speedup:", python_secs / mojo_secs)
+
+fn main() raises:
+    # var board = Board[9](
+    # 5, 3, 0, 0, 7, 0, 0, 0, 0,
+    # 6, 0, 0, 1, 9, 5, 0, 0, 0,
+    # 0, 9, 8, 0, 0, 0, 0, 6, 0,
+    # 8, 0, 0, 0, 6, 0, 0, 0, 3,
+    # 4, 0, 0, 8, 0, 3, 0, 0, 1,
+    # 7, 0, 0, 0, 2, 0, 0, 0, 6,
+    # 0, 6, 0, 0, 0, 0, 2, 8, 0,
+    # 0, 0, 0, 4, 1, 9, 0, 0, 5,
+    # 0, 0, 0, 0, 8, 0, 0, 7, 9
+    # )
+
+    # print("Solved:", board.solve())
+    # board.print_board()
+
+# Solved: True
+# [5, 3, 4, 6, 7, 8, 9, 1, 2]
+# [6, 7, 2, 1, 9, 5, 3, 4, 8]
+# [1, 9, 8, 3, 4, 2, 5, 6, 7]
+# [8, 5, 9, 7, 6, 1, 4, 2, 3]
+# [4, 2, 6, 8, 5, 3, 7, 9, 1]
+# [7, 1, 3, 9, 2, 4, 8, 5, 6]
+# [9, 6, 1, 5, 3, 7, 2, 8, 4]
+# [2, 8, 7, 4, 1, 9, 6, 3, 5]
+# [3, 4, 5, 2, 8, 6, 1, 7, 9]
+
+    # Benchmarking:
+    bench(Float64(python_secs))
+
+# mojo seconds: 0.00026104600000000002
+# speedup: 0.011363893217183025
+```
+?? Mojo version is slower than Python, reasons ?
+mojo seconds: 0.000260318
+speedup: 0.011395673248767892
+
+## 20.5 - Computing the Mandelbrot set
+Video:  https://www.youtube.com/watch?v=wFMB0VSH51M
+
 See Mojo blog:
 * https://www.modular.com/blog/how-mojo-gets-a-35-000x-speedup-over-python-part-1
 
 
+### 20.5.1 The pure Python algorithm
+```py
+MAX_ITERS = 1000
+def mandelbrot_kernel(c): 
+  z = c
+  nv = 0
+  for i in range(MAX_ITERS):
+    if abs(z) > 2:
+      break
+    z = z*z + c
+    nv += 1
+  return nv
+```
 
+Although Python code, this works unaltered in Mojo! We will gradually port this code to Mojo.
+A NumPy implementation is only 5x faster than Python.
+
+### 20.5.2 Adding types in the funtion signature
+The first thing we can do is to annotate the def mandelbrot_kernel with types:  
+`def mandelbrot_0(c: ComplexFloat64) -> Int:`
+The body of the def is unaltered.
+
+See `mandelbrot_0.mojo`:
+(46 x speedup)
+```mojo
+def mandelbrot_kernel_0(c: ComplexFloat64) -> Int:
+    z = c
+    nv = 0
+    for i in range(1, MAX_ITERS):
+      if abs(z) > 2:
+        break
+      z = z*z + c
+      nv += 1
+    return nv
+```
+
+The complete code to run it and display the resulting graph with matplotlib is stored in mojo `mandelbrot_0.mojo`. (in 0.191 seconds) Here is the graph image: ??
+
+### 20.5.3 Changing to an fn function
+We can opt into the Mojo "strict" mode, by using fn instead of def and declaring the local variables z and nv. This will enable Mojo to perform more aggressive optimizations since the compiler can discern certain properties about the program. 
+(46 x speedup)
+
+See `mandelbrot_1.mojo`:
+```mojo
+fn mandelbrot_kernel_1(c: ComplexFloat64) -> Int:
+    var z = c
+    var nv = 0
+    for i in range(1, MAX_ITERS):
+      if abs(z) > 2:
+        break
+      z = z*z + c
+      nv += 1
+    return nv
+```
+
+The complete code to run it and display the resulting graph with matplotlib is stored in mojo `mandelbrot_1.mojo`. (Executed in 0.193 seconds)
+There is no difference in performance between mandelbrot_0 and  mandelbrot_1. The reason is that Mojo’s type inference and optimizations remove the dynamism from the types – allowing one to work with concrete types rather than variants.
+
+
+### 20.5.4 Simplifying the math to reduce computation
+Removing redundant computations:
+* avoid the square root in abs, by changing the check of abs(z) > 2 to be squared_norm(z) > 4
+(saves 6 flops)
+* simplifying the computation of z*z + c (saves 1 flop)
+
+Squared addition is a common operation, and the Mojo standard library provides a special function for it called `squared_add`, which is implemented using FMA instructions for maximum performance.
+(89 x speedup)
+
+```mojo
+struct Complex[type: DType]:
+    ...
+    fn squared_add(self, c: Self) -> Self:
+        return Self(
+            fma(self.re, self.re, fma(-self.im, self.im, c.re)),
+            fma(self.re, 2*self.im, c.im)))
+```
+
+Rewriting the mandelbrot function now gives us:
+See `mandelbrot2.mojo`:
+```mojo
+fn mandelbrot_2(c: ComplexFloat64) -> Int:
+    var z = c
+    var nv = 0
+    for i in range(1, MAX_ITERS):
+        if z.squared_norm() > 4:
+            break
+        z = z.squared_add(c)
+        nv += 1
+    return nv
+```
+
+The complete code to run it and display the resulting graph with matplotlib is stored in mojo `mandelbrot_2.mojo`. (Executed in in 0.192 seconds)
+
+### 20.5.5 Adding supporting code
+We need some supporting declarations and code to iterate through the pixels in the image and compute the membership in the set:
+
+```mojo
+alias height = 4096
+alias width = 4096
+alias min_x = -2.0
+alias max_x = 0.47
+alias min_y = -1.12
+alias max_y = 1.12
+alias scalex = (max_x - min_x) / width
+alias scaley = (max_y - min_y) / height
+
+for h in range(height):
+	let cy = min_y + h * scale_y
+	for w in range(width):
+		let cx = min_x + w * scale_x
+		output[h,w] = mandelbrot_N(ComplexFloat64(cx,cy))
+```
+(in the above code, replace N resp. by 0, 1 and 2)
+
+We also need:  
+* def compute_mandelbrot() -> Tensor[float_type]:
+* def show_plot(tensor: Tensor[float_type]):
+and the starting point:
+```mojo
+fn main() raises:
+    _ = show_plot(compute_mandelbrot())
+```
+
+### 20.5.6
