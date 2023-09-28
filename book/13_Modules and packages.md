@@ -11,7 +11,10 @@ A Mojo *module* is a single Mojo source file that includes code like an API, sui
 The module gets its name from the filename (without the extension), for example: a file `module1.mojo` contains the code for module `module1`.  
 The code in a module has no main() function, so you can’t execute a module like in module1.mojo. However, you can import this into another file with a main() function and use it there.  
 
-A Mojo *package* is just a collection of Mojo modules in a directory that includes an `__init__.mojo` file. The directory name works as the package name when importing the package.
+A Mojo *package* is just a collection of Mojo modules in a directory that includes an `__init__.mojo` file. The directory name works as the package name when importing the package.  
+
+>Note: The packages of the Mojo standard library are stored in `/home/username/.modular/pkg/packages.modular.com_mojo/lib/mojo`
+
 You can then import all the modules together or individually.
 For example: the map() function resides in the `functional` module in the `algorithm` package, so you can import it as:
 `from algorithm.functional import map`.  
@@ -68,7 +71,7 @@ Line 1                :  `import mymodule as mp`
 and line 3 to:           `let mine = mp.MyPair(2, 4)`
 
 ## 13.3 Importing a local Mojo package
-You can import a package and its modules either directly from source files or from a compiled `.mojopkg/.📦` file. It makes no real difference to Mojo which way you import a package. When importing from source files, the directory name works as the package name, whereas when importing from a compiled package, the filename is the package name (which you specify with the mojo package command, so it can differ from the directory name).  
+You can import a package and its modules either directly from source files or from a compiled `.mojopkg` or `.📦` file. It makes no real difference to Mojo which way you import a package. When importing from source files, the directory name works as the package name, whereas when importing from a compiled package, the filename is the package name (which you specify with the mojo package command, so it can differ from the directory name).  
 
 ## 13.3.1 Importing the package as source code
 For our example, let's continue to work on the code from § 13.2. Suppose our project structure is like this:   

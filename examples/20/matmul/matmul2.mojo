@@ -10,6 +10,7 @@ from runtime.llcl import Runtime
 
 let python_gflops = 0.005430089939864052
 
+
 # Note that C, A, and B have types.
 fn matmul_naive(C: Matrix, A: Matrix, B: Matrix):
     for m in range(C.rows):
@@ -26,7 +27,7 @@ struct Matrix:
 
     fn __init__(inout self, rows: Int, cols: Int):
         self.data = DTypePointer[DType.float32].alloc(rows * cols)
-        rand(self.data, rows*cols)  # 1
+        rand(self.data, rows * cols)  # 1
         self.rows = rows
         self.cols = cols
 
@@ -41,7 +42,7 @@ struct Matrix:
         return self.load[1](y, x)
 
     @always_inline
-    fn load[nelts:Int](self, y: Int, x: Int) -> SIMD[DType.float32, nelts]:
+    fn load[nelts: Int](self, y: Int, x: Int) -> SIMD[DType.float32, nelts]:
         return self.data.simd_load[nelts](y * self.cols + x)
 
     @always_inline
@@ -49,8 +50,9 @@ struct Matrix:
         return self.store[1](y, x, val)
 
     @always_inline
-    fn store[nelts:Int](self, y: Int, x: Int, val: SIMD[DType.float32, nelts]):
+    fn store[nelts: Int](self, y: Int, x: Int, val: SIMD[DType.float32, nelts]):
         self.data.simd_store[nelts](y * self.cols + x, val)
+
 
 @always_inline
 fn benchmark[
@@ -66,16 +68,19 @@ fn benchmark[
     fn test_fn():
         _ = func(C, A, B)
 
-    let secs = Float64(Benchmark().run[test_fn]()) / 1_000_000_000
+    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    print("Mojo seconds: ", secs)
     # Prevent the matrices from being freed before the benchmark run
     _ = (A, B, C)
     let gflops = ((2 * M * N * K) / secs) / 1e9
     let speedup: Float64 = gflops / python_gflops
     print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
 
+
 fn main() raises:
     # benchmark[matmul_naive](128, 128, 128, python_gflops)
     benchmark[matmul_naive](512, 512, 512, python_gflops)
+
 
 # =>
 # $ mojo matmul2.mojo

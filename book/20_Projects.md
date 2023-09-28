@@ -394,6 +394,7 @@ def benchmark_matmul_python(M, N, K):
     B = PyMatrix(list(np.random.rand(K, N)), K, N)
     C = PyMatrix(list(np.zeros((M, N))), M, N)
     secs = timeit(lambda: matmul_python(C, A, B), number=2) / 2
+    print("Python seconds: ", secs)
     gflops = ((2 * M * N * K) / secs) / 1e9
     print(gflops, "GFLOP/s")
     return gflops
@@ -479,7 +480,8 @@ def benchmark_matmul_untyped(M: Int, N: Int, K: Int, python_gflops: Float64):
         except:
             pass
 
-    let secs = Float64(Benchmark().run[test_fn]()) / 1_000_000_000
+    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    print("Mojo seconds: ", secs)
     _ = (A, B, C)
     let gflops = ((2*M*N*K)/secs) / 1e9
     let speedup : Float64 = gflops / python_gflops
@@ -666,7 +668,7 @@ To get the best performance from modern processors, one has to utilize the multi
 
 STEPS:  
 1- Replace the benchmark function by benchmark_parallel:  
-For parallel code, we need to introduce a benchmark function that shares the threadpool, otherwise it introduces latency creating a new runtime on every iteration of the benchmark. You can see this bellow in `with Runtime() as rt`.
+For parallel code, we need to introduce a benchmark function that shares the threadpool, otherwise it introduces latency creating a new runtime on every iteration of the benchmark. You can see this below in `with Runtime() as rt`.
 2- Replace fn matmul_vectorized_1 by matmul_parallelized: modify the matmul implementation and make it multi-threaded by using the builtin parallelize function(for simplicity, we only parallelize on the M dimension):
 
 See `matmul5.mojo`:
@@ -920,10 +922,13 @@ speedup: 0.011395673248767892
 
 ## 20.5 - Computing the Mandelbrot set
 Video:  https://www.youtube.com/watch?v=wFMB0VSH51M
+        
+https://docs.modular.com/mojo/notebooks/Mandelbrot.html
 
 See Mojo blog:
-* https://www.modular.com/blog/how-mojo-gets-a-35-000x-speedup-over-python-part-1
-
+* 2023 Aug 18 - https://www.modular.com/blog/how-mojo-gets-a-35-000x-speedup-over-python-part-1
+* 2023 Aug 28 - https://www.modular.com/blog/how-mojo-gets-a-35-000x-speedup-over-python-part-2
+* 2023 Sep 6 - https://www.modular.com/blog/mojo-a-journey-to-68-000x-speedup-over-python-part-3
 
 ### 20.5.1 The pure Python algorithm
 ```py
@@ -1049,4 +1054,136 @@ fn main() raises:
     _ = show_plot(compute_mandelbrot())
 ```
 
-### 20.5.6
+### 20.5.6 - Vectorizing the code
+Vectorization is also known as Single Instruction Multiple Data (SIMD). By vectorizing the loop, we can compute multiple pixels simultaneously. `vectorize` is a higher order generator.
+
+See `mandelbrot_3.mojo`:
+```mojo
+from python import Python
+from math import abs, iota
+from complex import ComplexSIMD, ComplexFloat64
+from tensor import Tensor
+from utils.index import Index
+from benchmark import Benchmark
+from algorithm import vectorize
+
+alias float_type = DType.float64
+alias simd_width = 2 * simdwidthof[float_type]()
+
+alias width = 960
+alias height = 960
+alias MAX_ITERS = 1000
+
+alias min_x = -2.0
+alias max_x = 0.6
+alias min_y = -1.5
+alias max_y = 1.5
+
+
+# Compute the number of steps to escape.
+fn mandelbrot_kernel_SIMD[
+    simd_width: Int
+](c: ComplexSIMD[float_type, simd_width]) -> SIMD[float_type, simd_width]:
+    """A vectorized implementation of the inner mandelbrot computation."""
+    let cx = c.re
+    let cy = c.im
+    var x = SIMD[float_type, simd_width](0)
+    var y = SIMD[float_type, simd_width](0)
+    var y2 = SIMD[float_type, simd_width](0)
+    var iters = SIMD[float_type, simd_width](0)
+
+    var t: SIMD[DType.bool, simd_width] = True
+    for i in range(MAX_ITERS):
+        if not t.reduce_or():
+            break
+        y2 = y * y
+        y = x.fma(y + y, cy)
+        t = x.fma(x, y2) <= 4
+        x = x.fma(x, cx - y2)
+        iters = t.select(iters + 1, iters)
+    return iters
+
+
+fn vectorized():
+    let t = Tensor[float_type](height, width)
+
+    @parameter
+    fn worker(row: Int):
+        let scale_x = (max_x - min_x) / width
+        let scale_y = (max_y - min_y) / height
+
+        @parameter
+        fn compute_vector[simd_width: Int](col: Int):
+            """Each time we oeprate on a `simd_width` vector of pixels."""
+            let cx = min_x + (col + iota[float_type, simd_width]()) * scale_x
+            let cy = min_y + row * scale_y
+            let c = ComplexSIMD[float_type, simd_width](cx, cy)
+            t.data().simd_store[simd_width](
+                row * width + col, mandelbrot_kernel_SIMD[simd_width](c)
+            )
+
+        # Vectorize the call to compute_vector where call gets a chunk of pixels.
+        vectorize[simd_width, compute_vector](width)
+
+    @parameter
+    fn bench[simd_width: Int]():
+        for row in range(height):
+            worker(row)
+
+    let vectorized = Benchmark().run[bench[simd_width]]() / 1e6
+    print("Vectorized", ":", vectorized, "ms")
+
+    try:
+        _ = show_plot(t)
+    except e:
+        print("failed to show plot:", e.value)
+
+def show_plot(tensor: Tensor[float_type]):
+    alias scale = 10
+    alias dpi = 64
+
+    np = Python.import_module("numpy")
+    plt = Python.import_module("matplotlib.pyplot")
+    colors = Python.import_module("matplotlib.colors")
+
+    numpy_array = np.zeros((height, width), np.float64)
+
+    for row in range(height):
+        for col in range(width):
+            numpy_array.itemset((col, row), tensor[col, row])
+
+    fig = plt.figure(1, [scale, scale * height // width], dpi)
+    ax = fig.add_axes([0.0, 0.0, 1.0, 1.0], False, 1)
+    light = colors.LightSource(315, 10, 0, 1, 1, 0)
+
+    image = light.shade(
+        numpy_array, plt.cm.hot, colors.PowerNorm(0.3), "hsv", 0, 0, 1.5
+    )
+    plt.imshow(image)
+    plt.axis("off")
+    plt.show()
+
+
+fn main() raises:
+    let python_secs = 11.530147033001413
+    vectorized()
+```
+
+The output is: `Vectorized : 56.717956000000001 ms`
+so a 4.7 x speedup regarding to mandelbrot2.
+
+### 20.5.7 - Parallelizing the code
+See `mandelbrot_4.mojo`.
+
+The results are:  
+```
+ Number of threads: 12
+ Vectorized: 12.647498000000001 ms
+ Parallelized: 1.7074240000000001 ms
+ Parallel speedup: 7.4073563449969075, 6743 x faster than Python version.
+```
+
+Blog article 3 introduces a *partition factor* to alleviate load imbalance among the cores:  
+`parallelize[compute_row](rt, height, partition_factor * num_cores())`
+which adds a 2.3x speedup (see `mandelbrot_5.mojo` ??).
+On my system, this achieves a small speedup, to 1.5 ms.

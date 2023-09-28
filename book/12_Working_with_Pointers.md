@@ -1,10 +1,15 @@
 # 12 – Working with Pointers
 **Don’t be afraid of pointers.**
 
-Mojo needs the concept of *pointer* as a low-level systems language.  
+Pointers are a fundamental concept in many low-level systems programming languages, and they exist also in Mojo. They offer the following advantages:  
+* Memory Efficiency: Pointers allow programs to use memory more efficiently. Instead of copying and storing entire data structures, a program can use pointers to reference these structures. This is particularly useful when dealing with large data structures.
+* Dynamic Memory Allocation: Pointers enable dynamic memory allocation. This means that memory for variables can be allocated and deallocated during runtime, which provides flexibility and control over the memory usage of your program.
+* Data Structures and Algorithms: Pointers are essential for creating complex data structures like trees and linked lists. They also enable efficient implementation of various algorithms.
+* Function Arguments: Pointers can be used to pass arguments by reference to a function. This means that the function can modify the original data, not just a copy of it.
 
-Pointers are really needed to efficiently access memory, instead of having to move around big chunks of data in memory all the time.
-To do low-level things and get the best performance, we need direct access to memory locations, just like C and other low-level languages. That's what pointers are for. Mojo gives you the power to do whatever you want with pointers.
+In Mojo, pointers are used with care to avoid potential errors. For example, the language provides a `UniquePointer` type that cannot be copied, which helps prevent issues like dangling pointers or memory leaks. Mojo also allows you to define functions that take owned arguments, enabling you to transfer ownership of a pointer to another function.
+
+To do low-level things and get the best performance, we need direct access to memory locations, just like C and other low-level languages. Mojo gives you the power to do whatever you want with pointers.
 
 We already encountered some examples of Pointer use, particularly in § 7 when defining Structs.
 

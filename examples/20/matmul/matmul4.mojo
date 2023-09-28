@@ -69,7 +69,8 @@ fn benchmark[
     fn test_fn():
         _ = func(C, A, B)
 
-    let secs = Float64(Benchmark().run[test_fn]()) / 1_000_000_000
+    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    print("Mojo seconds: ", secs)
     # Prevent the matrices from being freed before the benchmark run
     _ = (A, B, C)
     let gflops = ((2 * M * N * K) / secs) / 1e9

@@ -9,17 +9,21 @@ from sys.info import simdwidthof
 from runtime.llcl import Runtime
 
 let python_gflops = 0.005430089939864052
-alias nelts = simdwidthof[DType.float32]() # The SIMD vector width.
+alias nelts = simdwidthof[DType.float32]()  # The SIMD vector width.
+
 
 fn matmul_vectorized_0(C: Matrix, A: Matrix, B: Matrix):
     for m in range(C.rows):
         for k in range(A.cols):
             for nv in range(0, C.cols, nelts):
-                C.store[nelts](m,nv, C.load[nelts](m,nv) + A[m,k] * B.load[nelts](k,nv))
-        
+                C.store[nelts](
+                    m, nv, C.load[nelts](m, nv) + A[m, k] * B.load[nelts](k, nv)
+                )
+
             # Handle remaining elements with scalars.
-            for n in range(nelts*(C.cols//nelts), C.cols):
-                C[m,n] += A[m,k] * B[k,n]
+            for n in range(nelts * (C.cols // nelts), C.cols):
+                C[m, n] += A[m, k] * B[k, n]
+
 
 # Matrix type and methods:
 struct Matrix:
@@ -70,7 +74,8 @@ fn benchmark[
     fn test_fn():
         _ = func(C, A, B)
 
-    let secs = Float64(Benchmark().run[test_fn]()) / 1_000_000_000
+    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    print("Mojo seconds: ", secs)
     # Prevent the matrices from being freed before the benchmark run
     _ = (A, B, C)
     let gflops = ((2 * M * N * K) / secs) / 1e9
@@ -80,6 +85,7 @@ fn benchmark[
 
 fn main() raises:
     benchmark[matmul_vectorized_0](512, 512, 512, python_gflops)
+
 
 # =>
 # $ mojo matmul3.mojo

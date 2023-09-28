@@ -118,7 +118,7 @@ It is on the roadmap.  Currently, you can use Python's C++ interop libraries lik
 Here are the killer features of Mojo: 
 0- PROGRESSIVE/STATIC TYPING: Leverage types for better performance and error checking.
 1- fast compilation  
-2- fast execution (runtime performance): ZERO COST ABSTRACTIONS: Take control of storage by inline-allocating values into structures.  
+2- fast execution (runtime performance): ZERO COST ABSTRACTIONS: Take control of storage by inline-allocating values into structures. Mojo includes a *high-performance concurrent runtime*. 
 3- automatic memory management:  OWNERSHIP + BORROW CHECKER: Take advantage of memory safety without the rough edges.
 >Note: if really needed, you could do manual memory management in Mojo. It provides a manual management system using pointers similar to C++ and Rust.
 

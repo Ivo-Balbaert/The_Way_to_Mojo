@@ -50,6 +50,7 @@ def benchmark_matmul_python(M, N, K):
     B = PyMatrix(list(np.random.rand(K, N)), K, N)
     C = PyMatrix(list(np.zeros((M, N))), M, N)
     secs = timeit(lambda: matmul_python(C, A, B), number=2) / 2
+    print("Python seconds: ", secs)
     gflops = ((2 * M * N * K) / secs) / 1e9
     print(gflops, "GFLOP/s")
     return gflops
@@ -60,3 +61,7 @@ if __name__ == "__main__":
     # benchmark_matmul_python(128, 128, 128)
     print("Throughput of a 512x512 matrix multiplication in Python:")
     benchmark_matmul_python(512, 512, 512)
+
+# Throughput of a 512x512 matrix multiplication in Python:
+# Python seconds:  52.46111132599617
+# 0.00511684654051508 GFLOP/s

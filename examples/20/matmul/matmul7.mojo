@@ -29,18 +29,26 @@ fn matmul_tiled_unrolled_parallelized(C: Matrix, A: Matrix, B: Matrix, rt: Runti
         @parameter
         fn calc_tile[tile_x: Int, tile_y: Int](x: Int, y: Int):
             for k in range(y, y + tile_y):
+
                 @parameter
-                fn dot[nelts : Int,](n : Int):
-                    C.store[nelts](m,n+x, C.load[nelts](m,n+x) + A[m,k] * B.load[nelts](k,n+x))
+                fn dot[
+                    nelts: Int,
+                ](n: Int):
+                    C.store[nelts](
+                        m,
+                        n + x,
+                        C.load[nelts](m, n + x) + A[m, k] * B.load[nelts](k, n + x),
+                    )
 
                 # Vectorize by nelts and unroll by tile_x/nelts
                 # Here unroll factor is 4
-                vectorize_unroll[nelts, tile_x//nelts, dot](tile_x)
+                vectorize_unroll[nelts, tile_x // nelts, dot](tile_x)
 
         alias tile_size = 4
-        tile[calc_tile, nelts*tile_size, tile_size](A.cols, C.cols)
-      
+        tile[calc_tile, nelts * tile_size, tile_size](A.cols, C.cols)
+
     parallelize[calc_row](rt, C.rows)
+
 
 # Matrix type and methods:
 struct Matrix:
@@ -93,7 +101,8 @@ fn benchmark_parallel[
         fn test_fn():
             _ = func(C, A, B, rt)
 
-        let secs = Float64(Benchmark().run[test_fn]()) / 1_000_000_000
+        let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+        print("Mojo seconds: ", secs)
         # Prevent the matrices from being freed before the benchmark run
         _ = (A, B, C)
         let gflops = ((2 * M * N * K) / secs) / 1e9
@@ -104,6 +113,7 @@ fn benchmark_parallel[
 
 fn main() raises:
     benchmark_parallel[matmul_tiled_unrolled_parallelized](512, 512, 512, python_gflops)
+
 
 # =>
 # $ mojo matmul7.mojo

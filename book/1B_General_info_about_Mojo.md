@@ -20,7 +20,10 @@ The name of the language is **Mojo**, meaning "a magical charm" or "magical powe
 
 Its logo is the ![fire emoticon](??), the U+1F525 Unicode character.
 
-Mojo’s source files have the fire emoticon extension like hello.🔥, or alternatively *.mojo*, as in *hello.mojo*.
+Mojo is also the first language to introduce emojis as file extensions!
+Mojo’s source files have the fire emoticon extension like hello.🔥, or alternatively *.mojo*, as in *hello.mojo*.  
+Mojo’s packages have the emoticon extension like greetings.📦, or alternatively *.mojopkg*, as in *greetings.mojopkg*.  
+
 
 Mojo users are called *mojicians 🪄*.
 The universe of all things Mojo is called the *Modverse*.

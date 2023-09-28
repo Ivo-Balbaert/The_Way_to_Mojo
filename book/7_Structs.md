@@ -486,7 +486,8 @@ Another example of a parametric struct is the SIMD struct (see § 7.9.3).
 See also § 12.2.
 
 
-## 7.9.3 Improving performance with the SIMD struct
+## 7.9.3 Improving performance with SIMD
+(See also Vectorization: § 20.5.6)
 Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance.
 
 Mojo’s SIMD struct type is defined as a struct in the builtin `simd` module and exposes the common SIMD operations in its methods, making the SIMD data type and size values parametric. This allows you to directly map your data to the SIMD vectors on any hardware.
@@ -541,10 +542,14 @@ Line 0 initializes a SIMD vector with zeros as values.
 DType.uint8 and 4 are called *parameters*. They must be known at compile-time.  
 (1, 2, 3, 4) are the *arguments*, which can be compile-time or runtime known (for example: user input or data retrieved from an API).
 
-y is now a vector of 8 bit numbers that are packed into 32 bits. We can perform a single instruction across all of it instead of 4 separate instructions, like *= shown in line 2.  
+y is now a vector of 8 bit numbers that are packed into 32 bits. We can perform a *single instruction across all of its items* (instead of 4 separate instructions as when we could have used a for loop), like *= shown in line 2.  
 If all items have the same value, use the shorthand notation as for z in line 3.  
 
 To show the SIMD register size on the current machine, use the function `simdbitwidth` from module `sys.info` as in line 4. The result `256` means that we can pack 32 x 8bit numbers together and perform a calculation on all of these with a single instruction.
+
+**Questions**
+Is this a correct declaration of a SOMD type? Test it.
+`let n = SIMD[DType.int32, 7](1, 2, 3, 4)`
 
 **Exercises**
 1- Initialize two single floats with 64 bits of data and the value 2.0, using the full SIMD version, and the shortened alias version, then multiply them together and print the result.
@@ -564,7 +569,7 @@ Other example: see `simd2.mojo`:
 	the cast() method is a generic method definition that gets instantiated at compile-time instead of runtime, based on the parameter value. cast is a SIMD specific method.
 
 ## 7.9.4 How to create a custom parametric type: Array
-In the following example you see the code for a parametric type Array, with parameter `AnyType` (line 1). It has an __init__ constructor (line 2), which takes the size and a value as arguments.
+In the following example you see the start of code for a parametric type Array, with parameter `AnyType` (line 1). It has an __init__ constructor (line 2), which takes the size and a value as arguments.
 Line 3 shows how to construct the array: 
 `let v = Array[Float32](4, 3.14)`  
 * parameter T = Float32
@@ -599,6 +604,10 @@ fn main():
 In line 4, memory space is allocated with: `self.data = Pointer[T].alloc(self.cap)`, and the value is stored in the for-loop in line 5.
 A destructor `__del__` is also provided, which executes  `self.data.free()` and is called automatically when the variable is no longer needed in code execution.
 A `__getitem__` method is also shown which takes an index i and returns the value on that position with `self.data.load(i)` (line 7).
+
+**Exercise**
+Enhance the code for struct Array with other useful methods like __setitem__, __copyinit__, __moveinit__, __dump__ and so on.
+(see ??)
 
 ## 7.9.5 Parametric functions and methods
 Better example: see parameter2.mojo in § 11.3

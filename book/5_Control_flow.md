@@ -49,6 +49,20 @@ fn guessLuckyNumber(guess: Int) -> Bool:    # 1
         return False
 ```
 
+Just like in Python, this can be expanded with one or more elif branches:
+```mojo
+if cond1:
+    ...
+elif cond2:
+    ...
+elif cond3:
+    ...
+else:
+    ...
+```
+
+Also if statements can be nested inside each other.
+
 ## 5.2 Using for loops
 The following program shows how to use a for in range-loop:
 
@@ -64,7 +78,7 @@ def main():
 # 3
 ```
 
-The loop in line 1 goes from start 9 to end 0, step -3. The end value 0 is not included.
+The loop in line 1 goes from start 9 to end 0, step -3. The end value 0 is not included, so a range(n) goes from 0 to n-1.
 
 ## 5.3 Using while loops
 Just like in Python, you can make a loop with a condition through `while`:
@@ -93,3 +107,20 @@ If your code is expected to possibly raise an exception, either the enveloping f
 ```
 
 For a concrete example, see `try_except.mojo` in § 6.2 
+
+## 5.5 The with statement
+In Python the with statement is used to create a context. Whatever statements we execute inside that context does not affect the outer environment. The with statement simplifies exception handling by encapsulating common preparation and cleanup tasks. 
+It is commonly used as `with open(file)` to read a file and close it automatically at the end of the context.  
+
+In Mojo it is used to create a parallelization context, for example in mandelbrot_4.mojo:
+```mojo
+from runtime.llcl import num_cores, Runtime
+
+with Runtime() as rt:
+
+        @parameter
+        fn bench_parallel[simd_width: Int]():
+            parallelize[worker](rt, height, height)
+
+        let parallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
+```

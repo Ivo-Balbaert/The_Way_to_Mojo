@@ -1,6 +1,6 @@
 # 11 – Decorators
 
-Decorators are a powerful feature in many programming languages that allow you to modify the behavior of a function, method, struct or class without changing its source code. This is known as metaprogramming, since a part of the program (the decorator) tries to modify another part of the program §the struct or class) at compile time.
+Decorators are a powerful feature in many programming languages that allow you to modify the behavior of a function, method, struct or class without changing its source code. This is known as *metaprogramming*, since a part of the program (the decorator) tries to modify another part of the program (for example: the struct or class) at compile time.
 
 Mojo also uses decorators to modify the properties and behaviors of types (like structs) and functions.
 

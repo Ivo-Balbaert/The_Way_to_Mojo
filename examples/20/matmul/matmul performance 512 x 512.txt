@@ -1,0 +1,13 @@
+matmul 512 x 512:
+
+Python secs:   		52.46111132599617
+
+Mojo secs:      		mojo			executable		speedup (executable)
+	    matmul1:	16.920603465999999	   15.122409769000001	          3.5
+	    matmul2:	0.038140180000000003	   0.037344123999999999		  1405
+	    matmul3:    0.005743265		   0.0079203780000000005          6624   (mojo run performs better! x 9134   )
+	    matmul4:    0.0054407220000000003      0.0078702579999999998	  6666	 (mojo run performs better! x 9542   )
+	    matmul5: 	0.0024114649999999998	   0.0024268710000000001         21617   (mojo run performs better! x 21755  )
+	    matmul6:    0.0027176610000000001      0.0028397029999999998	 18474	 (mojo run performs better! x 19304  )
+            matmul7:    0.002548514                0.0026734649999999999         19623   (mojo run performs better! x 20585  )
+	    matmul8:	0.0023758910000000002      0.0023371690000000001         22446

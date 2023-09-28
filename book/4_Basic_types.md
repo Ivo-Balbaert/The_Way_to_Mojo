@@ -7,7 +7,7 @@ These structs mostly contain so-called *dunder* (__...__) methods. Common exampl
 * the `__eq__` method: to test the equality of two values of the same type.  
 Often an equivalent infix or prefix operator can act as 'syntax sugar' for calling such a method. For example: the `__eq__` is called with the operator `==`.
 
-A *scalar* just means a single value in Mojo. The scalar types include the Bool type (see § 4.1.2), as well as the numerical types, which are all based on SIMD (see § ??).
+A *scalar* just means a single value in Mojo. The scalar types include the Bool type (see § 4.1.2), as well as the numerical types, which are all based on SIMD (see § 7.9.3).
 
 The `DType` (data type) class defined in module `dtype` is kind of an umbrella type for the bool and numeric types. It has the following aliases:  
 * invalid = invalid: Represents an invalid or unknown data type.
@@ -124,7 +124,7 @@ The type name can be used to convert a value to the type (if possible), for exam
 
 A small handy detail about spelling: _ can separate thousands:  `10_000_000`
 
-All numeric types are derived from a SIMD type for performance reasons (see § 7.3).
+All numeric types are derived from a SIMD type for performance reasons (see § 7.9.3).
 
 Integers can also be used as indexes, as shown in the following example. Here the parametrized type DynamicVector (from module utils.vector) takes Int as the parameter type of its elements:
 
