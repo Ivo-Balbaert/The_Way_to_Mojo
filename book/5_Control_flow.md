@@ -124,3 +124,10 @@ with Runtime() as rt:
 
         let parallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
 ```
+
+## 5.6 The walrus operator :=
+The walrus operator now works in if/while statements without parentheses, e.g.:  
+`if x := function():`
+
+Example: ??
+

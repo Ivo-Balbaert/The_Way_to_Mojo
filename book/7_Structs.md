@@ -253,7 +253,7 @@ struct HeapArray:                   # 1
         for i in range(self.size):
             if i > 0:
                 print_no_newline(", ")
-            print_no_newline(self.data.load(i))
+                
         print("]")
 
 fn main():
@@ -267,16 +267,16 @@ fn main():
 HeapArray contains an instance of `Pointer` (which is equivalent to a low-level C pointer), and Mojo doesn’t know what kind of data it points to or how to copy it. More generally, some types (like atomic numbers) cannot be copied or moved around because their address provides an identity just like a class instance does.
 
 If we then provide that method (see line 2), all works fine:
-When executing `let b = a`, b gets substituted for self, and a for other.
+When executing `let b = a`, b gets substituted for self, and a for rhs; that's why we call the 2nd arguments rhs ( a is on the 'right hand side').
 
 See `copy_init.mojo`:
 ```mojo
-fn __copyinit__(inout self, other: Self):         # 2
-        self.cap = other.cap
-        self.size = other.size
+fn __copyinit__(inout self, rhs: Self):         # 2
+        self.cap = rhs.cap
+        self.size = rhs.size
         self.data = Pointer[Int].alloc(self.cap)
         for i in range(self.size):
-            self.data.store(i, other.data.load(i))
+            self.data.store(i, rhs.data.load(i))
 
 fn main():
     let a = HeapArray(3, 1)
@@ -569,6 +569,7 @@ Other example: see `simd2.mojo`:
 	the cast() method is a generic method definition that gets instantiated at compile-time instead of runtime, based on the parameter value. cast is a SIMD specific method.
 
 ## 7.9.4 How to create a custom parametric type: Array
+Currently (2023 Sep) there is no canonical array type in the stdlib. So let's make one ourselves.
 In the following example you see the start of code for a parametric type Array, with parameter `AnyType` (line 1). It has an __init__ constructor (line 2), which takes the size and a value as arguments.
 Line 3 shows how to construct the array: 
 `let v = Array[Float32](4, 3.14)`  
@@ -607,8 +608,7 @@ A `__getitem__` method is also shown which takes an index i and returns the valu
 
 **Exercise**
 Enhance the code for struct Array with other useful methods like __setitem__, __copyinit__, __moveinit__, __dump__ and so on.
-(see ??)
-
+(see `parametric_array2.mojo`, see also https://github.com/Moosems/Mojo-Types).
 ## 7.9.5 Parametric functions and methods
 Better example: see parameter2.mojo in § 11.3
 Here are some examples of parametric functions:

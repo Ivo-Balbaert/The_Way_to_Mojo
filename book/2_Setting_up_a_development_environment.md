@@ -554,10 +554,11 @@ See also: [Troubleshooting Windows Subsystem for Linux | Microsoft Docs](https:/
 
 **How to update Mojo**
 Simpler: 
-1- `sudo apt-get update && sudo apt-get install modular`
+1- `sudo apt-get update`
+2- `sudo apt-get install modular`
 2- `modular update mojo`
 
-If there is an error about a missing lib, d:
+If there is an error about a missing lib, do:
 1- Execute the command:         `modular clean`
 2- Then do a fresh install:     `modular install mojo`
 displaying:
@@ -565,6 +566,9 @@ displaying:
 # Found release for https://packages.modular.com/mojo @ 0.2.1, installing to /home/ivo/.modular/pkg/packages.modular.com_mojo
 # ...
 ```
+
+To install the Python virtual environment:  
+`sudo apt install python3.10-venv`
 
 **How to remove Mojo**
 Issue the command: `modular uninstall`.

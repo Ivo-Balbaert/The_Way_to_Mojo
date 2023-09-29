@@ -17,12 +17,12 @@ struct HeapArray:                   # 1
         for i in range(self.size):
             self.data.store(i, val)
 
-    fn __copyinit__(inout self, other: Self):         # 1
-        self.cap = other.cap
-        self.size = other.size
+    fn __copyinit__(inout self, rhs: Self):         # 1
+        self.cap = rhs.cap
+        self.size = rhs.size
         self.data = Pointer[Int].alloc(self.cap)
         for i in range(self.size):
-            self.data.store(i, other.data.load(i))
+            self.data.store(i, rhs.data.load(i))
             
     fn __del__(owned self):
         self.data.free()

@@ -137,6 +137,8 @@ fn main():
 # Seconds: 0.028052724000000001
 ```
 
+>Note: 
+
 Let us now compare this to the iterative version (fib_iterative):
 
 ```mojo
@@ -445,6 +447,22 @@ fn main():
 
     measure()   
 ```
+
+Here is example code where we time the execution of the Fibonacci function (see § 19.3):
+```mojo
+from time import now
+
+var eval_begin = now()
+var res = fib(50)
+var eval_end = now()
+let execution_time_sequential = Float64((eval_end - eval_begin))
+print("execution_time sequential in ms:")
+print(execution_time_sequential / 1000000)
+# =>
+# execution_time sequential in ms:
+# 14253.018341999999
+```
+(A comparison showed: Julia 21s, Rust 16s, Mojo 14s)
 
 The now() function (line 1) gets the current number of nanoseconds using the systems monotonic clock, which is generally the time elapsed since the machine was booted. Behavior will vary by platform for states like sleep etc.  
 The sleep() function can be used to make a thread sleep for the duration in seconds, here 1 ms (see lines 2 and following).  

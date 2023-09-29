@@ -89,6 +89,7 @@ You are stopped by the following compiler errors:
     x = 42        # => expression must be mutable in assignment
     var x = 42    # => invalid redefinition of 'x'
 
+A function can be recursive (see Fibonacci example § 10.3)
 
 ## 6.4 Argument passing: control and memory ownership
 

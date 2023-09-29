@@ -531,7 +531,9 @@ fn main():
 ```
 
 Line 2 and following work, because alias is also a way to define a compile-time temporary value,  just like var and let define resp. a runtime variable and constant. alias is kind of a let at comptime. You can also make a user-defined type with it (see § 1B). All occurences of the alias name get substituted with the value at comptime, so it has a bit of a performance benifit. This is ideal to set parameter values of the problem at hand.
-Both None and AnyType are defined as type aliases. 
+Both None and AnyType are defined as type aliases in the builtin module `type_aliases`. 
+* AnyType: Represents any Mojo data type
+* NoneType = None: Represents the absence of a value.
 
 ### 4.4.2 Defining an enum type using alias
 (?? After ch 7 on structs)
@@ -582,3 +584,18 @@ fn main():
 ```
 
 These functions sort the vector in-place.
+
+## 4.6 The object type
+`object` is defined in module `object` in the `builtin` package.
+It is used to represent untyped values. This is the type of arguments in def functions that do not have a type annotation, such as the type of x in `def f(x): pass`. A value of any type can be passed in as the x argument in that case.
+
+`matmul1.mojo` in § 20. shows an example of its use.
+The following function shows how an object can be initialized and its attributes defined:
+```
+fn matrix_init(rows: Int, cols: Int) raises -> object:
+    let value = object([])
+    return object(
+        Attr("value", value), Attr("__getitem__", matrix_getitem), Attr("__setitem__", matrix_setitem), 
+        Attr("rows", rows), Attr("cols", cols), Attr("append", matrix_append),
+    )
+```

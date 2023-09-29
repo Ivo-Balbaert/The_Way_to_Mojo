@@ -65,6 +65,8 @@ A tutorial site:
 Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native support for Windows is coming.
 * 2023 Sep 7: First Mojo release for local download and execution (Linux - v 0.2.1 (64d14e85))
 * 2023 Sep 22: Mojo release v 0.3.0
+* 2023 Sep 29: Mojo release v 0.3.1 (for installation and lsp problems)
+
 
 Goals / Roadmap:
 * 2023 Jun 21 - "We expect that Mojo will be open-sourced. However, Mojo is still young, so we will continue to incubate it within Modular until more of its internal architecture is fleshed out. We don’t have an established plan for open-sourcing yet."
