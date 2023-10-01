@@ -1187,3 +1187,10 @@ Blog article 3 introduces a *partition factor* to alleviate load imbalance among
 `parallelize[compute_row](rt, height, partition_factor * num_cores())`
 which adds a 2.3x speedup (see `mandelbrot_5.mojo` ??).
 On my system, this achieves a small speedup, to 1.5 ms.
+
+## 20.6 - Raytracing in Mojo
+(Based on the article: https://github.com/ssloy/tinyraytracer/wiki/Part-1:-understandable-raytracing).
+
+There is a notebook `RayTracing.ipynb` and a doc section: https://docs.modular.com/mojo/notebooks/RayTracing.html.
+
+The code is assembled in `ray_tracing.mojo`.

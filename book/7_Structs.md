@@ -27,6 +27,8 @@ fn main():
     print(myInt.value)              # => 42
 ```
 
+Self refers to the type of the struct that you're in, while self refers to the actual object
+
 The `self` argument denotes the current instance of the struct. 
 A method has a signature like this: `fn method1(self, other parameters)` and when object1 is an instance of its type, the method is called as: `object1.method1(params)`. So `object1` is automatically used as `self`, the first parameter of the method.
 Inside its own methods, the struct's type can also be called `Self`.
@@ -108,6 +110,26 @@ What do you see?
 This returns a compile time error: invalid call to '__lt__': right side cannot be converted from 'Int' to 'IntPair'.
 
 See also `planets.mojo`.
+Here is another style of writing the __init__ method:
+From `nbody.mojo`:
+```mojo
+@register_passable("trivial")
+struct Planet:
+    var pos: SIMD[DType.float64, 4]
+    var velocity: SIMD[DType.float64, 4]
+    var mass: Float64
+
+    fn __init__(
+        pos: SIMD[DType.float64, 4],
+        velocity: SIMD[DType.float64, 4],
+        mass: Float64,
+    ) -> Self:
+        return Self {
+            pos: pos,
+            velocity: velocity,
+            mass: mass,
+        }
+```
 
 **Exercise**
 1 -  Define a struct Point for a 3 dimensional point in space. Declare a point variable origin, and print out its items.

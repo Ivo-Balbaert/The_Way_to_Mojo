@@ -41,7 +41,7 @@ fn main() raises:
     let py_string = py.evaluate("'This string was built' + ' inside of python'")
     print(py_string)  # => This string was built inside of python
  
-    let pybt = Python.import_module("builtins")
+    let pybt = Python.import_module("builtins") # 2
     _ = pybt.print("this uses the python print keyword") # => this uses the python print keyword
 
     _ = pybt.print(pybt.type(x))  # => <class 'int'>
@@ -57,7 +57,7 @@ python1.mojo(3, 1): or mark surrounding function as 'raises'
 
 Apparently, Mojo warns you that `Python.evaluate` could raise an error, that Mojo should catch.
 
-The rhs (right hand side) of line 1 is of type `PythonObject`.  
+The rhs (right hand side) of lines 1 and 2 are of type `PythonObject`. PythonObject is a Mojo type that can store Python objects of any class. 
 (The _ = are needed to avoid the warning: 'PythonObject' value is unused)
 The above code is equivalent to the following when used in a Jupyter notebook running Mojo (see § 2):
 
@@ -206,6 +206,110 @@ fn main() raises:
 # <head>
 #     <meta charset="utf-8">
 ```
+
+### 8.3.3 Understanding the interaction between Python and Mojo
+This is illustrated in the following program, the comments show you when you are in Python land, and when in Mojo land!
+
+See `interaction_python_mojo.mojo`:
+```mojo
+from python import Python, PythonObject    # 0
+
+
+fn plot_from_mojo(values: PythonObject) raises:   # 9
+    print(values.__class__.__name__)  # => ndarray
+    let plt = Python.import_module("matplotlib.pyplot")   # 10  
+    _ = plt.plot(values)                          # 11              
+    _ = plt.show()                                # 12
+
+fn numpy_array_from_mojo() raises -> PythonObject:
+    let np = Python.import_module("numpy")   # 3    
+
+    let x = PythonObject([])         # 4           
+    let range_size: Int = 256        # 5           
+    for i in range(range_size):      # 6          
+        _ = x.append(i)              # 7 
+    print(x)   # => [0, 1, 2, 3, 4, ..., 253, 254, 255]
+
+    return np.cos(np.array(x)*np.pi*2.0/256.0)  # 8 
+
+def main():            
+    let results = numpy_array_from_mojo()   # 1    
+    plot_from_mojo(results)                 # 2    
+```
+
+We start with importing references to the Python environment in line 0. The Python reference is generally used to import Python modules. These must allready be installed on the machine, the import command doesn't do any install. PythonObject is a Mojo type to store any object of a Python class  (see: https://docs.modular.com/mojo/stdlib/python/object.html#init__).  
+In line 1 in main(), we call the Mojo function `numpy_array_from_mojo`, which returns a PythonObject. In line 3, np is a PythonObject, as always when you import a Python module.
+Line 4 declares a PythonObject x explicitly. It is initialized a list class from an empty list literal. Nota that [] is a Mojo value of type ListLiteral (see https://docs.modular.com/mojo/stdlib/python/object.html#init__).  
+range_size in line 5 is a Mojo Int value, as well as i in line 6. 
+In line 6,  i is automatically converted to Python object by method __init__ of PythonObject.  
+In line 7, the `append` is a Python method of the list class, because x is a PythonObject!
+(append is in Python land and Mojo can call it!). Note that append is not a method of PythonObject  (https://docs.modular.com/mojo/stdlib/python/object.html). It lives in Python land and Mojo is able to find it inside the python object.  
+This is why it is possible to import any created Python file, as in:
+```mojo
+var my_python_file = Python.import_module("my_python_file_name")
+my_python_file.my_function([1,2,3])
+```
+In line 8, a numpy array is created with the list x. This is converted to a suitable value, and the cos value is calculated. So the method returns an Python array of cosine values, which is assigned to results in line 1, and passed as argument to plot_from_mojo in line 2.  
+As we see in line 9, plot_from_mojo is a Mojo function that takes a PythonObject. `results` "travel" trough Mojo functions,as a PythonObject, but can also be passed to Python land functions, as a PythonObject.  
+In line 10 we import matplotlib (which must be installed allready).  
+In line 11, the values (or results) comes from numpy. The Python object class is ndarray: `print(values.__class__.__name__)` # => ndarray. The matplotlib Python functions plot (line 11) and show (line 12) are then used to display the [plot](see ??)
+
+*An example using SIMD* (perhaps as an exercise?)
+See `py_mojo_simd.mojo`:
+```mojo
+from python import Python, PythonObject
+from math import math
+from time import now
+
+struct np_loader:
+    var lib: PythonObject
+    var loaded: Bool
+
+    fn __init__(inout self):
+        try:
+            self.lib = Python.import_module("numpy")
+            self.loaded = True
+        except e:
+            self.loaded = False
+
+    fn __getitem__(inout self, key:StringLiteral) raises -> PythonObject:
+        return self.lib.__getattr__(key)
+
+fn main() raises:
+    var np = np_loader()                                        # 1 
+    if np.loaded:                                               # 2
+        let python_result = np["linspace"](0, 255, 256)         # 3
+        print(python_result) 
+        # =>
+        # [  0.   1.   2.   3.   4.   5.   6.   7.   8.   9.  10.  11.  12.  13.
+        # 14.  15.  16.  17.  ...   253. 254. 255.]
+        var simd_mojo_array = SIMD[DType.float64, 256]()        # 4
+        let pi = np["pi"].to_float64()                          # 5
+    
+        let size: Int = python_result.size.to_float64().to_int()   # 6 
+        for x in range(size):                                      # 7
+            simd_mojo_array[x] = python_result[x].to_float64()    
+
+        simd_mojo_array = math.cos(simd_mojo_array*(pi*2.0/256.0))  # 8   
+        print(simd_mojo_array)    
+
+# =>
+# [1.0, 0.99969881869620425, 0.99879545620517241, 0.99729045667869021, 
+# 0.99518472667219693, 0.99247953459870997, 0.98917650996478101, 
+# 0.98527764238894122, ...,  0.99879545620517241, 0.99969881869620425]
+```
+ 
+The call to np_loader in line 1 gets numpy from the Python local environment, by calling its __init__ method. This does exception handling (see § 5.4) because there could be an error (e.g. when numpy is not installed locally). A Bool value loaded is set to True when everything is ok; this is tested in line 2.  
+In line 3, we see a new way to interact with Python:  
+np["linspace"] is called, through the __getitem__ method with "linspace" as key. The same happens in line 5 with key "pi". Python returns PythonObjects, so therefore they sometimes require conversion to Mojo types in order to use some functions, that's why we use to_float64() here.
+Line 4 constructs a Mojo SIMD array of size 256, which will perform the calculation a lot faster than numpy. Same remark for line 6: convert arr size to Mojo Int.  
+In the loop starting in line 7, we fill the SIMD Mojo array with the Python values: we convert from Python float objects to Mojo float values.  
+Then in line 8, we apply the Mojo cos function to the SIMD array.
+
+**Exercise**
+Add the code to plot the result.
+(?? error: invalid call to 'plot_from_mojo': argument #0 cannot be converted from 'SIMD[f64, 256]' to 'PythonObject')
+
 
 ## 8.4 Importing local Python modules
 This works just like in the preceding §. In the following example, the local Python module `simple_interop.py` is imported through Mojo in line 1. Then in line 2, its `test_interop_func` is called:

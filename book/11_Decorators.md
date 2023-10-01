@@ -149,8 +149,8 @@ var x = (Coord(5, 10), 5.5)
 print(x.get[0, Coord]().x) # => 5
 ```
 
-The `@register_passable("trivial")` decorator is a variant of @register_passable for trivial types like like Int, Float, and SIMD.
-Trivial means: it is always pass by copy/value.
+The `@register_passable("trivial")` decorator is a variant of @register_passable for trivial types like Int, Float, and SIMD.
+Trivial means: it is always passed by copy/value.
 Examples of trivial types:
 * Arithmetic types such as Int, Bool, Float64 etc.
 * Pointers (the address value is trivial, not the data being pointed to)
@@ -209,7 +209,22 @@ add_print()
 The add calculation ran at compile time, so those extra instructions don't happen at runtime!
 
 ## 11.5 - @staticmethod
-`@staticmethod` can (only ??) be used in a struct that cannot be instantiated, for an example see § 7.10.1
+`@staticmethod` can be used:
+* in a struct that cannot be instantiated, for an example see § 7.10.1
+* to indicate that the following is a static method, to be called on the struct itself, not on an instance, example (see § 20.6 - `ray_tracing.mojo`):
+
+```mojo
+struct Vec3f:
+    var data: SIMD[DType.float32, 4]
+
+    ...
+    @always_inline
+    @staticmethod
+    fn zero() -> Vec3f:
+        return Vec3f(0, 0, 0)
+```
+The zero method is called as:  Vec3f.zero()
+
 
 ## 11.6 - @always_inline
 Normally the compiler will do inlining automatically where it improves performance.
@@ -225,3 +240,19 @@ See matmul
 ## 11.7 - @noncapturing
 Marks a closure as not capturing variables from the outer scope. See § 6.5.1
 
+## 11.8 - @unroll
+Examples: see `nbody.mojo`:
+
+```mojo
+    @unroll
+    for i in range(NUM_BODIES):
+        p += bodies[i].velocity * bodies[i].mass
+        ...
+
+    @unroll
+    for i in range(NUM_BODIES):
+        for j in range(NUM_BODIES - i - 1):
+            var body_i = bodies[i]
+            var body_j = bodies[j + i + 1]
+            ...
+```

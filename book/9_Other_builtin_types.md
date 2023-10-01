@@ -34,7 +34,7 @@ this parametric function f2 has a variable number of parameters of type Int
 
 ## 9.2 The Tuple type
 This is implemented in the built-in module `tuple`. 
->Note: There is also a static_tuple module in package utils
+>Note: There is also a static_tuple module in package utils, which defines the tpe `StaticTuple`, which is a statically sized tuple type contains elements of the same types
 
 A tuple consists of zero or more, possibly heterogeneous values, separated by commas and enclosed in ().  
 The `len` function returns the number of items.

@@ -131,3 +131,25 @@ The walrus operator now works in if/while statements without parentheses, e.g.:
 
 Example: ??
 
+## 5.7 Exiting from a program
+This will eventually be implemented. For now you can use this function:
+
+See `exit.mojo`:
+```mojo
+fn main():
+    print("before exit")  # => before exit
+    _ = exit(-2)          # exit the program
+    print("after exit")
+
+
+fn exit(status: Int32) -> UInt8:
+    return external_call["exit", UInt8, Int32](status)
+```
+
+with output:  
+```
+[Running] mojo tempCodeRunnerFile.mojo
+before exit
+
+[Done] exited with code=254 in 0.113 seconds
+```

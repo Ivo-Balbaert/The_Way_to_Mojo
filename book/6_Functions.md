@@ -91,6 +91,23 @@ You are stopped by the following compiler errors:
 
 A function can be recursive (see Fibonacci example § 10.3)
 
+## 6.3B Default and named arguments
+You can give arguments a default value, in case it doesn't get a value when the function is called (see line 1). You can also pass arguments explicitly with an assignment and their parameter name as in lines 2 and 3.
+
+See `default_named_args.mojo`:
+```mojo
+fn greet(times: Int = 1, message: String = "!!!"):  # 1
+    for i in range(times):
+        print("Hello " + message)
+
+
+fn main():
+    greet()                    # => Hello !!!
+    greet(message = "Mojo")    # 2 => Hello Mojo
+    greet(times = 2)           # 3 => Hello !!! 
+                               # => Hello !!!
+```
+
 ## 6.4 Argument passing: control and memory ownership
 
 ### 6.4.1 General rules for def and fn arguments

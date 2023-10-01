@@ -519,17 +519,23 @@ You can easily define a synonym or shorthand for a type with the alias keyword:
 ### 4.4.1 Usage of alias
 See `alias1.mojo`:
 ```mojo
+alias fl = Float32   # 1
+alias Float16 = SIMD[DType.float16, 1]
+
+alias PI = 3.141592653589793    # 1B
+alias SOLAR_MASS = 4 * PI * PI
+alias DAYS_PER_YEAR = 365.24
+
 fn main():
-    alias MojoArr = Float32   # 1
-    alias Float16 = SIMD[DType.float16, 1]
-    alias MojoArr2 = DTypePointer[DType.float32]  # 1B
+    alias MojoArr2 = DTypePointer[DType.float32] 
 
     alias my_debug_build = 1  # 2
     alias width = 960
     alias height = 960
-    alias MAX_ITERS = 200
+    alias MAX_ITERS = 20
 ```
 
+Line 1B shows that an alias constant is often capitalized.
 Line 2 and following work, because alias is also a way to define a compile-time temporary value,  just like var and let define resp. a runtime variable and constant. alias is kind of a let at comptime. You can also make a user-defined type with it (see § 1B). All occurences of the alias name get substituted with the value at comptime, so it has a bit of a performance benifit. This is ideal to set parameter values of the problem at hand.
 Both None and AnyType are defined as type aliases in the builtin module `type_aliases`. 
 * AnyType: Represents any Mojo data type

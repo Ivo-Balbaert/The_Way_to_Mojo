@@ -342,6 +342,7 @@ This is implemented in the get() method from line 10.
 get() Creates a closure named check_dim decorated by @parameter so it runs at compile time, it's checking that each item in *idx is less then the same dimension in the static shape. unroll is used to run it at compile-time i amount of times. This is shown in line 11.
 
 ## 10.6 Querying the host target info with module sys.info
+Mojo can gather a lot of info on your host machine to finetune its behavior if need be.  
 Methods for querying the host target info are implemented in module `sys.info`.
 
 See `target_info.mojo`:
@@ -417,6 +418,74 @@ A number of other functions starting with has_ or is_ give info about the proces
 * has_intel_amx(): AMX is an extension to x86 with instructions for special units designed for ML workloads such as TMUL which is a matrix multiply on BF16 (from 2023 onwards).
 * has_neon(): Neon also known as Advanced SIMD is an ARM extension for specialized instructions.
 * is_apple_m1(): The Apple M1 chip contains an ARM CPU that supports Neon 128 bit instructions and GPU accessible through Metal API.
+
+The following example (taken from the standard Mojo distribution) prints the current host system information using APIs from the sys module.
+
+See `deviceinfo.mojo`:
+```mojo
+from runtime.llcl import num_cores
+from sys.info import (
+    os_is_linux,
+    os_is_windows,
+    os_is_macos,
+    has_sse4,
+    has_avx,
+    has_avx2,
+    has_avx512f,
+    has_avx512_vnni,
+    has_neon,
+    is_apple_m1,
+    has_intel_amx,
+    _current_target,
+    _current_cpu,
+    _triple_attr,
+)
+
+
+def main():
+    var os = ""
+    if os_is_linux():
+        os = "linux"
+    elif os_is_macos():
+        os = "macOS"
+    else:
+        os = "windows"
+    let cpu = String(_current_cpu())
+    let arch = String(_triple_attr())
+    var cpu_features = String(" ")
+    if has_sse4():
+        cpu_features = cpu_features.join(" sse4")
+    if has_avx():
+        cpu_features = cpu_features.join(" avx")
+    if has_avx2():
+        cpu_features = cpu_features.join(" avx2")
+    if has_avx512f():
+        cpu_features = cpu_features.join(" avx512f")
+    if has_avx512_vnni():
+        cpu_features = cpu_features.join(" avx512_vnni")
+    if has_intel_amx():
+        cpu_features = cpu_features.join(" intel_amx")
+    if has_neon():
+        cpu_features = cpu_features.join(" neon")
+    if is_apple_m1():
+        cpu_features = cpu_features.join(" Apple M1")
+    print("System information: ")
+    print("    OS          : ", os)
+    print("    CPU         : ", cpu)
+    print("    Arch        : ", arch)
+    print("    Num Cores   : ", num_cores())
+    print("    CPU Features:", cpu_features)
+```
+
+Output on my current machine (WSL2 in Windows 11 on Intel i9 - 24 cores - 64G):
+```
+System information: 
+    OS          :  linux
+    CPU         :  alderlake
+    Arch        :  x86_64-unknown-linux-gnu
+    Num Cores   :  12
+    CPU Features:  avx2
+```
 
 ## 10.7 The time module
 
@@ -675,3 +744,5 @@ cmdline_args.mojo
 42
 abc
 ```
+
+## 10.11 

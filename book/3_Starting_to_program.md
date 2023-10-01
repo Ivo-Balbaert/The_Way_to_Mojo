@@ -355,4 +355,5 @@ let np = Python.import_module("numpy")      # 2
 First you have to import the Python module as in line 1: `from python import Python`.  
 Then you can use the `Python.import_module()` function with the module name (see line 2). You give it a constant name (here `np`), which can be used later to call module methods.
 (The equivalent of this line in Python would be: `import numpy as np`.) 
+Note that the .py extension for the moudle is not needed.
 For some concrete examples see:
