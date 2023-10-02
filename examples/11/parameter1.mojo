@@ -1,8 +1,20 @@
 from testing import assert_true
 
-fn main():
-    alias my_debug_build = 1  # 2
+alias debug_mode = True  # 1
+
+
+fn example():
     @parameter
-    if my_debug_build == 1:
-        _ = assert_true(1==2, "assertion failed")
+    if debug_mode:     # 2
+        print("debug")
+
+
+fn main():
+    @parameter
+    if debug_mode:      # 1B
+        _ = assert_true(1 == 2, "assertion failed")
     # => ASSERT ERROR: assertion failed
+
+    example()  # => debug
+
+    

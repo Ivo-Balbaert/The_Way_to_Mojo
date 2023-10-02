@@ -1194,3 +1194,5 @@ On my system, this achieves a small speedup, to 1.5 ms.
 There is a notebook `RayTracing.ipynb` and a doc section: https://docs.modular.com/mojo/notebooks/RayTracing.html.
 
 The code is assembled in `ray_tracing.mojo`.
+(Problem step 6/ background.png is een geldig bestandsformat - Paint
+background.png is ok)

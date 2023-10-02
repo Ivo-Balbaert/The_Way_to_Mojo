@@ -631,23 +631,27 @@ A `__getitem__` method is also shown which takes an index i and returns the valu
 **Exercise**
 Enhance the code for struct Array with other useful methods like __setitem__, __copyinit__, __moveinit__, __dump__ and so on.
 (see `parametric_array2.mojo`, see also https://github.com/Moosems/Mojo-Types).
+
+See also Vec3f in ray_tracing.mojo (§ 20).
+
 ## 7.9.5 Parametric functions and methods
 Better example: see parameter2.mojo in § 11.3
 Here are some examples of parametric functions:
 
 See `simd3.mojo`:
 ```mojo
-from math import sqrt
+from math import sqrt, rsqrt
 
-fn rsqrt[dt: DType, width: Int](x: SIMD[dt, width]) -> SIMD[dt, width]:   # 1
-    return 1 / sqrt(x)
+# fn rsqrt[dt: DType, width: Int](x: SIMD[dt, width]) -> SIMD[dt, width]:   # 1
+#     return 1 / sqrt(x)
 
 fn main():
     print(rsqrt[DType.float16, 4](42))                                    # 2
     # => [0.154296875, 0.154296875, 0.154296875, 0.154296875]
 ```
 
-The function `rsqrt[dt: DType, width: Int](x: SIMD[dt, width])` in line 1 is a parametric function. In line 2, the dt type becomes Float16, the width takes the value 4. The argument x is the SIMD vector (42, 42, 42, 42).
+The function `rsqrt[dt: DType, width: Int](x: SIMD[dt, width])` in line 1 is a parametric function. It performs elementwise reciprocal square root on the elements of a SIMD vector, like the definition in line 1. (It is now contained in math).
+In line 2, the dt type becomes Float16, the width takes the value 4. The argument x is the SIMD vector (42, 42, 42, 42).
 
 In the following example, we see how parameters (len1 and len2) can be used to form a *parameter expression* len1 + len2:  
 

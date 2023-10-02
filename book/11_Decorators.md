@@ -162,25 +162,62 @@ It indicates that the type is register passable, so the value is passed in CPU r
 >Note: mostly @value and @register_passable are used together.
 
 ## 11.3 - @parameter if
-`@parameter` if is an if statement that runs at compile-time.
+`@parameter if` is an if statement that runs at compile-time.
 Some examples:
 
-You can use it to define a debug_only assert.  
+You can use it to define a debug_only assert, as in lines 1 and 1B.  
+
 See `parameter1.mojo`:
 ```mojo
 from testing import assert_true
 
-fn main():
-    alias my_debug_build = 1  # Set it to 0 for production
+alias debug_mode = True  # 1
+
+
+fn example():
     @parameter
-    if my_debug_build == 1:
-        _ = assert_true(1==2, "assertion failed")
+    if debug_mode:     # 2
+        print("debug")
+
+
+fn main():
+    @parameter
+    if debug_mode:      # 1B
+        _ = assert_true(1 == 2, "assertion failed")
     # => ASSERT ERROR: assertion failed
+
+    example()  # => debug
 ```
 
 The decorator is also used on nested functions that capture runtime values, creating "parametric" capturing closures (example matmul1.mojo § 20.3).
-
+In line 2, only if true will the code will be "included" at compile time. The if statement will never run again during runtime.
 See also § 7.9.6 (ctime_logic.mojo), § 10.6 (os_is_linux)
+
+See `parameter3.mojo`:  (not yet fully understood)
+```mojo
+from testing import assert_true
+
+fn example[T: AnyType](arg: T):
+    @parameter
+    if T == Float64:
+        print("Float64")
+        print(rebind[Float64](arg))
+
+    @parameter
+    if T == Int:
+        print("Integer")
+        print(rebind[Int](arg))    # 1
+
+
+fn main():
+    _ = example[Int]
+    _ = example[AnyType]
+```
+
+`rebind` implements a type rebind. For example in line 1, it rebinds the value of arg to Int.
+
+(?? Why is "Integer" not printed out? What is rebind?)
+
 
 ## 11.4 - @parameter 
 **Using @parameter in a function**

@@ -514,7 +514,10 @@ The `isdigit` function checks if the character passed in is a valid decimal betw
 
 
 ## 4.4 Defining alias types
-You can easily define a synonym or shorthand for a type with the alias keyword:
+The alias keyword only works at compile time, it is a compile-time temporary value.
+All instances of the alias are replaced by its value at compile-time.
+
+You can easily define a synonym or shorthand for a type with alias:
 
 ### 4.4.1 Usage of alias
 See `alias1.mojo`:
@@ -525,21 +528,25 @@ alias Float16 = SIMD[DType.float16, 1]
 alias PI = 3.141592653589793    # 1B
 alias SOLAR_MASS = 4 * PI * PI
 alias DAYS_PER_YEAR = 365.24
-
+alias MAX_ITERS = 200
+    
 fn main():
     alias MojoArr2 = DTypePointer[DType.float32] 
 
-    alias my_debug_build = 1  # 2
+    alias debug_mode = True  # 2
     alias width = 960
     alias height = 960
-    alias MAX_ITERS = 20
-```
+    for i in range(MAX_ITERS):  # 3
+        print_no_newline(i, " ") # => 0  1  2  3  4  5  6  ... 198 199```
 
 Line 1B shows that an alias constant is often capitalized.
 Line 2 and following work, because alias is also a way to define a compile-time temporary value,  just like var and let define resp. a runtime variable and constant. alias is kind of a let at comptime. You can also make a user-defined type with it (see § 1B). All occurences of the alias name get substituted with the value at comptime, so it has a bit of a performance benifit. This is ideal to set parameter values of the problem at hand.
+So line 3 is changed at compile time to `for i in range(MAX_ITERS):`.
+
 Both None and AnyType are defined as type aliases in the builtin module `type_aliases`. 
 * AnyType: Represents any Mojo data type
 * NoneType = None: Represents the absence of a value.
+(See also § 11.3 @parameter)
 
 ### 4.4.2 Defining an enum type using alias
 (?? After ch 7 on structs)
