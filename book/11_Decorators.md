@@ -161,6 +161,8 @@ It indicates that the type is register passable, so the value is passed in CPU r
 
 >Note: mostly @value and @register_passable are used together.
 
+For another example: see § 14.2
+
 ## 11.3 - @parameter if
 `@parameter if` is an if statement that runs at compile-time.
 Some examples:

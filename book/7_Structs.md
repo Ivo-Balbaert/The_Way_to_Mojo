@@ -239,6 +239,9 @@ fn main():
 ```
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
+`let b = a`
+Mojo uses *value semantics* by default, meaning that it expects to create a copy of `a` when assigning to `b`. However, Mojo doesn't make any assumptions about *how* to copy the value of a. The error indicates that we should implement a `__copyinit__` method, which would implement the copying logic.
+
 Mojo does not allow mutable references to overlap with other mutable references or with immutable borrows.
 
 For advanced use cases, Mojo allows you to define custom constructors (using Python’s existing __init__ special method), custom destructors (using the existing __del__ special method) and custom copy and move constructors using the new __copyinit__ and __moveinit__ special methods.  
@@ -630,7 +633,7 @@ A `__getitem__` method is also shown which takes an index i and returns the valu
 
 **Exercise**
 Enhance the code for struct Array with other useful methods like __setitem__, __copyinit__, __moveinit__, __dump__ and so on.
-(see `parametric_array2.mojo`, see also https://github.com/Moosems/Mojo-Types).
+(see `parametric_array2.mojo`, see also https://github.com/Moosems/Mojo-Types and https://github.com/Lynet101/Mojo_community-lib/blob/main/Algorithms/Quicksort/mojo/array.mojo).
 
 See also Vec3f in ray_tracing.mojo (§ 20).
 
