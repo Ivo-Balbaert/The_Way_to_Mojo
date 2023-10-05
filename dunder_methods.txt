@@ -1,4 +1,4 @@
-Name		Operator
+Name		Operator/Function
 
 __init__	constructor
 __del__		destructor
@@ -11,9 +11,12 @@ __lt__		<
 __gt__		>
 
 __add__		+
++ other arithmetic ops
 
 __getitem__	a[i]
 __setitem__	a[i] = val
+
+__len__		len, size
 
 __iter__  	to implement a for loop
 

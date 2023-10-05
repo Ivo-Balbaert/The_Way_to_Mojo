@@ -32,11 +32,12 @@ fn main():
 
     vec.reserve(16)     # 10
     print(vec.capacity) # => 16
+    print("after reserving: ", vec.size)     # => 1
 
     vec.resize(10)      # 11
-    print(vec.size)     # => 10
+    print("after resizing: ", vec.size)     # => 10
     
     vec.clear()         # 12
-    print(vec[1])       # => 1  ??
     print(vec.size)     # => 0
     print(len(vec))     # => 0
+    print(vec[1])       # => 1  - former items are not cleared

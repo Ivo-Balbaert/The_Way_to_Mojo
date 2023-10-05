@@ -1199,3 +1199,109 @@ background.png is ok)
 
 ## 20.7 - Working with files
 https://github.com/ShuzhaoFeng/mojo-minwa
+
+## 20.8 - Calculating PI
+Benchmark is not so good: see last remark.
+Let's compare Python vs Mojo calculating PI 100 million itterations each.
+First we time a Python version:
+
+See `pi.py`:
+```py
+import timeit
+
+def calculate_pi(terms):
+    pi = 0
+    for i in range(terms):
+        term = ((-1) ** i) / (2 * i + 1)
+        pi += term
+    pi *= 4
+    return pi
+
+def main():
+    secs = timeit.timeit(lambda: calculate_pi(100000000), number = 1)
+    print("Python seconds: ", secs)
+
+if __name__ == "__main__":
+    main()
+
+# => Python seconds:  21.144927762001316
+```
+
+The Mojo version:
+
+See pi.mojo
+```mojo
+from time import now
+
+fn calculate_pi(terms: Int) -> Float64:
+    var pi: Float64 = 0
+    var temp: Float64 = 0
+    for i in range(terms):
+        temp = ((-1) ** i) / (2 * i + 1)
+        pi += temp
+    pi *= 4
+    return pi
+
+fn main():
+    let start = now()     # 2
+    print(calculate_pi(100000000))
+    let calc_time = now() - start
+    print("Mojo pi2 Calculates PI in ", calc_time/1e9, " seconds")
+
+# => 3.141592643589326
+# => Mojo pi2 Calculates PI in  1.160146935  seconds
+```
+The only difference is that we used fn functions in the Mojo version, so all variables have to be declared with let or var, and given a type. Mojo runs 17.7 x faster than Python.
+
+
+## 20.9 - Timing a for loop
+In Python:
+See `forloop.py`:
+```mojo
+import time
+
+def call1():
+    x = 0
+    for i in range(100_000_000):
+        x += i
+    return x
+
+start_time1 = time.time()
+res1 = call1()
+end_time1 = time.time()
+print('duration in seconds:',end_time1 - start_time1)
+print(res1)
+
+# => duration in seconds: 1.8694157600402832
+# => 4999999950000000
+```
+
+Here is a Mojo version:
+See `forloop.mojo`:
+```mojo
+from time import now
+
+def call():
+   x = 0
+   for i in range(100_000_000):
+       x += i
+   return x
+
+def main():
+    let start_time = now()
+    let res = call()
+    let end_time = now()
+    print('duration in seconds:',(end_time - start_time)/1e9)
+    print(res)
+
+# => duration in seconds: 2.4e-08
+# => 4999999950000000
+```
+
+The Mojo version is 100_000_000 x faster!
+
+In this code, we increment the same integer variable a hundred million times.  
+In Python, the interpreter handles the execution of the code. When the interpreter encounters the increment operation, it needs to load the value of x from memory into the stack by dereferencing a pointer, and then increment it. This process of indirection and stack manipulation can be slower compared to the efficient register operations in compiled code.
+In Mojo the CPU loads the variable from memory into a register and performs an addl instruction. Once the data is in the register, the cost of adding to it becomes negligible. 
+Probably the compiler can completely get rid of the loop and compute (n+1)*n/2 instead. In fact since you're using a constant number of iterations it can just compute the final value at compile time instead. You're really just measuring the overhead of printing and timing in Mojo.
+

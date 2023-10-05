@@ -355,3 +355,30 @@ We can loop through and set the values, one row at a time with SIMD using the ab
 
 Because it's returning a SIMD[DType.u8, 8], we can also modify the column value using __setitem__ from the SIMD implementation (line 3).  
 As another example, lets take the fourth row, doubling it, and then writing that to the first row (line 4).
+
+## 12.5 Sorting with pointers
+### 12.5.1 Sorting with Bubblesort
+Here is a simple example of how to sort a ListLiteral by using a Pointer to it:
+
+See `bubble_sort.mojo`:
+```mojo
+from memory.unsafe import Pointer
+
+fn main():
+    let n = 10
+    var mylist = [9, 6, 0, 8, 2, 5, 1, 3, 7, 4]  # 1 - a ListLiteral
+    let arr = Pointer.address_of(mylist).bitcast[Int]()   # 2
+
+    # bubblesort
+    print(mylist)  # => [9, 6, 0, 8, 2, 5, 1, 3, 7, 4]
+    var temp = 0
+    for i in range(n):                          # 3
+        for j in range(n - i - 1):
+            if arr[j] > arr[j + 1]:
+                temp = arr[j]
+                arr.store(j, arr[j + 1])
+                arr.store(j + 1, temp)
+    print(mylist)  # => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+In line 2, we create a Pointer that points to the ListLiteral defined in line 1. The bitcast makes new Pointer object with the specified type (here Int) and the same address as the `Pointer.address_of(mylist)` pointer. The bubblesort algorithm is implemented starting in line 3.

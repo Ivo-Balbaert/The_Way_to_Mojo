@@ -38,7 +38,7 @@ Closed Beta Local SDK:
 
 Much more information can be found at the Modular/Mojo [Website](https://www.modular.com/mojo), particularly in the [Docs section](https://docs.modular.com/mojo/).
 
-Weekly newsletter: https://www.modular.com/newsletters/modverse-weekly-1
+Weekly newsletter: https://www.modular.com/newsletters/
 
 The source code repository of the language (GitHub repo, currently contains no source yet) is at [here](https://github.com/modularml/mojo). 
 

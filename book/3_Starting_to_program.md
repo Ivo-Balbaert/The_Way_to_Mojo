@@ -142,8 +142,11 @@ A Mojo app can be compiled into a small, standalone, fast-launching binary, maki
 In development the simple `mojo` command is just fine. But when you want to deploy your program to another environment, you need the executable. Luckily, this is only one binary with a small size, so easily deployable to cloud or embedded environments.
 
 By splitting compilation from execution, we also make the difference between:  
-* Compile-time: here the compiler scans your program and generates errors or warnings. If no errors are found, an executable is generated.
+* Compile-time: here the compiler scans your program and generates errors or warnings. If no errors are found, an executable is generated. 
+Data that is known at compile-time is said to be *statically known*.
+
 * Run-time: when the executable runs on your machine.
+Data that is not known at compile-time but only at run-time is said to be *dynamically known*.
 
 Later (see ??) we'll see that code can also be run at compile-time, to do what is called *meta-programming*.
 

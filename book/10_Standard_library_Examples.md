@@ -539,11 +539,16 @@ The sleep() function can be used to make a thread sleep for the duration in seco
 time_function() (used in line 3) tells you how long it takes (in nanoseconds) for a function closure to execute: pass in a nested function (also known as a closure that takes no arguments and returns None as a parameter), to time a function for example sleep1ms.
 
 ## 10.8 Vectors from the module utils.vector
+(?? Table schema with properties ?)
+
+InlinedFixedVector: small-vector optimization
+UnsafeFixedVector: fixed-capacity vector without bounds checks
+DynamicVector: dynamic resizing vector
 
 ### 10.8.1 DynamicVector
 (see also § 4.2.1, 4.5, 7.9.2)
-This is a dynamically-allocated vector.
-It supports pushing and popping from the back resizing the underlying storage as needed. 
+This Vector type dynamically allocates memory to store elements.
+It supports pushing and popping from the back, resizing the underlying storage to accommodate more elements as needed. 
 
 See `dynamicvector1.mojo`:
 ```mojo
@@ -581,10 +586,11 @@ fn main():
 
     vec.reserve(16)     # 10
     print(vec.capacity) # => 16
+    print("after reserving: ", vec.size)     # => 1
 
     vec.resize(10)      # 11
-    print(vec.size)     # => 10
-    
+    print("after resizing: ", vec.size)     # => 10
+
     vec.clear()         # 12
     print(vec[1])       # => 1  ??
     print(vec.size)     # => 0
@@ -593,7 +599,7 @@ fn main():
 
 You can reserve memory to add elements without the cost of copying everything if it grows too large. For example, we reserve 8 bytes in line 1 to store Int values.  
 Adding elements to the back is done with the push_back method, and len (line 2) gives the number of items, which is also given by vec.size. 
-(why are there two ways ??) 
+(why are there two ways ?? len and size) 
 Other useful variables are:
 * capacity: the memory reserved for the vector
 * the `data` field, which gives access to the underlying storage by indexing. But you can also use indexing by using the vector's name directly as in line 5.
@@ -614,12 +620,39 @@ The `resize` method discards elements if smaller than current size, or adds unin
 
 The `clear` method deallocates all items in the vector (line 12, doesn't seem to work). The size is set to 0.
 
-### 10.8.2 InlinedFixedVector
-This type is a dynamically-allocated vector with small-vector optimization.
-It does not resize or implement bounds checks, it is initialized with both a small-vector size (statically known) and a dynamic (not known at compile time) number of slots, and when it is deallocated, it frees its memory.
+### 10.8.2 Sorting a DynamicVector
+The sort module in package algorithms implements different sorting functions. Here is an example of usage:  
+
+See `sorting1.mojo`:
+```mojo
+from algorithm.sort import sort
+
+fn main():
+    var v = DynamicVector[Int](3)
+
+    v.push_back(20)
+    v.push_back(10)
+    v.push_back(70)
+
+    sort(v)
+
+    for i in range(v.size):
+        print(v[i])
+# =>
+# 10
+# 20
+# 70
+```
+
+These functions sort the vector in-place.
+
+### 10.8.3 InlinedFixedVector
+This type is a vector type with small-vector optimization.
+It allocates memory statically for a fixed number of elements, which eliminates the need for dynamic memory allocation for small vectors.
+It does not resize or implement bounds checks, it is initialized with both a small-vector size (statically known) number of slots, and when it is deallocated, it frees its memory.
 This data structure is useful for applications where the number of required elements is not known at compile time, but once known at runtime, is guaranteed to be equal to or less than a certain capacity.
 
-See `InlinedFixedvector.mojo`:
+See `fixedvectors.mojo`:
 ```mojo
 from utils.vector import InlinedFixedVector
 
@@ -641,7 +674,9 @@ fn main():
 
     print(len(vec))     # => 2
     vec[6] = 10
-    print(len(vec))     # => 2
+    vec.clear()
+    print(len(vec))     # => 0
+    print(vec2.size)        # => 0
 ```
 
 In line 1, we statically allocate 4 elements, and reserve a capacity of 8 elements. To add elements to the vector, use the append method (line 2).
@@ -653,10 +688,9 @@ Access and assign elements using indexes.
 
 To make a shallow or deep copy, or clear all elements, tee § 10.8.1
 
-### 10.8.3 UnsafeFixedVector
+### 10.8.4 UnsafeFixedVector
 This type is a dynamically-allocated vector that does not resize or implement bounds checks (see line 3).
 It is initialized with a dynamic (not known at compile time) number of slots.
-
 This data structure is useful for applications where the number of required elements is not known at compile time, but once known at runtime, is guaranteed to be equal to or less than a certain capacity.
 
 You index them as InlineFixedVector (with the same note). Only a shallow copy is possible.
@@ -745,4 +779,11 @@ cmdline_args.mojo
 abc
 ```
 
-## 10.11 
+## 10.11 Working with memory
+
+See also:  Buffer § 10.4, 10.5
+           Pointer § 12
+See examples memset, memcpy, memset_zero
+
+The `stack_allocation` function lets you allocate data buffer space on the stack, given a data type and number of elements, for example:  
+` let rest_p: DTypePointer[DType.uint8] = stack_allocation[simd_width, UInt8, 1]()`

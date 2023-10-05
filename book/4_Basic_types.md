@@ -336,7 +336,7 @@ The length of a string is given by the __len__ method or len() function.
 So, if you have a StringLiteral object, you can call data() on it to get a pointer to its underlying data. This could be useful if you need to pass the string data to a function that requires a pointer, or if you want to perform low-level operations on the string data.
 
 ### 4.3.2 The String type
-The `String` type represents a mutable string*. The `string` module contains basic methods for working with strings.
+The `String` type represents a mutable string*. The `string` module contains basic methods for working with strings. Mojo uses UTF-8 encoding to store strings. The length len corresponds to the number of bytes, not number of characters.
 The string value is heap-allocated, but the String itself is actually a pointer to heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture ??)
 
 ```mojo
@@ -512,6 +512,7 @@ Use String(integer) to convert an integer to a string.
 
 The `isdigit` function checks if the character passed in is a valid decimal between 0 and 9, which in ASCII is 48 to 57.
 
+See also `string_counting_bytes_and_characters.mojo`
 
 ## 4.4 Defining alias types
 The alias keyword only works at compile time, it is a compile-time temporary value.
@@ -537,7 +538,8 @@ fn main():
     alias width = 960
     alias height = 960
     for i in range(MAX_ITERS):  # 3
-        print_no_newline(i, " ") # => 0  1  2  3  4  5  6  ... 198 199```
+        print_no_newline(i, " ") # => 0  1  2  3  4  5  6  ... 198 199
+```
 
 Line 1B shows that an alias constant is often capitalized.
 Line 2 and following work, because alias is also a way to define a compile-time temporary value,  just like var and let define resp. a runtime variable and constant. alias is kind of a let at comptime. You can also make a user-defined type with it (see § 1B). All occurences of the alias name get substituted with the value at comptime, so it has a bit of a performance benifit. This is ideal to set parameter values of the problem at hand.
@@ -571,34 +573,7 @@ fn main():
 In this example, enum_type is a struct that implements a simple enum using aliases for the enumerators. This allows clients to use enum_type.float32 as a parameter expression, which also works as a runtime value.
 
 
-
-## 4.5 Sorting a DynamicVector
-The sort module in package algorithms implements different sorting functions. Here is an example of usage:  
-
-See `sorting1.mojo`:
-```mojo
-from algorithm.sort import sort
-
-fn main():
-    var v = DynamicVector[Int](3)
-
-    v.push_back(20)
-    v.push_back(10)
-    v.push_back(70)
-
-    sort(v)
-
-    for i in range(v.size):
-        print(v[i])
-# =>
-# 10
-# 20
-# 70
-```
-
-These functions sort the vector in-place.
-
-## 4.6 The object type
+## 4.5 The object type
 `object` is defined in module `object` in the `builtin` package.
 It is used to represent untyped values. This is the type of arguments in def functions that do not have a type annotation, such as the type of x in `def f(x): pass`. A value of any type can be passed in as the x argument in that case.
 
