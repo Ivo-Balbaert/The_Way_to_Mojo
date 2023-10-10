@@ -185,7 +185,7 @@ struct Image:
         # We use raw pointers to efficiently copy the pixels to the numpy array
         let out_pointer = Pointer(
             __mlir_op.`pop.index_to_pointer`[
-                _type : __mlir_type[`!kgen.pointer<scalar<f32>>`]
+                _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
             ](
                 SIMD[DType.index, 1](
                     np_image.__array_interface__["data"][0].__index__()
@@ -194,7 +194,7 @@ struct Image:
         )
         let in_pointer = Pointer(
             __mlir_op.`pop.index_to_pointer`[
-                _type : __mlir_type[`!kgen.pointer<scalar<f32>>`]
+                _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
             ](SIMD[DType.index, 1](self.pixels.__as_index()).value)
         )
 
@@ -251,7 +251,7 @@ def load_image(fname: String) -> Image:
 
     let in_pointer = Pointer(
         __mlir_op.`pop.index_to_pointer`[
-            _type : __mlir_type[`!kgen.pointer<scalar<f32>>`]
+            _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
         ](
             SIMD[DType.index, 1](
                 np_image.__array_interface__["data"][0].__index__()
@@ -260,7 +260,7 @@ def load_image(fname: String) -> Image:
     )
     let out_pointer = Pointer(
         __mlir_op.`pop.index_to_pointer`[
-            _type : __mlir_type[`!kgen.pointer<scalar<f32>>`]
+            _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
         ](SIMD[DType.index, 1](image.pixels.__as_index()).value)
     )
     for row in range(rows):

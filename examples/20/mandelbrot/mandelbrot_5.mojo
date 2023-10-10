@@ -74,17 +74,16 @@ fn main():
     print("Vectorized:", vectorized_ms, "ms")
 
     # Parallelized
-    with Runtime(num_cores()) as rt:
-        let partition_factor = 16 # Is autotuned.
+    let partition_factor = 16 # Is autotuned.
     
-        @parameter
-        fn bench_parallel[simd_width: Int]():
-            parallelize[compute_row](rt, height, partition_factor * num_cores())
+    @parameter
+    fn bench_parallel[simd_width: Int]():
+        parallelize[compute_row](height, partition_factor * num_cores())
 
 
-        let parallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
-        print("Parallelized:", parallelized_ms, "ms")
-        print("Parallel speedup:", vectorized_ms / parallelized_ms)
+    let parallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
+    print("Parallelized:", parallelized_ms, "ms")
+    print("Parallel speedup:", vectorized_ms / parallelized_ms)
 
     _ = t  # Make sure tensor isn't destroyed before benchmark is finished
 

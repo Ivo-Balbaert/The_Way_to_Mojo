@@ -32,13 +32,13 @@ fn main():
     var rawTime: Int = 0
     let rawTimePtr = Pointer[Int].address_of(rawTime)
     __mlir_op.`pop.external_call`[
-        func : "time".value,
-        _type:None,
+        func = "time".value,
+        _type = None,
     ](rawTimePtr.address)
 
     let tm = __mlir_op.`pop.external_call`[
-        func : "gmtime".value,
-        _type : Pointer[C_tm],
+        func = "gmtime".value,
+        _type = Pointer[C_tm],
     ](rawTimePtr).load()
 
     print(tm.tm_hour, ":", tm.tm_min, ":", tm.tm_sec)  # => 17 : 41 : 6

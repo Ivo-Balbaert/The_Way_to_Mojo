@@ -49,10 +49,10 @@ fn chars_count(s: StringLiteral) -> Int:
 fn main():
     # StringLiteral
     let s = "hello"
-    let p = Pointer(s.data())
-    for i in range(len(s)):
-        print_no_newline(p[i], " - ")
-    # => 104  - 101  - 108  - 108  - 111  -
+    # let p = Pointer(s.data()) # error: cannot construct 'Pointer' from 'DTypePointer[si8]' value in 'let' initializ
+    # for i in range(len(s)):
+    #     print_no_newline(p[i], " - ")
+    # # => 104  - 101  - 108  - 108  - 111  -
     # String
     print()
     let s2: String = "hello"
@@ -69,10 +69,10 @@ fn main():
     print()
     print(len(s3))  # => 10
     let s4 = "hello 🔥"
-    let p4 = Pointer(s4.data())
-    for i in range(len(s4)):
-        print_no_newline(p[i], " - ")
-    # => 104  - 101  - 108  - 108  - 111  - 0  - 0  - 0  - 0  - 0  -
+    # let p4 = Pointer(s4.data()) # same as previous error
+    # for i in range(len(s4)):
+    #     print_no_newline(p[i], " - ")
+    # # => 104  - 101  - 108  - 108  - 111  - 0  - 0  - 0  - 0  - 0  -
     print()
     print(len(s4))  # => 10
     print(String(s4)[6:10])  # => 🔥

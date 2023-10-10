@@ -1,5 +1,6 @@
-from mypackage.mymodule import MyPair
-from mypackage.mymodule import MyPair as mp1 
+# broken after v 0.4.0, worked in 0.3.0
+# from mypackage.mymodule import MyPair  #  error: unable to locate module 'mymodule'
+# from mypackage.mymodule import MyPair as mp1 #  error: unable to locate module 'mymodule'
 import mypackage.mymodule
 import mypackage.mymodule as mp              
 

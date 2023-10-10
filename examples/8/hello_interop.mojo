@@ -23,5 +23,5 @@ def main():
         let test_module = Python.import_module("simple_interop")  # 1
         test_module.test_interop_func()                           # 2
     except e:
-        print(e.value)
-        print("could not find module simple_interop")
+        print(e)
+  

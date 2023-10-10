@@ -15,7 +15,7 @@ The LLVM/MLIR compiler infrastructure together form a cutting-edge compiler and 
     For specific hardware and accelerators, the dialects used can vary. For example, Modular uses LLVM level dialects and leverages LLVM for the targets it supports, such as talking directly to both the Apple and Intel AMX instructions.
 
 **Compiler**  
-The compiler is written in C++.
+The compiler is written in C++, based on MLIR and LLVM.
 By default, Mojo code is AOT (Ahead Of Time) compiled.  
 But Mojo can also be interpreted for metaprogramming, or JIT-compiled, as in the Mojo Playground (see ??) or the Mojo REPL.
 If the Mojo app contains dynamic (Python) code, this is executed by running the dynamic code at compile time with an embedded CPython interpreter. This mechanism also makes possible compile-time meta-programming.
@@ -510,6 +510,8 @@ Python version from python: 3.10.12 (main, Jun 11 2023, 05:26:28) [GCC 11.4.0]
 ```
 
 Top-level python declarations are available in subsequent Mojo expressions (example ??).
+
+Type TAB to get code completion.
 
 The Mojo REPL is based on LLDB, the complete set of LLDB debugging commands is also available as described below (?? examples).  
 Type :quit to leave the REPL.

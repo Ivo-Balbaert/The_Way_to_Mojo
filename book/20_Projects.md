@@ -429,7 +429,6 @@ from memory import memset_zero
 from memory.unsafe import DTypePointer
 from random import rand, random_float64
 from sys.info import simdwidthof
-from runtime.llcl import Runtime
 
 # This exactly the same Python implementation, but is in fact Mojo code!
 def matmul_untyped(C, A, B):
@@ -517,7 +516,6 @@ from memory import memset_zero
 from memory.unsafe import DTypePointer
 from random import rand, random_float64
 from sys.info import simdwidthof
-from runtime.llcl import Runtime
 
 let python_gflops = 0.005356575518265889
 
@@ -668,12 +666,13 @@ To get the best performance from modern processors, one has to utilize the multi
 
 STEPS:  
 1- Replace the benchmark function by benchmark_parallel:  
-For parallel code, we need to introduce a benchmark function that shares the threadpool, otherwise it introduces latency creating a new runtime on every iteration of the benchmark. You can see this below in `with Runtime() as rt`.
+For parallel code, we need to introduce a benchmark function that shares the threadpool. The parallelize function caches the Mojo parallel runtime.
+
 2- Replace fn matmul_vectorized_1 by matmul_parallelized: modify the matmul implementation and make it multi-threaded by using the builtin parallelize function(for simplicity, we only parallelize on the M dimension):
 
 See `matmul5.mojo`:
 ```mojo
-fn matmul_parallelized(C: Matrix, A: Matrix, B: Matrix, rt: Runtime):
+fn matmul_parallelized(C: Matrix, A: Matrix, B: Matrix):
     @parameter
     fn calc_row(m: Int):
         for k in range(A.cols):
@@ -712,7 +711,7 @@ The above will perform 2 dimensional tiling over a 2D iteration space defined to
 See `matmul6.mojo`:
 ```mojo
 # Use the above tile function to perform tiled matmul.
-fn matmul_tiled_parallelized(C: Matrix, A: Matrix, B: Matrix, rt: Runtime):
+fn matmul_tiled_parallelized(C: Matrix, A: Matrix, B: Matrix):
     @parameter
     fn calc_row(m: Int):
         @parameter
@@ -727,7 +726,7 @@ fn matmul_tiled_parallelized(C: Matrix, A: Matrix, B: Matrix, rt: Runtime):
         alias tile_size = 4
         tile[calc_tile, nelts * tile_size, tile_size](A.cols, C.cols)
 
-    parallelize[calc_row](rt, C.rows)
+    parallelize[calc_row](C.rows)
 ```
 
 Running this version gives:
@@ -1136,7 +1135,7 @@ fn vectorized():
     try:
         _ = show_plot(t)
     except e:
-        print("failed to show plot:", e.value)
+        print("failed to show plot:", e)
 
 def show_plot(tensor: Tensor[float_type]):
     alias scale = 10
@@ -1185,7 +1184,7 @@ The results are:
 
 Blog article 3 introduces a *partition factor* to alleviate load imbalance among the cores:  
 `parallelize[compute_row](rt, height, partition_factor * num_cores())`
-which adds a 2.3x speedup (see `mandelbrot_5.mojo` ??).
+which adds a 2.3x speedup (see `mandelbrot_5.mojo`).
 On my system, this achieves a small speedup, to 1.5 ms.
 
 ## 20.6 - Raytracing in Mojo
@@ -1195,7 +1194,8 @@ There is a notebook `RayTracing.ipynb` and a doc section: https://docs.modular.c
 
 The code is assembled in `ray_tracing.mojo`.
 (Problem step 6/ background.png is een geldig bestandsformat - Paint
-background.png is ok)
+background.png is ok 
+- v 0.4.0 - only black background?)
 
 ## 20.7 - Working with files
 https://github.com/ShuzhaoFeng/mojo-minwa

@@ -41,12 +41,12 @@ struct OurBool:
     var value: __mlir_type.i1  # 1
 
     # fn __init__(inout self):
-    #     self.value = __mlir_op.`index.bool.constant`[value : __mlir_attr.`false`,]()
+    #     self.value = __mlir_op.`index.bool.constant`[value=__mlir_attr.`false`,]()
 
     # fn __init__() -> Self:
     #     return Self {
     #         value: __mlir_op.`index.bool.constant`[
-    #             value : __mlir_attr.`false`,
+    #             value= __mlir_attr.`false`,
     #         ]()
     #     }
 
@@ -69,15 +69,15 @@ struct OurBool:
         return self.value
 
     fn __eq__(self, rhs: OurBool) -> Self:
-        let lhsIndex = __mlir_op.`index.casts`[_type : __mlir_type.index](
+        let lhsIndex = __mlir_op.`index.casts`[_type = __mlir_type.index](
             self.value
         )
-        let rhsIndex = __mlir_op.`index.casts`[_type : __mlir_type.index](
+        let rhsIndex = __mlir_op.`index.casts`[_type = __mlir_type.index](
             rhs.value
         )
         return Self(
             __mlir_op.`index.cmp`[
-                pred : __mlir_attr.`#index<cmp_predicate eq>`
+                pred = __mlir_attr.`#index<cmp_predicate eq>`
             ](lhsIndex, rhsIndex)
         )
 
@@ -141,15 +141,15 @@ struct UInt8:
     @always_inline
     fn __init__(value: Int) -> Self:
         return Self {
-            value: __mlir_op.`index.castu`[_type : Self.Data](value.__mlir_index__())
+            value= __mlir_op.`index.castu`[_type = Self.Data](value.__mlir_index__())
         }
 
     @always_inline
     fn __add__(self, rhs: Self) -> Self:
         return Self(
             __mlir_op.`index.add`[_type : __mlir_type.index](
-                __mlir_op.`index.castu`[_type : __mlir_type.index](self.value),
-                __mlir_op.`index.castu`[_type : __mlir_type.index](rhs.value),
+                __mlir_op.`index.castu`[_type = __mlir_type.index](self.value),
+                __mlir_op.`index.castu`[_type = __mlir_type.index](rhs.value),
             )
         )
 
@@ -157,14 +157,14 @@ struct UInt8:
     fn __sub__(self, rhs: Self) -> Self:
         return Self(
             __mlir_op.`index.sub`[_type : __mlir_type.index](
-                __mlir_op.`index.castu`[_type : __mlir_type.index](self.value),
-                __mlir_op.`index.castu`[_type : __mlir_type.index](rhs.value),
+                __mlir_op.`index.castu`[_type = __mlir_type.index](self.value),
+                __mlir_op.`index.castu`[_type = __mlir_type.index](rhs.value),
             )
         )
 
     @always_inline
     fn to_int(self) -> Int:
-        return Int(__mlir_op.`index.castu`[_type : __mlir_type.index](self.value))
+        return Int(__mlir_op.`index.castu`[_type = __mlir_type.index](self.value))
 
     fn print(self):
         print(self.to_int())
@@ -182,7 +182,7 @@ Raw pointers are used here to efficiently copy the pixels to the numpy array:
 ```mojo
  let out_pointer = Pointer(
             __mlir_op.`pop.index_to_pointer`[
-                _type : __mlir_type[`!kgen.pointer<scalar<f32>>`]
+                _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
             ](
                 SIMD[DType.index, 1](
                     np_image.__array_interface__["data"][0].__index__()
@@ -192,7 +192,7 @@ Raw pointers are used here to efficiently copy the pixels to the numpy array:
 
  let in_pointer = Pointer(
             __mlir_op.`pop.index_to_pointer`[
-                _type : __mlir_type[`!kgen.pointer<scalar<f32>>`]
+                _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
             ](SIMD[DType.index, 1](self.pixels.__as_index()).value)
         )
 ```
@@ -236,13 +236,13 @@ fn main():
     var rawTime: Int = 0
     let rawTimePtr = Pointer[Int].address_of(rawTime)
     __mlir_op.`pop.external_call`[
-        func : "time".value,
-        _type:None,
+        func = "time".value,
+        _type = None,
     ](rawTimePtr.address)
 
     let tm = __mlir_op.`pop.external_call`[
-        func : "gmtime".value,
-        _type : Pointer[C_tm],
+         func = "gmtime".value,
+        _type = Pointer[C_tm],
     ](rawTimePtr).load()
 
     print(tm.tm_hour, ":", tm.tm_min, ":", tm.tm_sec)  # => 17 : 41 : 6

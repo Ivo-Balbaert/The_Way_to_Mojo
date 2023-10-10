@@ -1,3 +1,7 @@
+# broken after v 0.4.0
+# /home/ivo/mojo/mojo_test_way_programs/examples/matmul8.mojo:30:21: error: cannot pass 'VariadicList[fn(C = Matrix, A = Matrix, B = Matrix) -> None]' value, parameter expected 'VariadicList[fn(Matrix, Matrix, Matrix) -> None]'
+#         VariadicList(matmul_autotune_impl.__adaptive_set),
+#         ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 from benchmark import Benchmark
 from sys.intrinsics import strided_load
 from utils.list import VariadicList
@@ -6,7 +10,7 @@ from memory import memset_zero
 from memory.unsafe import DTypePointer, Pointer
 from random import rand, random_float64
 from sys.info import simdwidthof
-from runtime.llcl import Runtime
+# from runtime.llcl import Runtime
 from algorithm import vectorize, parallelize, vectorize_unroll
 from algorithm import Static2DTileUnitFunc as Tile2DFunc
 from autotune import autotune, search
@@ -14,7 +18,7 @@ from time import now
 
 let python_gflops = 0.005430089939864052
 alias nelts = simdwidthof[DType.float32]()  # The SIMD vector width.
-alias matmul_fn_sig_type = fn(Matrix, Matrix, Matrix, Runtime) -> None
+alias matmul_fn_sig_type = fn(Matrix, Matrix, Matrix) -> None
 
 # Perform 2D tiling on the iteration space defined by end_x and end_y.
 fn tile[tiled_fn: Tile2DFunc, tile_x: Int, tile_y: Int](end_x: Int, end_y: Int):
@@ -23,7 +27,7 @@ fn tile[tiled_fn: Tile2DFunc, tile_x: Int, tile_y: Int](end_x: Int, end_y: Int):
         for x in range(0, end_x, tile_x):
             tiled_fn[tile_x, tile_y](x, y)
 
-fn matmul_autotune(C: Matrix, A: Matrix, B: Matrix, rt: Runtime):
+fn matmul_autotune(C: Matrix, A: Matrix, B: Matrix):
     alias best_impl: matmul_fn_sig_type
     search[
         matmul_fn_sig_type,
@@ -31,7 +35,7 @@ fn matmul_autotune(C: Matrix, A: Matrix, B: Matrix, rt: Runtime):
         matmul_evaluator -> best_impl
     ]()
     # Run the best candidate
-    return best_impl(C, A, B, rt)
+    return best_impl(C, A, B)
 
 fn matmul_evaluator(funcs: Pointer[matmul_fn_sig_type], size: Int) -> Int:
     print("matmul_evaluator, number of candidates: ", size)
@@ -57,7 +61,6 @@ fn matmul_evaluator(funcs: Pointer[matmul_fn_sig_type], size: Int) -> Int:
     let Cptr = Pointer[Matrix].address_of(C).address
     let Aptr = Pointer[Matrix].address_of(A).address
     let Bptr = Pointer[Matrix].address_of(B).address
-    with Runtime() as rt:
         # Find the function that's the fastest on the size we're optimizing for
         for f_idx in range(size):
             let func = funcs.load(f_idx)
@@ -65,7 +68,7 @@ fn matmul_evaluator(funcs: Pointer[matmul_fn_sig_type], size: Int) -> Int:
             @always_inline
             @parameter
             fn wrapper():
-                func(C, A, B, rt)
+                func(C, A, B)
             let cur_time = Benchmark(1, 100_000, 500_000_000, 1000_000_000).run[wrapper]()
 
             if best_idx < 0:
@@ -86,7 +89,7 @@ fn matmul_evaluator(funcs: Pointer[matmul_fn_sig_type], size: Int) -> Int:
 
 # Autotune the tile size used in the matmul.
 @adaptive
-fn matmul_autotune_impl(C: Matrix, A: Matrix, B: Matrix, rt: Runtime, /):
+fn matmul_autotune_impl(C: Matrix, A: Matrix, B: Matrix):
     @parameter
     fn calc_row(m: Int):
         @parameter
@@ -102,7 +105,7 @@ fn matmul_autotune_impl(C: Matrix, A: Matrix, B: Matrix, rt: Runtime, /):
         alias tile_size = autotune(1, 2, 4, 8, 16, 32)
         tile[calc_tile, nelts * tile_size, tile_size](A.cols, C.cols)
       
-    parallelize[calc_row](rt, C.rows)
+    parallelize[calc_row](C.rows)
 
 # Matrix type and methods:
 struct Matrix:
@@ -141,28 +144,26 @@ struct Matrix:
 
 @always_inline
 fn benchmark_parallel[
-    func: fn (Matrix, Matrix, Matrix, Runtime) -> None
+    func: fn (Matrix, Matrix, Matrix) -> None
 ](M: Int, N: Int, K: Int, python_gflops: Float64):
     var C = Matrix(M, N)
     C.zero()
     var A = Matrix(M, K)
     var B = Matrix(K, N)
 
-    with Runtime() as rt:
+    @always_inline
+    @parameter
+    fn test_fn():
+        _ = func(C, A, B)
 
-        @always_inline
-        @parameter
-        fn test_fn():
-            _ = func(C, A, B, rt)
-
-        let secs = Float64(Benchmark().run[test_fn]()) / 1e9
-        print("Mojo seconds: ", secs)
-        # Prevent the matrices from being freed before the benchmark run
-        _ = (A, B, C)
-        let gflops = ((2 * M * N * K) / secs) / 1e9
-        let speedup: Float64 = gflops / python_gflops
-        # print(gflops, "GFLOP/s", speedup, " speedup")
-        print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
+    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    print("Mojo seconds: ", secs)
+    # Prevent the matrices from being freed before the benchmark run
+    _ = (A, B, C)
+    let gflops = ((2 * M * N * K) / secs) / 1e9
+    let speedup: Float64 = gflops / python_gflops
+    # print(gflops, "GFLOP/s", speedup, " speedup")
+    print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
 
 
 fn main() raises:

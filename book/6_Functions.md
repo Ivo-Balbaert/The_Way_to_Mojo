@@ -152,7 +152,7 @@ See also § 7.8, where inout is used with struct arguments.
 This behavior is a potential source of bugs, that's why Mojo forces you to be explicit about it with the keyword *inout*.
 
 ### 6.4.2 Making arguments owned
-An even stronger option is to declare an argument as *owned*. Then the function gets full ownership of the value, so that it’s mutable, but also guaranteed unique. This means the function can modify the value and not worry about affecting variables outside the function.  
+An even stronger option is to declare an argument as *owned*. Then the function gets full ownership of the value, so that it’s mutable inside the function, but also guaranteed unique. This means the function can modify the value and not worry about affecting variables outside the function.  
 For example:  
 
 See `owned.mojo`:
@@ -174,6 +174,7 @@ fn main():
 Our variable to be owned is of type `String`. This type and its methods(??) are defined in module string, which is built-in.   
 `set_fire` takes ownership of variable a in line 1 as argument `text`, which it changes and returns.  
 From the output, we see that the return value b has the changed value, while the original value of a still exists. Mojo made a copy of a to pass this as the text argument.
+(Better example by giving the parameters the same name as the argument ??)
 
 
 ### 6.4.3 Making arguments owned and transferred with ^

@@ -75,7 +75,7 @@ fn vectorized():
     try:
         _ = show_plot(t)
     except e:
-        print("failed to show plot:", e.value)
+        print("failed to show plot:", e)
 
 def show_plot(tensor: Tensor[float_type]):
     alias scale = 10

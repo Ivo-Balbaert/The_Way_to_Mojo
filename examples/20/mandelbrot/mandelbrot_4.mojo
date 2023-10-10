@@ -73,15 +73,13 @@ fn main():
     print("Vectorized:", vectorized_ms, "ms")
 
     # Parallelized
-    with Runtime() as rt:
+    @parameter
+    fn bench_parallel[simd_width: Int]():
+            parallelize[worker](height, height)
 
-        @parameter
-        fn bench_parallel[simd_width: Int]():
-            parallelize[worker](rt, height, height)
-
-        let parallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
-        print("Parallelized:", parallelized_ms, "ms")
-        print("Parallel speedup:", vectorized_ms / parallelized_ms)
+    let parallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
+    print("Parallelized:", parallelized_ms, "ms")
+    print("Parallel speedup:", vectorized_ms / parallelized_ms)
 
     _ = t  # Make sure tensor isn't destroyed before benchmark is finished
 

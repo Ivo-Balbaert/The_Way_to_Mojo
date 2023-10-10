@@ -6,14 +6,13 @@ from memory import memset_zero
 from memory.unsafe import DTypePointer
 from random import rand, random_float64
 from sys.info import simdwidthof
-from runtime.llcl import Runtime
 from algorithm import vectorize, parallelize
 
 let python_gflops = 0.005430089939864052
 alias nelts = simdwidthof[DType.float32]()  # The SIMD vector width.
 
 # Parallelize the code by using the builtin parallelize function
-fn matmul_parallelized(C: Matrix, A: Matrix, B: Matrix, rt: Runtime):
+fn matmul_parallelized(C: Matrix, A: Matrix, B: Matrix):
     @parameter
     fn calc_row(m: Int):
         for k in range(A.cols):
@@ -22,7 +21,7 @@ fn matmul_parallelized(C: Matrix, A: Matrix, B: Matrix, rt: Runtime):
                 C.store[nelts](m,n, C.load[nelts](m,n) + A[m,k] * B.load[nelts](k,n))
             vectorize[nelts, dot](C.cols)
         
-    parallelize[calc_row](rt, C.rows)
+    parallelize[calc_row](C.rows)
 
 # Matrix type and methods:
 struct Matrix:
@@ -60,27 +59,26 @@ struct Matrix:
 
 @always_inline
 fn benchmark_parallel[
-    func: fn (Matrix, Matrix, Matrix, Runtime) -> None
+    func: fn (Matrix, Matrix, Matrix) -> None
 ](M: Int, N: Int, K: Int, python_gflops: Float64):
     var C = Matrix(M, N)
     C.zero()
     var A = Matrix(M, K)
     var B = Matrix(K, N)
 
-    with Runtime() as rt:
-        @always_inline
-        @parameter
-        fn test_fn():
-            _ = func(C, A, B, rt)
+    @always_inline
+    @parameter
+    fn test_fn():
+        _ = func(C, A, B)
 
-        let secs = Float64(Benchmark().run[test_fn]()) / 1e9
-        print("Mojo seconds: ", secs)
-        # Prevent the matrices from being freed before the benchmark run
-        _ = (A, B, C)
-        let gflops = ((2 * M * N * K) / secs) / 1e9
-        let speedup: Float64 = gflops / python_gflops
-        # print(gflops, "GFLOP/s", speedup, " speedup")
-        print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
+    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    print("Mojo seconds: ", secs)
+    # Prevent the matrices from being freed before the benchmark run
+    _ = (A, B, C)
+    let gflops = ((2 * M * N * K) / secs) / 1e9
+    let speedup: Float64 = gflops / python_gflops
+    # print(gflops, "GFLOP/s", speedup, " speedup")
+    print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
 
 fn main() raises:
     benchmark_parallel[matmul_parallelized](512, 512, 512, python_gflops)

@@ -6,7 +6,6 @@ from memory import memset_zero
 from memory.unsafe import DTypePointer
 from random import rand, random_float64
 from sys.info import simdwidthof
-from runtime.llcl import Runtime
 from algorithm import vectorize, parallelize
 from algorithm import Static2DTileUnitFunc as Tile2DFunc
 
@@ -21,7 +20,7 @@ fn tile[tiled_fn: Tile2DFunc, tile_x: Int, tile_y: Int](end_x: Int, end_y: Int):
             tiled_fn[tile_x, tile_y](x, y)
 
 # Use the above tile function to perform tiled matmul.
-fn matmul_tiled_parallelized(C: Matrix, A: Matrix, B: Matrix, rt: Runtime):
+fn matmul_tiled_parallelized(C: Matrix, A: Matrix, B: Matrix):
     @parameter
     fn calc_row(m: Int):
         @parameter
@@ -36,7 +35,7 @@ fn matmul_tiled_parallelized(C: Matrix, A: Matrix, B: Matrix, rt: Runtime):
         alias tile_size = 4
         tile[calc_tile, nelts * tile_size, tile_size](A.cols, C.cols)
 
-    parallelize[calc_row](rt, C.rows)
+    parallelize[calc_row](C.rows)
 
 # Matrix type and methods:
 struct Matrix:
@@ -74,28 +73,26 @@ struct Matrix:
 
 @always_inline
 fn benchmark_parallel[
-    func: fn (Matrix, Matrix, Matrix, Runtime) -> None
+    func: fn (Matrix, Matrix, Matrix) -> None
 ](M: Int, N: Int, K: Int, python_gflops: Float64):
     var C = Matrix(M, N)
     C.zero()
     var A = Matrix(M, K)
     var B = Matrix(K, N)
 
-    with Runtime() as rt:
+    @always_inline
+    @parameter
+    fn test_fn():
+        _ = func(C, A, B)
 
-        @always_inline
-        @parameter
-        fn test_fn():
-            _ = func(C, A, B, rt)
-
-        let secs = Float64(Benchmark().run[test_fn]()) / 1e9
-        print("Mojo seconds: ", secs)
-        # Prevent the matrices from being freed before the benchmark run
-        _ = (A, B, C)
-        let gflops = ((2 * M * N * K) / secs) / 1e9
-        let speedup: Float64 = gflops / python_gflops
-        # print(gflops, "GFLOP/s", speedup, " speedup")
-        print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
+    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    print("Mojo seconds: ", secs)
+    # Prevent the matrices from being freed before the benchmark run
+    _ = (A, B, C)
+    let gflops = ((2 * M * N * K) / secs) / 1e9
+    let speedup: Float64 = gflops / python_gflops
+    # print(gflops, "GFLOP/s", speedup, " speedup")
+    print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
 
 
 fn main() raises:

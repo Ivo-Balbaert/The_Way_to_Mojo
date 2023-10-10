@@ -515,7 +515,7 @@ The `isdigit` function checks if the character passed in is a valid decimal betw
 See also `string_counting_bytes_and_characters.mojo`
 
 ## 4.4 Defining alias types
-The alias keyword only works at compile time, it is a compile-time temporary value.
+The alias keyword only works at compile time, it is a compile-time constant.
 All instances of the alias are replaced by its value at compile-time.
 
 You can easily define a synonym or shorthand for a type with alias:

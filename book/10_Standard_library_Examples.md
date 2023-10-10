@@ -245,7 +245,7 @@ Utilize SIMD to manipulate 32 bytes of data at the same time (see lines 6- ).
 This is an N-dimensional Buffer, that can be used both statically, and dynamically at runtime.  
 NDBuffer can be parametrized on rank, static dimensions and Dtype. It does not own its underlying pointer.
 
-See `ndbuffer1.mojo`:
+See `ndbuffer1.mojo`:  (seel also § 10.9 for Tensor from stdlib)
 ```mojo
 from utils.list import DimList
 from memory.unsafe import DTypePointer
@@ -711,7 +711,9 @@ You index them as InlineFixedVector (with the same note). Only a shallow copy is
 
 ## 10.9 The Tensor type from module tensor
 A tensor is a higher-dimensional matrix, its type Tensor is defined in module tensor (see line 1).  
-The tensor type manages its own data (unlike NDBuffer and Buffer which are just views). Therefore, the tensor type performs its own memory allocation and freeing. Here is a simple example of using the tensor type to represent an RGB image and convert it to grayscale:
+The tensor type manages its own data (unlike NDBuffer and Buffer which are just views), that is:  the tensor type performs its own memory allocation and freeing. Here is a simple example of using the tensor type to represent an RGB image and convert it to grayscale:
+See video: [Introduction to Tensors](https://www.youtube.com/watch?v=3OWkXNdkx8E)
+Tensorutils: see blogs_videos
 
 See `tensor0.mojo`:
 ```mojo
@@ -719,7 +721,7 @@ from tensor import Tensor
 
 fn main():
     let t = Tensor[DType.int32](2, 2)
-    print(t.simd_load[4](0, 1, 2, 3)) # => 
+    print(t.simd_load[4](0, 1, 2, 3)) # => [0, 1970038374, 26739, 33] - undefined last value ??
 ```
 
 See `tensor1.mojo`:
@@ -735,7 +737,7 @@ let channels = 3
 fn main():
     # Create the tensor of dimensions height, width, channels
     # and fill with random values.
-    let image = rand[DType.float32](height, width, channels)
+    let image = rand[DType.float32](height, width, channels) # -> Tensor
 
     # Declare the grayscale image.
     let spec = TensorSpec(DType.float32, height, width)
@@ -751,6 +753,61 @@ fn main():
 
     print(gray_scale_image.shape().__str__()) # => 256x256
 ```
+
+Nice example of vectorizing:
+See `tensor2.mojo`:
+```mojo
+from tensor import Tensor
+from random import rand
+from math import sqrt, round
+from algorithm import vectorize
+from sys.info import simdwidthof
+
+alias type = DType.float32
+alias simd_width: Int = simdwidthof[type]()
+
+fn tensor_math(t: Tensor[type]) -> Tensor[type]:
+    var t_new = Tensor[type](t.shape())
+    for i in range(t.num_elements()):
+        t_new[i] = sqrt(t[i])  # some for round isntead of sqrt
+    return t_new
+
+fn tensor_math_vectorized(t: Tensor[type]) -> Tensor[type]:
+    var t_new = Tensor[type](t.shape())
+    
+    @parameter
+    fn vecmath[simd_width: Int](idx: Int) -> None:
+        t_new.simd_store[simd_width](idx, sqrt(t.simd_load[simd_width](idx)))
+    vectorize[simd_width, vecmath](t.num_elements())
+    return t_new
+
+
+fn main():
+    let t = rand[type](2,2)
+    print(t.shape().__str__()) # 3x3
+    print(t.spec().__str__())  # 3x3xfloat32
+    # print(t[0]) # => 0.1315377950668335
+    # print(t[1]) # => 0.458650141954422
+    # print(t[2]) # => 0.21895918250083923
+    # print(t.num_elements()) # => 9
+
+    # tensorprint() utility ?
+    for i in range(t.num_elements()):
+       print(t[i]) 
+
+    print()
+    let t1 = tensor_math(t)
+    for i in range(t1.num_elements()):
+       print(t1[i]) 
+
+    print()
+    let t2 = tensor_math_vectorized(t)
+    for i in range(t2.num_elements()):
+       print(t2[i]) 
+
+    print(simd_width) # => 8
+```
+
 
 ## 10.10 Working with command-line arguments
 This is done with module arg from the sys package.
