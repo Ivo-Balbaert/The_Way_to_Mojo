@@ -6,7 +6,6 @@ Mojo also uses decorators to modify the properties and behaviors of types (like 
 
 Currently, the following decorators exist:  
 `@adaptive`     see matmul
-`@unroll`
 
 
 ## 11.1 - @value
@@ -250,8 +249,22 @@ The add calculation ran at compile time, so those extra instructions don't happe
 ## 11.5 - @staticmethod
 `@staticmethod` can be used:
 * in a struct that cannot be instantiated, for an example see § 7.10.1
-* to indicate that the following is a static method, to be called on the struct itself, not on an instance, example (see § 20.6 - `ray_tracing.mojo`):
+* to indicate that the following is a static method, to be called on the struct itself, not on an instance, keeping the scope clean.
 
+Here is a simple example:
+See `static_method1.mojo`
+```mojo
+struct helpers:
+    @staticmethod
+    fn is_even(value: Int) -> Bool:
+        return (value & 1) == 0
+
+fn main():
+    let x = 2
+    print(helpers.is_even(x))   # => True
+```
+
+Example (see § 20.6 - `ray_tracing.mojo`):
 ```mojo
 struct Vec3f:
     var data: SIMD[DType.float32, 4]
@@ -274,12 +287,46 @@ This improves the runtime performance by reducing function call overhead (elimin
 
 The version `@always_inline("nodebug")` works the same, but doesn't include debug information so you can't step into the function when debugging, but it will reduce debug build binary size.
 
+Example: see § 11.8
 See matmul
 
 ## 11.7 - @noncapturing
 Marks a closure as not capturing variables from the outer scope. See § 6.5.1
 
 ## 11.8 - @unroll
+See `unroll1.mojo`:
+```mojo
+@always_inline
+fn print_and_increment(inout x: Int):
+    print(x)
+    x += 1
+
+fn main():
+    var i = 0
+    @unroll
+    while i < 3:
+        print_and_increment(i)
+
+# =>
+# 0
+# 1
+# 2
+```
+
+After working out the decorators, this becomes:
+```mojo
+fn main():
+    var i = 0
+    print(i)
+    i+=1
+    print(i)
+    i+=1
+    print(i)
+    i+=1
+```
+
+The program is faster by not doing `if i<3` on each iteration and by not having to jump into print_and_increment. It also become bigger, but the point is that this is a choice.
+
 Examples: see `nbody.mojo`:
 
 ```mojo

@@ -16,8 +16,8 @@ __add__		+
 __getitem__	a[i]
 __setitem__	a[i] = val
 
+__call__	()
 __len__		len, size
-
 __iter__  	to implement a for loop
 
 

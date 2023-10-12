@@ -56,6 +56,7 @@ It also offers control over memory storage: struct field values are inline-alloc
 **Benchmarks**
 - Early benchmark comparisons show that Mojo has the performance level of C/C++ (or faster) and Rust:
 ![benchmark comparisons](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/performance.png) 
+[2023-10-11 - MOJO DOES GIVE SUPERPOWERS](https://github.com/StijnWoestenborghs/gradi-mojo)
 It easily beats Python performance with 4 orders of magnitude.
 It uses the whole range of possibilities offered by modern compiler optimizations, including automatic parallel processing across multiple cores. This is nicely illustrated in the section starting at 33:08 by Jeremy Howard of the [Keynote speech](https://www.youtube.com/watch?v=-3Kf2ZZU-dg) which announced Mojo to the world.
 

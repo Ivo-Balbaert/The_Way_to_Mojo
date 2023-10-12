@@ -270,5 +270,27 @@ You can see that we captured the a variable (line 1) in the inner closure (line 
 
 The keyword capturing is necessary.
 
+## 6.6 Functions with a variable number of arguments.
+This is indicated by prefixing the parameter name in the function header with *, for example args_w in the function my_func:
 
-From v 0.4.0: Functions support default parameters
+See `variadic1.mojo`:
+```mojo
+fn my_func(*args_w: String):  # 1
+    let args = VariadicList(args_w)
+    for i in range(len(args)):
+        # print(args[i])   # error: no matching value in call to print
+        print(__get_address_as_lvalue(args[i]))
+
+
+fn main():
+    my_func("hello", "world", "from", "Mojo!")
+
+# =>
+# hello
+# world
+# from
+# Mojo!
+```
+
+Also:
+- From v 0.4.0: Functions support default parameters

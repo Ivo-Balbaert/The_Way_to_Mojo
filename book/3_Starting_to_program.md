@@ -134,7 +134,7 @@ For example: `mojo build hello_world.mojo`
 
 >Note: When developing, you probably don't want to bother with building an executable. You will only start to need then when you're going to deploy into a test or production environment. But also for benchmarking it is important to do this: an executable runs at higher performance than mojo (run) itself.
 
-Now an executable `hello_world` is build, with is quite small in size (some 23 Kb). This can be run with: `./hello_world` (on Linux) or ?? , producing the same output as above.
+Now an executable `hello_world` is build, with is quite small in size (some 37 Kb). This can be run with: `./hello_world` (on Linux) or ?? , producing the same output as above.
 ```
 A Mojo app can be compiled into a small, standalone, fast-launching binary, making it easy to deploy while taking advantage of available cores and acceleration. 
 ```

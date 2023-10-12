@@ -574,7 +574,7 @@ In this example, enum_type is a struct that implements a simple enum using alias
 
 
 ## 4.5 The object type
-`object` is defined in module `object` in the `builtin` package.
+`object` is defined in module `object` in the `builtin` package, so it is not a Python object.
 It is used to represent untyped values. This is the type of arguments in def functions that do not have a type annotation, such as the type of x in `def f(x): pass`. A value of any type can be passed in as the x argument in that case.
 
 `matmul1.mojo` in § 20. shows an example of its use.
@@ -587,3 +587,22 @@ fn matrix_init(rows: Int, cols: Int) raises -> object:
         Attr("rows", rows), Attr("cols", cols), Attr("append", matrix_append),
     )
 ```
+
+Here is another example of creating an object:
+
+See `object1.mojo`:
+```mojo
+fn print_object(o: object):
+    print(o)
+
+fn main() raises:
+    var obj = object("hello world")     # a string
+    obj = object([])                    # change to a list
+    obj.append(object(123))             # a list of objects
+    obj.append(object("hello world"))
+    print_object(obj)   # => [123, 'hello world']
+```
+
+Objects do have types and can be type-checked.
+
+Usage: Fits into tiny space (+- 38K), so could be used in WASM and microcontrollers.
