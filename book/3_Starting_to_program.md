@@ -342,6 +342,13 @@ To import all types and functions from a module (say math), use:
 `from math import *`.  
 However, it is recommended to only import the things you need.
 
+You can also use:
+```mojo
+import benchmark
+```
+
+But then you have to access its members with: `benchmark.num_warmup`, prefixing the member name with the module name.
+
 For some examples see: ??
 
 ## 3.6.2 Python modules

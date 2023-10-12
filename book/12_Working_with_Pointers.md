@@ -148,6 +148,13 @@ Let's move back to where we were and free the memory, if we forget to free the m
     p1.free()
 ```
 
+(?? idiom:
+    data = Pointer[Float32].alloc(n)
+    data.free()
+
+    self.data.store(i, value)
+    self.data.load(i) )
+
 ## 12.3 - Writing safe pointer code
 As we saw in the previous §, it's easy to make mistakes when playing with pointers. So let's make the code of our struct more robust to reduce the surface area of potential errors. We enclose our struct Coord in another struct Coords which contains a data field that is a Pointer[Coord]. Then we can build in safeguards, for example in the __getitem__ method we make sure that the index stays within the bounds of the length of Coords.
 

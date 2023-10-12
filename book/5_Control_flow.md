@@ -61,6 +61,9 @@ else:
     ...
 ```
 
+(In a __init__) You can also use constructs like:  
+`self.height = height if height > 0 else 1`
+
 Also if statements can be nested inside each other.
 
 ## 5.2 Using for loops
@@ -110,9 +113,9 @@ For a concrete example, see `try_except.mojo` in § 6.2
 
 ## 5.5 The with statement
 In Python the with statement is used to create a context. Whatever statements we execute inside that context does not affect the outer environment. The with statement simplifies exception handling by encapsulating common preparation and cleanup tasks. 
-It is commonly used as `with open(file)` to read a file and close it automatically at the end of the context.  
+It is commonly used as `with open(file)` to read a file and close it automatically at the end of the context (see § 10.12).  
 
-In Mojo it is used to create a parallelization context, for example in mandelbrot_4.mojo:
+In Mojo it is used to create a parallelization context (no longer!), for example in mandelbrot_4.mojo:
 ```mojo
 from runtime.llcl import num_cores, Runtime
 

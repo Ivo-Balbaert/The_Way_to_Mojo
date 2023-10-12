@@ -47,8 +47,12 @@ fn main():
     test_debug_assert[1](2)
 ```
 
-When run as `mojo debug_assert.mojo` there is no output.
-??`mojo --debug-level full debug_assert1.mojo` also doesn't give any output (2023 Sep 9)
+When you run this as `mojo -D ASSERT_WARNING debug_assert1.mojo`, you get the following output:
+```
+Assert Warning: x is not equal to 42
+Assert Warning: y is not equal to 42
+```
+>Note: -debug-level full and "debug" build are different things; `mojo --debug-level full debug_assert1.mojo` doesn't give any output.
 
 >Note: debug_assert doesn't work in the Playground because this is not a debug build.
 
@@ -844,3 +848,22 @@ See examples memset, memcpy, memset_zero
 
 The `stack_allocation` function lets you allocate data buffer space on the stack, given a data type and number of elements, for example:  
 ` let rest_p: DTypePointer[DType.uint8] = stack_allocation[simd_width, UInt8, 1]()`
+
+
+## 10.12 Working with files
+This is done through the file module (v 0.4.0).
+
+Suppose we have a my_file.txt with contents: "I like Mojo!"
+
+See `read_file.mojo`
+```mojo
+fn main() raises:
+    var f = open("my_file.txt", "r")
+    print(f.read())     # => I like Mojo!
+    f.close()   
+
+    with open("my_file.txt", "r") as f:      # 1
+        print(f.read()) # => I like Mojo!
+```
+
+The with in line 1 closes the file automatically.

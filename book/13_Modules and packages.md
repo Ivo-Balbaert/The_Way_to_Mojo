@@ -76,7 +76,7 @@ You can import a package and its modules either directly from source files or fr
 ## 13.3.1 Importing the package as source code
 For our example, let's continue to work on the code from § 13.2. Suppose our project structure is like this:   
 
-use_package.mojo
+use_package.mojo  (?? can also be just main.mojo)
 mypackage/
     __init__.mojo
     mymodule.mojo
@@ -111,6 +111,9 @@ Executing `mojo use_package.mojo`  gives as output:
 2 4
 ```
 
+This doesn't work for me as of 0.4.0: issue # 1011.
+However it still works when using the package file as in the following section:
+
 ## 13.3.2 Compiling the package to a package file
 You can compile the package's source code into a package file like this:
 `mojo package mypackage -o mypackage.mojopkg`
@@ -127,6 +130,10 @@ Executing `mojo use_package.mojo` still gives the same output.
 If you want to get rid of the package file, use the command:  
 `mojo build use_package.mojo -o executable`  
 Then `./executable` gives the same output, even when the .mojopkg file is removed.
+
+Now you module is distributable!
+
+>Note: If you change the name of the package folder, you have to run a new package command and change the import statement.
 
 ## 13.3.3 The __init__ file
 This file must be in the package folder in order for Mojo to recognize the folder as a package.  

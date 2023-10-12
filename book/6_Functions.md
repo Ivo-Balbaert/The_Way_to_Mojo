@@ -269,3 +269,6 @@ fn main():
 You can see that we captured the a variable (line 1) in the inner closure (line 2) and returned it to the outer function. Note that the closure has the function type: `f: fn() capturing -> Int`.
 
 The keyword capturing is necessary.
+
+
+From v 0.4.0: Functions support default parameters

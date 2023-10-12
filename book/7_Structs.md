@@ -755,3 +755,6 @@ fn main():
 
 ## 7.10.2 Non-movable and non-copyable types
 These can be instantiated, bot not copied or moved, because they have no no copy or move constructors. Useful to implement types like atomic operations. 
+
+
+From v 0.4.0: Structs support default parameters
