@@ -20,10 +20,9 @@ The name of the language is **Mojo**, meaning "a magical charm" or "magical powe
 
 Its logo is the ![fire emoticon](??), the U+1F525 Unicode character.
 
-Mojo is also the first language to introduce emojis as file extensions!
+Mojo is also the first language to introduce emojis as file extensions:
 Mojo’s source files have the fire emoticon extension like hello.🔥, or alternatively *.mojo*, as in *hello.mojo*.  
 Mojo’s packages have the emoticon extension like greetings.📦, or alternatively *.mojopkg*, as in *greetings.mojopkg*.  
-
 
 Mojo users are called *mojicians 🪄*.
 The universe of all things Mojo is called the *Modverse*.
@@ -48,11 +47,11 @@ To come into contact with other Mojo users or the Modular team:
 * [GitHub discussions](https://github.com/modularml/mojo/discussions)
 * [GitHub issues](https://github.com/modularml/mojo/issues)
 
-* [Mojo Discord channel](https://discord.com/invite/modular or https://discord.gg/modular)
+* [Mojo Discord channel](https://discord.com/invite/modular) or https://discord.gg/modular
 * [Twitter channel](https://twitter.com/modular_ai)
 
 A tutorial site:
-    [mojodojo](https://mojodojo.dev/) created by https://github.com/Lorenzobattistela   (mojodojodev@gmail.com)
+    [mojodojo](https://mojodojo.dev/) created by Jack Clayton (mojodojodev@gmail.com)
 
 
 ## 1B.3 A brief history, status and roadmap 
@@ -63,15 +62,13 @@ A tutorial site:
     Chris Lattner considers Mojo to be at v 0.1
 * 2023 Aug 26: Early release Closed Beta Local SDK: Mojo release v 0.2.0
 Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native support for Windows is coming.
-* 2023 Sep 7: First Mojo release for local download and execution on Linux - 
-               Mojo v 0.2.1 
+* 2023 Sep 7: First Mojo release for local download and execution on Linux - Mojo v 0.2.1 
 * 2023 Sep 22: Mojo v 0.3.0
 * 2023 Sep 29: Mojo v 0.3.1 (for installation and lsp problems)
 * 2023 Oct 5:  Mojo v 0.4.0 (default parameters for structs and functions - file I/O)
 
 Goals / Roadmap:
 * 2023 Jun 21 - "We expect that Mojo will be open-sourced. However, Mojo is still young, so we will continue to incubate it within Modular until more of its internal architecture is fleshed out. We don’t have an established plan for open-sourcing yet."
-* a command-line REPL is coming soon
 * 2023 Jun 17 - A rough estimate mentioned by the team is that the language might be very usable for a lot of things in 18 months, so about 2024 Dec
 
 ## 1B.4 Popularity
@@ -79,7 +76,8 @@ Goals / Roadmap:
 |  Date        | GH watch | stars | forks | issues | open pull reqs | Contributors | Discord | Twitter | 
 |--------------|----------|-------|-------|--------|----------------|--------------|-------  |----------
 | 2023 Aug 13  | 175      | 9200  |  188  |  82    |  /             |   4          |  18465  |   10400 | 
-| 2023 Sep 15  | 224      | 13895 |  1408 |  199    |  5            |   8          |  20900  |   13100 | 
+| 2023 Sep 15  | 224      | 13895 |  1408 |  199   |  5             |   8          |  20900  |   13100 | 
+| 2023 Oct 12  | 238      | 14977 |  2000 |  225   |  2             |   15         |  22100  |   ?? | 
 GH = GitHub
 
 2023 Aug 24: in the 4 months since the product keynote, the Modular community has grown to more than 120K+ developers, including tens of thousands of enterprises.

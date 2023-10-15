@@ -281,6 +281,7 @@ It is written directly into the data segment of the binary. When the program sta
 String literals are all null-terminated for compatibility with C APIs (but this is subject to change). String literals store their length as an integer, and this does not include the null terminator.
 
 They can be converted to a Bool value (see lines 1B-C): an empty string is False, an non-empty is True. (Bool() doesn't work here).
+?? also examples with ''
 
 See `strings.mojo`:
 ```mojo

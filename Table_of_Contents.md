@@ -74,14 +74,20 @@
 ### 4.3.3 The StringRef type
 ### 4.3.4 Some String methods
 ## 4.4 Defining alias types
-## 4.5 Sorting a DynamicVector
+### 4.4.1 Usage of alias
+### 4.4.2 Defining an enum type using alias
+## 4.5 The object type
 
 # 5 Control flow
 ## 5.1 if else and Bool values
 ## 5.2 Using for loops
 ## 5.3 Using while loops
 ## 5.4 Catching exceptions with try-except-finally
+## 5.5 The with statement
+## 5.6 The walrus operator :=
+## 5.7 Exiting from a program
 
+---------------------------------------------
 # 6 Functions
 ## 6.1 Difference between fn and def
 ## 6.2  A fn that calls a def needs a try/except
@@ -147,13 +153,13 @@
 ## 10.10 Working with command-line arguments
 
 # 11 – Decorators
-## 11.1 - @value
-## 11.2 - @register_passable
-## 11.3 - @parameter if
-## 11.4 - @parameter 
-## 11.5 - @staticmethod
-## 11.6 - @always_inline
-## 11.7 - @noncapturing
+# 11.1 - @value
+# 11.2 - @register_passable
+# 11.3 - @parameter if
+# 11.4 - @parameter 
+# 11.5 - @staticmethod
+# 11.6 - @always_inline
+# 11.7 - @noncapturing
 
 # 12 – Working with Pointers
 ## 12.1 - What is a pointer?

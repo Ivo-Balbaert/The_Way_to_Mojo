@@ -32,6 +32,19 @@ Examples:
 `fn f2[*a: Int](b: Int)`:  
 this parametric function f2 has a variable number of parameters of type Int
 
+
+**Implementing a List like behavior with PythonObject**
+See `list_pythonobject.mojo`:
+```mojo
+fn main() raises:
+    let x = PythonObject([])
+    _ = x.append("hello")
+    _ = x.append(1.1)
+    let s: String = x[0].to_string()
+    let f: Float64 = x[1].to_float64()
+    print(x)  # => ['hello', 1.1]
+```
+
 ## 9.2 The Tuple type
 This is implemented in the built-in module `tuple`. 
 >Note: There is also a static_tuple module in package utils, which defines the tpe `StaticTuple`, which is a statically sized tuple type contains elements of the same types

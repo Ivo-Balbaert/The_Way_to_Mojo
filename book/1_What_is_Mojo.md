@@ -1,6 +1,6 @@
 # 1 – What is Mojo?
-Mojo is a new general purpose programming language*, with an initial focus on AI applications. Over time, the whole spectrum of general-purpose programming will be covered.
-It is the first language which is based on the [MLIR compiler infrastructure](https://mlir.llvm.org/), so it can run on all hardware.
+Mojo is a new programming language*, with an initial focus on AI applications. Over time, the whole spectrum of general-purpose programming will be covered.
+It is the first language which is completely based on the [MLIR compiler infrastructure](https://mlir.llvm.org/), so it can run on all hardware.
 
 It combines the usability of Python with the performance of C++/C and the safety of Rust.
 
@@ -56,7 +56,10 @@ It also offers control over memory storage: struct field values are inline-alloc
 **Benchmarks**
 - Early benchmark comparisons show that Mojo has the performance level of C/C++ (or faster) and Rust:
 ![benchmark comparisons](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/performance.png) 
-[2023-10-11 - MOJO DOES GIVE SUPERPOWERS](https://github.com/StijnWoestenborghs/gradi-mojo)
+See also: [2023-10-11 - MOJO DOES GIVE SUPERPOWERS](https://github.com/StijnWoestenborghs/gradi-mojo)
+[Llama2 - 2023-10-13](https://www.modular.com/blog/community-spotlight-how-i-built-llama2-by-aydyn-tairov)
+[Bioinformatics - 2023-10-13](https://medium.com/@traincheck/mojomics-supercharging-bioinformaticians-with-460030ae5b3d)
+
 It easily beats Python performance with 4 orders of magnitude.
 It uses the whole range of possibilities offered by modern compiler optimizations, including automatic parallel processing across multiple cores. This is nicely illustrated in the section starting at 33:08 by Jeremy Howard of the [Keynote speech](https://www.youtube.com/watch?v=-3Kf2ZZU-dg) which announced Mojo to the world.
 
@@ -77,6 +80,7 @@ Mojo is also *safe and reliable* because of:
 (See also § 2.1)
 
 Mojo prefers compile-time errors to runtime errors, because solving bugs at runtime is so much more painful (as developers in dynamic languages like Python and Ruby know well): this gives developers more confidence in their codebase.
+
 * It offers *type inference* in many cases to make development easier.
 
 * Its automatic memory management prevents memory errors (segfaults) and memory-leakage, a common cause for bugs in C++ applications.
@@ -117,12 +121,11 @@ It is on the roadmap.  Currently, you can use Python's C++ interop libraries lik
 
 ## 1.5 Summary 
 Here are the killer features of Mojo: 
-0- PROGRESSIVE/STATIC TYPING: Leverage types for better performance and error checking.
+0- progressive/static typing: Leverage types for better performance and error checking.
 1- fast compilation  
 2- fast execution (runtime performance): ZERO COST ABSTRACTIONS: Take control of storage by inline-allocating values into structures. Mojo includes a *high-performance concurrent runtime*. 
 3- automatic memory management:  OWNERSHIP + BORROW CHECKER: Take advantage of memory safety without the rough edges.
 >Note: if really needed, you could do manual memory management in Mojo. It provides a manual management system using pointers similar to C++ and Rust.
-
 4- seamless use of Python code (a superset of Python)  
 5- adaptability to custom hardware through MLIR: 
     PORTABLE PARAMETRIC ALGORITHMS: Leverage compile-time meta-programming to write hardware-agnostic algorithms and reduce boilerplate. 

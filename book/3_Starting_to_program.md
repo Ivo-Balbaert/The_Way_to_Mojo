@@ -26,14 +26,177 @@ Documenting your code is crucial for maintenance. This can be done in Mojo with 
 As in Python, code comments start with the `#` symbol. This can be used for a single-line comment, at the start of the line or in the middle of a line. Subsequent uses of # at the start of lines form a multi-line comment.   
 
 ## 3.2.2 Doc comments with """
-Use `docstrings` if you need more structured comments that can be gathered by the mojo tool.
+Use `docstrings` if you need more structured comments that can be gathered by the mojo doc tool.
 These are defined with the symbol `""" ... """`, and can be multi-line comments. They are mostly written after the header of a function, like here for the __init__ function:
 
+Here is a program with docstrings: (see § 7.4.1)
 ```mojo
-fn __init__(inout self, x: Float32):
-    """Construct a complex number given a real number."""
-    self.re = x
-    self.im = 0.0
+struct Complex:
+    var re: Float32
+    var im: Float32
+
+    fn __init__(inout self, x: Float32):
+        """Construct a complex number given a real number."""
+        self.re = x
+        self.im = 0.0
+
+    fn __init__(inout self, r: Float32, i: Float32):
+        """Construct a complex number given its real and imaginary components."""
+        self.re = r
+        self.im = i
+
+fn main():
+    let c1 = Complex(7)
+    print (c1.re)  # => 7.0
+    print (c1.im)  # => 0.0
+    var c2 = Complex(42.0, 1.0)
+    c2.im = 3.14
+    print (c2.re)  # => 42.0
+    print (c2.im)  # => 3.1400001049041748
+```
+
+When you give the command `mojo doc overloading.mojo`, you currently get the following JSON output (it is planned to also generate HTML in the future):
+
+```
+{
+  "aliases": [],
+  "description": "",
+  "functions": [
+    {
+      "kind": "function",
+      "name": "main",
+      "overloads": [
+        {
+          "args": [],
+          "async": false,
+          "constraints": "",
+          "description": "",
+          "isDef": false,
+          "isStatic": false,
+          "kind": "function",
+          "name": "main",
+          "parameters": [],
+          "raises": false,
+          "returnType": null,
+          "returns": "",
+          "signature": "main()",
+          "summary": ""
+        }
+      ]
+    }
+  ],
+  "kind": "module",
+  "name": "overloading",
+  "structs": [
+    {
+      "aliases": [],
+      "constraints": "",
+      "description": "",
+      "fields": [
+        {
+          "description": "",
+          "kind": "field",
+          "name": "re",
+          "summary": "",
+          "type": "SIMD[f32, 1]"
+        },
+        {
+          "description": "",
+          "kind": "field",
+          "name": "im",
+          "summary": "",
+          "type": "SIMD[f32, 1]"
+        }
+      ],
+      "functions": [
+        {
+          "kind": "function",
+          "name": "__init__",
+          "overloads": [
+            {
+              "args": [
+                {
+                  "description": "",
+                  "inout": true,
+                  "kind": "argument",
+                  "name": "self",
+                  "owned": false,
+                  "type": "Self"
+                },
+                {
+                  "description": "",
+                  "inout": false,
+                  "kind": "argument",
+                  "name": "x",
+                  "owned": false,
+                  "type": "SIMD[f32, 1]"
+                }
+              ],
+              "async": false,
+              "constraints": "",
+              "description": "",
+              "isDef": false,
+              "isStatic": false,
+              "kind": "function",
+              "name": "__init__",
+              "parameters": [],
+              "raises": false,
+              "returnType": null,
+              "returns": "",
+              "signature": "__init__(inout self: Self, x: SIMD[f32, 1])",
+              "summary": "Construct a complex number given a real number."
+            },
+            {
+              "args": [
+                {
+                  "description": "",
+                  "inout": true,
+                  "kind": "argument",
+                  "name": "self",
+                  "owned": false,
+                  "type": "Self"
+                },
+                {
+                  "description": "",
+                  "inout": false,
+                  "kind": "argument",
+                  "name": "r",
+                  "owned": false,
+                  "type": "SIMD[f32, 1]"
+                },
+                {
+                  "description": "",
+                  "inout": false,
+                  "kind": "argument",
+                  "name": "i",
+                  "owned": false,
+                  "type": "SIMD[f32, 1]"
+                }
+              ],
+              "async": false,
+              "constraints": "",
+              "description": "",
+              "isDef": false,
+              "isStatic": false,
+              "kind": "function",
+              "name": "__init__",
+              "parameters": [],
+              "raises": false,
+              "returnType": null,
+              "returns": "",
+              "signature": "__init__(inout self: Self, r: SIMD[f32, 1], i: SIMD[f32, 1])",
+              "summary": "Construct a complex number given its real and imaginary components."
+            }
+          ]
+        }
+      ],
+      "kind": "struct",
+      "name": "Complex",
+      "parameters": [],
+      "summary": ""
+    }
+  ],
+  "summary": ""
 ```
 
 Comments are not compiled. Use comments sparingly, in general names of variables should show what they contain, and names of functions should tell us what they do.
@@ -50,10 +213,10 @@ Now try to compile this empty file: `mojo hello_world.mojo`
 
 The compiler protests with:  
 `mojo: error: module does not `@export` any symbols; nothing to codegen`
-In other words: the mojo compiler doesn't find any code, so cannot generate any compiled code/
+In other words: the mojo compiler doesn't find any code, so cannot generate any compiled code.
 
 What does this mean?
-Every Mojo program contained in a source file needs a so called *entry point* called **main**.  This is the starting point for code execution, as in many other languages.  
+Every executable Mojo program contained in a source file needs a so called *entry point* called **main**.  This is the starting point for code execution, as in many other languages.  
 After all, the computer needs to know where to start executing your program!
 
 In Mojo syntax, this looks like:
@@ -112,6 +275,7 @@ For clarity it is best to place the `main` function at the bottom of the code fi
 The `print` function displays any string (enclosed in "") Try out if you can also use '' to envelop strings. This `print` function automatically adds a new line. So if you just want a newline, use `print()`.
 If you don 't want a newline, use the function `print_no_newline`. This function can also be used to print a series of elements, joined by spaces (see the last line in the following example).
 
+See `hello_world.mojo`:
 ```mojo
 fn main():
     print("Hello World from Mojo!")
@@ -139,7 +303,7 @@ Now an executable `hello_world` is build, with is quite small in size (some 37 K
 A Mojo app can be compiled into a small, standalone, fast-launching binary, making it easy to deploy while taking advantage of available cores and acceleration. 
 ```
 
-In development the simple `mojo` command is just fine. But when you want to deploy your program to another environment, you need the executable. Luckily, this is only one binary with a small size, so easily deployable to cloud or embedded environments.
+In development, the simple `mojo` command is just fine. But when you want to deploy your program to another environment, you need the executable. Luckily, this is only one binary with a small size, so easily deployable to cloud or embedded environments.
 
 By splitting compilation from execution, we also make the difference between:  
 * Compile-time: here the compiler scans your program and generates errors or warnings. If no errors are found, an executable is generated. 

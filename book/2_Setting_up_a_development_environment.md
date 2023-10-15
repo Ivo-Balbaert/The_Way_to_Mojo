@@ -4,7 +4,7 @@
 
 **Target OS’s and platforms** 
 2023 Aug 26: Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher)
-Native support for Windows is coming.
+Native support for Apple and Windows is coming.
 
 The LLVM/MLIR compiler infrastructure together form a cutting-edge compiler and code generation system. Because Mojo uses this system, it can target a very wide spectrum of operating systems, computation environments and hardware platforms.
 
@@ -21,12 +21,12 @@ But Mojo can also be interpreted for metaprogramming, or JIT-compiled, as in the
 If the Mojo app contains dynamic (Python) code, this is executed by running the dynamic code at compile time with an embedded CPython interpreter. This mechanism also makes possible compile-time meta-programming.
 
 **Runtime**
-- to call the CPython interpreter and call with the Mojo compiler ??
+- needed to call the CPython interpreter, and call with the Mojo compiler ??
 - a built-in GC to clean up Python objects, based on reference counting
 
 
 **Standard library**   
-Mojo has a growing standard library called `MojoStdlib` or SDK, which already contains a growing number of *modules*, such as Atomic, Benchmark, List, OS, Tensor, Testing, and so on (see § ??).
+Mojo has a growing standard library called `MojoStdlib` or SDK, which already contains a growing number of *modules*, such as algorithm, benchmark, list, os, tensor, testing, and so on (see § ??).
 A package is a collection of modules that serve the same purpose,
 example: the math package contains the bit, math, numerics, and polynomial modules
 The packages are built as binaries into the SDK to improve startup speed.
@@ -50,6 +50,8 @@ Version 0.2.0 ships with the following packages:
 * testing
 * time
 * utils
+
+?? adapt
 
 ## 2.2 Using a Mojo binary release
 ?? These can be downloaded from [here]().
@@ -711,7 +713,7 @@ Select another kernel > Existing Jupyter Server > Enter the URL of a
 running Jupyter Server.   
 Enter: `https://playground.modular.com/user/<your_email>/?token=<your_token>`  
 
-It is often easier to first restart the Mojo Playground server is you still have a browser session open with it. Then you can connect to it from within VS Code.  
+It is often easier to first restart the Mojo Playground server if you still have a browser session open with it. Then you can connect to it from within VS Code.  
 Now you can write Mojo code and run it within a cell of the notebook!  
 See next section for a screenshot of code in this environment.
 
@@ -732,7 +734,6 @@ See also the following [video](https://www.youtube.com/watch?v=cHyYmF-RhUk).
 
 #### 2.7.2.3 Compiling and executing a simple program
 To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  
-
 
 The first is the usual "Hello World!" program, which is in Mojo exactly the same as in Python, because Mojo is a superset of Python:
 
