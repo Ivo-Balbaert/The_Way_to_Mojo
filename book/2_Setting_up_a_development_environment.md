@@ -630,7 +630,7 @@ This is useful when:
 * you don't have access (yet) to a local Mojo installation 
 * you don't want to clutter your machine with a local Mojo installation 
 
-Mojo works in a REPL environment, like a Jupyter notebooks. To do that, it is interpreted, or JIT (Just In Time) compiled. 
+Mojo works in a REPL environment, like a Jupyter notebooks. To do that, it is interpreted, or JIT (Just In Time) compiled through OrcJIT. 
 In the Playground Mojo is running on a hosted JupyterLab server. Access is granted after signing in with your email-address.  
 
 **To get entrance:**  

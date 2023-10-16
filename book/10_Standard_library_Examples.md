@@ -550,7 +550,7 @@ UnsafeFixedVector: fixed-capacity vector without bounds checks
 DynamicVector: dynamic resizing vector
 
 ### 10.8.1 DynamicVector
-(see also § 4.2.1, 4.5, 7.9.2)
+(see also § 4.3.2, 4.5, 7.9.2)
 This Vector type dynamically allocates memory to store elements.
 It supports pushing and popping from the back, resizing the underlying storage to accommodate more elements as needed. 
 

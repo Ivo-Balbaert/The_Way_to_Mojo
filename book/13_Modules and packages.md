@@ -118,6 +118,8 @@ However it still works when using the package file as in the following section:
 You can compile the package's source code into a package file like this:
 `mojo package mypackage -o mypackage.mojopkg`
 
+The code in a .mojopkg file is parametric bytecode, obtained by compiling Mojo source code with OrcJIT.
+
 Now the package source code can be moved elsewhere, and the project structure looks like this:
 
 use_package.mojo

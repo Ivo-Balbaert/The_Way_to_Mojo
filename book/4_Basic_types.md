@@ -1,11 +1,11 @@
 # 4 Basic types
 Mojo's basic types are defined as built-ins, defined in the package `builtin`. They are automatically imported in code. These include Bool, Int, FloatLiteral, StringLiteral, StringRef and String, which we'll discuss in this section. Underneath, they are all defined as a struct (see § ??).
 
-These structs mostly contain so-called *dunder* (__...__) methods. Common examples are:
+These structs mostly contain so-called *dunder* (__methodname__) methods. Common examples are:
 * the `__init__` method: this acts as a constructor, creating an instance of the struct.
 * the `__del__` method: this acts as a destructor, releasing the occupied memory.
 * the `__eq__` method: to test the equality of two values of the same type.  
-Often an equivalent infix or prefix operator can act as 'syntax sugar' for calling such a method. For example: the `__eq__` is called with the operator `==`.
+Often an equivalent infix or prefix operator can act as 'syntax sugar' for calling such a method. For example: the `__eq__` is called with the operator `==`, so you can use the operator in code which is much more convenient.
 
 A *scalar* just means a single value in Mojo. The scalar types include the Bool type (see § 4.1.2), as well as the numerical types, which are all based on SIMD (see § 7.9.3).
 
@@ -28,7 +28,9 @@ The `DType` (data type) class defined in module `dtype` is kind of an umbrella t
 * address = address: Represents a pointer type whose bitwidth is the same as the bitwidth of the hardware’s pointer type (32-bit on 32-bit machines and 64-bit on 64-bit machines).
 
 ## 4.1 The Bool type
-Defined in the module `bool` as a struct, `Bool` has only 2 values: `True` and `False`. Among its methods are bool, invert, eq, ne, and, or, xor, rand, ror, rxor. 
+Defined in the module `bool` as a struct, `Bool` has only 2 values: `True` and `False`. 
+It is constructed from a i1 value (an __mlir_type.i1 value), which takes only one bit of memory.
+Among its methods are bool, invert, eq, ne, and, or, xor, rand, ror, rxor. 
 
 Here are some declarations:
 See `bools.mojo`:
@@ -101,11 +103,12 @@ The prefix U means the type is unsigned. The number at the end refers to the num
 ### 4.2.1 The Integer type
 The integer types are defined in module `int`, while the floating point types live in module `float_literal`. Both are part of the `builtin` package.
 
-Int is the same size as your architecture, so on a 64 bit machine it's 64 bits wide. Internally it is defined as a struct.
+Int is the same size as the architecture of the current computer, so on a 64 bit machine it's 64 bits wide. Internally it is defined as a struct.
 
 >Note: this type is different from the Python int type (see: https://docs.modular.com/mojo/programming-manual.html#int-vs-int)
 
-Here is a simple trick to work with Python int's (which can handle big integers!) in a Mojo program.
+One disadvantage is that Mojo's Int type is fixed, it can't work with big numbers.
+Here is a simple trick to work with Python int's, which can handle big integers, in a Mojo program.
 See `intInt.mojo`:
 ```mojo
 from python import PythonObject
@@ -118,7 +121,6 @@ fn main() raises:
     # `Int` overflows:
     print(2 ** 100) # => 0
 ```
-
 
 The type name can be used to convert a value to the type (if possible), for example: `UInt8(1)` makes sure the value 1 is stored as an unsigned 1 byte integer.
 
@@ -211,7 +213,7 @@ i stands for in-place, the lhs becomes the result of the operation and a new obj
 
 ```mojo
 var a = 40.0
-a += 2.0
+a += 2.0 # this runs __iadd__
 print(a)  # => 42.0
 ```
 
@@ -332,13 +334,13 @@ Equality is tested with the method __eq__ or the == operator. (1D-E). Not equali
 You can join or concatenate two StringLiterals with __add__ or the + operator.
 The length of a string is given by the __len__ method or len() function.
 
-`data` gets the raw pointer to the underlying data; pointer<scalar<si8>> is the return type of the method. This means that the method returns a pointer to the underlying data of the string literal. The `si8` indicates that the data is a sequence of 8-bit signed integers, which is a common way to represent characters in a string.
+`data` gets the raw pointer to the underlying data; pointer<scalar<si8>> is the return type of the method. This means that the method returns a pointer to the underlying data of the string literal. The `si8` indicates that the data is a sequence of 8-bit signed integers, which is a common way to represent characters in a string (signed ??).
 
 So, if you have a StringLiteral object, you can call data() on it to get a pointer to its underlying data. This could be useful if you need to pass the string data to a function that requires a pointer, or if you want to perform low-level operations on the string data.
 
 ### 4.3.2 The String type
-The `String` type represents a mutable string*. The `string` module contains basic methods for working with strings. Mojo uses UTF-8 encoding to store strings. The length len corresponds to the number of bytes, not number of characters.
-The string value is heap-allocated, but the String itself is actually a pointer to heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture ??)
+The `String` type represents a mutable string. The `string` module contains basic methods for working with strings. Mojo uses UTF-8 encoding to store strings. The length len corresponds to the number of bytes, not number of characters.
+The string value is heap-allocated, but the String itself is actually a pointer to the heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture ??)
 
 ```mojo
    # String:
@@ -436,7 +438,7 @@ It has the methods `getitem`, equal, not equal and length:
 ### 4.3.4 Some String methods
 See `string_methods.mojo`:
 ```mojo
-fn main() raises:    # raised needed because of atoi
+fn main() raises:    # raises needed because of atoi
     let s = String("abcde")
     print(s) # => abcde
 
@@ -516,8 +518,7 @@ The `isdigit` function checks if the character passed in is a valid decimal betw
 See also `string_counting_bytes_and_characters.mojo`
 
 ## 4.4 Defining alias types
-The alias keyword only works at compile time, it is a compile-time constant.
-All instances of the alias are replaced by its value at compile-time.
+We know that it is best practice to give constant values that are repeatedly used in our program a name, like ACONSTANT. So when its value changes, we only have to do it in one place. In Mojo, such constants are defined with the alias keyword.  This is a compile-time constant: all instances of the alias are replaced by its value at compile-time.
 
 You can easily define a synonym or shorthand for a type with alias:
 
@@ -553,7 +554,7 @@ Both None and AnyType are defined as type aliases in the builtin module `type_al
 
 ### 4.4.2 Defining an enum type using alias
 (?? After ch 7 on structs)
-You can create an enum-like structure using the alias declaration, used to name compile-time values.
+You can create an enum-like structure using the alias declaration, which defines the enum values at compile-time.
 
 See `enum_type.mojo`:
 ```mojo
@@ -578,18 +579,7 @@ In this example, enum_type is a struct that implements a simple enum using alias
 `object` is defined in module `object` in the `builtin` package, so it is not a Python object.
 It is used to represent untyped values. This is the type of arguments in def functions that do not have a type annotation, such as the type of x in `def f(x): pass`. A value of any type can be passed in as the x argument in that case.
 
-`matmul1.mojo` in § 20. shows an example of its use.
-The following function shows how an object can be initialized and its attributes defined:
-```
-fn matrix_init(rows: Int, cols: Int) raises -> object:
-    let value = object([])
-    return object(
-        Attr("value", value), Attr("__getitem__", matrix_getitem), Attr("__setitem__", matrix_setitem), 
-        Attr("rows", rows), Attr("cols", cols), Attr("append", matrix_append),
-    )
-```
-
-Here is another example of creating an object:
+Here is an example of creating an object:
 
 See `object1.mojo`:
 ```mojo
@@ -604,6 +594,19 @@ fn main() raises:
     print_object(obj)   # => [123, 'hello world']
 ```
 
+
+`matmul1.mojo` in § 20. shows an example of its use.
+The following function shows how an object can be initialized and its attributes defined:
+```
+fn matrix_init(rows: Int, cols: Int) raises -> object:
+    let value = object([])
+    return object(
+        Attr("value", value), Attr("__getitem__", matrix_getitem), Attr("__setitem__", matrix_setitem), 
+        Attr("rows", rows), Attr("cols", cols), Attr("append", matrix_append),
+    )
+```
+
+
 Objects do have types and can be type-checked.
 
-Usage: Fits into tiny space (+- 38K), so could be used in WASM and microcontrollers.
+Usage: They fit into a tiny space (+- 38K), so could be used in WASM and microcontrollers.

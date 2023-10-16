@@ -2,7 +2,7 @@
 A struct is a custom data structure that groups related variables of different data types into a single unit that holds multiple values.
 
 Structs exist in all lower-level languages like C/C++ and Rust. You can build high-level abstractions for types (or "objects") in a *struct*. 
-A struct in Mojo is similar to a class in Python: they both support methods, fields, operator overloading, decorators for metaprogramming, and so on. To gain performance structs are by default stored on the stack .
+A struct in Mojo is similar to a class in Python: they both support methods, fields, operator overloading, decorators for metaprogramming, and so on. To gain performance structs are by default stored on the stack, and all fields are memory inlined.
 
 >Note: At this time (Aug 2023), Mojo doesn't have the concept of "class", equivalent to that in Python; but it is on the roadmap.
 
@@ -18,6 +18,7 @@ See `struct1.mojo`:
 ```mojo
 struct MyInteger:
     var value: Int
+
     fn __init__(inout self, num: Int):   # 1
         self.value = num
 
@@ -28,8 +29,8 @@ fn main():
 ```
 
 Self refers to the type of the struct that you're in, while self refers to the actual object
-
 The `self` argument denotes the current instance of the struct. 
+
 A method has a signature like this: `fn method1(self, other parameters)` and when object1 is an instance of its type, the method is called as: `object1.method1(params)`. So `object1` is automatically used as `self`, the first parameter of the method.
 Inside its own methods, the struct's type can also be called `Self`.
 
@@ -56,6 +57,7 @@ fn main():
     print(True & my_number)   
     # => Called MyNumber's __rand__ function
     # => True
+    # print(my_number & True) #  error: 'MyNumber' does not implement the '__and__' method
 ```
 
 >Note: If you write `print(my_number & True)` you get the error: `MyNumber' does not implement the '__and__' method`   
@@ -139,9 +141,7 @@ Declare a car with all attributes and print these out. Declare a Car with only a
 (see *car.mojo*)
 
 ## 7.4 Overloading
-+
 Overloading a function (or method) name occurs when two or more functions or methods have the same name, but different parameter lists. The Mojo compiler selects the version that most closely matches the argument types.
-
 
 
 ### 7.4.1 Overloaded functions and methods
@@ -149,7 +149,7 @@ Like in Python, you can define functions in Mojo without specifying argument dat
 This allows you to define multiple functions with the same name but with different arguments. This is a common feature called *overloading*, as seen in many languages, such as C++, Java, and Swift.  
 When resolving a function call, Mojo tries each candidate and uses the one that works (if only one works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous if it can’t figure out which one to pick. In the latter case, you can resolve the ambiguity by adding an explicit cast on the call site.  
 
-In the next example a struct Complex is defined for defining complex numbers, but it has two __init__ methods, one to define only the real part, and another to define both parts of a complex number: the __init__ constructor is overloaded.
+In the next example a struct Complex is defined representing complex numbers, but it has two __init__ methods, one to define only the real part, and another to define both parts of a complex number: the __init__ constructor is overloaded.
 
 See `overloading.mojo`:
 ```mojo
@@ -186,6 +186,8 @@ Although we haven’t discussed parameters yet (they’re different from functio
 
 For other examples, which shows method and function overloading in the same program, see `employee.mojo` and `overloading2.mojo`.
 (Use employee.mojo as an example of overloading normal methods or functions.)
+
+XYZ
 
 ### 7.4.2 Overloaded operators
 (?? First make an exercise/example for Rectangle with the area and perimeter methods, then overloading_operators with only __add__).

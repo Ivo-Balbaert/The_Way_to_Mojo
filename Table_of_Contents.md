@@ -87,7 +87,6 @@
 ## 5.6 The walrus operator :=
 ## 5.7 Exiting from a program
 
----------------------------------------------
 # 6 Functions
 ## 6.1 Difference between fn and def
 ## 6.2  A fn that calls a def needs a try/except
@@ -98,6 +97,8 @@
 ### 6.4.2 Making arguments owned
 ### 6.4.3 Making arguments owned and transferred with ^
 ## 6.5 Closures
+## 6.6 Functions with a variable number of arguments.
+---------------------------------------------
 
 # 7 Structs
 ## 7.1 First example

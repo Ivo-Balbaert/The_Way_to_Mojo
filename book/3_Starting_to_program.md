@@ -55,7 +55,7 @@ fn main():
     print (c2.im)  # => 3.1400001049041748
 ```
 
-When you give the command `mojo doc overloading.mojo`, you currently get the following JSON output (it is planned to also generate HTML in the future):
+The command `mojo doc overloading.mojo` currently shows the following JSON output (it is planned to also generate HTML in the future):
 
 ```
 {
@@ -310,7 +310,7 @@ By splitting compilation from execution, we also make the difference between:
 Data that is known at compile-time is said to be *statically known*.
 
 * Run-time: when the executable runs on your machine.
-Data that is not known at compile-time but only at run-time is said to be *dynamically known*.
+Mostly data is not known at compile-time, but only at run-time. This can be because it is read in or calculated at run-time. Such data is said to be *dynamically known*.
 
 Later (see ??) we'll see that code can also be run at compile-time, to do what is called *meta-programming*.
 
@@ -354,6 +354,10 @@ fn main():
     print("Discount rate for Book with ID ", book_id, "is:", discount_rate)
 # => Discount rate for Book with ID  123 is: 0.20000000000000001
 ```
+
+If line 1 is commented out like this:  #  1 - let discount_rate: Float64  # no initialization yet! 
+you get the error: `error: use of unknown declaration 'discount_rate'`
+So every variable must be declared before it is used.
 
 See also: bookstore.mojo
 

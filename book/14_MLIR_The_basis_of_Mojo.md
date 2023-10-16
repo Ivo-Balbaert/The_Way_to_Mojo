@@ -9,6 +9,7 @@ See:
 - https://mlir.llvm.org/
 - MLIR_primer.pdf
 - https://github.com/TeamPuzel/mojo-std/blob/master/std/primitive.mojo
+- https://www.modular.com/blog/mojo-llvm-2023
 
 *Direct access to MLIR*
 Mojo provides the programmer access to all of the low-level primitives that you need to write powerful -- yet zero-cost -- abstractions. These primitives are implemented in [MLIR](https://mlir.llvm.org), an extensible intermediate representation (IR) format for compiler design. Many different programming languages and compilers translate their source programs into MLIR, and because Mojo provides direct access to MLIR features, this means Mojo programs can enjoy the benefits of each of these tools.

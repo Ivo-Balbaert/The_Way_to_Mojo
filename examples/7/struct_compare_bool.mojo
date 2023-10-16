@@ -14,4 +14,6 @@ fn main():
     print(True & my_number)
     # => Called MyNumber's __rand__ function
     # => True
+    # print(my_number & True) #  error: 'MyNumber' does not implement the '__and__' method
+    
    

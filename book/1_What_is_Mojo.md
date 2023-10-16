@@ -76,7 +76,7 @@ Mojo has been specifically designed to run AI-projects on diverse hardware, for 
 
 Mojo is also *safe and reliable* because of:   
 * It has a statically typed (AOT - ahead of time) compilation, resulting in faster execution times and better optimization. 
->Note: When running a Mojo kernel in a Jupyter notebook, JIT (Just In Time) compilation is used.
+>Note: When running a Mojo kernel in a Jupyter notebook, JIT (Just In Time) compilation is used through OrcJIT.
 (See also § 2.1)
 
 Mojo prefers compile-time errors to runtime errors, because solving bugs at runtime is so much more painful (as developers in dynamic languages like Python and Ruby know well): this gives developers more confidence in their codebase.

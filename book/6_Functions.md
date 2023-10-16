@@ -12,7 +12,7 @@ To complement this, Mojo provides an `fn` declaration which is like a "strict mo
 * Implicit declaration of local variables is disabled, so all locals must be declared. This catches name typos with the scoping provided by let and var.
 * Both support raising exceptions, but this must be explicitly declared on an fn with the `raises` keyword.
 
-## 6.2  A fn that calls a def needs a try/except
+## 6.2  An fn that calls a def needs a try/except
 Consider the following example: 
 
 See `try_except.mojo`:
@@ -293,4 +293,4 @@ fn main():
 ```
 
 Also:
-- From v 0.4.0: Functions support default parameters
+- From v 0.4.0: Functions support default parameter values (enclosed in [])
