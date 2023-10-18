@@ -377,7 +377,7 @@ Throughput of a 512x512 {tiled + unrolled + vectorized + parallelized} matrix mu
 ```
 
 ## 8.5 Mojo types in Python
-Mojo primitive types (bools, integers, floats, strings, lists and tuples (see § 9) implicitly convert into Python objects. 
+Mojo primitive types (bools, integers, floats, strings, lists and tuples (see § 9)) implicitly convert into Python objects. 
 
 See `mojo_types.mojo`: (works only in a cell in a Jupyter notebook)
 ```mojo
@@ -390,6 +390,12 @@ def type_printer(my_list, my_tuple, my_int, my_string, my_float):
     print(type(my_float))
 
 type_printer([0, 3], (False, True), 4, "orange", 3.4)
+# =>
+# <class 'list'>
+# <class 'tuple'>
+# <class 'int'>
+# <class 'str'>
+# <class 'float'>
 ```
 
 **Exercises**

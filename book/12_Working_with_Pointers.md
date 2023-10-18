@@ -158,11 +158,12 @@ Let's move back to where we were and free the memory, if we forget to free the m
 ## 12.3 - Writing safe pointer code
 As we saw in the previous §, it's easy to make mistakes when playing with pointers. So let's make the code of our struct more robust to reduce the surface area of potential errors. We enclose our struct Coord in another struct Coords which contains a data field that is a Pointer[Coord]. Then we can build in safeguards, for example in the __getitem__ method we make sure that the index stays within the bounds of the length of Coords.
 
-See `pointers2.mojo`:  
+See `pointers2.mojo`:
 ```mojo
 from memory.unsafe import Pointer
 from memory import memset_zero
 
+@value
 @register_passable
 struct Coord:
     var x: UInt8 
@@ -182,10 +183,27 @@ struct Coords:
             raise Error("Trying to access index out of bounds")
         return self.data.load(index)
 
+    fn __setitem__(inout self, index: Int, value: Coord) raises:
+        if index >= self.length:
+            raise Error("Trying to access index out of bounds")
+        self.data.store(index, value)
+    
     fn __del__(owned self):
         return self.data.free()
 
 fn main() raises:
+    var coords = Coords(5)
+
+    let coord1 = Coord(1, 2)
+    let coord2 = Coord(3, 4)
+    let coord3 = Coord(5, 6)
+    coords[0] = coord1
+    coords[1] = coord2
+    print(coords[0].x, coords[0].y, coords[1].x, coords[1].y,) # => 1 2 3 4
+
+    coords[1] = coord3
+    print(coords[0].x, coords[0].y, coords[1].x, coords[1].y,) # => 1 2 5 6
+
     let coords = Coords(5)
     print(coords[5].x)
 
@@ -195,6 +213,9 @@ fn main() raises:
 ```
 
 ## 12.4 - Working with DTypePointers
+Much faster than Pointer!
+    Pointer: data.load(i) data.store(i)
+	DTypePointer: data.simd_load, data.simd_store
 A DTypePointer stores an address with a given DType, allowing you to allocate, load and modify data with convenient access to SIMD operations.
 
 See `dtypepointer1.mojo`:

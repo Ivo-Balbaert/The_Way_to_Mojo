@@ -187,7 +187,6 @@ Although we haven’t discussed parameters yet (they’re different from functio
 For other examples, which shows method and function overloading in the same program, see `employee.mojo` and `overloading2.mojo`.
 (Use employee.mojo as an example of overloading normal methods or functions.)
 
-XYZ
 
 ### 7.4.2 Overloaded operators
 (?? First make an exercise/example for Rectangle with the area and perimeter methods, then overloading_operators with only __add__).
@@ -241,8 +240,8 @@ fn main():
 ```
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
-`let b = a`
-Mojo uses *value semantics* by default, meaning that it expects to create a copy of `a` when assigning to `b`. However, Mojo doesn't make any assumptions about *how* to copy the value of a. The error indicates that we should implement a `__copyinit__` method, which would implement the copying logic.
+Mojo uses *value semantics* by default, meaning that in a statement like `let b = a` we expect to create a copy of `a` when assigning to `b`. However, Mojo doesn't make any assumptions about *how* to copy the value of a. In the above program when typing `let b = square`, we get the `error: value of type 'Rectangle' cannot be copied into its destination`. 
+The error indicates that Mojo doesn't know how to copy a Rectangle struct, and that we must implement a `__copyinit__` method, which would implement the copying logic.
 
 Mojo does not allow mutable references to overlap with other mutable references or with immutable borrows.
 
@@ -294,7 +293,7 @@ fn main():
 HeapArray contains an instance of `Pointer` (which is equivalent to a low-level C pointer), and Mojo doesn’t know what kind of data it points to or how to copy it. More generally, some types (like atomic numbers) cannot be copied or moved around because their address provides an identity just like a class instance does.
 
 If we then provide that method (see line 2), all works fine:
-When executing `let b = a`, b gets substituted for self, and a for rhs; that's why we call the 2nd arguments rhs ( a is on the 'right hand side').
+When executing `let b = a`, b gets substituted for self, and a for rhs. a is on the 'right hand side', that's why we call the 2nd arguments rhs.
 
 See `copy_init.mojo`:
 ```mojo
@@ -421,7 +420,7 @@ fn main():
     print(x.value) # => 43
 ```
 
-inout is frequently used when a method needs to mutate self.
+inout is used when a method needs to mutate self.
 
 See also `counter.mojo`
 
@@ -429,6 +428,7 @@ See also `counter.mojo`
 Write a swap function that switches the values of variables x and y (see `swap.mojo`).
 
 ## 7.8 Transfer struct arguments with owned and ^
+(Better call this example:  UniqueNumber, it has nothing to do with pointers)
 In the following example, we mimic the behavior of unique pointers. It has a __moveinit__ function (see line 1), which moves the pointer (?? better wording).  
 In line 2 `take_ptr(p^)` the ownership of the `p` value is passed to another function take_ptr. Any subsequent use of p (as in line 3) gives the `error: use of uninitialized value 'p' - p is no longer valid here!`
 
@@ -474,8 +474,8 @@ Another example is a FileDescriptor type. These types are *unique* or *move-only
 You can also define custom __moveinit__ methods. If you want complete control, you should use define methods like copy() instead of using the dunder method. 
 
 **Summary**  
-* Copyable type (type must have __copyinit__):    var s2 = s1    # s2.__copyinit__(s1) runs here, so s2 is self, s1 is existing (or other)
-* Moveable type (type must have __moveinit__):    var s3 = s1^   # s3.__moveinit__(s1) runs here, so s3 is self, s1 is existing
+* Copyable type (type must have __copyinit__):    var s2 = s1    # s2.__copyinit__(s1) runs here, so s2 is self, s1 is existing (or other, rhs)
+* Moveable type (type must have __moveinit__):    var s3 = s1^   # s3.__moveinit__(s1) runs here, so s3 is self, s1 is existing (or other, rhs)
 __moveinit__ has as signature:  
 `fn __moveinit__(inout self, owned existing: Self):`
     # Initializes a new `self` by consuming the contents of `existing`
@@ -514,6 +514,10 @@ See also § 12.2.
 
 
 ## 7.9.3 Improving performance with SIMD
+SIMD is a core type in Mojo: 
+- all scalars are of SIMD type and width 1
+- all math functions work with SIMD elements
+
 (See also Vectorization: § 20.5.6)
 Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance.
 
@@ -563,6 +567,7 @@ fn main():
 
     print(simdbitwidth())  # => 256         # 4  
 ```
+simdwidthof : see § 10.6
 
 SIMD is a parametric (generic) type, indicated with the [ ] braces. We need to indicate the item type and the number of items, as is done in line 1 when declaring the SIMD-vector y.
 Line 0 initializes a SIMD vector with zeros as values.  
@@ -575,7 +580,7 @@ If all items have the same value, use the shorthand notation as for z in line 3.
 To show the SIMD register size on the current machine, use the function `simdbitwidth` from module `sys.info` as in line 4. The result `256` means that we can pack 32 x 8bit numbers together and perform a calculation on all of these with a single instruction.
 
 **Questions**
-Is this a correct declaration of a SOMD type? Test it.
+Is this a correct declaration of a SIMD type? Test it.
 `let n = SIMD[DType.int32, 7](1, 2, 3, 4)`
 
 **Exercises**
@@ -731,13 +736,13 @@ Mojo implements eager destruction of variables, that is: the memory is released 
 
 Int is a trivial type and Mojo reclaims this memory as soon as possible,without need for a __del__() method.
 String is a destructible (it has its own __del__() method) and Mojo destroys it as soon as it’s no longer used.
-    This means that a struct which has only String and Int fields doesn't need a destructor.
+This means that a struct which has only String and Int fields doesn't need a destructor.
 A struct that contains a pointer (like Array in § 7.9.4 or HeapArray) needs a __del__.
 
 Mojo also has field-sensitive lifetime management: it keeps track separately of whether a "whole object" is fully or only partially initialized or destroyed.  But the "whole object" must be constructed with the aggregate type’s initializer (__init__) (not by initializing all individual fields) and destroyed with the aggregate destructor (__del__).
 
 ## 7.10.1 Types that cannot be instantiated
-These are types from which you cannot create an instance because they have no initializer __init__. In order to get them, you need to define an __init__ method or use a decorator that synthesizes an initializer. 
+These are types from which you cannot create an instance because they have no initializer __init__. In order to get them, you need to define an __init__ method or use a decorator like @value that generates an initializer. 
 
 Without initializer, these types can be useful as "namespaces" for helper functions, because you can refer to static members like `NoInstances.my_int` or `NoInstances.print_hello()`.
 

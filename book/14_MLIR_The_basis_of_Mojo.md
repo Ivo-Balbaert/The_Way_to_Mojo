@@ -22,7 +22,7 @@ Mojo programs can take full advantage of *anything* that interfaces with MLIR. W
 
 ## 14.1 What is MLIR?
 
-MLIR is an intermediate representation of a program, not unlike an assembly language, in which a sequential set of instructions operate on in-memory values.
+MLIR is an intermediate representation of a program, resembling an assembly language, in which a sequential set of instructions operate on in-memory values.
 
 More importantly, MLIR is modular and extensible. MLIR is composed of an ever-growing number of *dialects.* Each dialect defines operations and optimizations: for example, the ['math' dialect](https://mlir.llvm.org/docs/Dialects/MathOps/) provides mathematical operations such as sine and cosine, the ['amdgpu' dialect](https://mlir.llvm.org/docs/Dialects/AMDGPU/) provides operations specific to AMD processors, and so on.  
 Each of MLIR's dialects can interoperate with the others. This is why MLIR is said to unlock heterogeneous compute: as newer, faster processors and architectures are developed, new MLIR dialects are implemented to generate optimal code for those environments. Any new MLIR dialect can be translated seamlessly into other dialects, so as more get added, all existing MLIR becomes more powerful.  

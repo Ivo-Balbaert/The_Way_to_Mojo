@@ -1,4 +1,4 @@
-    # 10 Standard library examples
+# 10 Standard library examples
 
 ## 10.1 Assert statements
 Both constrained and debug_assert are built-in.
@@ -104,6 +104,9 @@ Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)
 
 
 ## 10.3 Module benchmark
+
+See first § 10.7
+
 The class allows to benchmark a given function (passed as a parameter) and configure various benchmarking parameters, such as number of warmup iterations, maximum number of iterations, minimum and maximum elapsed time.
 Import it in your code through: `from benchmark import Benchmark`
 We'll benchmark the execution of the Fibonacci function, defined as follows:
@@ -119,7 +122,8 @@ fn fib(n: Int) -> Int:
        return fib(n-1) + fib(n-2)
 ```
 
-To benchmark it, create a nested fn (here called `closure`) that takes no arguments and doesn't return anything, then pass it in as a parameter:  `Benchmark().run[closure]()`.
+To benchmark it, create a nested fn (here called `closure`) that takes no arguments and doesn't return anything, and that calles the function to benchmark.
+Then pass the closure function in as a parameter:  `Benchmark().run[closure]()`.
 This returns the execution time in nanoseconds.
 
 ```mojo
@@ -249,7 +253,7 @@ Utilize SIMD to manipulate 32 bytes of data at the same time (see lines 6- ).
 This is an N-dimensional Buffer, that can be used both statically, and dynamically at runtime.  
 NDBuffer can be parametrized on rank, static dimensions and Dtype. It does not own its underlying pointer.
 
-See `ndbuffer1.mojo`:  (seel also § 10.9 for Tensor from stdlib)
+See `ndbuffer1.mojo`:  (see also § 10.9 for Tensor from stdlib, use that!)
 ```mojo
 from utils.list import DimList
 from memory.unsafe import DTypePointer

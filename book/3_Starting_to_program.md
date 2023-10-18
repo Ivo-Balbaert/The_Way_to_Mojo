@@ -510,12 +510,12 @@ To import all types and functions from a module (say math), use:
 `from math import *`.  
 However, it is recommended to only import the things you need.
 
-You can also use:
+>Note: You can also use:
 ```mojo
 import benchmark
 ```
 
-But then you have to access its members with: `benchmark.num_warmup`, prefixing the member name with the module name.
+But then you have to access its members with: `benchmark.num_warmup`, prefixing the member name with the module name. This is better than using from ... import *, because in this way you loose the info on from which module the function/type is imported.
 
 For some examples see: ??
 

@@ -7,6 +7,9 @@ Here we'll learn how to organize your code into modules and packages (which is a
 ## 13.1 What are modules and packages?
 We have seen that the Mojo standard library is organized in *packages*, each package grouping one or more related *modules*.  
 
+Most of our programs until now contains a fn main() starting point, and were meant to be run (with their name)  
+But often you want to assemble code (like a struct with its methods and helper functions) so that you can reuse this in many programs. In that case the code you write is called a module, which doesn't need a main() function because we don't want the code to start as such. The functions/types (the API) of this module can be imported in another program, which does contain a main() function to start it.
+
 A Mojo *module* is a single Mojo source file that includes code like an API, suitable for use by other files that import it.  
 The module gets its name from the filename (without the extension), for example: a file `module1.mojo` contains the code for module `module1`.  
 The code in a module has no main() function, so you can’t execute a module like in module1.mojo. However, you can import this into another file with a main() function and use it there.  
@@ -15,7 +18,8 @@ A Mojo *package* is just a collection of Mojo modules in a directory that includ
 
 >Note: The packages of the Mojo standard library are stored in `/home/username/.modular/pkg/packages.modular.com_mojo/lib/mojo`
 
-You can then import all the modules together or individually.
+
+You can import all the modules from a package together or individually.
 For example: the map() function resides in the `functional` module in the `algorithm` package, so you can import it as:
 `from algorithm.functional import map`.  
 Optionally, you can also compile the package into a `.mojopkg` or `.📦` file that’s easier to share (see § 13.3.2).
@@ -74,6 +78,7 @@ and line 3 to:           `let mine = mp.MyPair(2, 4)`
 You can import a package and its modules either directly from source files or from a compiled `.mojopkg` or `.📦` file. It makes no real difference to Mojo which way you import a package. When importing from source files, the directory name works as the package name, whereas when importing from a compiled package, the filename is the package name (which you specify with the mojo package command, so it can differ from the directory name).  
 
 ## 13.3.1 Importing the package as source code
+(?? Issue 1011)
 For our example, let's continue to work on the code from § 13.2. Suppose our project structure is like this:   
 
 use_package.mojo  (?? can also be just main.mojo)
@@ -139,7 +144,7 @@ Now you module is distributable!
 
 ## 13.3.3 The __init__ file
 This file must be in the package folder in order for Mojo to recognize the folder as a package.  
-It can be empty, or it can allready import the module members, like this:
+It can be empty, or it can already import the module members, like this:
 `from .mymodule import MyPair`  
 Then the import statements in `use_package.mojo` can be simplified to:  
 `from mypackage import MyPair`

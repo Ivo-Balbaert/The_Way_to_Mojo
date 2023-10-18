@@ -113,7 +113,7 @@ Execution always results in:
 0.0  seconds
 inf  Gflops/s
 ```
->Note: Calculations are executed to quick by Mojo, we can't compare anymore.
+>Note: Calculations are executed too quick by Mojo, we can't compare anymore.
 
 ### 20.1.4 - Using SIMD and vectorize
 
@@ -177,7 +177,7 @@ Execution always results in:
 0.0  seconds
 inf  Gflops/s
 ```
->Note: Calculations are executed to quick by Mojo, we can't compare anymore.
+>Note: Calculations are executed too quick by Mojo, we can't compare anymore.
 
 ## 20.2 - Calculating the Euclidean distance between two vectors
 (See [ref](https://www.modular.com/blog/an-easy-introduction-to-mojo-for-python-programmers))
@@ -1304,4 +1304,3 @@ In this code, we increment the same integer variable a hundred million times.
 In Python, the interpreter handles the execution of the code. When the interpreter encounters the increment operation, it needs to load the value of x from memory into the stack by dereferencing a pointer, and then increment it. This process of indirection and stack manipulation can be slower compared to the efficient register operations in compiled code.
 In Mojo the CPU loads the variable from memory into a register and performs an addl instruction. Once the data is in the register, the cost of adding to it becomes negligible. 
 Probably the compiler can completely get rid of the loop and compute (n+1)*n/2 instead. In fact since you're using a constant number of iterations it can just compute the final value at compile time instead. You're really just measuring the overhead of printing and timing in Mojo.
-

@@ -1,6 +1,9 @@
 # 9 - Other built-in types
 
 ## 9.1 The ListLiteral type
+
+See also DimList, VariadicList from utils.list.
+
 This is implemented in module `builtin_list` in package `builtin`.  
 A list consists of zero or more values that can be of the same or different type (a heterogeneous list), separated by commas and enclosed in []. Because list items can be of any type, their type is effectively `AnyType`. The types can be explicitly specified, also between [].
 The items are immutable, ListLiteral only includes getter methods for accessing them, nothing can be modified post-initialization.
@@ -47,7 +50,7 @@ fn main() raises:
 
 ## 9.2 The Tuple type
 This is implemented in the built-in module `tuple`. 
->Note: There is also a static_tuple module in package utils, which defines the tpe `StaticTuple`, which is a statically sized tuple type contains elements of the same types
+>Note: There is also a static_tuple module in package utils, which defines the tpe `StaticTuple`, which is a statically sized tuple type containing elements of the **same types**
 
 A tuple consists of zero or more, possibly heterogeneous values, separated by commas and enclosed in ().  
 The `len` function returns the number of items.

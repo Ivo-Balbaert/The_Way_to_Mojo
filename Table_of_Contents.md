@@ -98,7 +98,6 @@
 ### 6.4.3 Making arguments owned and transferred with ^
 ## 6.5 Closures
 ## 6.6 Functions with a variable number of arguments.
----------------------------------------------
 
 # 7 Structs
 ## 7.1 First example
@@ -136,6 +135,7 @@
 ## 9.3 The slice type
 ## 9.4 The Error type
 
+
 # 10 Standard library examples
 ## 10.1 Assert statements
 ### 10.1.1 constrained
@@ -152,21 +152,26 @@
 ### 10.8.3 UnsafeFixedVector
 ## 10.9 The Tensor type from module tensor
 ## 10.10 Working with command-line arguments
+## 10.11 Working with memory
+## 10.12 Working with files
 
 # 11 – Decorators
-# 11.1 - @value
-# 11.2 - @register_passable
-# 11.3 - @parameter if
-# 11.4 - @parameter 
-# 11.5 - @staticmethod
-# 11.6 - @always_inline
-# 11.7 - @noncapturing
+## 11.1 - @value
+## 11.2 - @register_passable
+## 11.3 - @parameter if
+## 11.4 - @parameter 
+## 11.5 - @staticmethod
+## 11.6 - @always_inline
+## 11.7 - @noncapturing
+## 11.8 - @unroll
 
 # 12 – Working with Pointers
 ## 12.1 - What is a pointer?
 ## 12.2 - Defining and using pointers
 ## 12.3 - Writing safe pointer code
 ## 12.4 - Working with DTypePointers
+## 12.5 Sorting with pointers
+### 12.5.1 Sorting with Bubblesort
 
 # 13 Modules and packages
 ## 13.1 What are modules and packages?
@@ -175,6 +180,13 @@
 ## 13.3.1 Importing the package as source code
 ## 13.3.2 Compiling the package to a package file
 ## 13.3.3 The __init__ file
+
+# 14 MLIR - The basis of Mojo
+## 14.1 What is MLIR?
+## 14.2 Defining a bool type with MLIR
+## 14.3 Defining an integer with MLIR
+## 14.4 Copying data with raw pointers
+## 14.5 Calling gmtime from C
 
 # 20 – Projects
 ## 20.1 - Calculating the sum of two vectors
@@ -194,6 +206,15 @@
 ### 20.3.6 - Tiling Matmul
 ### 20.3.7 - Unrolling the loops introduced by vectorize of the dot function
 ### 20.3.8 - Searching for the tile_factor
-## 20.4 - Computing the Mandelbrot set
-
-
+## 20.4 - Sudoku solver
+## 20.5 - Computing the Mandelbrot set
+### 20.5.1 The pure Python algorithm
+### 20.5.2 Adding types in the funtion signature
+### 20.5.3 Changing to an fn function
+### 20.5.4 Simplifying the math to reduce computation
+### 20.5.5 Adding supporting code
+### 20.5.6 - Vectorizing the code
+### 20.5.7 - Parallelizing the code
+## 20.7 - Working with files
+## 20.8 - Calculating PI
+## 20.9 - Timing a for loop

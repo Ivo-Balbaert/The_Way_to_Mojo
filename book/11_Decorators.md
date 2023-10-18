@@ -4,6 +4,23 @@ Decorators are a powerful feature in many programming languages that allow you t
 
 Mojo also uses decorators to modify the properties and behaviors of types (like structs) and functions.
 
+There is a difference between `signature decorators` (like @value) and `body decorators` (like @register_passable):
+If used like this:  
+```mojo
+@register_passable
+@value
+struct Coord:
+```
+
+you get the error: signature decorator cannot come after body decorator.
+
+This is ok:
+```mojo
+@value
+@register_passable
+struct Coord:
+```
+
 Currently, the following decorators exist:  
 `@adaptive`     see matmul
 
@@ -163,6 +180,8 @@ It indicates that the type is register passable, so the value is passed in CPU r
 For another example: see § 14.2
 
 ## 11.3 - @parameter if
+See also § 7.9.6.
+
 `@parameter if` is an if statement that runs at compile-time.
 Some examples:
 
@@ -242,7 +261,8 @@ fn add_print():
     let x = 15
     print(x)
 
-add_print()
+fn main():
+    add_print()
 ```
 The add calculation ran at compile time, so those extra instructions don't happen at runtime!
 

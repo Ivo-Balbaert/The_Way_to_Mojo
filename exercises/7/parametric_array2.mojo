@@ -13,7 +13,7 @@ struct Array[T: AnyType]:
         # initialize to zeros
         memset_zero(self.data, self.cap)
         # alternative: fill with random elements
-        # rand(self.data, size)
+        # rand(self.data, self.cap)
 
     fn __init__(inout self, size: Int, value: T):
         self.cap = size * 2
