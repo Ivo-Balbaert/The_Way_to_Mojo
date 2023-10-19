@@ -84,6 +84,8 @@ GH = GitHub
 2023 Sep: more than 120K+ developers have signed up to use the Mojo Playground and 19K+ developers actively discuss Mojo on Discord and GitHub.
 * See image mojo-eco.png
 
+[Tiobe-index](https://www.tiobe.com/tiobe-index/)
+* 2023 Nov: 1st rating of Mojo, starting at position  .
 
 ## 1B.5 Business and support model
 The company *Modular* is funded by VC (Venture Capital).  

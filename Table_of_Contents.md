@@ -98,6 +98,7 @@
 ### 6.4.3 Making arguments owned and transferred with ^
 ## 6.5 Closures
 ## 6.6 Functions with a variable number of arguments.
+## 6.7 Function types
 
 # 7 Structs
 ## 7.1 First example
@@ -114,6 +115,7 @@
 ## 7.9.1 Parametric types in structs and functions
 ## 7.9.2 Parametric structs
 ## 7.9.3 Improving performance with the SIMD struct
+### 7.9.3.1 Defining a vector with SIMD
 ## 7.9.4 How to create a custom parametric type: Array
 ## 7.9.5 Parametric functions and methods
 # 7.10 Lifetimes

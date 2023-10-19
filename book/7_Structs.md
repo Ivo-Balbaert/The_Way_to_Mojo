@@ -569,6 +569,21 @@ fn main():
 ```
 simdwidthof : see § 10.6
 
+See simd5.mojo:
+```mojo
+import math
+fn main():
+    var numbers = SIMD[DType.uint8, 8]()
+    print(numbers) # => [0, 0, 0, 0, 0, 0, 0, 0]
+    # fill them whith numbers from 0 to 7
+    numbers = math.iota[DType.uint8, 8](0)
+    print(numbers) # => [0, 1, 2, 3, 4, 5, 6, 7]
+    numbers *= numbers   # # x*x for each number using one SIMD instructions:
+    print(numbers) # => [0, 1, 4, 9, 16, 25, 36, 49]
+```
+
+math.iota fills an array with incrementing numbers.
+
 SIMD is a parametric (generic) type, indicated with the [ ] braces. We need to indicate the item type and the number of items, as is done in line 1 when declaring the SIMD-vector y.
 Line 0 initializes a SIMD vector with zeros as values.  
 DType.uint8 and 4 are called *parameters*. They must be known at compile-time.  
@@ -578,6 +593,27 @@ y is now a vector of 8 bit numbers that are packed into 32 bits. We can perform 
 If all items have the same value, use the shorthand notation as for z in line 3.  
 
 To show the SIMD register size on the current machine, use the function `simdbitwidth` from module `sys.info` as in line 4. The result `256` means that we can pack 32 x 8bit numbers together and perform a calculation on all of these with a single instruction.
+
+### 7.9.3.1 Defining a vector with SIMD
+
+See `simd_vector.mojo`:
+```mojo
+from sys.info import simdwidthof
+import math
+
+alias element_type = DType.int32
+alias group_size = simdwidthof[element_type]()
+
+fn main():
+    let numbers: SIMD[element_type, group_size]
+    # initialize numbers:
+    numbers = math.iota[element_type, group_size](0)
+    print(numbers) # => [0, 1, 2, 3, 4, 5, 6, 7]
+```
+
+numbers is a static vector, with items of type element_type, and a size which is exactly the SIMD width used on your machine to process the element_type.
+
+See also § 15.1.2
 
 **Questions**
 Is this a correct declaration of a SIMD type? Test it.

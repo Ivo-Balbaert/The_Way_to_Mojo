@@ -292,5 +292,12 @@ fn main():
 # Mojo!
 ```
 
+## 6.7 Function types
+
+Example: parallelize[func: fn(Int) capturing -> None]()
+`fn(Int) capturing -> None` is the function type.
+
+
+
 Also:
 - From v 0.4.0: Functions support default parameter values (enclosed in [])
