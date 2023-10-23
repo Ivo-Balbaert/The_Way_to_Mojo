@@ -128,7 +128,7 @@ fn sum(borrowed x: Int, borrowed y: Int) -> Int:
 But what if we want a function to be able to change its arguments?
 
 ### 6.4.2 Making arguments changeable with inout 
-For a function's arguments to be mutable, you need to declare them as *inout*. This means that changes made to the arguments inside the function are visible outside the function.  
+For a function's arguments to be mutable, you need to declare them as *inout*. This means that changes made to the arguments inside the function are visible outside the function (**in**side - **out**side).  
 This is illustrated in the following example:  
 
 See `inout.mojo`:
@@ -197,6 +197,79 @@ If you delete or comment out print(a), then it works fine.
 See also § 7.8 for an example with a struct.
 
 >Note: Currently (Aug 17 2023), Mojo always makes a copy when a function returns a value.
+
+**Summary of the different ways arguments can be passed:**
+See `inout.mojo`:
+```mojo
+fn sum(inout a: Int8, inout b: Int8) -> Int8:
+    # with inout the values can be changed (they must be declared as var)
+    a = 3
+    b = 2
+    return a + b
+
+fn main():
+    var a: Int8 = 4
+    var b: Int8 = 5
+
+    # inout: values can be changed inside, and the changes are visible outside
+    print(sum(a, b))  # => 5
+    print(a, b)       # => 3 2
+```
+
+See `borrowed.mojo`:
+```mojo
+fn sum(borrowed a: Int8, borrowed b: Int8) -> Int8:
+    # a = 3 # error: expression must be mutable in assignment
+    return a + b
+
+# same as:
+# fn sum_borrowed(a: Int8, b: Int8) -> Int8:
+#     return a + b
+
+fn main():
+    var a: Int8 = 4
+    var b: Int8 = 5
+
+    # borrowed: the values are used in computations, but they cannot be changed
+    print(sum(a, b))  # => 9
+    print(a, b)       # => 4 5
+```
+
+See `owned.mojo`:
+```mojo
+fn sum(owned a: Int8, owned b: Int8) -> Int8:
+    a = 3
+    b = 2
+    return a + b
+
+fn main():
+    var a: Int8 = 4
+    var b: Int8 = 5
+
+    # owned: the functions 'owns' these variables, so it can change them, but the original
+    # values remain unchanged
+    print(sum(a, b))     # => 5 
+    # if a and b would be declared with let, you would get error: uninitialized variable 'a'
+    print(a, b)          # => 4 5
+```
+
+See `owned_transfer.mojo`:
+```mojo
+fn sum(owned a: Int8, owned b: Int8) -> Int8:
+    a = 3
+    b = 2
+    return a + b
+
+
+fn main():
+    var a: Int8 = 4
+    var b: Int8 = 5
+
+    # owned: the functions 'owns' these variables, so it can change them, but the original
+    # values are no longer there, they are moved by the transfer operator
+    print(sum(a^, b^))  # => 5
+    # print(a, b)  # => error: use of uninitialized value 'a', error: use of uninitialized value 'b'
+```
 
 ## 6.5 Closures
 Mojo considers closures capturing by default, even if it's not capturing anything. Capturing means that if there were any variables in context, the closure would know their values, in the example in § 6.5.1 there are no variables to be captured.

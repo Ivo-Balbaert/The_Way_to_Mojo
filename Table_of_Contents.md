@@ -203,6 +203,13 @@
 # 16.1 - 
 ## 16.1.1 Vectorize SIMD cosine
 
+# 17 - Foreign Function Interface (FFI)
+# 17.1 - Mojo and C 
+## 17.1.1 Linking to functions of the C standard library
+### 17.1.1.1 Mojo calls C via external_call
+### 17.1.1.2 Mojo calls C via a function pointer
+
+
 # 20 – Projects
 ## 20.1 - Calculating the sum of two vectors
 ### 20.1.1 - A naive Python implementation

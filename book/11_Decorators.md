@@ -23,6 +23,8 @@ struct Coord:
 
 Currently, the following decorators exist:  
 `@adaptive`     see matmul
+`@export`       a function annotated with this decorator can be called from a C program
+(see § 17) 
 
 
 ## 11.1 - @value
