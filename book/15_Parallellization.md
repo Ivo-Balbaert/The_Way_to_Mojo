@@ -1,4 +1,5 @@
 # 15 - Parallellization
+Parallellization of code means: code executes in multiple threads inside one process (multithreading). This in contrast to how Python does parallelization, where multiple Python processes each execute one thread.
 
 # 15.1 - The parallellize function
 This function comes from the algorithm module, see [Docs](https://docs.modular.com/mojo/stdlib/algorithm/functional.html#parallelize)
@@ -99,3 +100,7 @@ fn main():
 # Index: 126  =  15876
 # Index: 127  =  16129
 ```
+
+# 15.3 - async/await in Mojo
+See module builtin.coroutine
+This is very similar to async/await in other languages: coroutines execute sequentially within one thread with async/await coordination. When execution is fast enough, this gives the impression of parallellization.

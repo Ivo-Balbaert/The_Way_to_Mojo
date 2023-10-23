@@ -580,10 +580,15 @@ Issue the command: `modular uninstall`.
 The total size of the Mojo SDK is about 345 Mb.
 
 ### 2.2.3 On MacOS
+See Mojo website
 
 ## 2.3 Testing the installation - Mojo's option flags
 
 ## 2.4 How to install Mojo platform dependencies
+??
+
+
+
 
 ## 2.5 Building Mojo from source
 
@@ -617,7 +622,10 @@ Resolving deltas: 100% (142374/142374), done.
 
 ### 2.5.2  Building Mojo
 
-## 2.6  Running the Mojo test suite
+## 2.6  Mojo configuration file
+There is a configuration file at `/home/username/.modular/modular.cfg`, which contains a number of mainly path environment variables, which can be edited. For example:  
+`import_path`, which has as default value /home/username/.modular/pkg/packages.modular.com_mojo/lib/mojo. This contains the path where Mojo searches for packages used in code. You can add your own package folder(s) to the default value (separated by a ;).
+
 
 ## 2.7  Editors
 

@@ -871,3 +871,24 @@ fn main() raises:
 ```
 
 The with in line 1 closes the file automatically.
+
+## 10.13 The module sys.param_env
+Suppose we want to define a Tensor with an element type that we provide at the command-line, like this:  mojo -D FLOAT_32 param_env1.mojo
+The module sys.param_env provides a function is_defined, which returns true when the same string was passed at the command-line.
+
+See `param_env1.mojo`:
+```mojo
+from sys.param_env import is_defined
+from tensor import Tensor, TensorSpec
+
+alias float_type: DType = DType.float32 if is_defined["FLOAT32"]() else DType.float64
+
+fn main():
+    print("float_type is: ", float_type)  # => float_type is:  float32
+    let spec = TensorSpec(float_type, 256, 256)
+    let image = Tensor[float_type](spec)
+```
+
+In the same way, you can also use name-value pairs, like -D customised=1234. In that case use the functions env_get_int or env_get_string.
+
+Another example simulating a testing environment with mojo -D testing comes https://github.com/rd4com/mojo-learning, see `param_env2.mojo`. It also shows how to print in color on the command-line.

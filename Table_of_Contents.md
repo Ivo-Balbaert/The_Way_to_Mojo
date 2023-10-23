@@ -35,7 +35,7 @@
 ## 2.5 Building Mojo from source
 ### 2.5.1 Downloading the Mojo source code
 ### 2.5.2  Building Mojo
-## 2.6  Running the Mojo test suite
+## 2.6  Mojo configuration file
 ## 2.7  Editors
 ## 2.7.1 The Mojo online playground
 **To get entrance:**  
@@ -99,6 +99,8 @@
 ## 6.5 Closures
 ## 6.6 Functions with a variable number of arguments.
 ## 6.7 Function types
+## 6.8 Running a function at compile-time and run-time
+## 6.9 Callbacks through parameters
 
 # 7 Structs
 ## 7.1 First example
@@ -156,6 +158,7 @@
 ## 10.10 Working with command-line arguments
 ## 10.11 Working with memory
 ## 10.12 Working with files
+## 10.13 The module sys.param_env
 
 # 11 – Decorators
 ## 11.1 - @value
@@ -189,6 +192,16 @@
 ## 14.3 Defining an integer with MLIR
 ## 14.4 Copying data with raw pointers
 ## 14.5 Calling gmtime from C
+
+# 15 - Parallellization
+# 15.1 - The parallellize function
+## 15.1.1 No SIMD example
+## 15.1.2 With SIMD
+# 15.3 - async/await in Mojo
+
+# 16 - Vectorization
+# 16.1 - 
+## 16.1.1 Vectorize SIMD cosine
 
 # 20 – Projects
 ## 20.1 - Calculating the sum of two vectors

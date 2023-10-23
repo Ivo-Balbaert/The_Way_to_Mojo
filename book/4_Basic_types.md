@@ -574,6 +574,8 @@ fn main():
 
 In this example, enum_type is a struct that implements a simple enum using aliases for the enumerators. This allows clients to use enum_type.float32 as a parameter expression, which also works as a runtime value.
 
+See also § 6.8
+
 
 ## 4.5 The object type
 `object` is defined in module `object` in the `builtin` package, so it is not a Python object.

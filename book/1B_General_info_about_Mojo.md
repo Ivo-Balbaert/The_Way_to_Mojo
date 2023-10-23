@@ -66,6 +66,7 @@ Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native suppo
 * 2023 Sep 22: Mojo v 0.3.0
 * 2023 Sep 29: Mojo v 0.3.1 (for installation and lsp problems)
 * 2023 Oct 5:  Mojo v 0.4.0 (default parameters for structs and functions - file I/O)
+* 2023 Oct 19: Mojo v 0.4.0 for Mac (support for Mac (Apple silicon))
 
 Goals / Roadmap:
 * 2023 Jun 21 - "We expect that Mojo will be open-sourced. However, Mojo is still young, so we will continue to incubate it within Modular until more of its internal architecture is fleshed out. We don’t have an established plan for open-sourcing yet."

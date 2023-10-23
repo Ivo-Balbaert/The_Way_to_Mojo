@@ -269,7 +269,7 @@ The add calculation ran at compile time, so those extra instructions don't happe
 ## 11.5 - @staticmethod
 `@staticmethod` can be used:
 * in a struct that cannot be instantiated, for an example see § 7.10.1
-* to indicate that the following is a static method, to be called on the struct itself, not on an instance, keeping the scope clean.
+* to indicate that the following is a static method, to be called on the struct itself, not on an instance, keeping the scope clean. The struct acts as a namespace.
 
 Here is a simple example:
 See `static_method1.mojo`

@@ -297,6 +297,88 @@ fn main():
 Example: parallelize[func: fn(Int) capturing -> None]()
 `fn(Int) capturing -> None` is the function type.
 
+## 6.8 Running a function at compile-time and run-time
+By using alias for the return variable, you can run a function at compile-time:
+
+See `compile_time1.mojo`:
+```mojo
+fn squared(n: Int) -> Pointer[Int]:
+    let tmp = Pointer[Int].alloc(n)
+    for i in range(n):
+        tmp.store(i, i * i)
+    return tmp
+
+alias n_numbers = 5
+alias precalculated = squared(n_numbers) # 1
+
+fn main():
+    for i in range(n_numbers):
+        print(precalculated.load(i))
+
+# =>
+# 0
+# 1
+# 4
+# 9
+# 16
+
+```
+
+The function squared can be used both during comptime and runtime. The alias in line 1 takes care of calculation precalculated at comptime. It returns a pointer with pre-calculated values during compilation and using it at runtime.
+If we comment this line and uncomment line 2, precalculated is computed at runtime.
+
+## 6.9 Callbacks through parameters
+
+See `callbacks_params.mojo`:
+```mojo
+@value
+struct Markdown:
+    var content: String
+
+    fn __init__(inout self):
+        self.content = ""
+
+    def render_page[f: def() -> object](self, file="none"):
+        f()
+
+    fn __ior__(inout self, t: String):
+        self.content += t
+
+var md = Markdown()
+
+def readme():
+    md |= '''
+    # hello mojo
+    this is markdown
+    ```python
+    fn main():
+        print("ok")
+    ```
+    '''
+    footer()
+
+def footer():
+    md |= '''
+    > Page generated
+    '''
+
+def main():
+    md.render_page[readme](file = "README.md")  # 1
+    print(md.content)
+
+# =>
+# hello mojo
+    # this is markdown
+    # ```python
+    # fn main():
+    #     print("ok")
+    # ```
+    
+    # > Page generated
+```
+
+This program generates markdown as an instance of struct Markdown.
+In line 1, the Markdown method render_page is called with the comptime parameter readme, which is itself a function of type def. 
 
 
 Also:

@@ -5,13 +5,22 @@ __del__		destructor
 __copyinit__	b = a, to copy a value, a still exists after copy
 __moveinit__	b = a, to move a value, a doesn't exist anymore after copy
 __eq__		==, test if values are equal
-__neq__		!=, test if values are not equal 
+__ne__		!=, test if values are not equal 
 __invert__	~
+__and__		&
+__or__		|
+__xor__		^
 __lt__		<
 __gt__		>
 
 __add__		+
 + other arithmetic ops
+
+__rand__	&  (and variable appears at rhs)
+__ior__		|=
+
+
+r - methods
 
 __getitem__	a[i]
 __setitem__	a[i] = val
