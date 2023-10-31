@@ -1,5 +1,7 @@
 # 16 - Vectorization
 
+See § 20.3.4.2
+
 # 16.1 - 
 
 ## 16.1.1 Vectorize SIMD cosine
@@ -45,4 +47,4 @@ fn main():
     except:
         print("no plot")
 ```
-?? not clear where group_size is defined
+?? not clear where group_size is defined, size in line (1)

@@ -40,7 +40,7 @@ struct Array[T: AnyType]:
 
     @always_inline
     fn __setitem__(inout self, i: Int, value: T):
-        if i >= self.cap:
+        if i >= self.size:
             print("Warning: you're trying to set an index out of bounds, doing nothing")
             return
         self.data.store(i, value)
@@ -54,14 +54,14 @@ struct Array[T: AnyType]:
     fn __copyinit__(inout self, rhs: Self):  # deep copy
         self.size = rhs.size
         self.cap = rhs.cap
-        self.data = Pointer[T].alloc(self.cap)  # new memory us allocated
+        self.data = Pointer[T].alloc(self.cap)  # new memory is allocated
         # for i in range(rhs.size):
         #     self.data.store(i, rhs.data.load(i))
         # faster:
         memcpy[T](self.data, rhs.data, self.size)
 
     @always_inline
-    fn __moveinit__(inout self, owned rhs: Self):  # move - same code as copyinit
+    fn __moveinit__(inout self, owned rhs: Self):  # move - same body code as copyinit
         self.__copyinit__(rhs)
         # self.size = rhs.size
         # self.cap = rhs.cap
@@ -84,8 +84,16 @@ fn main():
     var v = Array[Float32](4, 3.14)  # 3
     print(v[0], v[1], v[2], v[3])
     # => 3.1400001049041748 3.1400001049041748 3.1400001049041748 3.1400001049041748
+
     v[0] = 42
     print(v[0])  # => 42.0
+    print(v[0], v[1], v[2], v[3])
+    # => 42.0 3.1400001049041748 3.1400001049041748 3.1400001049041748
+
+    for i in range(v.size):
+        print_no_newline("i:", i, " ", v[i], "- ")
+    print()
+    # => i: 0   42.0 - i: 1   3.1400001049041748 - i: 2   3.1400001049041748 - i: 3   3.1400001049041748 - 
 
     let w = v  # deep copy
     print(w[0])  # => 42.0

@@ -124,6 +124,23 @@ fn main() raises:
 
 The type name can be used to convert a value to the type (if possible), for example: `UInt8(1)` makes sure the value 1 is stored as an unsigned 1 byte integer.
 
+There is also a cast method to convert to another type (see line 1):
+See `casting.mojo`:
+```mojo
+fn main():
+    # Cast SIMD:
+    let x : UInt8 = 42  # alias UInt8 = SIMD[DType.uint8, 1]
+    print(x) # => 42
+    let y : Int8 = x.cast[DType.int8]()   # 1
+    print(y) # => 42
+         
+    # Cast SIMD to Int
+    let w : Int = x.to_int() # `SIMD` to `Int`
+    let z : UInt8 = w         # `Int` to `SIMD`
+```
+
+(see also: § 7 simd2.mojo).
+
 A small handy detail about spelling: _ can separate thousands:  `10_000_000`
 
 All numeric types are derived from a SIMD type for performance reasons (see § 7.9.3).
@@ -345,9 +362,12 @@ The string value is heap-allocated, but the String itself is actually a pointer 
 ```mojo
    # String:
     let s = String("Mojo🔥")       # 3
+    # alternative:
+    let s9 : String = "Mojo🔥"
     print(s)            # => Mojo🔥
     print(s[0])         # 4 => M
     print(ord(s[0]))    # => 77
+    print(String("hello world")[0]) # => h
 ```
 
 One way to make a String is to convert a StringLiteral value with `String(value)`, as in line 3.  

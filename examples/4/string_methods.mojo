@@ -2,6 +2,7 @@ fn main() raises:    # raised needed because of atoi
     let s = String("abcde")
     print(s) # => abcde
 
+    print(s[0]) # => a
     for i in range(len(s)):     # 1
         print(s[i])
     # a
@@ -12,6 +13,7 @@ fn main() raises:    # raised needed because of atoi
     # Slicing:
     print(s[2:4]) # => cd       # 2
     print(s[1:])  # => bcde     # 3
+    print(s[:5]) # => abcde
     print(s[:-1]) # => abcd     # 4
     print(s[::2]) # => ace      # 5
     

@@ -1,6 +1,7 @@
 from python import Python
 
 fn main() raises:
+    let w: Int = 42
     var x = Python.evaluate('5 + 10')   # 1
     print(x)   # => 15
 
@@ -10,7 +11,7 @@ fn main() raises:
  
     let pybt = Python.import_module("builtins")
     _ = pybt.print("this uses the python print keyword") # => this uses the python print keyword
-
+    _ = pybt.print("The answer is", w) # => The answer is 42
     _ = pybt.print(pybt.type(x))  # => <class 'int'>
     _ = pybt.print(pybt.id(x))    # => 139787831339296
 

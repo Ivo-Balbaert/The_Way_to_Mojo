@@ -279,7 +279,7 @@ struct HeapArray:                   # 1
         for i in range(self.size):
             if i > 0:
                 print_no_newline(", ")
-                
+            print_no_newline(self.data.load(i))    
         print("]")
 
 fn main():
@@ -320,7 +320,7 @@ Mojo provides *full control over the lifetime of a value*, including the ability
 Because a fn function gets its arguments only as immutable references, a large struct argument will never cause extensive memory copying.
 In the following example the SomethingBig a and b structs are not copied to the function fn use_something_big. This function only gets references (the addresses) to these instances.
 
-See `borrowed.mojo`:
+See `borrowed0.mojo`:
 ```mojo
 struct HeapArray:
     var data: Pointer[Int]
@@ -521,7 +521,7 @@ SIMD is a core type in Mojo:
 (See also Vectorization: § 20.5.6)
 Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance.
 
-Mojo’s SIMD struct type is defined as a struct in the builtin `simd` module and exposes the common SIMD operations in its methods, making the SIMD data type and size values parametric. This allows you to directly map your data to the SIMD vectors on any hardware.
+Mojo’s SIMD struct type is defined as a struct in the builtin `simd` module and exposes the common SIMD operations in its methods, making the SIMD data type and size values parametric. This allows you to directly map your data to the SIMD vectors adapted to your hardware.
 The SIMD struct is a parametric struct type definition (see § 7.9.1).
 
 General format: `SIMD[DType.type, size]`  
@@ -737,7 +737,7 @@ we get as result:
 ## 7.9.6 Programming compile-time logic
 You can also write imperative compile-time logic with control flow, even  compile-time recursion. The following example makes use the of the `@parameter if` feature, which is an if statement that runs at compile-time. It requires that its condition be a valid parameter expression, and ensures that only the live branch of the if statement is compiled into the program.
 
-See `ctime_logic.mojo`:
+See `ctime_logic.mojo`: ?? these functions already exist in Mojo!
 ```mojo
 fn slice[ty: DType, new_size: Int, size: Int](
         x: SIMD[ty, size], offset: Int) -> SIMD[ty, new_size]:
@@ -801,3 +801,4 @@ These can be instantiated, bot not copied or moved, because they have no no copy
 
 
 From v 0.4.0: Structs support default parameters
+See example `structs2.mojo` from mojo_gym: perhaps as exercise?

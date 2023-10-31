@@ -4,6 +4,12 @@ Mojo allows us to leverage the huge Python ecosystem of libraries and tools.
 You can use Python for what it's good at, especially graph plotting and GUIs and for things that do not yet exist or are more difficult to rewrite in Mojo.
 That way, a Python project can be gradually migrated to Mojo.
 
+- Start by comparing Notebook code with standard Mojo code in .mojo:
+```
+%%python
+print("The answer is", 42)
+```
+
 ## 8.0 Comparing the same program in Python and Mojo
 See `adding.py`:
 ```mojo
@@ -34,6 +40,7 @@ See `python1.mojo`:
 from python import Python
 
 fn main() raises:
+    let w: Int = 42
     var x = Python.evaluate('5 + 10')   # 1 - this is of type `PythonObject`
     print(x)   # => 15
 
@@ -43,7 +50,7 @@ fn main() raises:
  
     let pybt = Python.import_module("builtins") # 2
     _ = pybt.print("this uses the python print keyword") # => this uses the python print keyword
-
+    _ = py.print("The answer is", w) # => 
     _ = pybt.print(pybt.type(x))  # => <class 'int'>
     _ = pybt.print(pybt.id(x))    # => 139787831339296
 ```
@@ -208,6 +215,28 @@ fn main() raises:
 ```
 
 ### 8.3.3 Understanding the interaction between Python and Mojo
+Working with PythonObject:
+In intInt.mojo in § 4 we saw how you can emulate a big integer type by using PythonObject. 
+(?? Combine both programs here, reference to it in § 4)
+Here are some other useful examples:
+See `pythonobject.mojo`:
+```mojo
+from python import python
+
+alias str = PythonObject
+alias float = PythonObject
+
+
+fn main() raises:
+    let f: float = 0.6
+    print(f.hex())  # => 0x1.3333333333333p-1
+    # f is a Python `float` object
+
+    let s1: str = "xxbaaa"
+    print(s1.upper())  # => XXBAAA
+    # s1 is a Python `str` object
+```
+
 This is illustrated in the following program, the comments show you when you are in Python land, and when in Mojo land!
 
 See `interaction_python_mojo.mojo`:

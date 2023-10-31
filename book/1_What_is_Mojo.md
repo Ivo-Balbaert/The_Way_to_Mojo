@@ -59,6 +59,8 @@ It also offers control over memory storage: struct field values are inline-alloc
 See also: [2023-10-11 - MOJO DOES GIVE SUPERPOWERS](https://github.com/StijnWoestenborghs/gradi-mojo)
 [Llama2 - 2023-10-13](https://www.modular.com/blog/community-spotlight-how-i-built-llama2-by-aydyn-tairov)
 [Bioinformatics - 2023-10-13](https://medium.com/@traincheck/mojomics-supercharging-bioinformaticians-with-460030ae5b3d)
+https://github.com/ego/awesome-mojo
+
 
 It easily beats Python performance with 4 orders of magnitude.
 It uses the whole range of possibilities offered by modern compiler optimizations, including automatic parallel processing across multiple cores. This is nicely illustrated in the section starting at 33:08 by Jeremy Howard of the [Keynote speech](https://www.youtube.com/watch?v=-3Kf2ZZU-dg) which announced Mojo to the world.

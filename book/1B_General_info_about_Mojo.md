@@ -49,6 +49,7 @@ To come into contact with other Mojo users or the Modular team:
 
 * [Mojo Discord channel](https://discord.com/invite/modular) or https://discord.gg/modular
 * [Twitter channel](https://twitter.com/modular_ai)
+* [Forum](https://mojo-forum.com/)
 
 A tutorial site:
     [mojodojo](https://mojodojo.dev/) created by Jack Clayton (mojodojodev@gmail.com)

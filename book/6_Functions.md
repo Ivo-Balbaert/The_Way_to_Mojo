@@ -194,6 +194,20 @@ we get the error: use of uninitialized value 'a'
 because the transfer operator effectively destroys the variable a, so when the following print() function tries to use a, that variable isn’t initialized anymore.
 If you delete or comment out print(a), then it works fine.
 
+Simpler example:
+```mojo
+fn main():
+    var counter = 0
+    counter += 1
+    print('counter is', counter)
+
+    # the line below should not be changed
+    var new_counter = counter^
+    print('new_counter is ', new_counter)
+    # counter += 1 # => error: use of uninitialized value 'counter'
+    new_counter += 1
+    print('new_counter is', new_counter)
+```
 See also § 7.8 for an example with a struct.
 
 >Note: Currently (Aug 17 2023), Mojo always makes a copy when a function returns a value.
@@ -399,6 +413,10 @@ fn main():
 
 The function squared can be used both during comptime and runtime. The alias in line 1 takes care of calculation precalculated at comptime. It returns a pointer with pre-calculated values during compilation and using it at runtime.
 If we comment this line and uncomment line 2, precalculated is computed at runtime.
+
+A parameter enclosed in [] is a compile-time (or static) value (1).
+A parameter(??) enclosed in () is a run-time (or dynamic) value (2).
+If you get the error: `cannot use a dynamic value in a type parameter`, Mojo says that you used a runtime value as a compile-time parameter (case (1)).
 
 ## 6.9 Callbacks through parameters
 
