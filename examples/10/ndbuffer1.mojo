@@ -2,7 +2,7 @@ from utils.list import DimList
 from memory.unsafe import DTypePointer
 from memory.buffer import NDBuffer
 from memory import memset_zero
-from utils.list import VariadicList, DimList
+from utils.list import DimList
 from algorithm.functional import unroll
 
 
@@ -23,7 +23,7 @@ struct Tensor[rank: Int, shape: DimList, type: DType]:  # 1
         for i in range(rank):
             if idx[i] >= shape.value[i].get():
                 raise Error("index out of bounds")
-        return self.buffer.simd_load[1](VariadicList[Int](idx))
+        return self.buffer.simd_load[1](idx)
 
     fn get[*idx: Int](self) -> SIMD[type, 1]:  # 10
         @parameter
@@ -79,3 +79,29 @@ fn main() raises:
     print(x.buffer.get_nd_index(4))  # => (1, 0, 0)
     x.buffer.zero()
     print(x.get[0, 0, 0]())  # => 0
+
+# =>
+# 8
+# 1
+# 5
+# 7
+# 50
+# 1
+# [1, 2, 3, 4]
+# [5, 6, 7, 50]
+# [7, 50]
+# (2, 2, 2)
+# (4, 2, 1)
+# True
+# 8
+# 2
+# 50
+# 50
+# (1, 0, 1)
+# 3
+# (2, 2, 2)
+# 8
+# 8
+# 4
+# (1, 0, 0)
+# 0

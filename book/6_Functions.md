@@ -473,4 +473,10 @@ In line 1, the Markdown method render_page is called with the comptime parameter
 
 
 Also:
+- From v 0.4.0: Functions support keyword arguments, also with defaults (enclosed in ())
 - From v 0.4.0: Functions support default parameter values (enclosed in [])
+- From v 0.5.0: Functions support keyword parameters, also with defaults (enclosed in [])
+
+
+**Exercises**
+1- Write a function is_palindrome that checks whether a word is a palindrome (like "otto" or "ava") (see `palindrome.mojo`).

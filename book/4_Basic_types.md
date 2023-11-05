@@ -537,6 +537,9 @@ The `isdigit` function checks if the character passed in is a valid decimal betw
 
 See also `string_counting_bytes_and_characters.mojo`
 
+- v 0.5.0: The String type has the count() and find() methods to enable counting the number of occurrences or finding the offset index of a substring in a string. It also has a replace() method which allows you to replace a substring with another string.
+
+
 ## 4.4 Defining alias types
 We know that it is best practice to give constant values that are repeatedly used in our program a name, like ACONSTANT. So when its value changes, we only have to do it in one place. In Mojo, such constants are defined with the alias keyword.  This is a compile-time constant: all instances of the alias are replaced by its value at compile-time.
 

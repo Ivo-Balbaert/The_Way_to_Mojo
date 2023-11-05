@@ -105,6 +105,50 @@ Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)
 
 ## 10.3 Module benchmark
 
+From v5, benchmark no longer requires a capturing fn so can benchmark functions outside the same scope. You can also print a report with: `report.print()`
+
+See `benchmark_newv5`:
+```mojo
+from benchmark import Unit, benchmark
+from time import sleep
+
+fn sleeper():
+    sleep(.01)
+
+fn main():
+    let report = benchmark.run[sleeper]()
+    print(report.mean())   # => 0.010147911948148149
+    report.print()
+    print("")
+    report.print[Unit.ms]()
+
+# ---------------------
+# Benchmark Report (s)
+# ---------------------
+# Mean: 0.010147911948148149
+# Total: 1.3699681130000001
+# Iters: 135
+# Warmup Mean: 0.0100463785
+# Warmup Total: 0.020092756999999999
+# Warmup Iters: 2
+# Fastest Mean: 0.010111081172413793
+# Slowest Mean: 0.010297477449999998
+
+
+# ---------------------
+# Benchmark Report (ms)
+# ---------------------
+# Mean: 10.147911948148147
+# Total: 1369.9681129999999
+# Iters: 135
+# Warmup Mean: 10.046378499999999
+# Warmup Total: 20.092756999999999
+# Warmup Iters: 2
+# Fastest Mean: 10.111081172413792
+# Slowest Mean: 10.297477449999999
+```
+
+
 See first § 10.7
 
 The class allows to benchmark a given function (passed as a parameter) and configure various benchmarking parameters, such as number of warmup iterations, maximum number of iterations, minimum and maximum elapsed time.
@@ -259,7 +303,7 @@ from utils.list import DimList
 from memory.unsafe import DTypePointer
 from memory.buffer import NDBuffer
 from memory import memset_zero
-from utils.list import VariadicList, DimList
+from utils.list import DimList
 from algorithm.functional import unroll
 
 struct Tensor[rank: Int, shape: DimList, type: DType]:      # 1
@@ -279,7 +323,7 @@ struct Tensor[rank: Int, shape: DimList, type: DType]:      # 1
         for i in range(rank):
             if idx[i] >= shape.value[i].get():
                 raise Error("index out of bounds")
-        return self.buffer.simd_load[1](VariadicList[Int](idx))
+        return self.buffer.simd_load[1](idx)
 
     fn get[*idx: Int](self) -> SIMD[type, 1]:               # 10
         @parameter
@@ -334,6 +378,32 @@ fn main() raises:
     print(x.buffer.get_nd_index(4)) # => (1, 0, 0)
     x.buffer.zero()
     print(x.get[0, 0, 0]())         # => 0
+
+# => compare output !!
+8
+1
+5
+7
+50
+1
+[1, 2, 3, 4]
+[5, 6, 7, 50]
+[7, 50]
+(2, 2, 2)
+(4, 2, 1)
+True
+8
+2
+50
+50
+(1, 0, 1)
+3
+(2, 2, 2)
+8
+8
+4
+(1, 0, 0)
+0
 ```
 
 The struct defined in line 1 allows you to carry around the pointer that owns the data the NDBuffer is pointing to.
@@ -718,6 +788,11 @@ You index them as InlineFixedVector (with the same note). Only a shallow copy is
 ```
 
 ## 10.9 The Tensor type from module tensor
+- From v 0.5.0: 
+Tensor has new fromfile() and tofile() methods to save and load as bytes from a file.
+The built-in print() function now works on the Tensor type.
+TensorShape and TensorSpec now have constructors that take DynamicVector[Int] and StaticIntTuple to initialize shapes.
+
 A tensor is a higher-dimensional matrix, its type Tensor is defined in module tensor (see line 1).  
 The tensor type manages its own data (unlike NDBuffer and Buffer which are just views), that is:  the tensor type performs its own memory allocation and freeing. Here is a simple example of using the tensor type to represent an RGB image and convert it to grayscale:
 See video: [Introduction to Tensors](https://www.youtube.com/watch?v=3OWkXNdkx8E)
@@ -729,7 +804,11 @@ from tensor import Tensor
 
 fn main():
     let t = Tensor[DType.int32](2, 2)
-    print(t.simd_load[4](0, 1, 2, 3)) # => [0, 1970038374, 26739, 33] - undefined last value ??
+    print(t.simd_load[4](0, 1, 2, 3)) # => [0, 1970038374, 26739, 33] 
+    t.simd_store[4](0, 1)  # 4 values from start get value 1
+    print(t)
+    # =>
+    # Tensor([[1, 1], [1, 1]], dtype=int32, shape=2x2)
 ```
 
 See `tensor1.mojo`:

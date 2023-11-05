@@ -595,6 +595,7 @@ If all items have the same value, use the shorthand notation as for z in line 3.
 To show the SIMD register size on the current machine, use the function `simdbitwidth` from module `sys.info` as in line 4. The result `256` means that we can pack 32 x 8bit numbers together and perform a calculation on all of these with a single instruction.
 
 ### 7.9.3.1 Defining a vector with SIMD
+The SIMD type defaults to the architectural SIMD width of the type. This means you can write SIMD[DType.float32], which is equivalent to SIMD[DType.float32, simdwidthof[DType.float32]()].
 
 See `simd_vector.mojo`:
 ```mojo
@@ -800,5 +801,7 @@ fn main():
 These can be instantiated, bot not copied or moved, because they have no no copy or move constructors. Useful to implement types like atomic operations. 
 
 
-From v 0.4.0: Structs support default parameters
 See example `structs2.mojo` from mojo_gym: perhaps as exercise?
+
+- From v 0.4.0: Structs support default parameters
+- From v 0.5.0: Structs support keyword parameters, also with defaults (enclosed in [])

@@ -1,7 +1,7 @@
 from utils.vector import InlinedFixedVector, UnsafeFixedVector
 
 fn main():
-    var vec = InlinedFixedVector[4, Int](8)  # 1
+    var vec = InlinedFixedVector[Int, 4](8)  # 1
 
     vec.append(10)      # 2
     vec.append(20)

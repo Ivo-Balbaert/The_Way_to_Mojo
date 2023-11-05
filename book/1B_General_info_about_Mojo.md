@@ -37,7 +37,7 @@ Closed Beta Local SDK:
 
 Much more information can be found at the Modular/Mojo [Website](https://www.modular.com/mojo), particularly in the [Docs section](https://docs.modular.com/mojo/).
 
-Weekly newsletter: https://www.modular.com/newsletters/
+[Weekly newsletter:](https://www.modular.com/newsletters/)
 
 The source code repository of the language (GitHub repo, currently contains no source yet) is at [here](https://github.com/modularml/mojo). 
 
@@ -68,6 +68,7 @@ Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native suppo
 * 2023 Sep 29: Mojo v 0.3.1 (for installation and lsp problems)
 * 2023 Oct 5:  Mojo v 0.4.0 (default parameters for structs and functions - file I/O)
 * 2023 Oct 19: Mojo v 0.4.0 for Mac (support for Mac (Apple silicon))
+* 2023 Nov 2:  Mojo v 0.5.0 and the Modular CLI 💻  v0.2.2
 
 Goals / Roadmap:
 * 2023 Jun 21 - "We expect that Mojo will be open-sourced. However, Mojo is still young, so we will continue to incubate it within Modular until more of its internal architecture is fleshed out. We don’t have an established plan for open-sourcing yet."

@@ -2,8 +2,11 @@ fn main() raises:
     # Create a Pointer to an existing variable:
     var x: Int = 42  # x must be mutable to pass as a reference
     let xPtr = Pointer[Int].address_of(x)
+    # print the address:
+    print(xPtr.__as_index()) # => 140722471124352
+    # print the value:
     print(xPtr.load())  # => 42  # dereference a pointer
-
+    
     # Casting type of Pointer with bitcast:
     let yPtr: Pointer[UInt8] = xPtr.bitcast[UInt8]()
 
@@ -17,6 +20,6 @@ fn main() raises:
     # => 1  - 2  - 114845100566118  -
 
     # Create Null pointerq
-    var ptr01 = Pointer[Int]()
-    var ptr02 = Pointer[Int].get_null()
+    let ptr01 = Pointer[Int]()
+    let ptr02 = Pointer[Int].get_null()
     print(ptr02.load(0))  # prints blancs
