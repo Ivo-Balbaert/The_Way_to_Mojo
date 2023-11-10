@@ -1,3 +1,4 @@
+# After v5: error: 'AnyType' does not implement the '__eq__' method
 from testing import assert_true
 
 

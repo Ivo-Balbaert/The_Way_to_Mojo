@@ -152,77 +152,82 @@ fn main():
 See first § 10.7
 
 The class allows to benchmark a given function (passed as a parameter) and configure various benchmarking parameters, such as number of warmup iterations, maximum number of iterations, minimum and maximum elapsed time.
-Import it in your code through: `from benchmark import Benchmark`
+Import it in your code through: `import benchmark`
 We'll benchmark the execution of the Fibonacci function, defined as follows:
 (code: see `running_benchmark.mojo`)`
 
 ```mojo
-from benchmark import Benchmark
+import benchmark
+from time import sleep
+
 
 fn fib(n: Int) -> Int:
     if n <= 1:
-       return n 
+        return n
     else:
-       return fib(n-1) + fib(n-2)
-```
+        return fib(n - 1) + fib(n - 2)
 
-To benchmark it, create a nested fn (here called `closure`) that takes no arguments and doesn't return anything, and that calles the function to benchmark.
-Then pass the closure function in as a parameter:  `Benchmark().run[closure]()`.
-This returns the execution time in nanoseconds.
 
-```mojo
-fn bench():
-    fn closure():
-        let n = 35
-        for i in range(n):
-            _ = fib(i)
-
-    let nanoseconds = Benchmark().run[closure]()
-    print("Nanoseconds:", nanoseconds)
-    print("Seconds:", Float64(nanoseconds) / 1e9)
-
-fn main():
-    bench()`
-    
-# =>
-# Nanoseconds: 28052724
-# Seconds: 0.028052724000000001
-```
-
->Note: 
-
-Let us now compare this to the iterative version (fib_iterative):
-
-```mojo
 fn fib_iterative(n: Int) -> Int:
     var count = 0
     var n1 = 0
     var n2 = 1
 
     while count < n:
-       let nth = n1 + n2
-       n1 = n2
-       n2 = nth
-       count += 1
+        let nth = n1 + n2
+        n1 = n2
+        n2 = nth
+        count += 1
     return n1
 
-fn bench_iterative():
-    fn iterative_closure():
-        for i in range(n):
-            _ = fib_iterative(i)
 
-    let iterative = Benchmark().run[iterative_closure]()
-    print("Nanoseconds iterative:", iterative)
+fn sleeper():
+    print("sleeping 300,000ns")
+    sleep(3e-4)
+
+
+fn test_fib():
+    let n = 35
+    for i in range(n):
+        _ = fib(i)
+
+fn test_fib_iterative():
+    let n = 35
+    for i in range(n):
+        _ = fib_iterative(i)
+
 
 fn main():
-    bench_iterative()
-# => Nanoseconds iterative: 0
-```
+    var report = benchmark.run[test_fib]()
+    print(report.mean(), "seconds")
+    # => 0.028419847121951218 seconds
 
-The compiler has optimized away everything that took time in the previous version.
+    report = benchmark.run[test_fib_iterative]()
+    print(report.mean(), "seconds")
+    # => 1.3176532113682314e-17 seconds
 
-`bench_args()` demonstrates the maximum number of iterations (max_iters) here 5
-`bench_args2()` demonstrates how to limit the max running time(max_time_ns) here 0.001, so it will never run over 0.001 seconds
+    print("0 warmup iters, 5 max iters, 0ns min time, 1_000_000_000ns max time")
+    report = benchmark.run[sleeper](0, 5, 0, 1_000_000_000)
+    print(report.mean(), "seconds")
+    # 1.3327284737390688e-17 seconds
+    # 0 warmup iters, 5 max iters, 0ns min time, 1_000_000_000ns max time
+    # sleeping 300,000ns
+    # sleeping 300,000ns
+    # sleeping 300,000ns
+    # sleeping 300,000ns
+    # sleeping 300,000ns
+    # sleeping 300,000ns
+    # 0.00040065083333333334 seconds```
+
+Pass the test function in as a parameter:  `benchmark().run[test_fib]()`.
+This returns the execution time in seconds.
+
+Let us now compare this to the iterative version (fib_iterative):
+# =>  1.3176532113682314e-17 seconds
+
+The compiler has nearly optimized away everything that took time in the previous version.
+
+The 3rd example demonstrates the maximum number of iterations (max_iters) here 5
 
 As the 1st parameter, you can also set up the number of warmup iterations (num_warmup).  
 As the 3rd parameter, you can also set up the minimum running time (min_time_ns).
@@ -510,7 +515,7 @@ from sys.info import (
     has_avx,
     has_avx2,
     has_avx512f,
-    has_avx512_vnni,
+    has_vnni,
     has_neon,
     is_apple_m1,
     has_intel_amx,
@@ -539,7 +544,7 @@ def main():
         cpu_features = cpu_features.join(" avx2")
     if has_avx512f():
         cpu_features = cpu_features.join(" avx512f")
-    if has_avx512_vnni():
+    if has_vnni():
         cpu_features = cpu_features.join(" avx512_vnni")
     if has_intel_amx():
         cpu_features = cpu_features.join(" intel_amx")
@@ -735,7 +740,7 @@ See `fixedvectors.mojo`:
 from utils.vector import InlinedFixedVector
 
 fn main():
-    var vec = InlinedFixedVector[4, Int](8)  # 1
+    var vec = InlinedFixedVector[Int, 4](8)  # 1
 
     vec.append(10)      # 2
     vec.append(20)

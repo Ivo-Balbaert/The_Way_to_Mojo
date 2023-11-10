@@ -2,10 +2,9 @@ from memory.unsafe import Pointer
 from memory.buffer import NDBuffer
 from utils.list import DimList
 from random import randint
-from utils.list import VariadicList
 from math import sqrt
 from math import FPUtils
-from benchmark import Benchmark
+import benchmark
 
 alias board_size = 9 
 alias python_secs = 2.96649886877276e-06
@@ -79,8 +78,7 @@ struct Board[grid_size: Int]:
                     return False
         return True
 
-fn bench(python_secs: Float64):
-    @parameter
+    @staticmethod
     fn init_board() raises -> Board[board_size]:
         return Board[board_size](
             5, 3, 0, 0, 7, 0, 0, 0, 0,
@@ -94,16 +92,13 @@ fn bench(python_secs: Float64):
             0, 0, 0, 0, 8, 0, 0, 7, 9
         )
 
-    fn solve():
-        try:
-            let board = init_board()
-            _ = board.solve()
-        except:
-            pass
+fn test_solve():
+    try:
+        let board = Board[9].init_board()
+        _ = board.solve()
+    except:
+        pass
 
-    let mojo_secs = Float64(Benchmark().run[solve]()) / 1e9
-    print("mojo seconds:", mojo_secs)
-    print("speedup:", python_secs / mojo_secs)
 
 fn main() raises:
     # var board = Board[9](
@@ -132,8 +127,10 @@ fn main() raises:
 # [2, 8, 7, 4, 1, 9, 6, 3, 5]
 # [3, 4, 5, 2, 8, 6, 1, 7, 9]
 
-    # Benchmarking:
-    bench(Float64(python_secs))
+# Benchmarking:
+    let report = benchmark.run[test_solve]()
+    print("mojo seconds", report.mean())
+    print("speedup:", python_secs / report.mean())
 
 # mojo seconds: 0.00026104600000000002
 # speedup: 0.011363893217183025

@@ -360,13 +360,14 @@ The keyword capturing is necessary.
 ## 6.6 Functions with a variable number of arguments.
 This is indicated by prefixing the parameter name in the function header with *, for example args_w in the function my_func:
 
-See `variadic1.mojo`:
+See `variadic1.mojo`:   print out doesn't work anymore (2023 Nov 5), removed from test_way
 ```mojo
 fn my_func(*args_w: String):  # 1
     let args = VariadicList(args_w)
     for i in range(len(args)):
+        pass
         # print(args[i])   # error: no matching value in call to print
-        print(__get_address_as_lvalue(args[i]))
+        # print(__get_address_as_lvalue(args[i]))
 
 
 fn main():

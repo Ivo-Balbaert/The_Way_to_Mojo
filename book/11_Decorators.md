@@ -215,7 +215,7 @@ The decorator is also used on nested functions that capture runtime values, crea
 In line 2, only if true will the code will be "included" at compile time. The if statement will never run again during runtime.
 See also § 7.9.6 (ctime_logic.mojo), § 10.6 (os_is_linux)
 
-See `parameter3.mojo`:  (not yet fully understood)
+See `parameter3.mojo`:  (not yet fully understood, doesn't work after v5)
 ```mojo
 from testing import assert_true
 

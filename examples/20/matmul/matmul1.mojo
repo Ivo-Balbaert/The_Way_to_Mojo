@@ -1,6 +1,5 @@
-from benchmark import Benchmark
+import benchmark
 from sys.intrinsics import strided_load
-from utils.list import VariadicList
 from math import div_ceil, min
 from memory import memset_zero
 from memory.unsafe import DTypePointer
@@ -67,7 +66,7 @@ def benchmark_matmul_untyped(M: Int, N: Int, K: Int, python_gflops: Float64):
         except:
             pass
 
-    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    let secs = Float64(benchmark.run[test_fn]()) / 1e9
     print("Mojo seconds: ", secs)
     _ = (A, B, C)
     let gflops = ((2 * M * N * K) / secs) / 1e9

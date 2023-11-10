@@ -31,7 +31,7 @@ def main():
     var sender_country: String = 'Spain'
     var recipient_country: String = 'Austria'
     try:
-        var package = Package(sender_country, recipient_country, 5)
+        let package = Package(sender_country, recipient_country, 5)
         raise Error('Package is too small, cannot send')
     except Error:
         pass

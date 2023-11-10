@@ -805,3 +805,4 @@ See example `structs2.mojo` from mojo_gym: perhaps as exercise?
 
 - From v 0.4.0: Structs support default parameters
 - From v 0.5.0: Structs support keyword parameters, also with defaults (enclosed in [])
+See `keyword_params.mojo`

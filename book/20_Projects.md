@@ -69,7 +69,7 @@ See `calc_vecsum.mojo`:
 ```mojo
 from memory.unsafe import DTypePointer
 from random import rand
-from benchmark import Benchmark
+import benchmark
 
 alias MojoArr = DTypePointer[DType.float32]
 
@@ -121,7 +121,7 @@ See `calc_vecsum_vectorized.mojo`:
 ```mojo
 from memory.unsafe import DTypePointer
 from random import rand
-from benchmark import Benchmark
+import benchmark
 from algorithm import vectorize
 from sys.info import simdwidthof
 
@@ -341,6 +341,10 @@ See:
 * https://docs.modular.com/mojo/notebooks/Matmul.html
 * https://www.modular.com/blog/ais-compute-fragmentation-what-matrix-multiplication-teaches-us
 
+See matmul.mojo (+ chec_mod.pi / pymatmul.py) for the most recent version!
+
+matmul1-7.mojo were NOT adapted to >= v 0.5.0 
+
 ### 20.3.1 - Naive Python implementation
 
 See `matmul.py`:
@@ -421,9 +425,8 @@ STEPS:
 
 See `matmul1.mojo`:
 ```mojo
-from benchmark import Benchmark
+import benchmark
 from sys.intrinsics import strided_load
-from utils.list import VariadicList
 from math import div_ceil, min
 from memory import memset_zero
 from memory.unsafe import DTypePointer
@@ -508,7 +511,7 @@ STEPS:
 
 See `matmul2.mojo`:
 ```mojo
-from benchmark import Benchmark
+import benchmark
 from sys.intrinsics import strided_load
 from utils.list import VariadicList
 from math import div_ceil, min
@@ -766,9 +769,20 @@ Best candidate idx: 0
 118.13100247584663 GFLOP/s, a 21754.888737405363 x speedup over Python
 ```
 
-All optimization methods (except autotune) are combined in matmul.mojo
+All optimization methods (except autotune) are combined in matmul.mojo, with results:
+# => 2023 Nov 7
+# CPU Results
 
-## 20.4 - Sudoku solver
+# Python:         0.004 GFLOPS
+# Numpy:         89.977 GFLOPS
+# Naive:          7.056 GFLOPS   1731.29x Python  0.08x Numpy
+# Vectorized:    32.214 GFLOPS   7904.49x Python  0.36x Numpy
+# Parallelized: 114.647 GFLOPS  28131.32x Python  1.27x Numpy
+# Tiled:        132.892 GFLOPS  32608.30x Python  1.48x Numpy
+# Unrolled:     117.974 GFLOPS  28947.86x Python  1.31x Numpy
+# Accumulated:  352.863 GFLOPS  86583.45x Python  3.92x Numpy
+
+## 20.4 - Sudoku solver  (changed / removed from tests)
 For the Python version see `sudoku_solver.py`. This is the time it took:  
 `python seconds: 2.96649886877276e-06`.
 
@@ -782,7 +796,7 @@ from random import randint
 from utils.list import VariadicList
 from math import sqrt
 from math import FPUtils
-from benchmark import Benchmark
+import benchmark
 
 alias board_size = 9 
 alias python_secs = 2.96649886877276e-06
@@ -929,6 +943,11 @@ See Mojo blog:
 * 2023 Aug 28 - https://www.modular.com/blog/how-mojo-gets-a-35-000x-speedup-over-python-part-2
 * 2023 Sep 6 - https://www.modular.com/blog/mojo-a-journey-to-68-000x-speedup-over-python-part-3
 
+Srr mandelbrot.mojo (v 0.5.0)
+
+mandelbrot0-5.mojo were NOT adapted to >= v 0.5.0 
+
+
 ### 20.5.1 The pure Python algorithm
 ```py
 MAX_ITERS = 1000
@@ -1063,7 +1082,7 @@ from math import abs, iota
 from complex import ComplexSIMD, ComplexFloat64
 from tensor import Tensor
 from utils.index import Index
-from benchmark import Benchmark
+import benchmark
 from algorithm import vectorize
 
 alias float_type = DType.float64
