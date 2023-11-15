@@ -71,6 +71,12 @@ Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native suppo
 * 2023 Nov 2:  Mojo v 0.5.0 and the Modular CLI 💻  v0.2.2
 
 Goals / Roadmap:
+* 2023 Dec: Modcon: debugger
+* 2023 Dec: open source standard library
+* 2023 Dec: (basics) of traits
+* 2024 Jan: Windows version
+* 2024 Jan: (basics) of lifetimes
+
 * 2023 Jun 21 - "We expect that Mojo will be open-sourced. However, Mojo is still young, so we will continue to incubate it within Modular until more of its internal architecture is fleshed out. We don’t have an established plan for open-sourcing yet."
 * 2023 Jun 17 - A rough estimate mentioned by the team is that the language might be very usable for a lot of things in 18 months, so about 2024 Dec
 
@@ -81,6 +87,8 @@ Goals / Roadmap:
 | 2023 Aug 13  | 175      | 9200  |  188  |  82    |  /             |   4          |  18465  |   10400 | 
 | 2023 Sep 15  | 224      | 13895 |  1408 |  199   |  5             |   8          |  20900  |   13100 | 
 | 2023 Oct 12  | 238      | 14977 |  2000 |  225   |  2             |   15         |  22100  |   14100 | 
+| 2023 Nov 13  | 241      | 15581 |  2000 |  294   |  0             |   15         |  21700  |   15000 | 
+
 GH = GitHub
 
 2023 Aug 24: in the 4 months since the product keynote, the Modular community has grown to more than 120K+ developers, including tens of thousands of enterprises.

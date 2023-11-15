@@ -21,7 +21,7 @@ fn main():
     # _ = add_positives[-2, 4]()  # 2
 ```
 
-If the condition fails, you get a compile error, and optionally the error message is displayed.
+If the condition fails, you get a **compile-time error**, and optionally the error message is displayed.
 Line 2 gives the error:  
 ```
 constrained.mojo:2:23: note:               constraint failed: param assertion failed
@@ -105,7 +105,7 @@ Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)
 
 ## 10.3 Module benchmark
 
-From v5, benchmark no longer requires a capturing fn so can benchmark functions outside the same scope. You can also print a report with: `report.print()`
+From v5, benchmark no longer requires a capturing fn so you can benchmark functions outside the same scope. You can also print a report with: `report.print()`
 
 See `benchmark_newv5`:
 ```mojo
@@ -231,6 +231,108 @@ The 3rd example demonstrates the maximum number of iterations (max_iters) here 5
 
 As the 1st parameter, you can also set up the number of warmup iterations (num_warmup).  
 As the 3rd parameter, you can also set up the minimum running time (min_time_ns).
+
+Here is another example:
+See `calc_mean_matrix.mojo`:
+```mojo
+from tensor import Tensor
+from random import rand
+import benchmark
+from time import sleep
+from algorithm import vectorize, parallelize
+
+alias dtype = DType.float32
+alias simd_width = simdwidthof[DType.float32]()
+
+
+fn row_mean_naive[dtype: DType](t: Tensor[dtype]) -> Tensor[dtype]:
+    var res = Tensor[dtype](t.dim(0), 1)
+    for i in range(t.dim(0)):
+        for j in range(t.dim(1)):
+            res[i] += t[i, j]
+        res[i] /= t.dim(1)
+    return res
+
+
+fn row_mean_fast[dtype: DType](t: Tensor[dtype]) -> Tensor[dtype]:
+    var res = Tensor[dtype](t.dim(0), 1)
+
+    @parameter
+    fn parallel_reduce_rows(idx1: Int) -> None:
+        @parameter
+        fn vectorize_reduce_row[simd_width: Int](idx2: Int) -> None:
+            res[idx1] += t.simd_load[simd_width](idx1 * t.dim(1) + idx2).reduce_add()
+
+        vectorize[2 * simd_width, vectorize_reduce_row](t.dim(1))
+        res[idx1] /= t.dim(1)
+
+    parallelize[parallel_reduce_rows](t.dim(0), t.dim(0))
+    return res
+
+
+fn main():
+    let t = rand[dtype](1000, 1000)
+    var result = Tensor[dtype](t.dim(0), 1)
+
+    @parameter
+    fn bench_mean():
+        _ = row_mean_naive(t)
+
+    @parameter
+    fn bench_mean_fast():
+        _ = row_mean_fast(t)
+
+    let report = benchmark.run[bench_mean]()
+  #  let report = benchmark.run[row_mean_naive(t)]()
+    let report_fast = benchmark.run[bench_mean_fast]()
+    report.print()
+    report_fast.print()
+    print("Speed up:", report.mean() / report_fast.mean())
+
+
+# => 202.3 Nov 11: for  main():
+#    let t = rand[dtype](1000,100000)
+# [29195:29195:20231111,103553.196898:ERROR file_io_posix.cc:144] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
+# [29195:29195:20231111,103553.196940:ERROR file_io_posix.cc:144] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
+# Please submit a bug report to https://github.com/modularml/mojo/issues and include the crash backtrace along with all the relevant source codes.
+# Stack dump:
+# 0.      Program arguments: mojo calc_mean_matrix.mojo
+# Stack dump without symbol names (ensure you have llvm-symbolizer in your PATH or set the environment var `LLVM_SYMBOLIZER_PATH` to point to it):
+# 0  mojo      0x0000558fd8c39b97
+# 1  mojo      0x0000558fd8c3776e
+# 2  mojo      0x0000558fd8c3a26f
+# 3  libc.so.6 0x00007f42366c9520
+# 4  libc.so.6 0x00007f41740017b3
+# Segmentation fault
+
+# =>
+# ---------------------
+# Benchmark Report (s)
+# ---------------------
+# Mean: 0.0020958697733598408
+# Total: 1.054222496
+# Iters: 503
+# Warmup Mean: 0.0019287810000000001
+# Warmup Total: 0.0038575620000000001
+# Warmup Iters: 2
+# Fastest Mean: 0.0020823652932862192
+# Slowest Mean: 0.0021170246499999999
+
+# for (1000, 1000)
+# ---------------------
+# Benchmark Report (s)
+# ---------------------
+# Mean: 0.00068503110180224058
+# Total: 1.4063688519999999
+# Iters: 2053
+# Warmup Mean: 0.00091436450000000004
+# Warmup Total: 0.0018287290000000001
+# Warmup Iters: 2
+# Fastest Mean: 0.00020097415
+# Slowest Mean: 0.00074287821512247071
+
+# Speed up: 3.0595249877645565
+```
 
 ## 10.4 Type Buffer from module memory.buffer
 A buffer (defined in module memory.buffer) doesn't own the underlying memory, it's a view over data that is owned by another object.
@@ -489,7 +591,7 @@ bitwidthof in line 2 uses bits instead of bytes to show the width of the type in
 simdwidthof is used to show how many of the type can fit into the targets SIMD register, e.g. to see how many uint64's can be processed with a single instruction. For our system, the SIMD register can process 4 UInt64 values at once (see line 3). 
 simd_bit_width is the total amount of bits that can be processed at the same time on the host systems SIMD register, line 4 shows 256.
 simd_byte_width is the total amount of bytes that can be processed at the same time on the host systems SIMD register, , line 5 shows 32.  
-The total size in bytes of an AnyType is given by the sizeof function. (line 6).
+The total size in bytes of an AnyType is given by the `sizeof` function. (line 6).
 
 The same module also contains the values os_is_linux, os_is_macos, os_is_windows, which can be used to conditionally compile code based on the operating system (see line 7).
 

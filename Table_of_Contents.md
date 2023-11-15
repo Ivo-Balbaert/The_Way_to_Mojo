@@ -192,6 +192,7 @@
 ## 14.3 Defining an integer with MLIR
 ## 14.4 Copying data with raw pointers
 ## 14.5 Calling gmtime from C
+## 14.6 Custom bitwidth integers
 
 # 15 - Parallellization
 # 15.1 - The parallellize function

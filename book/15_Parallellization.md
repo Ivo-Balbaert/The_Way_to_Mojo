@@ -1,10 +1,10 @@
 # 15 - Parallellization
 Parallellization of code means: code executes in multiple threads inside one process (multithreading). This in contrast to how Python does parallelization, where multiple Python processes each execute one thread.
 
-# 15.1 - The parallellize function
+## 15.1 - The parallellize function
 This function comes from the algorithm module, see [Docs](https://docs.modular.com/mojo/stdlib/algorithm/functional.html#parallelize)
 
-## 15.1.1 No SIMD example
+### 15.1.1 No SIMD example
 ?? use num_tasks instead of num_workers
 
 The autobus analogy:
@@ -42,7 +42,7 @@ This parallellize function implements:
     * num_workers: is the number of threads (cores) that execute the tasks, so   num_workers is the maximum number of tasks that can execute in parallel
 
 
-## 15.1.2 With SIMD
+### 15.1.2 With SIMD
 
 The autobus analogy: see https://github.com/rd4com/mojo-learning/blob/main/tutorials/multi-core-parallelize-with-simd .md
 
@@ -101,6 +101,21 @@ fn main():
 # Index: 127  =  16129
 ```
 
-# 15.3 - async/await in Mojo
+## 15.2 - async/await in Mojo
 See module builtin.coroutine
 This is very similar to async/await in other languages: coroutines execute sequentially within one thread with async/await coordination. When execution is fast enough, this gives the impression of parallellization.
+
+
+## 15.3 - Parallelization applied to row-wise mean() of a vector
+In the following example,  we calculate the row-wise `mean()` of a matrix, by vectorizing across colums and parallelizing across rows.
+
+See `matrix_mean_row.mojo`:
+```mojo
+
+```
+
+Create a small `Tensor` tx and visualize the shape of the inputs and outputs.
+This small input matrix has shape `5x12` and the output matrix with `means()` should be `5x1`.
+
+Then create a `1000x100000` matrix t to make it more computationally intensive.  
+

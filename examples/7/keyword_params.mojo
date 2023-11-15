@@ -10,8 +10,8 @@ struct SquareMatrix[dtype: DType = DType.float32, dim: Int = 4]():
 
     fn __init__(inout self, val: SIMD[dtype, 1] = 5):
         self.mat = Tensor[dtype](self.dim, self.dim)
-        alias simd_width = simdwidthof[dtype]()  # this can probably be made simpler
-
+        alias simd_width = simdwidthof[dtype]()  
+        
         @parameter
         fn fill_val[simd_width: Int](idx: Int) -> None:
             self.mat.simd_store(

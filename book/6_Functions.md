@@ -386,6 +386,8 @@ Example: parallelize[func: fn(Int) capturing -> None]()
 `fn(Int) capturing -> None` is the function type.
 
 ## 6.8 Running a function at compile-time and run-time
+Mojo has two ‘spaces’, the ‘parameter’ space (which operates during compile time and the ‘value’ space (which operates during run time). Mojo functions can do computations in both spaces, the `[]` accepts arguments for the ‘parameter’ space, and `()` accepts arguments for the ‘value’ space .
+
 By using alias for the return variable, you can run a function at compile-time:
 
 See `compile_time1.mojo`:

@@ -4,7 +4,9 @@ from tensor import Tensor
 from math import sqrt
 from time import now
 
-fn mojo_fn_dist(a: Tensor[DType.float64], b: Tensor[DType.float64]) -> Float64:
+alias dtype = DType.float64
+
+fn mojo_fn_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
     var s: Float64 = 0.0
     let n = a.num_elements()
     for i in range(n):
@@ -22,8 +24,8 @@ fn main() raises:
     let anp = np.random.rand(n)
     let bnp = np.random.rand(n)
 
-    var a = Tensor[DType.float64](n)
-    var b = Tensor[DType.float64](n)
+    var a = Tensor[dtype](n)
+    var b = Tensor[dtype](n)
 
     for i in range(n):
         a[i] = anp[i].to_float64()
@@ -36,5 +38,5 @@ fn main() raises:
     print_formatter("mojo_fn_dist value: ", fn_dist)
     print_formatter("mojo_fn_dist time (ms): ",Float64((eval_end - eval_begin)) / 1e6)
 
-# mojo_fn_dist value: 1291.0881564332019
-# mojo_fn_dist time (ms): 11.135488
+# mojo_fn_dist value: 1290.742319614782
+# mojo_fn_dist time (ms): 10.321598

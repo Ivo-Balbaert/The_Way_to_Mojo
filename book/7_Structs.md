@@ -519,7 +519,7 @@ SIMD is a core type in Mojo:
 - all math functions work with SIMD elements
 
 (See also Vectorization: § 20.5.6)
-Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance.
+Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance. They are fast because the vector registers are the fastest kind of memory access at the hardware level. 
 
 Mojo’s SIMD struct type is defined as a struct in the builtin `simd` module and exposes the common SIMD operations in its methods, making the SIMD data type and size values parametric. This allows you to directly map your data to the SIMD vectors adapted to your hardware.
 The SIMD struct is a parametric struct type definition (see § 7.9.1).
@@ -629,13 +629,16 @@ Is this a correct declaration of a SIMD type? Test it.
     [0,0,1,0]
     [0,0,0,1]
 
-Hint: Use a loop: for i in range(4):
+Hint: Use a loop: fori in range(4):
                         pass
 (see `exerc7.3.🔥`)
 
 Other example: see `simd2.mojo`:
 `cast[DType.float32]()`
 	the cast() method is a generic method definition that gets instantiated at compile-time instead of runtime, based on the parameter value. cast is a SIMD specific method.
+
+**The splat and join operations**: see `simd_splat_join.mojo`.
+
 
 ## 7.9.4 How to create a custom parametric type: Array
 Currently (2023 Sep) there is no canonical array type in the stdlib. So let's make one ourselves.

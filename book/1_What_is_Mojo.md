@@ -1,4 +1,6 @@
 # 1 – What is Mojo?
+The best way to describe Mojo is as a "Pythonic system programming language".
+
 Mojo is a new programming language*, with an initial focus on AI applications. Over time, the whole spectrum of general-purpose programming will be covered.
 It is the first language which is completely based on the [MLIR compiler infrastructure](https://mlir.llvm.org/), so it can run on all hardware.
 

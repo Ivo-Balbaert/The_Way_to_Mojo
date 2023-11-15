@@ -1,7 +1,10 @@
 # 4 Basic types
 Mojo's basic types are defined as built-ins, defined in the package `builtin`. They are automatically imported in code. These include Bool, Int, FloatLiteral, StringLiteral, StringRef and String, which we'll discuss in this section. Underneath, they are all defined as a struct (see § ??).
 
-These structs mostly contain so-called *dunder* (__methodname__) methods. Common examples are:
+These structs mostly contain so-called *dunder* (__methodname__) methods. 
+(short for double underscore) `__add__` method. You can think of dunder methods as interface methods to change the runtime behaviour of types, e.g. by implementing `__add__`, we are telling the Mojo compiler, how to add two `U24`s.
+
+Common examples are:
 * the `__init__` method: this acts as a constructor, creating an instance of the struct.
 * the `__del__` method: this acts as a destructor, releasing the occupied memory.
 * the `__eq__` method: to test the equality of two values of the same type.  
@@ -290,6 +293,21 @@ The function random_float64 returns a single random Float64 value within a speci
 The function random_si64 returns a single random Int64 value within a specified range e.g -10 to +10 (see line 5).
 The function random_ui64 returns a single random UInt64 value within a specified range e.g 0 to +10 (see line 6).
 
+The rand function allows for creating a Tensor with random values, see `random2.mojo`:
+```mojo
+from random import rand
+
+
+fn main() raises:
+    let tx = rand[DType.int8](3, 5)
+    print(tx)
+
+
+# =>
+# Tensor([[-128, -95, 65, -11, 8],
+# [-72, -116, 45, 45, 111],
+# [-30, 4, 84, -120, -115]], dtype=int8, shape=3x5)
+```
 
 ## 4.3 The String types
 Mojo has no equivalent of a char type.
@@ -575,6 +593,8 @@ Both None and AnyType are defined as type aliases in the builtin module `type_al
 * NoneType = None: Represents the absence of a value.
 (See also § 11.3 @parameter)
 
+A struct field can also be an alias.
+
 ### 4.4.2 Defining an enum type using alias
 (?? After ch 7 on structs)
 You can create an enum-like structure using the alias declaration, which defines the enum values at compile-time.
@@ -635,3 +655,5 @@ fn matrix_init(rows: Int, cols: Int) raises -> object:
 Objects do have types and can be type-checked.
 
 Usage: They fit into a tiny space (+- 38K), so could be used in WASM and microcontrollers.
+
+Mojo allows you to define custom bitwidth integers (see §  ## 14.6 Custom bitwidth integers )

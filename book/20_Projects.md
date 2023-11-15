@@ -185,6 +185,7 @@ inf  Gflops/s
 For the algorithm: see the article.
 We first write a pure Python implementation, a naive one, and then one using numpy. :
 
+### 20.2.1 - Python and Numpy version
 See `euclid_distance.py`:
 ```mojo
 import time
@@ -237,7 +238,8 @@ print_formatter("python_numpy_dist time (ms):", 1000*secs)
 
 Run it as `python3 euclid_distance.py`.
 
-**Simple Mojo implementation**
+### 20.2.2 - Simple Mojo version
+Go directly to euclid_distance2.mojo
 
 See `euclid_distance.mojo`:
 ```mojo
@@ -247,14 +249,16 @@ from tensor import Tensor
 from math import sqrt
 from time import now
 
+alias dtype = DType.float64
+
 fn main() raises:
     let np = Python.import_module("numpy")
     let n = 10_000_000
     let anp = np.random.rand(n)
     let bnp = np.random.rand(n)
 
-    var a = Tensor[DType.float64](n)
-    var b = Tensor[DType.float64](n)
+    var a = Tensor[dtype](n)
+    var b = Tensor[dtype](n)
 
     for i in range(n):
         a[i] = anp[i].to_float64()
@@ -266,7 +270,7 @@ In Mojo *parameters* represent a compile-time value. In this example we’re tel
 
 Calculation of Euclid distance:
 ```mojo
-def mojo_naive_dist(a: Tensor[DType.float64], b: Tensor[DType.float64]) -> Float64:
+def mojo_naive_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
     s = 0.0
     n = a.num_elements()
     for i in range(n):
@@ -310,7 +314,7 @@ Strict typing and declaring all variables is now enforced.
 
 See `euclid_distance2.mojo`
 ```mojo
-fn mojo_fn_dist(a: Tensor[DType.float64], b: Tensor[DType.float64]) -> Float64:
+fn mojo_fn_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
     var s: Float64 = 0.0
     let n = a.num_elements()
     for i in range(n):
@@ -334,6 +338,72 @@ Results:
 mojo_fn_dist value: 1291.0881564332019
 mojo_fn_dist time (ms): 11.135488
         <-- 33.3 x faster than naive Python implementation
+
+### 20.2.3 - Accelerating Mojo code with vectorization
+Modern CPU cores have dedicated vector register that can perform calculations simultaneously on fixed length vector data. For example an Intel CPU with AVX 512 has 512-bit vector register, therefore we have `512/64=8` Float64 elements on which we can simultaneously perform calculations. This is referred to as `SIMD = Single Instruction Multiple Data`. The theoretical speed up is 8x but in practice it'll be lower due to memory reads/writes latency.
+
+Note: SIMD should not be confused with parallel processing with multiple cores/threads. Each core has dedicated SIMD vector units and we can take advantage of both SIMD and parallel processing to see massive speedup as you'll see in the next §.
+
+First, let's gather the `simd_width` for the specific `dtype` on the specific CPU you'll be running this on.  
+To vectorize our naive `mojo_dist` function, we'll write a closure that is parameterized on `simd_width`. Rather than operate on individual elements, we'll work with `simd_width` number of elements, which gives us speed ups. You can access `simd_width` elements using `simd_load`.
+
+See `euclid_distance3.mojo`
+```mojo
+# Create numpy arrays anp and bnp:
+from python import Python
+from tensor import Tensor
+from math import sqrt
+from time import now
+from sys.info import simdwidthof
+from algorithm import vectorize
+
+alias dtype = DType.float64
+alias simd_width = simdwidthof[dtype]()
+
+fn print_formatter(string: String, value: Float64):
+    print_no_newline(string)
+    print(value)
+
+fn mojo_dist_vectorized(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
+    var sq_dist: Float64 = 0.0
+
+    @parameter
+    fn simd_norm[simd_width: Int](idx: Int):
+        let diff = a.simd_load[simd_width](idx) - b.simd_load[simd_width](idx)
+        sq_dist += (diff * diff).reduce_add()
+
+    vectorize[simd_width, simd_norm](a.num_elements())
+    return sqrt(sq_dist)
+
+
+fn main() raises:
+    print("simdwidth:", simd_width)
+    let np = Python.import_module("numpy")
+    let n = 10_000_000
+    let anp = np.random.rand(n)
+    let bnp = np.random.rand(n)
+
+    var arr1_tensor = Tensor[dtype](n)
+    var arr2_tensor = Tensor[dtype](n)
+
+    for i in range(n):
+        arr1_tensor[i] = anp[i].to_float64()
+        arr2_tensor[i] = bnp[i].to_float64()
+
+    let eval_begin = now()
+    let mojo_arr_vec_sum = mojo_dist_vectorized(arr1_tensor, arr2_tensor)
+    let eval_end = now()
+
+    print_formatter("mojo_vectorized_dist value: ", mojo_arr_vec_sum)
+    print_formatter("mojo_fn_vectorized time (ms): ",Float64((eval_end - eval_begin)) / 1e6)
+
+# simdwidth: 4
+# mojo_vectorized_dist value: 1291.0948987587576
+# mojo_fn_vectorized time (ms): 6.7728580000000003
+```
+
+This is 55x faster than the Python version.
+
 
 
 ## 20.3 - Matrix multiplication (matmul)
@@ -943,7 +1013,7 @@ See Mojo blog:
 * 2023 Aug 28 - https://www.modular.com/blog/how-mojo-gets-a-35-000x-speedup-over-python-part-2
 * 2023 Sep 6 - https://www.modular.com/blog/mojo-a-journey-to-68-000x-speedup-over-python-part-3
 
-Srr mandelbrot.mojo (v 0.5.0)
+See mandelbrot.mojo (v 0.5.0)
 
 mandelbrot0-5.mojo were NOT adapted to >= v 0.5.0 
 
