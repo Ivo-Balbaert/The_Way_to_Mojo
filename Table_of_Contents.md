@@ -198,7 +198,10 @@
 # 15.1 - The parallellize function
 ## 15.1.1 No SIMD example
 ## 15.1.2 With SIMD
-# 15.3 - async/await in Mojo
+# 15.2 - async/await in Mojo
+# 15.3  Parallelization applied to row-wise mean() of a vector
+### 15.3.1 Using a function
+### 15.3.2 Using a custom struct based on Tensor type
 
 # 16 - Vectorization
 # 16.1 - 

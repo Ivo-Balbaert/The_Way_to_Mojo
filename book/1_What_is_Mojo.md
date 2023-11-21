@@ -7,6 +7,8 @@ It is the first language which is completely based on the [MLIR compiler infrast
 It combines the usability of Python with the performance of C++/C and the safety of Rust.
 
 It uses the *Python syntax and semantics* model: it already can run a lot of Python code. It will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
+A superset of Python: in a way like TypeScript is a superset of JavaScript. This is true in the sense that Mojo also ehances Python-like code with types. But Mojo isn't translated to Python, and it provides many more features for performance acceleration than TypeScript.
+
     Why?   
     - Because Python is one of the (if not the) most popular language(s) (2023 Aug: the number one language in the [Tiobe index](https://www.tiobe.com/tiobe-index/), and it was the Tiobe top language in 2020-21).  
     - Because Python is the number one language used in machine learning and AI projects.   

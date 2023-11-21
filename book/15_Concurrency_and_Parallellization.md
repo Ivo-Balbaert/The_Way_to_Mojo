@@ -101,10 +101,11 @@ fn main():
 # Index: 127  =  16129
 ```
 
-## 15.2 - async/await in Mojo
+## 15.2 - Concurrency: async/await in Mojo
 See module builtin.coroutine
 This is very similar to async/await in other languages: coroutines execute sequentially within one thread with async/await coordination. When execution is fast enough, this gives the impression of parallellization.
 
+?? good example
 
 ## 15.3 - Parallelization applied to row-wise mean() of a vector
 ### 15.3.1 Using a function
