@@ -461,7 +461,7 @@ Trying to change a variable's type as in the code above leads to a compiler erro
 ```
 UInt8 is an unsigned, 1 byte integer value.
 
-Finally, here is a naming convention:  
+Finally, here is a naming convention, following Python's example:  
 * variable and function names start with a lowercase letter, with words separated by underscores as necessary to improve readability (example: lucky_number).
 * types (like `Int`) start with an uppercase letter, and follow PascalCase style (example: IntPair).
 
