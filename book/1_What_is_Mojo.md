@@ -1,8 +1,13 @@
 # 1 – What is Mojo?
 The best way to describe Mojo is as a "Pythonic system programming language".
 
-Mojo is a new programming language*, with an initial focus on AI applications. Over time, the whole spectrum of general-purpose programming will be covered.
-It is the first language which is completely based on the [MLIR compiler infrastructure](https://mlir.llvm.org/), so it can run on all hardware.
+Mojo is a new programming language* (not an experimental or research project), with an initial focus on AI applications. Over time, the whole spectrum of general-purpose programming will be covered.
+
+" Mojo is grounded on a great idea: a static, safe language with strong dynamic capacities and seamless integration with Python. "
+
+It is the first language which is completely based on the [MLIR compiler infrastructure](https://mlir.llvm.org/), so it can run on all hardware (see image 9' 2023 LLVM talk).
+
+First the MLIR compiler was built. Then Python was chosen as the syntax, because Python is ubiquitous in AI and general software (Python in the no 1 programming language in the TIOBE index).
 
 It combines the usability of Python with the performance of C++/C and the safety of Rust.
 
@@ -30,7 +35,19 @@ MLIR removes the necessity to use CUDA at the lowest level. This compatibility a
 
 This will lead to accelerated development and production-use of AI technologies.
 
-## 1.2 Targets and Characteristics of the language
+## 1.2 The super powers of Mojo
+At the bottom: MLIR
+At the top: Compile time metaprogramming: like what Python does, except that Python has to do it at runtime.
+
+*Design of the language*
+Push language design into libraries.
+Advantages:
+    * the language can be extended without changing the compiler
+    * this reduces the engineering effort
+    * it enables Mojo to talk to all weird hardware
+    * when open-sourced, all developers can extend the language
+
+
 *Mojo is F(ast), - S(calable), A(ccelerated)*.  
 
 Mojo combines the parts of Python that researchers love with the systems programming features that require the use of C, C++ and CUDA
@@ -47,7 +64,7 @@ By progressively using types in code, performance can be enhanced.
 - Tiling optimization: Mojo includes a built-in tiling optimization tool that effectively caches and reuses data, which helps optimize performance by using memory located near each other at a given time and reusing it. 
 (Mojo has a built-in tiling optimization tool that improves cache locality and memory access patterns by dividing computations into smaller tiles that fit into fast cache memory.) 
 
-- Parallel computing: 
+- Parallel and concurrent (asynchronous) computing: 
 Python has the GIL (Global Interpreter Lock) limitation: even if your app is multithreaded, Python can only execute one thread (so use one of you machine's cores) at a time.
 Mojo introduces inbuilt parallelization, enabling multithreaded code execution, which can increase execution speed by 2,000x. It simplifies writing of efficient, parallel code through automatic parallelization across multiple hardware backends, without requiring low-level parallelization knowledge.
 
@@ -144,3 +161,8 @@ Here are the killer features of Mojo:
     The `autotune` module in Mojo offers interfaces for adaptive compilation. It helps you find the best parameters for your target hardware by automatically tuning your code.
 
 Mojo is also better to tackle climate-change: a Mojo program uses only 10% of the energy usage of an equivalent Python program.
+
+- Interpreted and compiled
+- Static and dynamic, strong / weak:
+    http://legi.grenoble-inp.fr/people/Pierre.Augier/mojo-the-point-of-view-of-a-researcher-using-python.html#tiobe
+

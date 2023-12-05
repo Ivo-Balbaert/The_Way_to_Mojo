@@ -240,6 +240,8 @@ fn main():
 ```
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
+Developers in Mojo have precise control over the lifetime behavior of defined types by choosing to implement or omit “dunder” methods. Initialization is managed using __init__ , copying is controlled with __copyinit__ (“deep copy”), and “move” operations (“shallow copy”) are handled through __movecopy__ .
+
 Mojo uses *value semantics* by default, meaning that in a statement like `let b = a` we expect to create a copy of `a` when assigning to `b`. However, Mojo doesn't make any assumptions about *how* to copy the value of a. In the above program when typing `let b = square`, we get the `error: value of type 'Rectangle' cannot be copied into its destination`. 
 The error indicates that Mojo doesn't know how to copy a Rectangle struct, and that we must implement a `__copyinit__` method, which would implement the copying logic.
 
@@ -487,9 +489,10 @@ __del__ has as signature:
 One of the great characteristics of Python is that you can change code at runtime, so-called *run-time metaprogramming*. This can do some amazing things, but it comes at a great performance cost.  
 The modern trend in programming languages is toward statically compiled languages, with *metaprogramming done at compile-time*! Think about Rust macros, Swift, Zig and Jai. Mojo as a compiled language fully embraces *compile-time metaprogramming*, built into the compiler as a separate stage of compilation - after parsing, semantic analysis, and IR generation, but before lowering to target-specific code. To do this, the same Mojo language is used for metaprograms as for runtime programs, and it also leverages MLIR. This is because Modular’s work in AI needs high-performance machine learning kernels, and accelerators, and high abstraction capabilities provided by advanced metaprogramming systems.  
 Currently the following techniques are used with metaprogramming:  
-1) Parametric types in structs and functions (see § 7.9.1)
-2) Overloading on parameters (see `overloading_params.mojo`)
-
+1) Parametric types in structs and functions  with compile-time arguments (called parameters in Mojo)(see § 7.9.1)
+2) Running arbitrary Mojo code (at compile-time) to set parameter values  (alias)
+3) Using conditions based on parameter values. (@parameter if)
+4) Overloading on parameters (see `overloading_params.mojo`)
 
 ## 7.9.1 Parametric types in structs and functions
 A **parametric* (generic) struct or function where you can indicate your own type is a very useful concept. It allows you to write flexible code, that can be reused in many situations.

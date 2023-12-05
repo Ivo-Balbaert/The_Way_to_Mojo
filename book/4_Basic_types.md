@@ -374,7 +374,7 @@ The length of a string is given by the __len__ method or len() function.
 So, if you have a StringLiteral object, you can call data() on it to get a pointer to its underlying data. This could be useful if you need to pass the string data to a function that requires a pointer, or if you want to perform low-level operations on the string data.
 
 ### 4.3.2 The String type
-The `String` type represents a mutable string. The `string` module contains basic methods for working with strings. Mojo uses UTF-8 encoding to store strings. The length len corresponds to the number of bytes, not number of characters.
+The `String` type represents a mutable string. Declare an immutable string with let. The `string` module contains basic methods for working with strings. Mojo uses UTF-8 encoding to store strings. The length len corresponds to the number of bytes, not number of characters.
 The string value is heap-allocated, but the String itself is actually a pointer to the heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture ??)
 
 ```mojo
@@ -545,7 +545,7 @@ Appending: Returns a new string by copying memory (see line 6).
 The join function has a similar syntax to Python's join. You can join elements using the current string as a delimiter (see line 7).
 You can also use it to join elements of a StaticIntTuple (line 8).
 
-`atoi`: The term comes from the C stdlib for ASCII to long-integer, it converts a string to an Int (currently just works with base-10 / decimal).
+`atol`: The term comes from the C stdlib for ASCII to long-integer, it converts a string to an Int (currently just works with base-10 / decimal).
 
 Use `chr` to convert an integer between 0 and 255 to a string containing the single character. ord stands for ordinal which means the position of the character in ASCII. Only 1 byte utf8 (ASCII) characters currently work, anything outside will currently wrap (see line 9).
 
@@ -569,10 +569,10 @@ See `alias1.mojo`:
 alias fl = Float32   # 1
 alias Float16 = SIMD[DType.float16, 1]
 
-alias PI = 3.141592653589793    # 1B
-alias SOLAR_MASS = 4 * PI * PI
-alias DAYS_PER_YEAR = 365.24
 alias MAX_ITERS = 200
+alias DAYS_PER_YEAR = 365.24
+alias PI = 3.141592653589793    # 1B
+alias TAU = 2 * PI
     
 fn main():
     alias MojoArr2 = DTypePointer[DType.float32] 
@@ -621,7 +621,7 @@ See also § 6.8
 
 
 ## 4.5 The object type
-`object` is defined in module `object` in the `builtin` package, so it is not a Python object.
+`object` is defined in module `object` in the `builtin` package, so it is not a Python object.  
 It is used to represent untyped values. This is the type of arguments in def functions that do not have a type annotation, such as the type of x in `def f(x): pass`. A value of any type can be passed in as the x argument in that case.
 
 Here is an example of creating an object:
@@ -639,6 +639,25 @@ fn main() raises:
     print_object(obj)   # => [123, 'hello world']
 ```
 
+An object acts like a Python reference.
+
+See `object2.mojo`:
+```mojo
+def modify(a):
+    # argument given by copy in Mojo `def` but one can modify the referenced list
+    a[0] = 1
+
+def main():
+    a = object([0])
+    b = a  # <- the reference is copied but not the pointed list
+
+    print(a)  # prints [0]
+    modify(a)
+    print(a)  # prints [1]
+    print(b)  # prints [1]
+```
+
+This is pure Mojo code that does not use the Python interpreter. 
 
 `matmul1.mojo` in § 20. shows an example of its use.
 The following function shows how an object can be initialized and its attributes defined:

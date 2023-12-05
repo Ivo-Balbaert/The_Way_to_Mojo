@@ -12,6 +12,9 @@ See:
 - https://www.modular.com/blog/mojo-llvm-2023
 
 *Direct access to MLIR*
+* Mojo is the programming language built on top of MLIR.
+* Mojo is syntax sugar for MLIR
+In this sense, MLIR is "Mojo Language Intermediate Representation".
 Mojo provides the programmer access to all of the low-level primitives that you need to write powerful -- yet zero-cost -- abstractions. These primitives are implemented in [MLIR](https://mlir.llvm.org), an extensible intermediate representation (IR) format for compiler design. Many different programming languages and compilers translate their source programs into MLIR, and because Mojo provides direct access to MLIR features, this means Mojo programs can enjoy the benefits of each of these tools.
 
 Mojo provides full access to the MLIR dialects and ecosystem. Please take a look at the Low level IR in Mojo notebook how to use the __mlir_type, __mlir_op, and __mlir_type constructs. All of the built-in and standard library APIs are implemented by just calling the underlying MLIR constructs, and in doing so, Mojo effectively serves as syntax sugar on top of MLIR.
@@ -21,6 +24,8 @@ Most Mojo programmers will not need to access MLIR directly, and for the few tha
 Mojo programs can take full advantage of *anything* that interfaces with MLIR. While this isn't something normal Mojo programmers may ever need to do, it's an extremely powerful capability when extending a system to interface with a new datatype, or an esoteric new accelerator feature.
 
 MLIR is further sub-categorized into many different ‘dialects’, e.g. `arith` dialect for compiler operations related to arithmetic. Mojo’s `Int` type is a wrapper around the `index` dialect.
+
+Mojo only uses the LLVM and index dialect (video 2023 LLVM Mtg 34')
 
 ## 14.1 What is MLIR?
 

@@ -20,6 +20,12 @@ By default, Mojo code is AOT (Ahead Of Time) compiled.
 But Mojo can also be interpreted for metaprogramming, or JIT-compiled, as in the Mojo Playground (see ??) or the Mojo REPL.
 If the Mojo app contains dynamic (Python) code, this is executed by running the dynamic code at compile time with an embedded CPython interpreter. This mechanism also makes possible compile-time meta-programming.
 
+Structure of compiler: video 2023 LLVM Dev Mtg - 21' / 24'
+    compiler pipeline, Elaborator
+OrcJit is used for Just in Time compilation, but also for generating static archive .a file. The system linker then transforms this into an executable file.
+
+
+
 **Runtime**
 - needed to call the CPython interpreter, and call with the Mojo compiler ??
 - a built-in GC to clean up Python objects, based on reference counting

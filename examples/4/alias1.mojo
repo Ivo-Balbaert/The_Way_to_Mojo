@@ -1,10 +1,11 @@
 alias fl = Float32   # 1
 alias Float16 = SIMD[DType.float16, 1]
 
-alias PI = 3.141592653589793    # 1B
-alias SOLAR_MASS = 4 * PI * PI
-alias DAYS_PER_YEAR = 365.24
 alias MAX_ITERS = 200
+alias DAYS_PER_YEAR = 365.24
+alias PI = 3.141592653589793    # 1B
+alias TAU = 2 * PI
+
     
 fn main():
     alias MojoArr2 = DTypePointer[DType.float32] 

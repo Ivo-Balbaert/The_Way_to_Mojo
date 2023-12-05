@@ -3,6 +3,8 @@
 A key trick in Mojo is that you can opt in at any time to a faster 'mode' as a developer, by using `fn` instead of `def` to create your function. In this mode, you have to declare exactly what the type of every variable is, and as a result Mojo can create optimized machine code to implement your function.
 
 ## 6.1 Difference between fn and def
+Unlike Python, Mojo utilizes two keywords ( def and fn ) for defining functions. It’s crucial to grasp that both keywords define the same function objects. It is not at all “ def for Python-like functions and fn for static functions”. The difference in keywords is only about default argument passing mechanics and strictness in terms of variable declaration. By default, arguments are copied for def and borrowed (immutable reference) for fn . With fn , explicit specification of argument types, parameters, and the return value is mandatory. Conversely, for def , the default argument type is object, representing a particular Mojo type designed for dynamic code.
+
 `def` is defined by necessity to be very dynamic, flexible and generally compatible with Python: arguments are mutable, local variables are implicitly declared on first use, and scoping isn’t enforced. This is great for high level programming and scripting, but is not always great for systems programming.  
 To complement this, Mojo provides an `fn` declaration which is like a "strict mode" for def.
 
@@ -109,6 +111,11 @@ fn main():
 ```
 
 ## 6.4 Argument passing: control and memory ownership
+There are three keywords to modify how arguments are passed to functions:
+
+borrowed : immutable reference, which is the default
+inout : mutable reference,
+owned : object given to the function, used with a deference operator ^ at the function call.
 
 ### 6.4.1 General rules for def and fn arguments
 * All values passed into a `Python def` function use *reference semantics*. This means the function can modify mutable objects passed into it and those changes are visible outside the function. 
@@ -386,7 +393,12 @@ Example: parallelize[func: fn(Int) capturing -> None]()
 `fn(Int) capturing -> None` is the function type.
 
 ## 6.8 Running a function at compile-time and run-time
-Mojo has two ‘spaces’, the ‘parameter’ space (which operates during compile time and the ‘value’ space (which operates during run time). Mojo functions can do computations in both spaces, the `[]` accepts arguments for the ‘parameter’ space, and `()` accepts arguments for the ‘value’ space .
+There are two times of execution: compile-time and runtime.
+Mojo has two ‘spaces’, the ‘parameter’ space (which operates during compile time and the ‘value’ space (which operates during run time). Mojo functions can do computations in both spaces, the `[]` accepts arguments for the ‘parameter’ space, and `()` accepts arguments for the ‘value’ space:
+```mojo
+fn bar[a: Int](b: Int):
+    print("bar[a: Int](b: Int)")
+```
 
 By using alias for the return variable, you can run a function at compile-time:
 

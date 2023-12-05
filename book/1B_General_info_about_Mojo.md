@@ -69,6 +69,7 @@ Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native suppo
 * 2023 Oct 5:  Mojo v 0.4.0 (default parameters for structs and functions - file I/O)
 * 2023 Oct 19: Mojo v 0.4.0 for Mac (support for Mac (Apple silicon))
 * 2023 Nov 2:  Mojo v 0.5.0 and the Modular CLI 💻  v0.2.2
+* 2023 Dec 4:  Mojo v 0.6.0 was announced/published during the 1st MODCON conference. Also MAX was introduced, and partnerships with AWS, replit, and NVidia.
 
 Goals / Roadmap:
 * 2023 Dec: Modcon: debugger
@@ -95,6 +96,9 @@ GH = GitHub
 2023 Sep: more than 120K+ developers have signed up to use the Mojo Playground and 19K+ developers actively discuss Mojo on Discord and GitHub.
 * See image mojo-eco.png
 
+TIOBE-index:
+First time registered: Nov 2023: position 184.
+
 [Tiobe-index](https://www.tiobe.com/tiobe-index/)
 * 2023 Nov: 1st rating of Mojo, starting at position  .
 
@@ -105,6 +109,7 @@ The company *Modular* is funded by VC (Venture Capital).
 
 
 ## 1B.6 Some one-liners
+* Mojo🔥: The Language of AI
 * Python++
 * Mojo was created to integrate Python’s usability with C’s performance
 * Mojo is as simple as Python and as fast as Rust.

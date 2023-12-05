@@ -241,8 +241,7 @@ fn main():
 (?? Why is "Integer" not printed out? What is rebind?)
 
 
-## 11.4 - @parameter 
-**Using @parameter in a function**
+## 11.4 - @parameter runs a function at compile-time
 See `parameter2.mojo`:
 ```mojo
 fn add_print[a: Int, b: Int](): 
@@ -303,7 +302,7 @@ The zero method is called as:  Vec3f.zero()
 ## 11.6 - @always_inline
 Normally the compiler will do inlining automatically where it improves performance.
 But you can force this behavior with @always_inline:
-This decorator forces the compiler to always inline the decorated function, directly into the body of the calling function for the final binary.  
+This decorator forces the compiler to always inline the decorated function, directly into the body of the calling function for the final binary, avoiding function call overhead.  
 
 This improves the runtime performance by reducing function call overhead (eliminates jumping to a new point in code). The downside is that it can increase the binary size for the duplicated functions.
 

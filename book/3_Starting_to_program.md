@@ -438,7 +438,50 @@ fn main():
     print(str)  # => Hello from Mojo!
 ```
 
+The current design of Mojo does not support the use of global variables inside functions, except for main (tes() works) ?? see https://github.com/modularml/mojo/discussions/448)
+
 Also alias is heavily used at the global level (see § 4.4).
+
+Mojo variables are much more like C variables than like Python variables: a name in Mojo is attached to an object.
+
+See `variable_addresses.mojo`:
+```mojo
+from memory.unsafe import Pointer
+
+def print_pointer(ptr: Pointer):
+    print(ptr.__as_index())
+
+def main():
+    a = 1
+    p1 = Pointer.address_of(a)  # => 140726871503576
+    print_pointer(p1)
+
+    a = 2
+    p2 = Pointer.address_of(a)
+    print_pointer(p2)           # => 140726871503576
+```
+This means that there is only one integer variable a, which has been modified in-place with the statement a = 2 . In contrast, the equivalent Python code, something like:
+
+```python
+a = 1
+print(id(a)) # => 140163769254128
+a = 2
+print(id(a)) # => 140163769254160
+```
+
+such that id(2) - id(1) is 32. The name (the reference) a first points towards the int object 1 . The statement a = 2 modifies the reference and not the integer object.
+
+In Python, references are everywhere (the names are references, elements in a list/tuple are references, function arguments are passed as references). It does not work like that with Mojo, which has strong consequences. For example, in Python a = "py"; b = a creates two references pointing towards one object ( "py" ). In contrast, a = "mojo"; b = a creates two different objects at two different locations in the memory so that:
+
+```mojo
+    b = "mojo"
+    p = Pointer.address_of(b) # => 140722059283008
+    print_pointer(p)
+
+    c = b  # <- this copies the String object "mojo"
+    p = Pointer.address_of(c) # => 140722059283024
+    print_pointer(p)
+```
 
 ## 3.5  Typing in Mojo
 Mojo has so-called *progressive typing*: adding more types leads to better performance and error checking, the code becomes safer and more reliable.

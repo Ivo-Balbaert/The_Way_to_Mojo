@@ -4,6 +4,15 @@ Mojo allows us to leverage the huge Python ecosystem of libraries and tools.
 You can use Python for what it's good at, especially graph plotting and GUIs and for things that do not yet exist or are more difficult to rewrite in Mojo.
 That way, a Python project can be gradually migrated to Mojo.
 
+Mojo aims to vastly improve the experience of writing a performant library, so you don't need to write C/C++ underneath Python for performance and hardware optimizations.
+
+Calling Mojo from Python: still has to be built. (The common Python dev won't be excited by Mojo until they start getting libraries that are much more performant than what they're used to, with code they can actually step into and understand).
+
+The more that Python wins, the more that Mojo wins. And a bigger audience for Mojo will also grow the Python community, because they will be first class citizens to the fastest libraries in the world. It's a **symbiotic relationship**.
+
+There are some common builtin functions ( print , len , range , slice , …) and the syntax is largely compatible (imports, indexing, slicing, loops, function def, contexts, try/except, async/await, even struct definition with dunder methods, …)
+
+
 - Start by comparing Notebook code with standard Mojo code in .mojo:
 ```
 %%python

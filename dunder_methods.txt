@@ -22,7 +22,7 @@ __ior__		|=
 
 r - methods
 
-__getitem__	a[i]
+__getitem__	enables indexing on an object: a[i]
 __setitem__	a[i] = val
 
 __call__	()
