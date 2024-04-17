@@ -9,7 +9,7 @@ fn main():
     print(report.mean())   # => 0.010147911948148149
     report.print()
     print("")
-    report.print[Unit.ms]()
+    report.print(Unit.ms)
 
 # ---------------------
 # Benchmark Report (s)

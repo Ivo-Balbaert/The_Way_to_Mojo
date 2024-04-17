@@ -43,5 +43,5 @@ fn main():
     # => [5, 5, 5, 5, 5, 5, 5, 5]
     z = x.aligned_stack_allocation[8]()
 
-    from sys.intrinsics import PrefetchOptions
-    x.prefetch[PrefetchOptions().for_read().high_locality()](0)
+    # from sys.intrinsics import PrefetchOptions
+    # x.prefetch[PrefetchOptions().for_read().high_locality()](0)

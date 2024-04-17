@@ -822,6 +822,8 @@ Running this version gives:
 The choice of the tile factor can greatly impact the performace of the full matmul, but the optimal tile factor is highly hardware-dependent, and is influenced by the cache configuration and other hard-to-model effects. We want to write portable code without having to know everything about the hardware, so we can ask Mojo to automatically select the best tile factor using autotuning.
 This will generate multiple candidates for the matmul function. To teach Mojo how to find the best tile factor, we provide an evaluator function Mojo can use to assess each candidate.
 
+
+==> !! v 0.7: autotuning is being redesigned !!
 STEPS:  
 1- Import the autotune function from Mojo stdlib
 2- Replace the matmul_tiled_unrolled_parallelized function by `matmul_autotune_impl`
@@ -1281,7 +1283,7 @@ On my system, this achieves a small speedup, to 1.5 ms.
 
 There is a notebook `RayTracing.ipynb` and a doc section: https://docs.modular.com/mojo/notebooks/RayTracing.html.
 
-The code is assembled in `ray_tracing.mojo`.
+The code is assembled in `ray_tracing.mojo`. <-- code doesn't work anymore, see removed from test>
 (Problem step 6/ background.png is een geldig bestandsformat - Paint
 background.png is ok 
 - v 0.4.0 - only black background?)

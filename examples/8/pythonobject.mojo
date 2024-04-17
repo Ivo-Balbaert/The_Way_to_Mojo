@@ -13,6 +13,6 @@ fn main() raises:
     # s1 is a Python `str` object
 
     # Translate Python str to Mojo String
-    let s2 : String = s1.to_string()
+    let s2 : String = s1.__str__()
     print(s2) # => xxbaaa
     # does NOT work for int with to_int(), float with to_float()

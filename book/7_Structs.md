@@ -111,7 +111,7 @@ Add the following line just after instantiating the struct:
 What do you see?
 This returns a compile time error: invalid call to '__lt__': right side cannot be converted from 'Int' to 'IntPair'.
 
-See also `planets.mojo`.
+See also `planets.mojo`.( crashes since 0.6.1, see removed_from_test)
 Here is another style of writing the __init__ method:
 From `nbody.mojo`:
 ```mojo
@@ -653,7 +653,7 @@ Line 3 shows how to construct the array:
 
 See `parametric_array.mojo`:
 ```mojo
-struct Array[T: AnyType]:                           # 1
+struct Array[T: AnyRegType]:                           # 1
     var data: Pointer[T]
     var size: Int
     var cap: Int

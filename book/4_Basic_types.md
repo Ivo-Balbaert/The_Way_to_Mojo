@@ -148,7 +148,7 @@ A small handy detail about spelling: _ can separate thousands:  `10_000_000`
 
 All numeric types are derived from a SIMD type for performance reasons (see § 7.9.3).
 
-Integers can also be used as indexes, as shown in the following example. Here the parametrized type DynamicVector (from module utils.vector) takes Int as the parameter type of its elements:
+Integers can also be used as indexes, as shown in the following example. Here the parametrized type DynamicVector (from module collections.vector) takes Int as the parameter type of its elements:
 
 See `integers.mojo`:
 ```mojo
@@ -172,6 +172,9 @@ Conversions in Mojo are performed by using the constructor as a conversion funct
 We see that a conversion from a 64 bit FloatLiteral to a Float32 works, but already looses some precision.
 As shown above conversion from an Int to Float works. Conversion from FloatLiteral to an Int is done with: `FloatLiteral.to_int`.
 
+
+!! warning: if statement with constant condition 'if True'
+    if 1.0: !!
 See `floats.mojo`:
 ```mojo
 fn main():
@@ -312,6 +315,11 @@ fn main() raises:
 ## 4.3 The String types
 Mojo has no equivalent of a char type.
 
+In short:
+* StringLiteral compile time known, static lifetime, immutable. 
+* String owns the underlying buffer, backed by DynamicVector hence mutable, 0 terminated.  
+* StringRef does not own underlying buffer, is immutable, not 0 terminated. 
+
 ### 4.3.1 The StringLiteral type
 It has a `StringLiteral` type, which is built-in. In `strings.mojo` a value of that type is made in line 1. (Guess the error when you try to give it the value 20 and test it out.)  
 It is written directly into the data segment of the binary. When the program starts, it's loaded into read-only memory, which means it's constant and lives for the duration of the program.
@@ -374,7 +382,7 @@ The length of a string is given by the __len__ method or len() function.
 So, if you have a StringLiteral object, you can call data() on it to get a pointer to its underlying data. This could be useful if you need to pass the string data to a function that requires a pointer, or if you want to perform low-level operations on the string data.
 
 ### 4.3.2 The String type
-The `String` type represents a mutable string. Declare an immutable string with let. The `string` module contains basic methods for working with strings. Mojo uses UTF-8 encoding to store strings. The length len corresponds to the number of bytes, not number of characters.
+The `String` type represents an immutable string. Declare an immutable string with let. The `string` module contains basic methods for working with strings. Mojo uses UTF-8 encoding to store strings. The length len corresponds to the number of bytes, not number of characters.
 The string value is heap-allocated, but the String itself is actually a pointer to the heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture ??)
 
 ```mojo
@@ -386,6 +394,7 @@ The string value is heap-allocated, but the String itself is actually a pointer 
     print(s[0])         # 4 => M
     print(ord(s[0]))    # => 77
     print(String("hello world")[0]) # => h
+    # s[0] = "a" # error: expression must be mutable in assignment
 ```
 
 One way to make a String is to convert a StringLiteral value with `String(value)`, as in line 3.  
@@ -398,34 +407,34 @@ To display it, print(vec) doesn't work. To do that, we can use a `StringRef` to 
 
 ```mojo
     # building a string with a DynamicVector:
-    from utils.vector import DynamicVector
+    from collections.vector import DynamicVector
     var vec = DynamicVector[Int8](2)    # 5
     vec.push_back(78)
     vec.push_back(79)
 
-    from memory.unsafe import DTypePointer
-    # 6:
-    let vec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
-    print(vec_str_ref) # 7 => NO
-```
+#     from memory.unsafe import DTypePointer
+#     # 6:
+#     let vec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
+#     print(vec_str_ref) # 7 => NO
+# ```
 
 Because it points to the same location in heap memory, changing the original vector will also change the value retrieved by the reference:
 
 ```mojo
-    vec[1] = 78
-    print(vec_str_ref)  # 8 => NN
+    # vec[1] = 78
+    # print(vec_str_ref)  # 8 => NN
 ```
 
 In line (9) we make a deep copy `vec_str` of the string. Having made a copy of the data to a new location in heap memory, we can now modify the original and it won't effect our copy (see line 10):
 
 ```mojo
-    let vec_str = String(vec_str_ref)  # 9
-    print(vec_str)      # => NN
+    # let vec_str = String(vec_str_ref)  # 9
+    # print(vec_str)      # => NN
 
-    vec[0] = 65
-    vec[1] = 65
-    print(vec_str_ref)  # => AA
-    print(vec_str)      # 10 => NN
+    # vec[0] = 65
+    # vec[1] = 65
+    # print(vec_str_ref)  # => AA
+    # print(vec_str)      # 10 => NN
 ```
 
 ### 4.3.3 The StringRef type
@@ -588,12 +597,16 @@ Line 1B shows that an alias constant is often capitalized.
 Line 2 and following work, because alias is also a way to define a compile-time temporary value,  just like var and let define resp. a runtime variable and constant. alias is kind of a let at comptime. You can also make a user-defined type with it (see § 1B). All occurences of the alias name get substituted with the value at comptime, so it has a bit of a performance benifit. This is ideal to set parameter values of the problem at hand.
 So line 3 is changed at compile time to `for i in range(MAX_ITERS):`.
 
-Both None and AnyType are defined as type aliases in the builtin module `type_aliases`. 
-* AnyType: Represents any Mojo data type
+Both None and AnyType are defined as type aliases in the builtin module `type_aliases` as metatypes:
+* AnyType: Represents any Mojo data type, includes all Mojo types.
+* AnyRegType: a metatype representing any register-passable type.
 * NoneType = None: Represents the absence of a value.
 (See also § 11.3 @parameter)
 
 A struct field can also be an alias.
+
+>Note: use alias in order to use the ord function efficently, example:  
+`alias QUOTE = ord('"')`
 
 ### 4.4.2 Defining an enum type using alias
 (?? After ch 7 on structs)

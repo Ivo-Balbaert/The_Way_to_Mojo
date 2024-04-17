@@ -1,23 +1,25 @@
 # 1 – What is Mojo?
 The best way to describe Mojo is as a "Pythonic system programming language".
+Mojo is focused on optimizing code for performance.
 
-Mojo is a new programming language* (not an experimental or research project), with an initial focus on AI applications. Over time, the whole spectrum of general-purpose programming will be covered.
+Mojo is a new programming language* (not an experimental or research project), with an initial focus on AI applications (spearheaded by the company Modular). Over time, the whole spectrum of general-purpose programming will be covered (largely by the community).
+
+Why?   
+    - Because Python is the most popular language (2023 Aug: the number one language in the [Tiobe index](https://www.tiobe.com/tiobe-index/), and it was the Tiobe top language in 2020-21).  
+    - Because Python is the number one language used in machine learning and AI projects.   
+This makes it easy for Python-savvy developers to learn and use it almost immediately.
+
 
 " Mojo is grounded on a great idea: a static, safe language with strong dynamic capacities and seamless integration with Python. "
 
 It is the first language which is completely based on the [MLIR compiler infrastructure](https://mlir.llvm.org/), so it can run on all hardware (see image 9' 2023 LLVM talk).
 
-First the MLIR compiler was built. Then Python was chosen as the syntax, because Python is ubiquitous in AI and general software (Python in the no 1 programming language in the TIOBE index).
+First the MLIR compiler was built. Then Python was chosen as the syntax, because Python is ubiquitous in AI and general software (Python in the no 1 programming language in the TIOBE index since ...).
 
 It combines the usability of Python with the performance of C++/C and the safety of Rust.
 
-It uses the *Python syntax and semantics* model: it already can run a lot of Python code. It will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
-A superset of Python: in a way like TypeScript is a superset of JavaScript. This is true in the sense that Mojo also ehances Python-like code with types. But Mojo isn't translated to Python, and it provides many more features for performance acceleration than TypeScript.
-
-    Why?   
-    - Because Python is one of the (if not the) most popular language(s) (2023 Aug: the number one language in the [Tiobe index](https://www.tiobe.com/tiobe-index/), and it was the Tiobe top language in 2020-21).  
-    - Because Python is the number one language used in machine learning and AI projects.   
-This makes it easy for Python-savvy developers to learn and use it almost immediately.
+It largely uses the *Python syntax and semantics* model: it already can run a lot of Python code. It will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
+A superset of Python: in a way like TypeScript is a superset of JavaScript. This is true in the sense that Mojo also enhances Python-like code with types. But Mojo isn't translated to Python, and it provides many more features for performance acceleration than TypeScript.
 
 
 ## 1.1 Write everything in one language
@@ -32,6 +34,8 @@ Mojo is created to solve this problem:
 * It has the performance and system programming capabilities of a low-level language like C++ or Rust.
 * Mojo is built on top of next-generation compiler technologies. By taking advantage of MLIR, Mojo code can access a variety of AI-tuned hardware features, such as TensorCores and AMX extensions. 
 MLIR removes the necessity to use CUDA at the lowest level. This compatibility allows the same code to be compiled for different devices *without modifications*.
+
+Mojo combines the parts of Python that researchers love with the systems programming features that require the use of C, C++ and CUDA
 
 This will lead to accelerated development and production-use of AI technologies.
 
@@ -50,7 +54,6 @@ Advantages:
 
 *Mojo is F(ast), - S(calable), A(ccelerated)*.  
 
-Mojo combines the parts of Python that researchers love with the systems programming features that require the use of C, C++ and CUDA
 
 Let's analyze each of these characteristics.
 
@@ -72,8 +75,6 @@ Mojo introduces inbuilt parallelization, enabling multithreaded code execution, 
 
 It also offers control over memory storage: struct field values are inline-allocated values.
 
-- Mojo also doesn't suffer from Python's GIL (Global Interpreter Lock), so it can put to use multiple threads and concurrency much better.
-
 **Benchmarks**
 - Early benchmark comparisons show that Mojo has the performance level of C/C++ (or faster) and Rust:
 ![benchmark comparisons](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/performance.png) 
@@ -82,12 +83,11 @@ See also: [2023-10-11 - MOJO DOES GIVE SUPERPOWERS](https://github.com/StijnWoes
 [Bioinformatics - 2023-10-13](https://medium.com/@traincheck/mojomics-supercharging-bioinformaticians-with-460030ae5b3d)
 https://github.com/ego/awesome-mojo
 
-
 It easily beats Python performance with 4 orders of magnitude.
 It uses the whole range of possibilities offered by modern compiler optimizations, including automatic parallel processing across multiple cores. This is nicely illustrated in the section starting at 33:08 by Jeremy Howard of the [Keynote speech](https://www.youtube.com/watch?v=-3Kf2ZZU-dg) which announced Mojo to the world.
 
 ### 1.2.2 A Scalable language
-Mojo offers native support for multiple hardware backends: Mojo allows for utilization of CPUs, GPUs, TPUs, and custom ASICs, catering to the strengths of each hardware type.
+Mojo offers native support for multiple hardware backends: it allows for utilization of CPUs, GPUs, TPUs, and custom ASICs, catering to the strengths of each hardware type.
 Starting with writing code like Python, you can scale all the way down to the metal and enabling you to program the multitude of low-level AI hardware, thanks to Mojo's MLIR foundation. Because of its LLVM fundament, it targets a wide diversity of OS platforms. MLIR itself has great adaptability to new kinds of hardware stacks and allows Mojo to scale to new exotic hardware types and domains.
 
 Conclusion: Mojo can run almost everywhere.
@@ -143,6 +143,7 @@ The Mojo runtime also has a built-in GC to clean up Python objects, based on ref
 It is on the roadmap.  Currently, you can use Python's C++ interop libraries like ctypes (https://docs.python.org/3/library/ctypes.html) or Cython (https://cython.org/) to call your C++ code from Python, and then use Mojo's Python integration to work with the results.
 
 ## 1.5 Summary 
+
 Here are the killer features of Mojo: 
 0- progressive/static typing: Leverage types for better performance and error checking.
 1- fast compilation  

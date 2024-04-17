@@ -1,7 +1,7 @@
 from memory import memset_zero
 
 
-struct Array[T: AnyType]:
+struct Array[T: AnyRegType]:
     var data: Pointer[T]
     var size: Int
     var cap: Int

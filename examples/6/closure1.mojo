@@ -1,9 +1,7 @@
-# fn outer(f: fn() capturing -> None):   # 2
 fn outer(f: fn() -> None):   # 2B
-    f()                                # 3
+    f()                      # 3
 
 fn call_it():
-    @noncapturing           # 3B
     fn inner():             # 1
         print("inner")
 

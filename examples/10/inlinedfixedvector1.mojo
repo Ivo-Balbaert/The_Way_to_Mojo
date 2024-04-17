@@ -1,4 +1,4 @@
-from utils.vector import InlinedFixedVector
+from collections.vector import InlinedFixedVector
 
 fn main():
     var vec = InlinedFixedVector[Int, 4](8)  # 1
@@ -20,19 +20,7 @@ fn main():
     vec[6] = 10
     print(len(vec))     # => 2
 
-    var vec2 = UnsafeFixedVector[Int](8) # 3
-    vec2.append(10)
-    vec2.append(20)
-    print(len(vec))   # => 2
-
-    print(vec2.capacity)    # => 8
-    print(vec2.data[0])     # => 10
-    print(vec2.size)        # => 2
-
-    vec2.clear()
-    print(vec2[1])          # => 20 
-
-
+    
 
 
 

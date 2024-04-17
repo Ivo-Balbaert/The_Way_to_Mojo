@@ -4,7 +4,7 @@ from math import sqrt, rsqrt, tan, acos, max
 from math.limit import inf
 from python import Python
 from algorithm import parallelize
-from utils.vector import DynamicVector
+from collections.vector import DynamicVector
 
 
 # Uses to represent a vector in 3D space as well as RGB pixels

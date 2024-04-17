@@ -558,14 +558,14 @@ However, it is recommended to only import the things you need.
 import benchmark
 ```
 
-But then you have to access its members with: `benchmark.num_warmup`, prefixing the member name with the module name. This is better than using from ... import *, because in this way you loose the info on from which module the function/type is imported.
+But then you have to access its members with: `benchmark.Benchmark.num_warmup`, prefixing the member name with the module name. This is better than using from ... import *, because in this way you loose the info on from which module the function/type is imported.
 
 For some examples see: ??
 
 ## 3.6.2 Python modules
 Mojo can access the whole Python ecosystem by importing Python modules.
 Importing and using a Python package in Mojo is very easy.  
-Here's an example (from a Jupiter notebook cell) of how to import the NumPy package:
+Here's an example (from a Jupyter notebook cell) of how to import the NumPy package:
 
 ```mojo
 from python import Python            # 1
@@ -576,5 +576,5 @@ let np = Python.import_module("numpy")      # 2
 First you have to import the Python module as in line 1: `from python import Python`.  
 Then you can use the `Python.import_module()` function with the module name (see line 2). You give it a constant name (here `np`), which can be used later to call module methods.
 (The equivalent of this line in Python would be: `import numpy as np`.) 
-Note that the .py extension for the moudle is not needed.
-For some concrete examples see:
+Note that the .py extension for the module is not needed.
+For some concrete examples see: ??

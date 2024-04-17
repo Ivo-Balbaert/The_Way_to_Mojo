@@ -35,9 +35,10 @@ constrained.mojo:2:23: note:               constraint failed: use a positive num
 ```
 
 ### 10.1.2 debug_assert
+(See also changelog/blog v 0.7)
 `debug_assert[cond, err_msg]` checks that the condition is true, but only in debug builds. It is removed from the compilation process in release builds. It works like assert in C++.
 
-See `debug_assert.mojo`:
+See `debug_assert1.mojo`:
 ```mojo
 fn test_debug_assert[x: Int](y: Int):
     debug_assert(x == 42, "x is not equal to 42")
@@ -52,13 +53,20 @@ When you run this as `mojo -D ASSERT_WARNING debug_assert1.mojo`, you get the fo
 Assert Warning: x is not equal to 42
 Assert Warning: y is not equal to 42
 ```
->Note: -debug-level full and "debug" build are different things; `mojo --debug-level full debug_assert1.mojo` doesn't give any output.
+>Note:  Users cannot use debug_assert with just specifying -debug-level full. 
+-debug-level full and "debug" build are different things; `mojo --debug-level full debug_assert1.mojo` doesn't give any output.
 
->Note: debug_assert doesn't work in the Playground because this is not a debug build.
+ The shipped mojo-sdk is always a "release" build in that sense with regard to debug_assert. An explicit option for users to specify -D MOJO_ENABLE_ASSERTIONS was added:
+```
+mojo -D MOJO_ENABLE_ASSERTIONS debug_assert1.mojo
+Assert Error: x is not equal to 42
+...
+```
 
 ## 10.2 Module testing 
 This module implements various testing utilities.  
 
+(code changed, because from v 0.6, assert_ return Error when the assertion fails)
 See `testing1.mojo`:
 ```mojo
 from testing import *
@@ -66,7 +74,7 @@ from testing import *
 
 fn main():
     let b1 = 3 < 5
-    print(assert_true(b1, "This is false!"))  # => True
+    print(assert_true(b1, "This is false!"))  # => None
     print(assert_false(b1, "This is false!"))
     # => ASSERT ERROR: This is false!
     # => False
@@ -97,7 +105,7 @@ fn main():
 
 `assert_true(Boolean, message)` tests the Boolean expression which is its first argument. If True, nothing happens. If False, ASSERT ERROR: is printed, followed by message.
 `assert_false(Boolean, message)` works the other way around.
-Both have a Boolean return value.
+Both raise an Error when the assertion fails.
 
 Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)`, where val1 and val2 must be both of type Int, String or SIMD[type, size].
 `assert_almost_equal(val1, val2)` checks whether both values are approximately equal (tolerance ??)
@@ -120,7 +128,7 @@ fn main():
     print(report.mean())   # => 0.010147911948148149
     report.print()
     print("")
-    report.print[Unit.ms]()
+    report.print(Unit.ms)
 
 # ---------------------
 # Benchmark Report (s)
@@ -232,7 +240,7 @@ The 3rd example demonstrates the maximum number of iterations (max_iters) here 5
 As the 1st parameter, you can also set up the number of warmup iterations (num_warmup).  
 As the 3rd parameter, you can also set up the minimum running time (min_time_ns).
 
-Here is another example:
+Here is another example: stack dump!
 See `calc_mean_matrix.mojo`:
 ```mojo
 from tensor import Tensor
@@ -384,8 +392,6 @@ fn main():
     # => [5, 5, 5, 5, 5, 5, 5, 5]
     z = x.aligned_stack_allocation[8]()
 
-    from sys.intrinsics import PrefetchOptions
-    x.prefetch[PrefetchOptions().for_read().high_locality()](0)
 ```
 
 In line 1, we allocate 8 uint8 and pass that pointer into the buffer. Then we initialize all the values to zero to make sure no garbage data is used (line 2). Loop through the buffer and set each item in line 3-4.
@@ -398,7 +404,7 @@ Utilize SIMD to manipulate 32 bytes of data at the same time (see lines 6- ).
 `aligned_simd_store`: Some registers work better with different alignments e.g. AVX-512 performs better with 64 bit alignment, so you might want padding for a type like a UInt32.
 `aligned_simd_load`: see above
 `aligned_stack_allocation`: Allocate to the stack with a given alignment for extra padding
-`prefetch`: Specifies how soon until the data will be visited again and how the data will be used, to optimize for the cache.
+
 
 ## 10.5 Type NDBuffer from module memory.buffer
 This is an N-dimensional Buffer, that can be used both statically, and dynamically at runtime.  
@@ -537,7 +543,7 @@ from sys.info import (
     bitwidthof,
     simdwidthof,
     simdbitwidth,
-    simd_byte_width,
+    simdbytewidth,
     sizeof,
     os_is_linux,
     os_is_macos,
@@ -563,7 +569,7 @@ fn main():
     print(bitwidthof[Foo]())  # 2 => 64
     print(simdwidthof[DType.uint64]()) # 3 => 4
     print(simdbitwidth())     # 4 => 256
-    print(simd_byte_width())  # 5 => 32
+    print(simdbytewidth())    # 5 => 32
     print(sizeof[UInt8]())    # 6 => 1
 
     @parameter                # 7
@@ -608,8 +614,7 @@ The following example (taken from the standard Mojo distribution) prints the cur
 
 See `deviceinfo.mojo`:
 ```mojo
-from runtime.llcl import num_cores
-from sys.info import (
+ffrom sys.info import (
     os_is_linux,
     os_is_windows,
     os_is_macos,
@@ -624,6 +629,7 @@ from sys.info import (
     _current_target,
     _current_cpu,
     _triple_attr,
+     num_physical_cores,
 )
 
 
@@ -658,7 +664,7 @@ def main():
     print("    OS          : ", os)
     print("    CPU         : ", cpu)
     print("    Arch        : ", arch)
-    print("    Num Cores   : ", num_cores())
+    print("    Num Cores   : ", num_physical_cores())
     print("    CPU Features:", cpu_features)
 ```
 
@@ -723,7 +729,7 @@ The sleep() function can be used to make a thread sleep for the duration in seco
 
 time_function() (used in line 3) tells you how long it takes (in nanoseconds) for a function closure to execute: pass in a nested function (also known as a closure that takes no arguments and returns None as a parameter), to time a function for example sleep1ms.
 
-## 10.8 Vectors from the module utils.vector
+## 10.8 Vectors from the module collections.vector
 (?? Table schema with properties ?)
 
 InlinedFixedVector: small-vector optimization
@@ -737,7 +743,7 @@ It supports pushing and popping from the back, resizing the underlying storage t
 
 See `dynamicvector1.mojo`:
 ```mojo
-from utils.vector import DynamicVector
+from collections.vector import DynamicVector
 
 fn main():
     var vec = DynamicVector[Int](8)  # 1
@@ -748,7 +754,12 @@ fn main():
     print(vec.size)     # => 2
 
     print(vec.capacity) # 3 => 8
-    print(vec.data[0])  # 4 => 10
+       # error: 'AnyPointer[Int]' ` methods
+    #print(vec.data[0])  # 4 => 10
+   print(vec.data[0])  # 4 => 10
+ptable, it does not implement the `__getitem__`/`__setitem__` methods
+    # print(vec.data[0])  # 4 => 10
+   # print(vec.data[0])  # 4 => 10
    
     print(vec[0])       # 5 => 10
     vec[1] = 42     
@@ -760,10 +771,7 @@ fn main():
     let vec2 = vec      # 7
     vec[0] = 99
     print(vec2[0])      # => 99
-
-    let vec3 = vec.deepcopy()  # 8
     vec[1] = 100
-    print(vec3[1])      # => 42
 
     print(len(vec))     # => 2
     print(vec.pop_back()) # 9 => 
@@ -773,11 +781,11 @@ fn main():
     print(vec.capacity) # => 16
     print("after reserving: ", vec.size)     # => 1
 
-    vec.resize(10)      # 11
+    vec.resize(10, 0)      # 11
     print("after resizing: ", vec.size)     # => 10
 
     vec.clear()         # 12
-    print(vec[1])       # => 1  ??
+    print(vec[1])       # => 0  
     print(vec.size)     # => 0
     print(len(vec))     # => 0
 ```
@@ -839,7 +847,7 @@ This data structure is useful for applications where the number of required elem
 
 See `fixedvectors.mojo`:
 ```mojo
-from utils.vector import InlinedFixedVector
+from collections.vector import InlinedFixedVector
 
 fn main():
     var vec = InlinedFixedVector[Int, 4](8)  # 1
@@ -873,26 +881,6 @@ Access and assign elements using indexes.
 
 To make a shallow or deep copy, or clear all elements, tee § 10.8.1
 
-### 10.8.4 UnsafeFixedVector
-This type is a dynamically-allocated vector that does not resize or implement bounds checks (see line 3).
-It is initialized with a dynamic (not known at compile time) number of slots.
-This data structure is useful for applications where the number of required elements is not known at compile time, but once known at runtime, is guaranteed to be equal to or less than a certain capacity.
-
-You index them as InlineFixedVector (with the same note). Only a shallow copy is possible.
-
-```mojo
-    var vec2 = UnsafeFixedVector[Int](8) # 3
-    vec2.append(10)
-    vec2.append(20)
-    print(len(vec))   # => 2
-
-    print(vec2.capacity)    # => 8
-    print(vec2.data[0])     # => 10
-    print(vec2.size)        # => 2
-
-    vec2.clear()
-    print(vec2[1])          # => 20 
-```
 
 ## 10.9 The Tensor type from module tensor
 - From v 0.5.0: 

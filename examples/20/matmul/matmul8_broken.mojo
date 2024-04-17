@@ -88,7 +88,7 @@ fn matmul_evaluator(funcs: Pointer[matmul_fn_sig_type], size: Int) -> Int:
         return best_idx
 
 # Autotune the tile size used in the matmul.
-@adaptive
+@adaptive   # change to @parameter if
 fn matmul_autotune_impl(C: Matrix, A: Matrix, B: Matrix):
     @parameter
     fn calc_row(m: Int):

@@ -3,7 +3,7 @@ from sys.info import (
     bitwidthof,
     simdwidthof,
     simdbitwidth,
-    simd_byte_width,
+    simdbytewidth,
     sizeof,
     os_is_linux,
     os_is_macos,
@@ -29,7 +29,7 @@ fn main():
     print(bitwidthof[Foo]())  # 2 => 64
     print(simdwidthof[DType.uint64]()) # 3 => 4
     print(simdbitwidth())     # 4 => 256
-    print(simd_byte_width())  # 5 => 32
+    print(simdbytewidth())  # 5 => 32
     print(sizeof[UInt8]())    # 6 => 1
 
     @parameter                # 7

@@ -41,8 +41,8 @@ fn main():
 # Model: Civic
 # Year: 2013
 # Price: 28000.0
-        let car3 = Car("Mercedes")
-        car3.print_car_details()
+    let car3 = Car("Mercedes")
+    car3.print_car_details()
 # =>
 # Make: Mercedes
 # Model: Base

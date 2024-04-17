@@ -10,8 +10,8 @@ struct SquareMatrix[dtype: DType = DType.float32, dim: Int = 4]():
 
     fn __init__(inout self, val: SIMD[dtype, 1] = 5):
         self.mat = Tensor[dtype](self.dim, self.dim)
-        alias simd_width = simdwidthof[dtype]()  
-        
+        alias simd_width = simdwidthof[dtype]()  # this can probably be made simpler
+
         @parameter
         fn fill_val[simd_width: Int](idx: Int) -> None:
             self.mat.simd_store(
@@ -43,11 +43,11 @@ struct SquareMatrix[dtype: DType = DType.float32, dim: Int = 4]():
         _ = load_mat
         return new_tensor
 
-  fn save(self, fname: String='saved_matrix') raises -> String:
-    let fpath = self.prepare_filename(fname)
-    self.mat.tofile(fpath)
-    print('File saved:',fpath)
-    return fpath
+    fn save(self, fname: String='saved_matrix') raises -> String:
+        let fpath = self.prepare_filename(fname)
+        self.mat.tofile(fpath)
+        print('File saved:',fpath)
+        return fpath
 
 
 

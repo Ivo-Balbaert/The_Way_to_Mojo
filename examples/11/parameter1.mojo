@@ -9,7 +9,7 @@ fn example():
         print("debug")
 
 
-fn main():
+fn main() raises:
     @parameter
     if debug_mode:      # 1B
         _ = assert_true(1 == 2, "assertion failed")

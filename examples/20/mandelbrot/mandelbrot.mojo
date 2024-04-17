@@ -15,7 +15,7 @@ import benchmark
 from complex import ComplexSIMD, ComplexFloat64
 from math import iota
 from python import Python
-from runtime.llcl import num_cores
+from sys.info import num_physical_cores
 from algorithm import parallelize, vectorize
 from tensor import Tensor
 from utils.index import Index
@@ -84,7 +84,7 @@ fn main() raises:
             worker(row)
 
     let vectorized = benchmark.run[bench[simd_width]]().mean()
-    print("Number of threads:", num_cores())
+    print("Number of threads:", num_physical_cores())
     print("Vectorized:", vectorized, "s")
 
     # Parallelized

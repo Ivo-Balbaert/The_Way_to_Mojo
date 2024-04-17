@@ -81,6 +81,7 @@ fn main():
 
 Change `let z = sum(1, 2)` to just `sum(1, 2)`. Now you don't use the return value of a function, so you get a  `warning: 'Int' value is unused`.
 You can print out the return value, or just discard the value with _ = sum(1, 2). `_ =` is called the *discard pattern*, and can be used for just that, to indicate that you receive the returned value, but that you don't want to use it.
+Note: You can force Mojo to keep a value alive up to a certain point by assigning the value to the _ “discard” pattern at the point where it’s okay to destroy it (see https://docs.modular.com/mojo/manual/lifecycle/death.html)
 
 If a function has no return value (example ??), you could write this as `-> None`. In normal cases you can leave this out, and the compiler will understand this. But if you need to write the function type (as in higher order functions), writing `-> None` is needed.
 
@@ -294,47 +295,20 @@ fn main():
 
 ## 6.5 Closures
 Mojo considers closures capturing by default, even if it's not capturing anything. Capturing means that if there were any variables in context, the closure would know their values, in the example in § 6.5.1 there are no variables to be captured.
+(See Changelog v 0.7)
 
 ## 6.5.1 Example of a closure
 The following example shows an example of a nested (or inner) function in line 1. This is also called a *clojure*. The outer function that calls the closure in line 3 has as argument the function type of the closure:  
-`f: fn() capturing -> None` 
+`f: fn() -> None` 
 So the inner function must conform to this type. 
-Here -> None is required, as well as the keyword capturing.
+Here -> None is required.
 
 See `closure1.mojo`:
 ```mojo
-fn outer(f: fn() capturing -> None):   # 2
-    f()                                # 3
-
-fn call_it():
-    fn inner():             # 1
-        print("inner")
-
-    outer(inner) 
-
-fn main():
-    call_it()  # => inner
-```
-
->Note: If you forget the capturing keyword, you get the error:
-```
-closure1.mojo:8:10: error: invalid call to 'outer': argument #0 cannot be converted from 'fn() capturing -> None' to 'fn() -> None'
-    outer(inner) 
-    ~~~~~^~~~~~~
-closure1.mojo:1:1: note: function declared here
 fn outer(f: fn() -> None):   # 2
-^
-```
-
-Because here inner is not really capturing any variables, you can leave out the capturing keyword by decorating the function with @noncapturing (see lines 2B and 3B).
-
-See `closure1.mojo`:
-```mojo
-fn outer(f: fn() -> None):   # 2B
     f()                      # 3
 
 fn call_it():
-    @noncapturing           # 3B
     fn inner():             # 1
         print("inner")
 
@@ -347,7 +321,7 @@ fn main():
 ## 6.5.2 Example of a capturing closure
 See `closure2.mojo`:
 ```mojo
-fn outer(f: fn() capturing -> Int):
+fn outer(f: fn() escaping -> Int):
     print(f())
 
 fn call_it():
@@ -360,9 +334,9 @@ fn call_it():
 fn main():
     call_it()  # => 5
 ```
-You can see that we captured the a variable (line 1) in the inner closure (line 2) and returned it to the outer function. Note that the closure has the function type: `f: fn() capturing -> Int`.
+You can see that we captured the a variable (line 1) in the inner closure (line 2) and returned it to the outer function. Note that the closure has the function type: `f: fn() escaping -> Int`.
 
-The keyword capturing is necessary.
+The keyword escaping is necessary.
 
 ## 6.6 Functions with a variable number of arguments.
 This is indicated by prefixing the parameter name in the function header with *, for example args_w in the function my_func:

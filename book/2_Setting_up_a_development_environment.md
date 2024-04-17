@@ -3,8 +3,9 @@
 ## 2.1 Architectures and compilers
 
 **Target OS’s and platforms** 
-2023 Aug 26: Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher)
-Native support for Apple and Windows is coming.
+2023 Aug 26: Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher, other distro's)
+2023 Oct 19: Support for Apple silicon
+Native support for Apple (Intel) and Windows is coming.
 
 The LLVM/MLIR compiler infrastructure together form a cutting-edge compiler and code generation system. Because Mojo uses this system, it can target a very wide spectrum of operating systems, computation environments and hardware platforms.
 
@@ -17,7 +18,7 @@ The LLVM/MLIR compiler infrastructure together form a cutting-edge compiler and 
 **Compiler**  
 The compiler is written in C++, based on MLIR and LLVM.
 By default, Mojo code is AOT (Ahead Of Time) compiled.  
-But Mojo can also be interpreted for metaprogramming, or JIT-compiled, as in the Mojo Playground (see ??) or the Mojo REPL.
+But Mojo can also be interpreted for metaprogramming, or JIT-compiled, as in the Mojo REPL.
 If the Mojo app contains dynamic (Python) code, this is executed by running the dynamic code at compile time with an embedded CPython interpreter. This mechanism also makes possible compile-time meta-programming.
 
 Structure of compiler: video 2023 LLVM Dev Mtg - 21' / 24'
@@ -638,45 +639,22 @@ There is a configuration file at `/home/username/.modular/modular.cfg`, which co
 ## 2.7.0 A vim plugin
 See https://github.com/czheo/mojo.vim for Mojo syntax highlighting.
 
-## 2.7.1 The Mojo online playground
-Mojo has an [online playground](https://playground.modular.com/), which you can access by admission and a token. 
-This is useful when:
-* you don't have access (yet) to a local Mojo installation 
-* you don't want to clutter your machine with a local Mojo installation 
-
 Mojo works in a REPL environment, like a Jupyter notebooks. To do that, it is interpreted, or JIT (Just In Time) compiled through OrcJIT. 
-In the Playground Mojo is running on a hosted JupyterLab server. Access is granted after signing in with your email-address.  
-
-**To get entrance:**  
-1- Go to the [official Modular Get Started form](https://www.modular.com/get-started)
-2- Fill out the form, tick Mojo and press submit
-3- In a few hours/days you'll get an email with a button "Access the Mojo Playground"
-
-A Mojo kernel then runs a Jupyter notebook in a server at `/user/<your_email>/`
-
-**Alternative way:**   
-In general the PlayGround's URL is `https://playground.modular.com/user/<your_email>`.
-You need a token for initial entry, and for subsequent accesses after expiration of the tokens. The token is sent to you by email, but you can generate one [here](https://playground.modular.com/hub/token) too.
-Then change the email address and token in the following URL:
-`https://playground.modular.com/user/<your_email>/?token=<your_token>`
-
-The Playground is a collection of Jupyter notebooks which you can execute. They are run by a Mojo kernel. You can also save them under a different name, and change or add new code.
-
 When working with Jupyter notebooks, it's not allowed to mix Python and Mojo code in one cell. 
 The `%%python` is used at the top of a notebook cell in Mojo to indicate that the cell contains Python code. Variables, functions, and imports defined in a Python cell are available for access in future Mojo cells. This allows you to write and execute normal Python code within a Mojo notebook.
 
-Example:
-When the Playground is started up, start a new notebook with:  
-> File > New Notebook
-
-Then add some code and push the run button  "▶" and the computation result is shown below the cell.  
-Don't worry about the program code, that will all be explained in the coming sections.
-See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Mojo%20Playground.png)
-
+## 2.7.1 Working with a Jupyter notebook
 To install Jupyter notebook locally:  
 * First install Python from `https://www.python.org/downloads/`
 * pip install notebook
 Then the `jupyter lab` or `jupyter notebook` command starts up a local browser page where you can start a new notebook with the `.ipynb` extension.
+
+Example:
+Start a new notebook with:  
+> File > New Notebook
+
+Then add some code and push the run button  "▶" and the computation result is shown below the cell.  
+Don't worry about the program code, that will all be explained in the coming sections.
 
 See also: § 2.7.2 for how to work with a Jupyter notebook in VS Code.
 
@@ -717,22 +695,15 @@ See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/image
 
 
 #### 2.7.2.2 How to work with a Jupyter notebook in VS Code 
-You can also use the Mojo Playground (§ 2.7.1) to run a notebook from within VS Code.
-
 **Here are the steps:**     
 1- Install the [Jupyter VS Code extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)  
 2- From the Command Palette (CTRL+SHIFT+P or CMD+SHIFT+P) select "Create: New Jupyter Notebook"  
 3- Then from the Command Palette again select Notebook: "Select Notebook Kernel" and follow the options:  
-Select another kernel > Existing Jupyter Server > Enter the URL of a 
-running Jupyter Server.   
-Enter: `https://playground.modular.com/user/<your_email>/?token=<your_token>`  
 
-It is often easier to first restart the Mojo Playground server if you still have a browser session open with it. Then you can connect to it from within VS Code.  
+Start up a Jupyter notebook as explained in § 2.7.1
+
 Now you can write Mojo code and run it within a cell of the notebook!  
 See next section for a screenshot of code in this environment.
-
-**Tips and Troubleshooting:**    
-Every time you want to use it, you'll need to start the server from your browser. But you can the add the link without your username and it'll remember your session via cookies through the command: `open 'https://playground.modular.com'`.
 
 You'll likely need to restart the kernel at some point, you can use:
 Command Palette > Jupyter: Restart Kernel
@@ -775,17 +746,16 @@ Then the console displays: `Hello World! from Mojo`.
 
 To show the output of statements in code sections, we'll show them in a comment that starts with `# =>`.
 
-The second snippet shows a main function, which declares an integer x, increments it and then prints it out. The function is then called with main().
-
+The second snippet shows a main function, which declares an integer x, increments it and then prints it out. 
 See `using_main.mojo`:
 ```mojo
 fn main():
     var x: Int = 1
     x += 1
     print(x)  # => 2
-
-main()
 ```
+
+Remark: If you work in the REPL, you have to call main() explicitly.
 
 We'll dive deeper into this code at the start of the next chapter.
 

@@ -22,7 +22,7 @@ struct Coord:
 ```
 
 Currently, the following decorators exist:  
-`@adaptive`     see matmul
+deprecated: `@adaptive`     see matmul, changed to @parameter if (see changelog v 0.7)
 `@export`       a function annotated with this decorator can be called from a C program
 (see § 17) 
 
@@ -202,7 +202,7 @@ fn example():
         print("debug")
 
 
-fn main():
+fn main() raises:
     @parameter
     if debug_mode:      # 1B
         _ = assert_true(1 == 2, "assertion failed")
@@ -310,9 +310,6 @@ The version `@always_inline("nodebug")` works the same, but doesn't include debu
 
 Example: see § 11.8
 See matmul
-
-## 11.7 - @noncapturing
-Marks a closure as not capturing variables from the outer scope. See § 6.5.1
 
 ## 11.8 - @unroll
 See `unroll1.mojo`:

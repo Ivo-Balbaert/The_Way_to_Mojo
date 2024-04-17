@@ -1,3 +1,6 @@
+from memory.unsafe import DTypePointer
+from collections.vector import DynamicVector
+
 fn main():
     # StringLiteral:
     let lit = "This is my StringLiteral"  # 1
@@ -54,28 +57,24 @@ fn main():
     print(ord(s[0]))  # => 77
 
     # building a string with a DynamicVector:
-
-    from utils.vector import DynamicVector
-
     var vec = DynamicVector[Int8](2)  # 5
     vec.push_back(78)
     vec.push_back(79)
 
-    from memory.unsafe import DTypePointer
-
     # 6:
-    let vec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
-    print(vec_str_ref)  # 7 => NO
+    # error: cannot construct 'DTypePointer[si8, 0]' from 'AnyPointer[SIMD[si8, 1]]' value
+    # let vec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
+    # print(vec_str_ref)  # 7 => NO
 
-    vec[1] = 78
-    print(vec_str_ref)  # 8 => NN
-    let vec_str = String(vec_str_ref)  # 9
-    print(vec_str)  # => NN
+    # vec[1] = 78
+    # print(vec_str_ref)  # 8 => NN
+    # let vec_str = String(vec_str_ref)  # 9
+    # print(vec_str)  # => NN
 
     vec[0] = 65
     vec[1] = 65
-    print(vec_str_ref)  # => AA
-    print(vec_str)  # 10 => NN
+    # print(vec_str_ref)  # => AA
+    # print(vec_str)  # 10 => NN
 
     # StringRef:
     let isref = StringRef("i")

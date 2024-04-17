@@ -7,7 +7,7 @@ from sys.info import simdwidthof
 alias simd_width_u8 = simdwidthof[DType.uint8]()
 
 fn chars_len[simd_width: Int](s: StringLiteral) -> Int:
-    let p = DTypePointer[DType.int8](s.data()).bitcast[DType.uint8]()
+    let p = s.data().bitcast[DType.uint8]()
     let l = len(s)
     var offset = 0
     var result = 0
@@ -35,7 +35,7 @@ fn chars_len[simd_width: Int](s: StringLiteral) -> Int:
     return result
 
 fn chars_count(s: StringLiteral) -> Int:
-    let p = DTypePointer[DType.int8](s.data()).bitcast[DType.uint8]()
+    let p = s.data().bitcast[DType.uint8]()
     let string_byte_length = len(s)
     var result = 0
     

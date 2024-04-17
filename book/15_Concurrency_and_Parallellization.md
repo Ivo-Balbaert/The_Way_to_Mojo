@@ -170,7 +170,7 @@ fn main() raises:
 
     seed(42)
     let t = rand[dtype](1000, 100_000)
-    var result = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
+    let result = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
 
     print(
         "Input Matrix shape:", t.shape().__str__()
@@ -182,7 +182,7 @@ fn main() raises:
 
     # Naive approach in Mojo
     alias reps = 10
-    var tm1 = time.now()
+    let tm1 = time.now()
     for i in range(reps):
         _ = tensor_mean[dtype](t)
     let dur1 = time.now() - tm1
@@ -193,14 +193,14 @@ fn main() raises:
     let dim0 = t.dim(0)
     let dim1 = t.dim(1)
     let t_np = np.random.rand(dim0, dim1).astype(np.float32)
-    var tm2 = time.now()
+    let tm2 = time.now()
     for i in range(reps):
         _ = np.mean(t_np, 1)
     let dur2 = time.now() - tm2
     print("Numpy mean:", dur2 / reps / 1000000, "ms")
 
     # Vectorized and parallelized approach in Mojo
-    var tm3 = time.now()
+    let tm3 = time.now()
     for i in range(reps):
         _ = tensor_mean_vectorize_parallelized[dtype](t)
     let dur3 = time.now() - tm3

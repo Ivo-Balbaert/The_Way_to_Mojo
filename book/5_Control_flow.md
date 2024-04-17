@@ -194,6 +194,21 @@ The error will be transfered to the next Except: block.
 In Python the with statement is used to create a context. Whatever statements we execute inside that context does not affect the outer environment. The with statement simplifies exception handling by encapsulating common preparation and cleanup tasks. 
 It is commonly used as `with open(file)` to read a file and close it automatically at the end of the context (see § 10.12).  
 
+For example:
+```mojo
+with open("my_file.txt", "r") as file:
+    print(file.read())
+
+    # Other stuff happens here (whether using `file` or not)...
+    foo()
+    # `file` is alive up to the end of the `with` statement.
+
+# `file` is destroyed when the statement ends.
+bar()
+```
+
+For any value defined at the entrance to a with statement (like `file` here), Mojo will keep that value alive until the end of the with statement.
+
 In Mojo it is used to create a parallelization context (no longer the same code!), for example in mandelbrot_4.mojo:
 ```mojo
 from runtime.llcl import num_cores, Runtime

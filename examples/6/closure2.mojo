@@ -1,4 +1,4 @@
-fn outer(f: fn() capturing -> Int):
+fn outer(f: fn() escaping -> Int):
     print(f())
 
 fn call_it():

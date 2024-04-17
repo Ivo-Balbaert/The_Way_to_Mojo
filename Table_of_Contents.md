@@ -150,10 +150,9 @@
 ## 10.5 Type NDBuffer from module memory.buffer
 ## 10.6 Querying the host target info with module sys.info
 ## 10.7 The time module
-## 10.8 Vectors from the module utils.vector
+## 10.8 Vectors from the module collections.vector
 ### 10.8.1 DynamicVector
 ### 10.8.2 InlinedFixedVector
-### 10.8.3 UnsafeFixedVector
 ## 10.9 The Tensor type from module tensor
 ## 10.10 Working with command-line arguments
 ## 10.11 Working with memory
@@ -167,7 +166,6 @@
 ## 11.4 - @parameter 
 ## 11.5 - @staticmethod
 ## 11.6 - @always_inline
-## 11.7 - @noncapturing
 ## 11.8 - @unroll
 
 # 12 – Working with Pointers
