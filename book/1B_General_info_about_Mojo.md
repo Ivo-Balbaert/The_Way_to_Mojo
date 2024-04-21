@@ -56,6 +56,8 @@ A tutorial site:   [mojodojo](https://mojodojo.dev/) created by Jack Clayton (mo
 
 An overview of [educational material and links to community projects](https://github.com/mojicians/awesome-mojo)
 
+[Links for examples](https://github.com/modularml/devrel-extras/tree/main/blogs/)
+
 ?? wrong link - The [X Modular channel](https://twitter.com/modular_ai) regularly contains Mojo tutorials.
 
 

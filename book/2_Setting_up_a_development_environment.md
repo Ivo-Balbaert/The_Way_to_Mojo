@@ -21,11 +21,10 @@ By default, Mojo code is AOT (Ahead Of Time) compiled.
 But Mojo can also be interpreted for metaprogramming, or JIT-compiled, as in the Mojo REPL.
 If the Mojo app contains dynamic (Python) code, this is executed by running the dynamic code at compile time with an embedded CPython interpreter. This mechanism also makes possible compile-time meta-programming.
 
-Structure of compiler: video 2023 LLVM Dev Mtg - 21' / 24'
+Structure of compiler: video 2023 LLVM Dev Mtg:
+    https://www.youtube.com/watch?v=SEwTjZvy8vw  (21' / 24')
     compiler pipeline, Elaborator
 OrcJit is used for Just in Time compilation, but also for generating static archive .a file. The system linker then transforms this into an executable file.
-
-
 
 **Runtime**
 - needed to call the CPython interpreter, and call with the Mojo compiler ??
@@ -33,25 +32,32 @@ OrcJit is used for Just in Time compilation, but also for generating static arch
 
 
 **Standard library**   
-Mojo has a growing standard library called `MojoStdlib` or SDK, which already contains a growing number of *modules*, such as algorithm, benchmark, list, os, tensor, testing, and so on (see § ??).
+Mojo has a growing standard library called `MojoStdlib` or SDK, which already contains a growing number of *packages*, such as algorithm, benchmark, list, os, tensor, testing, and so on.
+
+It is documented here [here](https://docs.modular.com/mojo/lib).
+
 A package is a collection of modules that serve the same purpose,
 example: the math package contains the bit, math, numerics, and polynomial modules
 The packages are built as binaries into the SDK to improve startup speed.
 Package and module names are lowercase (like Python).
 
-Version 0.2.0 ships with the following packages:
+Version 24.2.0 (2024 Mar 29) ships with the following 20 packages, containing 83 modules:
+
 * algorithm
 * autotune
 * base64
 * benchmark
+* buffer
 * builtin
+* collections
 * complex
 * math
 * memory
 * os
+* pathlib
 * python
 * random
-* runtime
+* stat
 * sys
 * tensor
 * testing
@@ -60,6 +66,10 @@ Version 0.2.0 ships with the following packages:
 
 ?? adapt
 
+
+You can execute code also in the [Online Playground](https://docs.modular.com/mojo/playground)
+
+
 ## 2.2 Using a Mojo binary release
 ?? These can be downloaded from [here]().
 
@@ -67,12 +77,14 @@ Version 0.2.0 ships with the following packages:
 This is currently (??) still in a testing phase.
 
 ### 2.2.2 On Linux Ubuntu 20-22 (or WSL2 on Windows)
-2023 Aug 26: Mojo can be used on Windows with a Linux container or remote system.
+2023 Aug 26: Mojo can be used on Windows with a Linux container (like WSL) or remote system.
 
 For installation on ArchLinux, see:
 https://gist.github.com/Sharktheone/79da849c96db13f21eefa2be9430d9ec
 
 STEPS:
+For an up to date version, [see](https://docs.modular.com/mojo/manual/get-started/)
+
 1- Install VS Code, the WSL extension, and the Mojo extension.
 2- Install Ubuntu 22.04 for WSL and open it.
 3- In the Ubuntu terminal, install the Modular CLI:
@@ -198,7 +210,7 @@ What's contained in the Mojo SDK?  See A view of the Mojo SDK.png
 * mojo driver: provides a shell (for read-eval-print-loop or REPL), and allows you to build and run Mojo programs, package Mojo modules (including support for the 🔥 extension!), generate docs, and format code‍
 * Extension for Visual Studio Code (VS Code): supports various productivity features such as syntax highlighting, code completion, and more ‍
 * Jupyter kernel: supports building and running Mojo notebooks, including Python code‍
-* Debugging support (coming soon): step into and inspect running Mojo programs, even intermixing C++ and Mojo stack frames
+* Debugging support: step into and inspect running Mojo programs, even intermixing C++ and Mojo stack frames
 
 
 A. Via an installation script:
@@ -494,16 +506,18 @@ $ mojo
 Welcome to Mojo! 🔥
 Expressions are delimited by a blank line.
 Type `:mojo help` for further assistance.
-1> let n = 3
+1> n = 3
 2. print(n)
 3.
 3
-(Int) n = {
-  (index) value = 3
-}
+(Int) n = 3
 3>
 ```
 
+!!!
+??? Doesn't work (2024/5): 
+[User] error: Expression [0]:1:2: unexpected token in expression
+ %%python
 If you want to run Python code, use %%python:  
 ```
 1> %%python
@@ -517,15 +531,16 @@ Python version from python: 3.10.12 (main, Jun 11 2023, 05:26:28) [GCC 11.4.0]
   }
 }
 ```
+!!!
 
 Top-level python declarations are available in subsequent Mojo expressions (example ??).
 
 Type TAB to get code completion.
 
 The Mojo REPL is based on LLDB, the complete set of LLDB debugging commands is also available as described below (?? examples).  
-Type :quit to leave the REPL.
+Type :quit or :q to leave the REPL.
 
-**Testing the CLI mojo command**  
+**Testing the mojo command**  
 Create folder $HOME/mojo.  
 Copy in examples from § 2.
 
@@ -537,7 +552,7 @@ $ $ mojo using_main.mojo
 Hello Mojo!
 2
 
-B. Manual installation instructions:
+B. Manual installation instructions: ?? not needed
 (Ubuntu 16.04 and later)  
 
 Open a terminal, as root give the command:
@@ -582,22 +597,16 @@ To install the Python virtual environment:
 `sudo apt install python3.10-venv`
 
 **How to remove Mojo**
-Issue the command: `modular uninstall`.
+Issue the command: `modular uninstall`. (?? adding mojo)
 
-The total size of the Mojo SDK is about 345 Mb.
+The total size of the Mojo SDK is about 345 Mb. (??)
 
 ### 2.2.3 On MacOS
 See Mojo website
 
 ## 2.3 Testing the installation - Mojo's option flags
 
-## 2.4 How to install Mojo platform dependencies
-??
-
-
-
-
-## 2.5 Building Mojo from source
+?? ## 2.5 Building Mojo from source
 
 ### 2.5.1 Downloading the Mojo source code
 For this you need the `git` tool.  
@@ -605,16 +614,16 @@ If you don't already have git installed:
 * On Windows: Install via chocolatey:
 - install chocolatey: https://chocolatey.org/install
 - choco install git
-* On Linux (WSL2): `sudo apt install git`
+* On Linux (or WSL2): `sudo apt install git`
 
 On Windows:
     - Go to c:\ in a cmd-terminal with Administrator priviliges.
-    - Download the Mojo repo (+- 116 MB) with the command: `git clone https://github.com/Mojo-lang/Mojo`
+    - Download the Mojo repo with the command: `git clone ??`
       the Mojo repository will now be in c:\Mojo.
 
 On Linux:
     - Make a new folder $HOME/Mojo_repo, `cd Mojo_repo`
-    - Download the Mojo repo (+- 116 MB) with the command: `git clone https://github.com/Mojo-lang/Mojo`
+    - Download the Mojo repo with the command: `git clone ??`
 
 On both platforms, you'll see an output like:  
 ```
@@ -630,23 +639,25 @@ Resolving deltas: 100% (142374/142374), done.
 ### 2.5.2  Building Mojo
 
 ## 2.6  Mojo configuration file
-There is a configuration file at `/home/username/.modular/modular.cfg`, which contains a number of mainly path environment variables, which can be edited. For example:  
+There is a configuration file at `/home/username/.modular/modular.cfg`, which contains a number of mainly path environment variables, which can be edited. 
+For example:  
 `import_path`, which has as default value /home/username/.modular/pkg/packages.modular.com_mojo/lib/mojo. This contains the path where Mojo searches for packages used in code. You can add your own package folder(s) to the default value (separated by a ;).
 
 
 ## 2.7  Editors
 
-## 2.7.0 A vim plugin
+## 2.7.1 A vim plugin
 See https://github.com/czheo/mojo.vim for Mojo syntax highlighting.
 
+
+## 2.7.2 Working with a Jupyter notebook
 Mojo works in a REPL environment, like a Jupyter notebooks. To do that, it is interpreted, or JIT (Just In Time) compiled through OrcJIT. 
 When working with Jupyter notebooks, it's not allowed to mix Python and Mojo code in one cell. 
 The `%%python` is used at the top of a notebook cell in Mojo to indicate that the cell contains Python code. Variables, functions, and imports defined in a Python cell are available for access in future Mojo cells. This allows you to write and execute normal Python code within a Mojo notebook.
 
-## 2.7.1 Working with a Jupyter notebook
 To install Jupyter notebook locally:  
 * First install Python from `https://www.python.org/downloads/`
-* pip install notebook
+* `pip install notebook`
 Then the `jupyter lab` or `jupyter notebook` command starts up a local browser page where you can start a new notebook with the `.ipynb` extension.
 
 Example:
@@ -658,43 +669,20 @@ Don't worry about the program code, that will all be explained in the coming sec
 
 See also: § 2.7.2 for how to work with a Jupyter notebook in VS Code.
 
-### 2.7.2 Visual Studio Code (VS Code)
+## 2.7.3 Visual Studio Code (VS Code)
 This is one of the most popular programmer’s editors today (https://code.visualstudio.com/)
 
-The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo). It features (v 0.2.1):
+The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo). It features (v 24.2.1):
 * Syntax highlighting for .mojo and .🔥 files
 * Code completion
 * Code diagnostics and quick fixes
 * API docs on hover
 * Code formatting
 * Run Mojo File
-
-Another unofficial plugin is here:
- (mojo-lang) [here](https://marketplace.visualstudio.com/items?itemName=mojo-lang.mojo-lang&ssr=false#review-details) which is at v0.1.0 and provides syntax-highlighting. Later a LS (Language Server) will be added.
-
-There is also another plugin [Mojo-lang](https://marketplace.visualstudio.com/items?itemName=CristianAdamo.mojo&ssr=false#review-details) by Cristian Adamo.
+* Showing docs
 
 
-#### 2.7.2.1 An easy way to execute code (not needed anymore!)
-(?? this works only after local installation)  
-
-Install the [vs-code-runner](https://marketplace.visualstudio.com/items?itemName=HarryHopkinson.vs-code-runner).  
-File, Preferences, Settings:  
-	Search for:  code-runner:   
-    Click on the "edit in settings.json" button.  
-    Now a .json-file should've opened. Add the "Mojo" line to the Executor map:  
-    "code-runner.executorMap": {
-        "Mojo": "Mojo $fileName",
-    ...
-    }
-    Close Settings  
-    Restart VSCode.  
-
-Now F1 + select "Run Custom Command" or "CTRL+ALT+N" compiles and executes the source code in the editor. This is most easily used by clicking the RIGHT mouse button, and selecting the first option "Run Code".
-See [screenshot](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/Using_Mojo_in_VSCode.png).
-
-
-#### 2.7.2.2 How to work with a Jupyter notebook in VS Code 
+## 2.7.4 How to work with a Jupyter notebook in VS Code 
 **Here are the steps:**     
 1- Install the [Jupyter VS Code extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)  
 2- From the Command Palette (CTRL+SHIFT+P or CMD+SHIFT+P) select "Create: New Jupyter Notebook"  
@@ -713,14 +701,18 @@ See:
 * https://github.com/microsoft/vscode-jupyter/wiki/Connecting-to-a-remote-Jupyter-server-from-vscode.dev
 
 
-#### 2.7.2.2B Using a Docker file
+## 2.7.5 Using a Docker file (?? updating)
 The repo website https://github.com/modularml/mojo/tree/main/examples/docker contains a Docker example file `Dockerfile.mojosdk`. The following [article](https://medium.com/@1ce.mironov/how-to-install-mojo-locally-using-docker-5346bc23a9fe) goes into detail of how to create and use a Docker image.
 See also the following [video](https://www.youtube.com/watch?v=cHyYmF-RhUk).
 
-#### 2.7.2.3 Compiling and executing a simple program
+
+## 2.7.6 PyCharm plugin
+[See here](https://plugins.jetbrains.com/plugin/23371-mojo)
+
+# 2.8 Compiling and executing a simple program
 To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  
 
-The first is the usual "Hello World!" program, which is in Mojo exactly the same as in Python, because Mojo is a superset of Python:
+The first is the usual "Hello World!" program: 
 
 See `hello_world.mojo`:
 ```mojo
@@ -728,7 +720,9 @@ fn main():
     print("Hello World from Mojo!") # => Hello World! from Mojo
 ```
 
-In a source file however we have to use a starting point function called `main()` (see § 3.1).
+APart from fn main(), this is exactly the same in Mojo as in Python, because Mojo aims to be a superset of Python:
+In a Mojo source file we have to use a starting point function called `main()` (see § 3.1).
+(?? Top-level statements as in Python are not yet implemented)
 
 A version with `def` instead of `fn` is also a valid Mojo program:
 See `hello_world_def.mojo`:
@@ -738,7 +732,7 @@ def main():
 ```
 
 
->Note: Don't forget the () after main, and also the () containing the value to print out after print!
+>Note: Don't forget the () after main, and also the () containing the value to print out after print! main and print are functions, so they expect an argument list between ()
 
 To compile and run this source code, use the command: 
 `mojo hello_world.mojo` or `mojo hello_world.🔥`.

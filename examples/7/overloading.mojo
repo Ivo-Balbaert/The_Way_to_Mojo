@@ -13,7 +13,7 @@ struct Complex:
         self.im = i
 
 fn main():
-    let c1 = Complex(7)
+    var c1 = Complex(7)
     print (c1.re)  # => 7.0
     print (c1.im)  # => 0.0
     var c2 = Complex(42.0, 1.0)

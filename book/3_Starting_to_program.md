@@ -59,145 +59,157 @@ The command `mojo doc overloading.mojo` currently shows the following JSON outpu
 
 ```
 {
-  "aliases": [],
-  "description": "",
-  "functions": [
-    {
-      "kind": "function",
-      "name": "main",
-      "overloads": [
-        {
-          "args": [],
-          "async": false,
-          "constraints": "",
-          "description": "",
-          "isDef": false,
-          "isStatic": false,
-          "kind": "function",
-          "name": "main",
-          "parameters": [],
-          "raises": false,
-          "returnType": null,
-          "returns": "",
-          "signature": "main()",
-          "summary": ""
-        }
-      ]
-    }
-  ],
-  "kind": "module",
-  "name": "overloading",
-  "structs": [
-    {
-      "aliases": [],
-      "constraints": "",
-      "description": "",
-      "fields": [
-        {
-          "description": "",
-          "kind": "field",
-          "name": "re",
-          "summary": "",
-          "type": "SIMD[f32, 1]"
-        },
-        {
-          "description": "",
-          "kind": "field",
-          "name": "im",
-          "summary": "",
-          "type": "SIMD[f32, 1]"
-        }
-      ],
-      "functions": [
-        {
-          "kind": "function",
-          "name": "__init__",
-          "overloads": [
-            {
-              "args": [
-                {
-                  "description": "",
-                  "inout": true,
-                  "kind": "argument",
-                  "name": "self",
-                  "owned": false,
-                  "type": "Self"
-                },
-                {
-                  "description": "",
-                  "inout": false,
-                  "kind": "argument",
-                  "name": "x",
-                  "owned": false,
-                  "type": "SIMD[f32, 1]"
-                }
-              ],
-              "async": false,
-              "constraints": "",
-              "description": "",
-              "isDef": false,
-              "isStatic": false,
-              "kind": "function",
-              "name": "__init__",
-              "parameters": [],
-              "raises": false,
-              "returnType": null,
-              "returns": "",
-              "signature": "__init__(inout self: Self, x: SIMD[f32, 1])",
-              "summary": "Construct a complex number given a real number."
-            },
-            {
-              "args": [
-                {
-                  "description": "",
-                  "inout": true,
-                  "kind": "argument",
-                  "name": "self",
-                  "owned": false,
-                  "type": "Self"
-                },
-                {
-                  "description": "",
-                  "inout": false,
-                  "kind": "argument",
-                  "name": "r",
-                  "owned": false,
-                  "type": "SIMD[f32, 1]"
-                },
-                {
-                  "description": "",
-                  "inout": false,
-                  "kind": "argument",
-                  "name": "i",
-                  "owned": false,
-                  "type": "SIMD[f32, 1]"
-                }
-              ],
-              "async": false,
-              "constraints": "",
-              "description": "",
-              "isDef": false,
-              "isStatic": false,
-              "kind": "function",
-              "name": "__init__",
-              "parameters": [],
-              "raises": false,
-              "returnType": null,
-              "returns": "",
-              "signature": "__init__(inout self: Self, r: SIMD[f32, 1], i: SIMD[f32, 1])",
-              "summary": "Construct a complex number given its real and imaginary components."
-            }
-          ]
-        }
-      ],
-      "kind": "struct",
-      "name": "Complex",
-      "parameters": [],
-      "summary": ""
-    }
-  ],
-  "summary": ""
-```
+  "decl": {
+    "aliases": [],
+    "description": "",
+    "functions": [
+      {
+        "kind": "function",
+        "name": "main",
+        "overloads": [
+          {
+            "args": [],
+            "async": false,
+            "constraints": "",
+            "description": "",
+            "isDef": false,
+            "isStatic": false,
+            "kind": "function",
+            "name": "main",
+            "parameters": [],
+            "raises": false,
+            "returnType": null,
+            "returns": "",
+            "signature": "main()",
+            "summary": ""
+          }
+        ]
+      }
+    ],
+    "kind": "module",
+    "name": "overloading",
+    "structs": [
+      {
+        "aliases": [],
+        "constraints": "",
+        "description": "",
+        "fields": [
+          {
+            "description": "",
+            "kind": "field",
+            "name": "re",
+            "summary": "",
+            "type": "SIMD[f32, 1]"
+          },
+          {
+            "description": "",
+            "kind": "field",
+            "name": "im",
+            "summary": "",
+            "type": "SIMD[f32, 1]"
+          }
+        ],
+        "functions": [
+          {
+            "kind": "function",
+            "name": "__init__",
+            "overloads": [
+              {
+                "args": [
+                  {
+                    "description": "",
+                    "inout": true,
+                    "kind": "argument",
+                    "name": "self",
+                    "owned": false,
+                    "passingKind": "pos",
+                    "type": "Self"
+                  },
+                  {
+                    "description": "",
+                    "inout": false,
+                    "kind": "argument",
+                    "name": "x",
+                    "owned": false,
+                    "passingKind": "pos_or_kw",
+                    "type": "SIMD[f32, 1]"
+                  }
+                ],
+                "async": false,
+                "constraints": "",
+                "description": "",
+                "isDef": false,
+                "isStatic": false,
+                "kind": "function",
+                "name": "__init__",
+                "parameters": [],
+                "raises": false,
+                "returnType": null,
+                "returns": "",
+                "signature": "__init__(inout self: Self, x: SIMD[f32, 1])",
+                "summary": "Construct a complex number given a real number."
+              },
+              {
+                "args": [
+                  {
+                    "description": "",
+                    "inout": true,
+                    "kind": "argument",
+                    "name": "self",
+                    "owned": false,
+                    "passingKind": "pos",
+                    "type": "Self"
+                  },
+                  {
+                    "description": "",
+                    "inout": false,
+                    "kind": "argument",
+                    "name": "r",
+                    "owned": false,
+                    "passingKind": "pos_or_kw",
+                    "type": "SIMD[f32, 1]"
+                  },
+                  {
+                    "description": "",
+                    "inout": false,
+                    "kind": "argument",
+                    "name": "i",
+                    "owned": false,
+                    "passingKind": "pos_or_kw",
+                    "type": "SIMD[f32, 1]"
+                  }
+                ],
+                "async": false,
+                "constraints": "",
+                "description": "",
+                "isDef": false,
+                "isStatic": false,
+                "kind": "function",
+                "name": "__init__",
+                "parameters": [],
+                "raises": false,
+                "returnType": null,
+                "returns": "",
+                "signature": "__init__(inout self: Self, r: SIMD[f32, 1], i: SIMD[f32, 1])",
+                "summary": "Construct a complex number given its real and imaginary components."
+              }
+            ]
+          }
+        ],
+        "kind": "struct",
+        "name": "Complex",
+        "parameters": [],
+        "parentTraits": [
+          "AnyType"
+        ],
+        "summary": ""
+      }
+    ],
+    "summary": "",
+    "traits": []
+  },
+  "version": "24.2.0"
+  ```
 
 Comments are not compiled. Use comments sparingly, in general names of variables should show what they contain, and names of functions should tell us what they do.
 
@@ -212,8 +224,8 @@ Now try to compile this empty file: `mojo hello_world.mojo`
 (You can do this on the command-line, or from within VSCode (see § 2.7.2.1))
 
 The compiler protests with:  
-`mojo: error: module does not `@export` any symbols; nothing to codegen`
-In other words: the mojo compiler doesn't find any code, so cannot generate any compiled code.
+`mojo: error: error: module does not define a `main` function`
+In other words: the mojo compiler doesn't find a main() function from where to start compiling/executing.
 
 What does this mean?
 Every executable Mojo program contained in a source file needs a so called *entry point* called **main**.  This is the starting point for code execution, as in many other languages.  
@@ -228,8 +240,8 @@ This is simply a *function* with name `main`.
 >Note: This can also be a `def main():`.
 
 Not only is the main function a starting point, it also envelops the complete program execution from start to end.  
-() is the parameter list, which is empty for main. We also don't see a -> after the ) brace. This means main has no return value, unlike C.  
-Then comes a : to mark the beginning of the function body, which contains the code to execute line by line.
+() is the parameter list, which is empty for main. We also don't see a -> after the `)` brace. This means main has no return value, unlike C.  
+Then comes a `:` to mark the beginning of the function body, which contains the code to execute line by line.
 
 Now try `mojo hello_world.mojo`. As you probably expect, it doesn't produce any output. Because there is no code in `fn main`, it doesn't do anything. But this is the first Mojo program which can be compiled!  
 
@@ -271,17 +283,22 @@ This suggests that someday this will also be possible in Mojo, as it is already 
 For clarity it is best to place the `main` function at the bottom of the code file, beneath all data and other function definitions.
 
 
-## 3.3.2 print and print_no_newline
+## 3.3.2 The print function
 The `print` function displays any string (enclosed in "") Try out if you can also use '' to envelop strings. This `print` function automatically adds a new line. So if you just want a newline, use `print()`.
-If you don 't want a newline, use the function `print_no_newline`. This function can also be used to print a series of elements, joined by spaces (see the last line in the following example).
+This function can also be used to print a series of elements, joined by spaces (see the last line in the following example).
+`print()` takes sep and end keyword arguments. This means that you can write:
+```
+print("Hello", "Mojo", sep=", ", end="!!!\n") # prints Hello, Mojo!!!
+```
+sep defaults to the empty string and end defaults to "\n".
 
 See `hello_world.mojo`:
 ```mojo
 fn main():
     print("Hello World from Mojo!")
-    print_no_newline("  - starts at the same line as the following print: ")
+    print("  - starts at the same line as the following print: ", end="")
     print('Hello World from Mojo! - 2')
-    print_no_newline("A", "B", "42", 3.14) # => A B 42 3.1400000000000001
+    print("A", "B", "42", 3.14, end="") # => A B 42 3.1400000000000001
 ```
 
 which displays:  
@@ -298,7 +315,11 @@ For example: `mojo build hello_world.mojo`
 
 >Note: When developing, you probably don't want to bother with building an executable. You will only start to need then when you're going to deploy into a test or production environment. But also for benchmarking it is important to do this: an executable runs at higher performance than mojo (run) itself.
 
-Now an executable `hello_world` is build, with is quite small in size (some 37 Kb). This can be run with: `./hello_world` (on Linux) or ?? , producing the same output as above.
+Now an executable `hello_world` is build. This can be run with: `./hello_world` (on Linux/MacOS) or hello_world, producing the same output as above.
+?? Output is relatively big some 44Mb ?? issue 
+[BUG]: Mojo hello world binary size unreasonably large #599 
+(closed - open a new issue if necessary)
+
 ```
 A Mojo app can be compiled into a small, standalone, fast-launching binary, making it easy to deploy while taking advantage of available cores and acceleration. 
 ```
@@ -310,7 +331,7 @@ By splitting compilation from execution, we also make the difference between:
 Data that is known at compile-time is said to be *statically known*.
 
 * Run-time: when the executable runs on your machine.
-Mostly data is not known at compile-time, but only at run-time. This can be because it is read in or calculated at run-time. Such data is said to be *dynamically known*.
+Often data is not known at compile-time, but only at run-time, for example because it is read in or calculated at run-time. Such data is said to be *dynamically known*.
 
 Later (see ??) we'll see that code can also be run at compile-time, to do what is called *meta-programming*.
 
@@ -325,27 +346,35 @@ fn main():
     print(n)            # => 2
 ```
 
+In line 1 a variable `n` is declared with the keyword `var`, which means it is a real mutable variable whose value can change. The typing n: Int is optional, Mojo has type inference.
+
 Like in Python, `main()` has no parameters and no return value.
 
-Why didn't we write the Python form `def main()`, instead of `fn main()`? It turns out that both forms of function can be used in Mojo, but they have different meaning: 
+Why didn't we write the Python form `def main()`, instead of `fn main()`? 
+Here is the equivalent version with def main():
+
+See `first_def.mojo`:
+```mojo
+def main():
+    n = 1      # 1
+    n += 1
+    print(n)   # => 2
+```
+
+So both forms of function can be used in Mojo, but they have a different meaning: 
 * `def` functions are dynamic, flexible and types are optional
 * `fn` is meant for stricter code: it enforces strongly-typed and memory-safe behavior
 
 Supporting both `def` and `fn` makes it easier to port Python functions to Mojo.
 
-In line 1 a variable `n` is declared with the keyword `var`, which means it is a real mutable variable whose value can change. If you need to define an immutable variable (a constant, read-only), use `let` instead. This enhances type-safety and performance.
-
-For both let and var the following is true:
-* They create a new scoped runtime value.
-* They support name shadowing, allowing variables in inner scopes to have the same name as variables in outer scopes.  
-So in a nested scope, you can create a variable with a name that already exists in an outer scope. These variables will be totally independent of each other. Shadowing prevents unintended interference between variables of the same name in different scopes.
-* They can include type specifiers, patterns, and late initialization.
+* Name shadowing can occur, allowing variables in inner scopes to have the same name as variables in outer scopes. So in a nested scope, you can create a variable with a name that already exists in an outer scope. These variables will be totally independent of each other. Shadowing prevents unintended interference between variables of the same name in different scopes.
+* Declarations can include type specifiers, patterns, and late initialization.
 
 See `late_initialization.mojo`:
 ```mojo
 fn main():
-    let discount_rate: Float64  # no initialization yet! 
-    let book_id: Int = 123      # typing and initialization
+    var discount_rate: Float64  # no initialization yet! 
+    var book_id: Int = 123      # typing and initialization
     # Late initialization and pattern matching with if/else
     if book_id == 123:
         discount_rate = 0.2  # 20% discount for mystery books
@@ -361,17 +390,9 @@ So every variable must be declared before it is used.
 
 See also: bookstore.mojo
 
->Note: In `fn` functions all variables need to be declared with var or let.
+>Note: In `fn` functions all variables need to be declared with var.
 
-Why is this also useful? Because Python doesn't give you an error if you mistype a variable name in an assignment, while Mojo does point this out when declaring variables with var or let.
-
-What happens when you change var in line 1 to let? You get a compiler error:  
-```
-error: Expression [15]:7:5: expression must be mutable for in-place operator destination
-    n += 1
-    ^
-```
-Indeed in line 2, the value of n is incremented. The line is equivalent to: `n = n + 1`. `let` makes n immutable.
+Why is this useful? Because Python doesn't give you an error if you mistype a variable name in an assignment, while Mojo does point this out when declaring variables with var.
 
 If var is omitted, you get another error:
 ```
@@ -380,25 +401,24 @@ error: use of unknown declaration 'n', 'fn' declarations require explicit variab
     ^
 ```
 
-Unlike in def functions, in fn functions you need to use either var or let when a local variable is declared!
+Unlike in def functions, in fn functions you need to use var when a local variable is declared!
 
 Also in line 1, we see that the type of n is declared as `Int`, an integer. *Declaring the type is not required for local variables in fn*, but it can be useful and increases performance.
 
->Note: A def used in Mojo allows to declare untyped variables just by assigning them a value. But you can also use var and let inside defs!
+>Note: A def used in Mojo allows to declare untyped variables just by assigning them a value. But you can also use var inside defs!
 
->Note: When using Mojo in a REPL environment (such as a Jupyter notebook), top-level variables (variables that live outside a function or struct) are treated like variables in a def, so they allow implicit value type declarations (they do not require var or let declarations, nor type declarations). This matches the Python REPL behavior.
+>Note: When using Mojo in a REPL environment (such as a Jupyter notebook), top-level variables (variables that live outside a function or struct) are treated like variables in a def, so they allow implicit value type declarations (they do not require var declarations, nor type declarations). This matches the Python REPL behavior.
 
-Here is an example snippet which uses `let` for declarations: 
+Here is an example snippet which uses `var` for declarations: 
 
-See `let.mojo`:
+See `var.mojo`:
 ```mojo
 fn do_math():
-    let x: Int = 1   # 1
-    let y = 2        # 2
+    var x: Int = 1   # 1
+    var y = 2        # 2
     var z = 7        # 3
-    # y = 5          # 4
-    let w: Int       # 5
-    print(x + y)     # => 3
+    var w: Int       # 5
+    print(x, y, x + y)     # => 1 2 3
     w = 42           # 6
 
 fn main():
@@ -406,37 +426,27 @@ fn main():
 ```
 
 Here we see how `main` calls another fn function `do_math`.
-A constant x of type Int (integer) is declared and initialized in line 1. Note the general format: `let/var varname: Type = value`
-In line 2, the type of variable `y` is not declared, but inferred by the compiler to be Int (we could do this also in line 1). Note that you cannot write: `let w`, the statement must contain either a type or an initializing value.
-
-In line 3 in the declaration of z, we get a useful warning:  
-```
- warning: 'z' was declared as a 'var' but never mutated, consider switching to a 'let'
-    var z = 7
-    ^
-```
->Note: Take care to only use var when really needed! The immutability of `let` is favored in the functional programming style.
-
-If line 4 is uncommented, you get an error:
-```
-error: expression must be mutable in assignment
-    y = 5            # 4
-    ^
-mojo: error: failed to parse the provided Mojo
-```
+A constant x of type Int (integer) is declared and initialized in line 1. Note the general format: `var varname: Type = value`
+In line 2, the type of variable `y` is not declared, but inferred by the compiler to be Int (we could do this also in line 1). Note that you cannot write: `var w`, the statement must contain either a type or an initializing value.
 
 Lines 5-6 show late initialization, a feature that does not exist in Python.
 
+?? doesn't work as of 2024-04-20:
+https://github.com/modularml/mojo/issues/1573
 Mojo also supports *global variables*:  
 See `global_vars.mojo`:
 ```mojo
 var n = 42
-let str = "Hello from Mojo!"
+var str = "Hello from Mojo!"
 
 fn main():
-    print(n)  # => 42
+    print(n)    # => 42
     print(str)  # => Hello from Mojo!
 ```
+
+?? 2024-04-20: Output is 
+0
+
 
 The current design of Mojo does not support the use of global variables inside functions, except for main (tes() works) ?? see https://github.com/modularml/mojo/discussions/448)
 
@@ -444,12 +454,14 @@ Also alias is heavily used at the global level (see § 4.4).
 
 Mojo variables are much more like C variables than like Python variables: a name in Mojo is attached to an object.
 
+XYZ
+
 See `variable_addresses.mojo`:
 ```mojo
 from memory.unsafe import Pointer
 
 def print_pointer(ptr: Pointer):
-    print(ptr.__as_index())
+    print(ptr.__int__())
 
 def main():
     a = 1
@@ -460,7 +472,7 @@ def main():
     p2 = Pointer.address_of(a)
     print_pointer(p2)           # => 140726871503576
 ```
-This means that there is only one integer variable a, which has been modified in-place with the statement a = 2 . In contrast, the equivalent Python code, something like:
+This means that there is only one integer variable a, which has been modified in-place with the statement a = 2 . In contrast, in equivalent Python code:
 
 ```python
 a = 1
@@ -471,7 +483,7 @@ print(id(a)) # => 140163769254160
 
 such that id(2) - id(1) is 32. The name (the reference) a first points towards the int object 1 . The statement a = 2 modifies the reference and not the integer object.
 
-In Python, references are everywhere (the names are references, elements in a list/tuple are references, function arguments are passed as references). It does not work like that with Mojo, which has strong consequences. For example, in Python a = "py"; b = a creates two references pointing towards one object ( "py" ). In contrast, a = "mojo"; b = a creates two different objects at two different locations in the memory so that:
+In Python, references are everywhere (the names are references, elements in a list/tuple are references, function arguments are passed as references). It does not work like that with Mojo, which has strong consequences. For example, in Python a = "py"; b = a creates two references pointing towards one object ( "py" ). In contrast, a = "mojo"; b = a creates two different objects at two different locations in memory so that:
 
 ```mojo
     b = "mojo"
@@ -485,7 +497,7 @@ In Python, references are everywhere (the names are references, elements in a li
 
 ## 3.5  Typing in Mojo
 Mojo has so-called *progressive typing*: adding more types leads to better performance and error checking, the code becomes safer and more reliable.
-If the type is omitted, it is inferred by the compiler, that is: derived from the type of value the variable is initialized with (in let.mojo line 1 this was 1, an integer).
+If the type is omitted, it is inferred by the compiler, that is: derived from the type of value the variable is initialized with.
 
 Mojo is also a *strongly-typed language", contrary to Python, which is *loosely typed*:
 
@@ -513,7 +525,9 @@ Mojo can import Python modules as well as modules written in Mojo itself. Here w
 
 ## 3.6.1 Mojo modules
 The code of the standard library is written in *modules*. Modules are sometimes bundled together in *packages*. Module- and package names are written in all lowercase, like in Python.  
+
 The most common code is stored in the package  `builtin`, like bool, int and dtype. Their code is automatically imported, so the types and functions of these modules are always available in your Mojo programs. 
+
 Other modules can be imported like this:
 
 ```mojo
@@ -530,23 +544,23 @@ from benchmark import Benchmark as bm
 
 Then access its members with: `bm.num_warmup`
 
-`memory` is a package, containing the modules buffer, memory and unsafe. To import something from the unsafe module, write the following:
+`memory` is a package, containing the modules anypointer, memory and unsafe. To import something from the unsafe module, write the following:
 
 ```mojo
 from memory.unsafe import Pointer
 ```
 
->Note: These from ... statements can be written everywhere in code. Code clarity can be enhanced by grouping them at the start of a code file.
+>Note: These from statements can be written everywhere in code, but code clarity can be enhanced by grouping them at the start of a code file.
 
 If you have many types to import, enclose them within (), like this:
 ```mojo
 from sys.info import (
     alignof,
+    sizeof,
     bitwidthof,
     simdwidthof,
     simdbitwidth,
-    simd_byte_width,
-    sizeof
+    simdbytewidth,
 )
 ```
 To import all types and functions from a module (say math), use:  
@@ -556,9 +570,11 @@ However, it is recommended to only import the things you need.
 >Note: You can also use:
 ```mojo
 import benchmark
+# or:
+import benchmark as bm
 ```
 
-But then you have to access its members with: `benchmark.Benchmark.num_warmup`, prefixing the member name with the module name. This is better than using from ... import *, because in this way you loose the info on from which module the function/type is imported.
+But then you have to access its members with: `benchmark.Benchmark.num_warmup` or `bm.Benchmark.num_warmup`, prefixing the member name with the module name. This is better than using from ... import *, because doing so you loose the info from which module the function/type is imported.
 
 For some examples see: ??
 
@@ -568,7 +584,7 @@ Importing and using a Python package in Mojo is very easy.
 Here's an example (from a Jupyter notebook cell) of how to import the NumPy package:
 
 ```mojo
-from python import Python            # 1
+from python import Python                   # 1
 
 let np = Python.import_module("numpy")      # 2
 ```
