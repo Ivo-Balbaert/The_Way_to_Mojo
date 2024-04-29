@@ -231,10 +231,10 @@ For example:
 `import_path`, which has as default value /home/username/.modular/pkg/packages.modular.com_mojo/lib/mojo. This contains the path where Mojo searches for packages used in code. You can add your own package folder(s) to the default value (separated by a ;).
 
 ## 2.10  Editors
-## 2.10.1 A vim plugin
+### 2.10.1 A vim plugin
 See https://github.com/czheo/mojo.vim for Mojo syntax highlighting.
 
-## 2.10.2 Working with a Jupyter notebook
+### 2.10.2 Working with a Jupyter notebook
 Mojo works in a REPL environment, like a Jupyter notebooks. To do that, it is interpreted, or JIT (Just In Time) compiled through OrcJIT. 
 When working with Jupyter notebooks, it's not allowed to mix Python and Mojo code in one cell. 
 The `%%python` is used at the top of a notebook cell in Mojo to indicate that the cell contains Python code. Variables, functions, and imports defined in a Python cell are available for access in future Mojo cells. This allows you to write and execute normal Python code within a Mojo notebook.
@@ -253,7 +253,7 @@ Don't worry about the program code, that will all be explained in the coming sec
 
 See also: § 2.7.2 for how to work with a Jupyter notebook in VS Code.
 
-## 2.10.3 Visual Studio Code (VS Code)
+### 2.10.3 Visual Studio Code (VS Code)
 This is one of the most popular programmer’s editors today (https://code.visualstudio.com/)
 
 The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo). It features (v 24.2.1):
@@ -265,7 +265,7 @@ The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https:/
 * Run Mojo File
 * Showing docs
 
-## 2.10.4 How to work with a Jupyter notebook in VS Code 
+### 2.10.4 How to work with a Jupyter notebook in VS Code 
 1- Install the [Jupyter VS Code extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)  
 2- From the Command Palette (CTRL+SHIFT+P or CMD+SHIFT+P) select "Create: New Jupyter Notebook"  
 3- Then from the Command Palette again select Notebook: "Select Notebook Kernel" and follow the options:  
@@ -283,16 +283,16 @@ See:
 * https://github.com/microsoft/vscode-jupyter/wiki/Connecting-to-a-remote-Jupyter-server-from-vscode.dev
 
 
-## 2.10.5 Using a Docker file (?? updating)
+### 2.10.5 Using a Docker file (?? updating)
 The repo website https://github.com/modularml/mojo/tree/main/examples/docker contains a Docker example file `Dockerfile.mojosdk`. The following [article](https://medium.com/@1ce.mironov/how-to-install-mojo-locally-using-docker-5346bc23a9fe) goes into detail of how to create and use a Docker image.
 See also the following [video](https://www.youtube.com/watch?v=cHyYmF-RhUk).
 
 
-## 2.10.6 PyCharm plugin
+### 2.10.6 PyCharm plugin
 [See here](https://plugins.jetbrains.com/plugin/23371-mojo)
 
 
-# 2.11 Compiling and executing a simple program
+## 2.11 Compiling and executing a simple program
 To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  
 
 The first is the usual "Hello World!" program: 
@@ -303,7 +303,7 @@ fn main():
     print("Hello World from Mojo!") # => Hello World! from Mojo
 ```
 
-APart from fn main(), this is exactly the same in Mojo as in Python, because Mojo aims to be a superset of Python:
+Apart from fn main(), this is exactly the same in Mojo as in Python, because Mojo aims to be a superset of Python:
 In a Mojo source file we have to use a starting point function called `main()` (see § 3.1).
 (?? Top-level statements as in Python are not yet implemented)
 
@@ -314,8 +314,7 @@ def main():
     print("Hello World from Mojo!") # => Hello World! from Mojo
 ```
 
-
->Note: Don't forget the () after main, and also the () containing the value to print out after print! main and print are functions, so they expect an argument list between ()
+>Note: Don't forget the () after main, and also the () containing the value to print out after print. main and print are functions, so they expect an argument list between ()
 
 To compile and run this source code, use the command: 
 `mojo hello_world.mojo` or `mojo hello_world.🔥`.
@@ -332,7 +331,7 @@ fn main():
     print(x)  # => 2
 ```
 
-Remark: If you work in the REPL, you have to call main() explicitly.
+Remark: In the REPL, you can write top-level statements like in Python.
 
 We'll dive deeper into this code at the start of the next chapter.
 
