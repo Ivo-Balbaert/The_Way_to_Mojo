@@ -15,7 +15,7 @@ The following example demonstrates a struct MyInteger with one field called valu
 In the following line, the fields is changed and then accessed with the dot-notation:
 
 See `struct1.mojo`:
-```mojo
+```py
 struct MyInteger:
     var value: Int
 
@@ -34,39 +34,10 @@ The `self` argument denotes the current instance of the struct.
 A method has a signature like this: `fn method1(self, other parameters)` and when object1 is an instance of its type, the method is called as: `object1.method1(params)`. So `object1` is automatically used as `self`, the first parameter of the method.
 Inside its own methods, the struct's type can also be called `Self`.
 
-## 7.2 Comparing a FloatLiteral and a Bool
-You normally cannot compare a Bool with a FloatLiteral (instance of the MyNumber here):
-But we can if we implement the `__rand__` method on the struct.
-Now we can execute the following code as in line 5:
-
-See `struct_compare_bool.mojo`:
-```mojo
-struct MyNumber:
-    var value: FloatLiteral
-    fn __init__(inout self, num: FloatLiteral):
-        self.value = num
-
-    fn __rand__(self, other: Bool) -> Bool:
-        print("Called MyNumber's __rand__ function")
-        if self.value > 0.0 and other:
-            return True
-        return False
-
-fn main():
-    let my_number = MyNumber(1.0) 
-    print(True & my_number)   
-    # => Called MyNumber's __rand__ function
-    # => True
-    # print(my_number & True) #  error: 'MyNumber' does not implement the '__and__' method
-```
-
->Note: If you write `print(my_number & True)` you get the error: `MyNumber' does not implement the '__and__' method`   
-
-See also § 4.2.2
 
 ## 7.3 A second example
 See `struct2.mojo`:  
-```mojo
+```py
 struct IntPair:   
     var first: Int          # 1
     var second: Int         # 2
@@ -102,6 +73,24 @@ The fields of a struct (here lines 1-2) need to be defined as var when they are 
 To make a struct, you need an __init__ method (see however § 11.1). 
 The `fn __init__` function (line 3) is an "initializer" - it behaves like a constructor in other languages. It is called in line 4. 
 All methods like it that start and end with __ are called *dunder*  (double-underscore) methods. They are widely used in internal code in MojoStdLib. They can be used directly as a method call, but there are often shortcuts or operators to call them (see the StringLiteral examples in strings.mojo).  
+
+**Dunder methods**
+These structs have so-called *dunder* (short for double underscore) methods, like the
+ `__add__` method. 
+ Often an equivalent infix or prefix operator can act as 'syntax sugar' for calling such a method. For example: the `__add__` is called with the operator `+`, so you can use the operator in code,which is much more convenient.
+ 
+ You can think of dunder methods as interface methods to change the runtime behaviour of types, e.g. by implementing `__add__`, we are telling the Mojo compiler, how to add (+) two `U24`s.
+
+Common examples are:
+* the `__init__` method: this acts as a constructor, creating an instance of the struct.
+* the `__del__` method: this acts as a destructor, releasing the occupied memory.
+* the `__eq__` method: to test the equality of two values of the same type.  
+
+
+
+
+
+
 `self` refers to the current instance of the struct, it is similar to the `this` keyword used in some other languages.
 In line 5, the `<` operator is automatically translated to the __lt__ method.
 
@@ -114,7 +103,7 @@ This returns a compile time error: invalid call to '__lt__': right side cannot b
 See also `planets.mojo`.( crashes since 0.6.1, see removed_from_test)
 Here is another style of writing the __init__ method:
 From `nbody.mojo`:
-```mojo
+```py
 @register_passable("trivial")
 struct Planet:
     var pos: SIMD[DType.float64, 4]
@@ -152,7 +141,7 @@ When resolving a function call, Mojo tries each candidate and uses the one that 
 In the next example a struct Complex is defined representing complex numbers, but it has two __init__ methods, one to define only the real part, and another to define both parts of a complex number: the __init__ constructor is overloaded.
 
 See `overloading.mojo`:
-```mojo
+```py
 struct Complex:
     var re: Float32
     var im: Float32
@@ -194,7 +183,7 @@ For other examples, which shows method and function overloading in the same prog
 In the following code snippet, we define a method __add__ in our struct Rectangle (line 1). Then we can use + as in line 2, adding two rectangles, and this will automatically call the __add__ method. Line 3 shows that both calls have the same result.
 
 See `overloading_operators.mojo`:
-```mojo
+```py
 struct Rectangle:
     var length: Float32
     var width: Float32
@@ -253,7 +242,7 @@ When a struct has no __copyinit__ method, an instance of that struct cannot be c
 In the following example a struct HeapArray is defined in line 1. If we try to copy it to another variable b (line 2), we get an `error: value of type 'HeapArray' cannot be copied into its destination`.
 
 See `copy_init.mojo`:
-```mojo
+```py
 from memory.unsafe import Pointer
 
 struct HeapArray:                   # 1
@@ -298,7 +287,7 @@ If we then provide that method (see line 2), all works fine:
 When executing `let b = a`, b gets substituted for self, and a for rhs. a is on the 'right hand side', that's why we call the 2nd arguments rhs.
 
 See `copy_init.mojo`:
-```mojo
+```py
 fn __copyinit__(inout self, rhs: Self):         # 2
         self.cap = rhs.cap
         self.size = rhs.size
@@ -323,7 +312,7 @@ Because a fn function gets its arguments only as immutable references, a large s
 In the following example the SomethingBig a and b structs are not copied to the function fn use_something_big. This function only gets references (the addresses) to these instances.
 
 See `borrowed0.mojo`:
-```mojo
+```py
 struct HeapArray:
     var data: Pointer[Int]
     var size: Int
@@ -392,7 +381,7 @@ The Mojo compiler implements a *borrow checker* (similar to Rust) that prevents 
 In the following example, we are able to do `x += 1` where x has type MyInt, because the method `__iadd__` is defined (+= is syntax sugar for __iadd__). But this could only work because in that function the self parameter is declared as `inout` (remove inout to see the error that results).
 
 See `inout2.mojo`:
-```mojo
+```py
 struct MyInt:
     var value: Int
     
@@ -437,7 +426,7 @@ In line 2 `take_ptr(p^)` the ownership of the `p` value is passed to another fun
 >Note: to type a ^ on a NLD(Dutch) Belgian keyboard, tap 2x on the key next to the P-key.
 
 See `transfer_owner.mojo`:
-```mojo
+```py
 struct UniquePointer:
     var ptr: Int
     
@@ -516,133 +505,6 @@ Another example of a parametric struct is the SIMD struct (see § 7.9.3).
 See also § 12.2.
 
 
-## 7.9.3 Improving performance with SIMD
-SIMD is a core type in Mojo: 
-- all scalars are of SIMD type and width 1
-- all math functions work with SIMD elements
-
-(See also Vectorization: § 20.5.6)
-Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you do the same operation across a vector in a single instruction, greatly improving performance. They are fast because the vector registers are the fastest kind of memory access at the hardware level. 
-
-Mojo’s SIMD struct type is defined as a struct in the builtin `simd` module and exposes the common SIMD operations in its methods, making the SIMD data type and size values parametric. This allows you to directly map your data to the SIMD vectors adapted to your hardware.
-The SIMD struct is a parametric struct type definition (see § 7.9.1).
-
-General format: `SIMD[DType.type, size]`  
-It has two parameters: 
-* type specifies the data type, for example: uint8, float32, it is given by the field `element_type` 
-* size is given by the `len` function (size must be a power of 2) of the SIMD vector, for example 1, 2, 4, and so on
-
-`UInt8` is just a *type alias* for `SIMD[DType.uint8, 1]`, 
-which is the same as `SIMD[ui8, 1]`.  
-All numeric types (see $ 4.2 and the DType class) are defined as aliases in terms of SIMD:  
-* Int8 = SIMD[si8, 1]
-* UInt8 = SIMD[ui8, 1]
-* Int16 = SIMD[si16, 1]
-* UInt16 = SIMD[ui16, 1]
-* Int32 = SIMD[si32, 1]
-* UInt32 = SIMD[ui32, 1]
-* Int64 = SIMD[si64, 1]
-* UInt64 = SIMD[ui64, 1]
-* Float16 = SIMD[f16, 1]
-* Float32 = SIMD[f32, 1]
-* Float64 = SIMD[f64, 1]
-
-Here is an example of a simd struct with size 4:  
-`SIMD[DType.uint8, 4](1, 2, 3, 4)`
-
-Here is some code using this feature:
-See simd.mojo:
-```mojo
-from sys.info import simdbitwidth
-
-fn main():
-    let zeros = SIMD[DType.uint8, 4]()       # 0
-    print(zeros)  # => [0, 0, 0, 0]
-
-    var y = SIMD[DType.uint8, 4](1, 2, 3, 4)  # 1
-    print(y)  # => [1, 2, 3, 4]
-
-    y *= 10                                 # 2
-    print(y)  # => [10, 20, 30, 40]
-
-    let z = SIMD[DType.uint8, 4](1)         # 3
-    print(z)  # => [1, 1, 1, 1]
-
-    print(simdbitwidth())  # => 256         # 4  
-```
-simdwidthof : see § 10.6
-
-See simd5.mojo:
-```mojo
-import math
-fn main():
-    var numbers = SIMD[DType.uint8, 8]()
-    print(numbers) # => [0, 0, 0, 0, 0, 0, 0, 0]
-    # fill them whith numbers from 0 to 7
-    numbers = math.iota[DType.uint8, 8](0)
-    print(numbers) # => [0, 1, 2, 3, 4, 5, 6, 7]
-    numbers *= numbers   # # x*x for each number using one SIMD instructions:
-    print(numbers) # => [0, 1, 4, 9, 16, 25, 36, 49]
-```
-
-math.iota fills an array with incrementing numbers.
-
-SIMD is a parametric (generic) type, indicated with the [ ] braces. We need to indicate the item type and the number of items, as is done in line 1 when declaring the SIMD-vector y.
-Line 0 initializes a SIMD vector with zeros as values.  
-DType.uint8 and 4 are called *parameters*. They must be known at compile-time.  
-(1, 2, 3, 4) are the *arguments*, which can be compile-time or runtime known (for example: user input or data retrieved from an API).
-
-y is now a vector of 8 bit numbers that are packed into 32 bits. We can perform a *single instruction across all of its items* (instead of 4 separate instructions as when we could have used a for loop), like *= shown in line 2.  
-If all items have the same value, use the shorthand notation as for z in line 3.  
-
-To show the SIMD register size on the current machine, use the function `simdbitwidth` from module `sys.info` as in line 4. The result `256` means that we can pack 32 x 8bit numbers together and perform a calculation on all of these with a single instruction.
-
-### 7.9.3.1 Defining a vector with SIMD
-The SIMD type defaults to the architectural SIMD width of the type. This means you can write SIMD[DType.float32], which is equivalent to SIMD[DType.float32, simdwidthof[DType.float32]()].
-
-See `simd_vector.mojo`:
-```mojo
-from sys.info import simdwidthof
-import math
-
-alias element_type = DType.int32
-alias group_size = simdwidthof[element_type]()
-
-fn main():
-    let numbers: SIMD[element_type, group_size]
-    # initialize numbers:
-    numbers = math.iota[element_type, group_size](0)
-    print(numbers) # => [0, 1, 2, 3, 4, 5, 6, 7]
-```
-
-numbers is a static vector, with items of type element_type, and a size which is exactly the SIMD width used on your machine to process the element_type.
-
-See also § 15.1.2
-
-**Questions**
-Is this a correct declaration of a SIMD type? Test it.
-`let n = SIMD[DType.int32, 7](1, 2, 3, 4)`
-
-**Exercises**
-1- Initialize two single floats with 64 bits of data and the value 2.0, using the full SIMD version, and the shortened alias version, then multiply them together and print the result.
-(see `exerc7.2.🔥`)
-2- Create a loop using SIMD that prints four rows of data that look like this:
-    [1,0,0,0]
-    [0,1,0,0]
-    [0,0,1,0]
-    [0,0,0,1]
-
-Hint: Use a loop: fori in range(4):
-                        pass
-(see `exerc7.3.🔥`)
-
-Other example: see `simd2.mojo`:
-`cast[DType.float32]()`
-	the cast() method is a generic method definition that gets instantiated at compile-time instead of runtime, based on the parameter value. cast is a SIMD specific method.
-
-**The splat and join operations**: see `simd_splat_join.mojo`.
-
-
 ## 7.9.4 How to create a custom parametric type: Array
 Currently (2023 Sep) there is no canonical array type in the stdlib. So let's make one ourselves.
 In the following example you see the start of code for a parametric type Array, with parameter `AnyType` (line 1). It has an __init__ constructor (line 2), which takes the size and a value as arguments.
@@ -652,7 +514,7 @@ Line 3 shows how to construct the array:
 * arguments size is 4 and value is 3.14
 
 See `parametric_array.mojo`:
-```mojo
+```py
 struct Array[T: AnyRegType]:                           # 1
     var data: Pointer[T]
     var size: Int
@@ -692,7 +554,7 @@ Better example: see parameter2.mojo in § 11.3
 Here are some examples of parametric functions:
 
 See `simd3.mojo`:
-```mojo
+```py
 from math import sqrt, rsqrt
 
 # fn rsqrt[dt: DType, width: Int](x: SIMD[dt, width]) -> SIMD[dt, width]:   # 1
@@ -709,7 +571,7 @@ In line 2, the dt type becomes Float16, the width takes the value 4. The argumen
 In the following example, we see how parameters (len1 and len2) can be used to form a *parameter expression* len1 + len2:  
 
 See `simd4.mojo`:
-```mojo
+```py
 fn concat[ty: DType, len1: Int, len2: Int](
         lhs: SIMD[ty, len1], rhs: SIMD[ty, len2]) -> SIMD[ty, len1+len2]:
 
@@ -745,7 +607,7 @@ we get as result:
 You can also write imperative compile-time logic with control flow, even  compile-time recursion. The following example makes use the of the `@parameter if` feature, which is an if statement that runs at compile-time. It requires that its condition be a valid parameter expression, and ensures that only the live branch of the if statement is compiled into the program.
 
 See `ctime_logic.mojo`: ?? these functions already exist in Mojo!
-```mojo
+```py
 fn slice[ty: DType, new_size: Int, size: Int](
         x: SIMD[ty, size], offset: Int) -> SIMD[ty, new_size]:
     var result = SIMD[ty, new_size]()
@@ -790,7 +652,7 @@ These are types from which you cannot create an instance because they have no in
 Without initializer, these types can be useful as "namespaces" for helper functions, because you can refer to static members like `NoInstances.my_int` or `NoInstances.print_hello()`.
 
 See `no_instance.mojo`:
-```mojo
+```py
 struct NoInstances:
     var state: Int
     alias my_int = Int

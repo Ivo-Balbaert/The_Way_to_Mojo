@@ -16,7 +16,7 @@ from algorithm import Static2DTileUnitFunc as Tile2DFunc
 from autotune import autotune, search
 from time import now
 
-let python_gflops = 0.005430089939864052
+var python_gflops = 0.005430089939864052
 alias nelts = simdwidthof[DType.float32]()  # The SIMD vector width.
 alias matmul_fn_sig_type = fn(Matrix, Matrix, Matrix) -> None
 
@@ -40,13 +40,13 @@ fn matmul_autotune(C: Matrix, A: Matrix, B: Matrix):
 fn matmul_evaluator(funcs: Pointer[matmul_fn_sig_type], size: Int) -> Int:
     print("matmul_evaluator, number of candidates: ", size)
 
-    let eval_begin: Int = now()
+    var eval_begin: Int = now()
 
     # This size is picked at random, in real code we could use a real size
     # distribution here.
-    let M = 512
-    let N = 512
-    let K = 512
+    var M = 512
+    var N = 512
+    var K = 512
     print("Optimizing for size:", M, "x", N, "x", K)
 
     var best_idx: Int = -1
@@ -58,18 +58,18 @@ fn matmul_evaluator(funcs: Pointer[matmul_fn_sig_type], size: Int) -> Int:
     var C = Matrix(M, N)
     var A = Matrix(M, K)
     var B = Matrix(K, N)
-    let Cptr = Pointer[Matrix].address_of(C).address
-    let Aptr = Pointer[Matrix].address_of(A).address
-    let Bptr = Pointer[Matrix].address_of(B).address
+    var Cptr = Pointer[Matrix].address_of(C).address
+    var Aptr = Pointer[Matrix].address_of(A).address
+    var Bptr = Pointer[Matrix].address_of(B).address
         # Find the function that's the fastest on the size we're optimizing for
         for f_idx in range(size):
-            let func = funcs.load(f_idx)
+            var func = funcs.load(f_idx)
 
             @always_inline
             @parameter
             fn wrapper():
                 func(C, A, B)
-            let cur_time = Benchmark(1, 100_000, 500_000_000, 1000_000_000).run[wrapper]()
+            var cur_time = Benchmark(1, 100_000, 500_000_000, 1000_000_000).run[wrapper]()
 
             if best_idx < 0:
                 best_idx = f_idx
@@ -78,7 +78,7 @@ fn matmul_evaluator(funcs: Pointer[matmul_fn_sig_type], size: Int) -> Int:
                 best_idx = f_idx
                 best_time = cur_time
 
-        let eval_end: Int = now()
+        var eval_end: Int = now()
         # Prevent matrices from being destroyed before we finished benchmarking them.
         _ = A.data
         _ = B.data
@@ -156,12 +156,12 @@ fn benchmark_parallel[
     fn test_fn():
         _ = func(C, A, B)
 
-    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    var secs = Float64(Benchmark().run[test_fn]()) / 1e9
     print("Mojo seconds: ", secs)
     # Prevent the matrices from being freed before the benchmark run
     _ = (A, B, C)
-    let gflops = ((2 * M * N * K) / secs) / 1e9
-    let speedup: Float64 = gflops / python_gflops
+    var gflops = ((2 * M * N * K) / secs) / 1e9
+    var speedup: Float64 = gflops / python_gflops
     # print(gflops, "GFLOP/s", speedup, " speedup")
     print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
 

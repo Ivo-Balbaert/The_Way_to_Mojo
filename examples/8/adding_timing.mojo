@@ -4,10 +4,10 @@ fn add(x: Int, y: Int) -> Int:
     return x + y
 
 fn main():
-    let start = now()
+    var start = now()
     for i in range(1000000):
-        let z = add(i, i + 1)
-    let end = now()
+        var z = add(i, i + 1)
+    var end = now()
     
     print("It took Mojo", end - start , " nanoseconds")
 

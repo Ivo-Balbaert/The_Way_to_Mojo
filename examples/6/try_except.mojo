@@ -1,7 +1,7 @@
 def func1(a, b):
-    let c = a
+    var c = a
     if c != b:
-        let d = b
+        var d = b
         print(d)  # => 3
 
 fn main():

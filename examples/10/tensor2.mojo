@@ -1,5 +1,5 @@
-from tensor import Tensor
-from random import rand
+from tensor import Tensor, rand
+# from random import rand
 from math import sqrt, round
 from algorithm import vectorize
 from sys.info import simdwidthof
@@ -18,13 +18,13 @@ fn tensor_math_vectorized(t: Tensor[type]) -> Tensor[type]:
     
     @parameter
     fn vecmath[simd_width: Int](idx: Int) -> None:
-        t_new.simd_store[simd_width](idx, sqrt(t.simd_load[simd_width](idx)))
-    vectorize[simd_width, vecmath](t.num_elements())
+        t_new.store[simd_width](idx, sqrt(t.load[simd_width](idx)))
+    vectorize[vecmath, simd_width, ](t.num_elements())
     return t_new
 
 
 fn main():
-    let t = rand[type](2,2)
+    var t = rand[type](2,2)
     print(t.shape().__str__()) # 3x3
     print(t.spec().__str__())  # 3x3xfloat32
     # print(t[0]) # => 0.1315377950668335
@@ -37,12 +37,12 @@ fn main():
        print(t[i]) 
 
     print()
-    let t1 = tensor_math(t)
+    var t1 = tensor_math(t)
     for i in range(t1.num_elements()):
        print(t1[i]) 
 
     print()
-    let t2 = tensor_math_vectorized(t)
+    var t2 = tensor_math_vectorized(t)
     for i in range(t2.num_elements()):
        print(t2[i]) 
 

@@ -26,8 +26,8 @@ struct Car:
 
 fn main():
     # Create car instances
-    let car1 = Car("Toyota", "Corolla", 2023, 25000.0)
-    let car2 = Car("Honda", "Civic", 2013, 28000.0)
+    var car1 = Car("Toyota", "Corolla", 2023, 25000.0)
+    var car2 = Car("Honda", "Civic", 2013, 28000.0)
 
     # Print car details
     car1.print_car_details()
@@ -41,7 +41,7 @@ fn main():
 # Model: Civic
 # Year: 2013
 # Price: 28000.0
-    let car3 = Car("Mercedes")
+    var car3 = Car("Mercedes")
     car3.print_car_details()
 # =>
 # Make: Mercedes

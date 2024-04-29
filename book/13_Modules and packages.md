@@ -29,7 +29,7 @@ Doing this is as easy as for Python modules.
 Suppose we have functionality of a pair of integers in `mymodule.mojo`. 
 
 See `mymodule.mojo`:
-```mojo
+```py
 struct MyPair:
     var first: Int
     var second: Int
@@ -45,7 +45,7 @@ struct MyPair:
 We want to use this module in a Mojo program, for example `use_module.mojo`. We can do this as follows:  
 
 See `use_module.mojo`:
-```mojo
+```py
 from mymodule import MyPair        # 1
 from mymodule import MyPair as mp1 # 1B
 import mymodule                    # 2
@@ -150,7 +150,7 @@ Then the import statements in `use_package.mojo` can be simplified to:
 `from mypackage import MyPair`
 
 This is applied in the standard library. For example: algorithm/__init__.mojo contains:  
-```mojo
+```py
 from .functional import *
 from .reduction import *
 ```

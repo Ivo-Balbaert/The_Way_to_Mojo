@@ -4,5 +4,5 @@ struct Coord:
     var y: Int
 
 fn main():
-    let p = Coord(0, 0)
+    var p = Coord(0, 0)
     print(p.y) # => 0

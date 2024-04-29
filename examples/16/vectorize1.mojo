@@ -20,9 +20,9 @@ fn main():
         print(tmp)
         tmp = tmp * 3.14 * 2 / 256.0
         tmp = math.cos[value_type,group_size](tmp)
-        array.simd_store[group_size](n, tmp)
+        array.store(n, tmp)
     
-    vectorize[by_group_of, cosine](size)  # 1
+    vectorize[cosine, by_group_of](size)  # 1
     
     for i in range(size):
         print(array.load(i))

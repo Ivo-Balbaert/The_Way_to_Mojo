@@ -15,14 +15,14 @@ def mojo_naive_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
     return sqrt(s)
 
 fn print_formatter(string: String, value: Float64):
-    print_no_newline(string)
+    print(string, end="")
     print(value)
 
 fn main() raises:
-    let np = Python.import_module("numpy")
-    let n = 10_000_000
-    let anp = np.random.rand(n)
-    let bnp = np.random.rand(n)
+    var np = Python.import_module("numpy")
+    var n = 10_000_000
+    var anp = np.random.rand(n)
+    var bnp = np.random.rand(n)
 
     var a = Tensor[dtype](n)
     var b = Tensor[dtype](n)
@@ -31,9 +31,9 @@ fn main() raises:
         a[i] = anp[i].to_float64()
         b[i] = bnp[i].to_float64()
 
-    let eval_begin = now()
-    let naive_dist = mojo_naive_dist(a, b)
-    let eval_end = now()
+    var eval_begin = now()
+    var naive_dist = mojo_naive_dist(a, b)
+    var eval_end = now()
 
     print_formatter("mojo_naive_dist value: ", naive_dist)
     print_formatter("mojo_naive_dist time (ms): ",Float64((eval_end - eval_begin)) / 1e6)

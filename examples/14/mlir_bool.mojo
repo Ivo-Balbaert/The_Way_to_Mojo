@@ -35,10 +35,10 @@ struct OurBool:
         return self.value
 
     fn __eq__(self, rhs: OurBool) -> Self:
-        let lhsIndex = __mlir_op.`index.casts`[_type = __mlir_type.index](
+        var lhsIndex = __mlir_op.`index.casts`[_type = __mlir_type.index](
             self.value
         )
-        let rhsIndex = __mlir_op.`index.casts`[_type = __mlir_type.index](
+        var rhsIndex = __mlir_op.`index.casts`[_type = __mlir_type.index](
             rhs.value
         )
         return Self(
@@ -52,21 +52,21 @@ struct OurBool:
 
 
 fn main():
-    # let a: OurBool                # 2
-    let a = OurBool()  # 3  - this needs an __init__ method !
-    let b = a  # 4 error: 'OurBool' does not implement the '__copyinit__' method
+    # var a: OurBool                # 2
+    var a = OurBool()  # 3  - this needs an __init__ method !
+    var b = a  # 4 error: 'OurBool' does not implement the '__copyinit__' method
 
-    let e = OurTrue
-    let f = OurFalse
+    var e = OurTrue
+    var f = OurFalse
 
-    let g = OurTrue
+    var g = OurTrue
     if g:
         print("It's true!")  # 5  - __bool__ is needed here => It's true!
 
     # After defining the  __mlir_i1__, the __bool__ method is no longer needed
-    let h = OurTrue
+    var h = OurTrue
     if h:
         print("No more Bool conversion!")
 
-    let i = OurFalse
+    var i = OurFalse
     if ~i: print("It's false!")   # 6 => It's false!

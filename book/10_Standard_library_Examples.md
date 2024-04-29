@@ -9,7 +9,7 @@ Both constrained and debug_assert are built-in.
 In the following example we ensure that the two parameters to `assert_positives` are both > 0:
 
 See `constrained.mojo`:
-```mojo
+```py
 fn add_positives[x: Int, y: Int]() -> UInt8:
     constrained[x > 0, "use a positive number"]()     # 1A
     constrained[y > 0]()     # 1B
@@ -39,7 +39,7 @@ constrained.mojo:2:23: note:               constraint failed: use a positive num
 `debug_assert[cond, err_msg]` checks that the condition is true, but only in debug builds. It is removed from the compilation process in release builds. It works like assert in C++.
 
 See `debug_assert1.mojo`:
-```mojo
+```py
 fn test_debug_assert[x: Int](y: Int):
     debug_assert(x == 42, "x is not equal to 42")
     debug_assert(y == 42, "y is not equal to 42")
@@ -68,7 +68,7 @@ This module implements various testing utilities.
 
 (code changed, because from v 0.6, assert_ return Error when the assertion fails)
 See `testing1.mojo`:
-```mojo
+```py
 from testing import *
 
 
@@ -116,7 +116,7 @@ Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)
 From v5, benchmark no longer requires a capturing fn so you can benchmark functions outside the same scope. You can also print a report with: `report.print()`
 
 See `benchmark_newv5`:
-```mojo
+```py
 from benchmark import Unit, benchmark
 from time import sleep
 
@@ -164,7 +164,7 @@ Import it in your code through: `import benchmark`
 We'll benchmark the execution of the Fibonacci function, defined as follows:
 (code: see `running_benchmark.mojo`)`
 
-```mojo
+```py
 import benchmark
 from time import sleep
 
@@ -242,7 +242,7 @@ As the 3rd parameter, you can also set up the minimum running time (min_time_ns)
 
 Here is another example: stack dump!
 See `calc_mean_matrix.mojo`:
-```mojo
+```py
 from tensor import Tensor
 from random import rand
 import benchmark
@@ -346,7 +346,7 @@ fn main():
 A buffer (defined in module memory.buffer) doesn't own the underlying memory, it's a view over data that is owned by another object.
 
 See `buffer1.mojo`:
-```mojo
+```py
 from memory.buffer import Buffer
 from memory.unsafe import DTypePointer
 
@@ -411,7 +411,7 @@ This is an N-dimensional Buffer, that can be used both statically, and dynamical
 NDBuffer can be parametrized on rank, static dimensions and Dtype. It does not own its underlying pointer.
 
 See `ndbuffer1.mojo`:  (see also § 10.9 for Tensor from stdlib, use that!)
-```mojo
+```py
 from utils.list import DimList
 from memory.unsafe import DTypePointer
 from memory.buffer import NDBuffer
@@ -537,7 +537,7 @@ Mojo can gather a lot of info on your host machine to finetune its behavior if n
 Methods for querying the host target info are implemented in module `sys.info`.
 
 See `target_info.mojo`:
-```mojo
+```py
 from sys.info import (
     alignof,
     bitwidthof,
@@ -567,9 +567,6 @@ fn main():
     print(alignof[UInt64]())  # => 8
     print(alignof[Foo]())     # 1 => 4
     print(bitwidthof[Foo]())  # 2 => 64
-    print(simdwidthof[DType.uint64]()) # 3 => 4
-    print(simdbitwidth())     # 4 => 256
-    print(simdbytewidth())    # 5 => 32
     print(sizeof[UInt8]())    # 6 => 1
 
     @parameter                # 7
@@ -594,9 +591,7 @@ fn main():
 To check the alignment of any type, use the alignof function. In the struct Foo (line 1) it returns 4 bytes. This means each instance of Foo will start at a memory address that is a multiple of 4 bytes. There will also be 3 bytes of padding to accommodate the UInt8.  
 bitwidthof in line 2 uses bits instead of bytes to show the width of the type in bits. Type Foo will take 24 bits of padding, as each object can only be placed at multiples of 64 in memory.
 
-simdwidthof is used to show how many of the type can fit into the targets SIMD register, e.g. to see how many uint64's can be processed with a single instruction. For our system, the SIMD register can process 4 UInt64 values at once (see line 3). 
-simd_bit_width is the total amount of bits that can be processed at the same time on the host systems SIMD register, line 4 shows 256.
-simd_byte_width is the total amount of bytes that can be processed at the same time on the host systems SIMD register, , line 5 shows 32.  
+
 The total size in bytes of an AnyType is given by the `sizeof` function. (line 6).
 
 The same module also contains the values os_is_linux, os_is_macos, os_is_windows, which can be used to conditionally compile code based on the operating system (see line 7).
@@ -613,7 +608,7 @@ A number of other functions starting with has_ or is_ give info about the proces
 The following example (taken from the standard Mojo distribution) prints the current host system information using APIs from the sys module.
 
 See `deviceinfo.mojo`:
-```mojo
+```py
 ffrom sys.info import (
     os_is_linux,
     os_is_windows,
@@ -681,7 +676,7 @@ System information:
 ## 10.7 The time module
 
 See `timing.mojo`:
-```mojo
+```py
 from time import now, sleep, time_function
 
 fn sleep1ms():
@@ -709,7 +704,7 @@ fn main():
 ```
 
 Here is example code where we time the execution of the Fibonacci function (see § 19.3):
-```mojo
+```py
 from time import now
 
 var eval_begin = now()
@@ -742,7 +737,7 @@ This Vector type dynamically allocates memory to store elements.
 It supports pushing and popping from the back, resizing the underlying storage to accommodate more elements as needed. 
 
 See `dynamicvector1.mojo`:
-```mojo
+```py
 from collections.vector import DynamicVector
 
 fn main():
@@ -817,7 +812,7 @@ The `clear` method deallocates all items in the vector (line 12, doesn't seem to
 The sort module in package algorithms implements different sorting functions. Here is an example of usage:  
 
 See `sorting1.mojo`:
-```mojo
+```py
 from algorithm.sort import sort
 
 fn main():
@@ -846,7 +841,7 @@ It does not resize or implement bounds checks, it is initialized with both a sma
 This data structure is useful for applications where the number of required elements is not known at compile time, but once known at runtime, is guaranteed to be equal to or less than a certain capacity.
 
 See `fixedvectors.mojo`:
-```mojo
+```py
 from collections.vector import InlinedFixedVector
 
 fn main():
@@ -894,7 +889,7 @@ See video: [Introduction to Tensors](https://www.youtube.com/watch?v=3OWkXNdkx8E
 Tensorutils: see blogs_videos
 
 See `tensor0.mojo`:
-```mojo
+```py
 from tensor import Tensor
 
 fn main():
@@ -907,7 +902,7 @@ fn main():
 ```
 
 See `tensor1.mojo`:
-```mojo
+```py
 from tensor import Tensor, TensorSpec, TensorShape
 from utils.index import Index
 from random import rand
@@ -938,7 +933,7 @@ fn main():
 
 Nice example of vectorizing:
 See `tensor2.mojo`:
-```mojo
+```py
 from tensor import Tensor
 from random import rand
 from math import sqrt, round
@@ -995,7 +990,7 @@ fn main():
 This is done with module arg from the sys package.
 
 See `cmdline_args.mojo`:
-```mojo
+```py
 from sys import argv
 
 fn main():
@@ -1034,7 +1029,7 @@ This is done through the file module (v 0.4.0).
 Suppose we have a my_file.txt with contents: "I like Mojo!"
 
 See `read_file.mojo`
-```mojo
+```py
 fn main() raises:
     var f = open("my_file.txt", "r")
     print(f.read())     # => I like Mojo!
@@ -1051,7 +1046,7 @@ Suppose we want to define a Tensor with an element type that we provide at the c
 The module sys.param_env provides a function is_defined, which returns true when the same string was passed at the command-line.
 
 See `param_env1.mojo`:
-```mojo
+```py
 from sys.param_env import is_defined
 from tensor import Tensor, TensorSpec
 

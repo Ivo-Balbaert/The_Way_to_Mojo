@@ -4,7 +4,7 @@ from algorithm import parallelize
 fn main():
     @parameter
     fn compute_number(x: Int):
-        print_no_newline(x * x, " - ")
+        print(x * x, " - ", end="")
 
     var stop_at = 16
     var cores = 4

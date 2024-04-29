@@ -1,10 +1,10 @@
-from tensor import Tensor, TensorShape, TensorSpec
+from tensor import Tensor, TensorShape, TensorSpec, rand
 from math import trunc, mod
 from memory import memset_zero
 from sys.info import simdwidthof, simdbitwidth
-from algorithm import vectorize, parallelize, vectorize_unroll
+from algorithm import vectorize, parallelize
 from utils.index import Index
-from random import rand, seed
+from random import seed
 from python import Python
 import time
 
@@ -31,15 +31,15 @@ struct myTensor[dtype: DType]:
         fn parallel_reduce_rows(idx1: Int)->None:
             @parameter
             fn vectorize_reduce_row[simd_width: Int](idx2: Int) -> None:
-                new_tensor[idx1] += self.t.simd_load[simd_width](idx1*self.t.dim(1)+idx2).reduce_add()
-            vectorize[2*simd_width,vectorize_reduce_row](self.t.dim(1))
+                new_tensor[idx1] += self.t.load[width=simd_width](idx1*self.t.dim(1)+idx2).reduce_add()
+            vectorize[vectorize_reduce_row, 2*simd_width](self.t.dim(1))
             new_tensor[idx1] /= self.t.dim(1)
         parallelize[parallel_reduce_rows](self.t.dim(0),8)
         return Self(new_tensor)
 
     fn print(self, prec: Int=4)->None:
-        let t = self.t
-        let rank = t.rank()
+        var t = self.t
+        var rank = t.rank()
         if rank == 0:
             print("Error: Nothing to print. Tensor rank = 0")
             return
@@ -71,10 +71,10 @@ struct myTensor[dtype: DType]:
             for j in range(dim1):
                 if rank!=1:
                     if j==0:
-                        print_no_newline("  [")
+                        print("  [", end="")
                     else:
-                        print_no_newline("\n   ")
-                print_no_newline("[")
+                        print("\n   ", end="")
+                print("[", end="")
                 for k in range(dim2):
                     if rank==1:
                         val = t[k]
@@ -82,22 +82,22 @@ struct myTensor[dtype: DType]:
                         val = t[j,k]
                     if rank==3:
                         val = t[i,j,k]
-                    let int_str: String
+                    var int_str: String
                     if val > 0:
                         int_str = String(trunc(val).cast[DType.int32]())
                     else:
                         int_str = "-"+String(trunc(val).cast[DType.int32]())
                         val = -val
-                    let float_str: String
+                    var float_str: String
                     float_str = String(mod(val,1))
-                    let s = int_str+"."+float_str[2:prec+2]
+                    var s = int_str+"."+float_str[2:prec+2]
                     if k==0:
-                        print_no_newline(s)
+                        print(s, end="")
                     else:
-                        print_no_newline("  ",s)
-                print_no_newline("]")
+                        print("  ",s, end="")
+                print("]", end="")
             if rank>1:
-                print_no_newline("]")
+                print("]", end="")
             print()
         if rank>2:
             print("]")
@@ -105,15 +105,15 @@ struct myTensor[dtype: DType]:
 
 
 fn main():
-    let tx = myTensor[dtype](5, 10)
+    var tx = myTensor[dtype](5, 10)
     tx.print()
     tx.mean().print()
 
-    let tx2 = myTensor[dtype](1000, 100_000)
-    let tm = time.now()
+    var tx2 = myTensor[dtype](1000, 100_000)
+    var tm = time.now()
     for i in range(reps):
         _ = tx2.mean()
-    let dur = time.now() - tm
+    var dur = time.now() - tm
     print("Mojo Vectorized and parallelized mean in a struct:", dur / reps / 1000000, "ms")
 
 # [[0.1315   0.4586   0.2189   0.6788   0.9346   0.5194   0.0345   0.5297   0.0076   0.0668]

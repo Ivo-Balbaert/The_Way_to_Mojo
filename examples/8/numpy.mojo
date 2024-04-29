@@ -1,9 +1,9 @@
 from python import Python                    # 1
 
 fn main() raises:
-    let np = Python.import_module("numpy")   # 2
+    var np = Python.import_module("numpy")   # 2
 
-    let array = np.array([1, 2, 3])          # 3
+    var array = np.array([1, 2, 3])          # 3
     print(array)  # => [1  2  3]
 
     var arr = np.ndarray([5])        
@@ -12,7 +12,7 @@ fn main() raises:
     arr = "this will work fine"  # Python is loosely typed, so:
     print(arr)                   # => this will work fine
 
-    let ar = np.arange(15).reshape(3, 5)
+    var ar = np.arange(15).reshape(3, 5)
     print(ar)
     # =>
     # [[ 0  1  2  3  4]

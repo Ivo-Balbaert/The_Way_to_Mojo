@@ -15,7 +15,7 @@ fn fib_iterative(n: Int) -> Int:
     var n2 = 1
 
     while count < n:
-        let nth = n1 + n2
+        var nth = n1 + n2
         n1 = n2
         n2 = nth
         count += 1
@@ -28,13 +28,13 @@ fn sleeper():
 
 
 fn test_fib():
-    let n = 35
+    var n = 35
     for i in range(n):
         _ = fib(i)
 
 
 fn test_fib_iterative():
-    let n = 35
+    var n = 35
     for i in range(n):
         _ = fib_iterative(i)
 

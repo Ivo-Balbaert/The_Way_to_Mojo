@@ -39,7 +39,7 @@ This means that our own custom types, such as the `OurBool` type we'll create be
 ## 14.2 Defining a bool type with MLIR
 
 See `mlir_bool.mojo`:
-```mojo
+```py
 alias OurTrue = OurBool(__mlir_attr.`true`)
 alias OurFalse: OurBool = __mlir_attr.`false`
 
@@ -139,7 +139,7 @@ Of course, the reason booleans are ubiquitous in programming is because they can
 ## 14.3 Defining an integer with MLIR
 
 See `mlir_int.mojo`:
-```mojo
+```py
 @register_passable("trivial")
 struct UInt8:
     alias Data = __mlir_type.ui8
@@ -187,7 +187,7 @@ fn main():
 Example usage 2:  (see ray_tracing.mojo)
 Raw pointers are used here to efficiently copy the pixels to the numpy array:
        
-```mojo
+```py
  let out_pointer = Pointer(
             __mlir_op.`pop.index_to_pointer`[
                 _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
@@ -209,7 +209,7 @@ Raw pointers are used here to efficiently copy the pixels to the numpy array:
 This uses the MLIR operation `pop.external_call`.
 
 See `call_gmtime.mojo`:
-```mojo
+```py
 alias int = Int32
 
 
@@ -258,7 +258,7 @@ fn main():
 
 ## 14.6 Custom bitwidth integers
 See `custom_bitwidth_integers.mojo`:
-```mojo
+```py
 @register_passable("trivial")
 struct U24[N: Int]:
     var value: __mlir_type.ui24

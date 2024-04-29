@@ -4,8 +4,6 @@ from math import sqrt, rsqrt, tan, acos, max
 from math.limit import inf
 from python import Python
 from algorithm import parallelize
-from collections.vector import DynamicVector
-
 
 # Uses to represent a vector in 3D space as well as RGB pixels
 @register_passable("trivial")
@@ -51,8 +49,8 @@ struct Vec3f:
 
     @always_inline
     fn cross(self, other: Vec3f) -> Vec3f:
-        let self_zxy = self.data.shuffle[2, 0, 1, 3]()
-        let other_zxy = other.data.shuffle[2, 0, 1, 3]()
+        var self_zxy = self.data.shuffle[2, 0, 1, 3]()
+        var other_zxy = other.data.shuffle[2, 0, 1, 3]()
         return (self_zxy * other.data - self.data * other_zxy).shuffle[2, 0, 1, 3]()
 
     @always_inline
@@ -78,8 +76,8 @@ struct Material:
 alias W = 1024
 alias H = 768
 alias bg_color = Vec3f(0.02, 0.02, 0.02)
-let shiny_yellow = Material(Vec3f(0.95, 0.95, 0.4), Vec3f(0.7, 0.6, 0), 30.0)
-let green_rubber = Material(Vec3f(0.3, 0.7, 0.3), Vec3f(0.9, 0.1, 0), 1.0)
+var shiny_yellow = Material(Vec3f(0.95, 0.95, 0.4), Vec3f(0.7, 0.6, 0), 30.0)
+var green_rubber = Material(Vec3f(0.3, 0.7, 0.3), Vec3f(0.9, 0.1, 0), 1.0)
 
 
 @register_passable("trivial")
@@ -97,21 +95,21 @@ struct Sphere:
         And if it does, it writes in the `dist` parameter the distance to the
         origin of the ray.
         """
-        let L = orig - self.center
-        let a = dir @ dir
-        let b = 2 * (dir @ L)
-        let c = L @ L - self.radius * self.radius
-        let discriminant = b * b - 4 * a * c
+        var L = orig - self.center
+        var a = dir @ dir
+        var b = 2 * (dir @ L)
+        var c = L @ L - self.radius * self.radius
+        var discriminant = b * b - 4 * a * c
         if discriminant < 0:
             return False
         if discriminant == 0:
             dist = -b / 2 * a
             return True
-        let q = -0.5 * (b + sqrt(discriminant)) if b > 0 else -0.5 * (
+        var q = -0.5 * (b + sqrt(discriminant)) if b > 0 else -0.5 * (
             b - sqrt(discriminant)
         )
         var t0 = q / a
-        let t1 = c / q
+        var t1 = c / q
         if t0 > t1:
             t0 = t1
         if t0 < 0:
@@ -153,14 +151,14 @@ struct Image:
         return self.rc.load()
 
     fn _dec_rc(self):
-        let rc = self._get_rc()
+        var rc = self._get_rc()
         if rc > 1:
             self.rc.store(rc - 1)
             return
         self._free()
 
     fn _inc_rc(self):
-        let rc = self._get_rc()
+        var rc = self._get_rc()
         self.rc.store(rc + 1)
 
     fn _free(self):
@@ -177,13 +175,13 @@ struct Image:
         return row * self.width + col
 
     def to_numpy_image(self) -> PythonObject:
-        let np = Python.import_module("numpy")
-        let plt = Python.import_module("matplotlib.pyplot")
+        var np = Python.import_module("numpy")
+        var plt = Python.import_module("matplotlib.pyplot")
 
-        let np_image = np.zeros((self.height, self.width, 3), np.float32)
+        var np_image = np.zeros((self.height, self.width, 3), np.float32)
 
         # We use raw pointers to efficiently copy the pixels to the numpy array
-        let out_pointer = Pointer(
+        var out_pointer = Pointer(
             __mlir_op.`pop.index_to_pointer`[
                 _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
             ](
@@ -192,15 +190,15 @@ struct Image:
                 ).value
             )
         )
-        let in_pointer = Pointer(
+        var in_pointer = Pointer(
             __mlir_op.`pop.index_to_pointer`[
                 _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
-            ](SIMD[DType.index, 1](self.pixels.__as_index()).value)
+            ](SIMD[DType.index, 1](self.pixels.__int__()).value)
         )
 
         for row in range(self.height):
             for col in range(self.width):
-                let index = self._pos_to_index(row, col)
+                var index = self._pos_to_index(row, col)
                 for dim in range(3):
                     out_pointer.store(index * 3 + dim, in_pointer[index * 4 + dim])
 
@@ -225,14 +223,14 @@ fn cast_ray(orig: Vec3f, dir: Vec3f, sphere: Sphere) -> Vec3f:
 
 
 fn create_image_with_sphere(sphere: Sphere, height: Int, width: Int) -> Image:
-    let image = Image(height, width)
+    var image = Image(height, width)
 
     @parameter
     fn _process_row(row: Int):
-        let y = -((2.0 * row + 1) / height - 1)
+        var y = -((2.0 * row + 1) / height - 1)
         for col in range(width):
-            let x = ((2.0 * col + 1) / width - 1) * width / height
-            let dir = Vec3f(x, y, -1).normalize()
+            var x = ((2.0 * col + 1) / width - 1) * width / height
+            var dir = Vec3f(x, y, -1).normalize()
             image.set(row, col, cast_ray(Vec3f.zero(), dir, sphere))
 
     parallelize[_process_row](height)
@@ -241,15 +239,15 @@ fn create_image_with_sphere(sphere: Sphere, height: Int, width: Int) -> Image:
 
 
 def load_image(fname: String) -> Image:
-    let np = Python.import_module("numpy")
-    let plt = Python.import_module("matplotlib.pyplot")
+    var np = Python.import_module("numpy")
+    var plt = Python.import_module("matplotlib.pyplot")
 
-    let np_image = plt.imread(fname)
-    let rows = np_image.shape[0].__index__()
-    let cols = np_image.shape[1].__index__()
-    let image = Image(rows, cols)
+    var np_image = plt.imread(fname)
+    var rows = np_image.shape[0].__index__()
+    var cols = np_image.shape[1].__index__()
+    var image = Image(rows, cols)
 
-    let in_pointer = Pointer(
+    var in_pointer = Pointer(
         __mlir_op.`pop.index_to_pointer`[
             _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
         ](
@@ -258,14 +256,14 @@ def load_image(fname: String) -> Image:
             ).value
         )
     )
-    let out_pointer = Pointer(
+    var out_pointer = Pointer(
         __mlir_op.`pop.index_to_pointer`[
             _type = __mlir_type[`!kgen.pointer<scalar<f32>>`]
-        ](SIMD[DType.index, 1](image.pixels.__as_index()).value)
+        ](SIMD[DType.index, 1](image.pixels.__int__()).value)
     )
     for row in range(rows):
         for col in range(cols):
-            let index = image._pos_to_index(row, col)
+            var index = image._pos_to_index(row, col)
             for dim in range(3):
                 out_pointer.store(index * 4 + dim, in_pointer[index * 3 + dim])
     return image
@@ -286,7 +284,7 @@ def render(image: Image):
 fn scene_intersect(
     orig: Vec3f,
     dir: Vec3f,
-    spheres: DynamicVector[Sphere],
+    spheres: List[Sphere],
     background: Material,
 ) -> Material:
     var spheres_dist = inf[DType.float32]()
@@ -301,22 +299,22 @@ fn scene_intersect(
     return material
 
 
-fn cast_ray(orig: Vec3f, dir: Vec3f, spheres: DynamicVector[Sphere]) -> Material:
-    let background = Material(Vec3f(0.02, 0.02, 0.02))
+fn cast_ray(orig: Vec3f, dir: Vec3f, spheres: List[Sphere]) -> Material:
+    var background = Material(Vec3f(0.02, 0.02, 0.02))
     return scene_intersect(orig, dir, spheres, background)
 
 
 fn create_image_with_spheres(
-    spheres: DynamicVector[Sphere], height: Int, width: Int
+    spheres: ListLiteral[Sphere], height: Int, width: Int
 ) -> Image:
-    let image = Image(height, width)
+    var image = Image(height, width)
 
     @parameter
     fn _process_row(row: Int):
-        let y = -((2.0 * row + 1) / height - 1)
+        var y = -((2.0 * row + 1) / height - 1)
         for col in range(width):
-            let x = ((2.0 * col + 1) / width - 1) * width / height
-            let dir = Vec3f(x, y, -1).normalize()
+            var x = ((2.0 * col + 1) / width - 1) * width / height
+            var dir = Vec3f(x, y, -1).normalize()
             image.set(row, col, cast_ray(Vec3f.zero(), dir, spheres).color)
 
     parallelize[_process_row](height)
@@ -327,7 +325,7 @@ fn create_image_with_spheres(
 fn scene_intersect(
     orig: Vec3f,
     dir: Vec3f,
-    spheres: DynamicVector[Sphere],
+    spheres: List[Sphere],
     inout material: Material,
     inout hit: Vec3f,
     inout N: Vec3f,
@@ -348,8 +346,8 @@ fn scene_intersect(
 # fn cast_ray(
 #     orig: Vec3f,
 #     dir: Vec3f,
-#     spheres: DynamicVector[Sphere],
-#     lights: DynamicVector[Light],
+#     spheres: List[Sphere],
+#     lights: List[Light],
 # ) -> Material:
 #     var point = Vec3f.zero()
 #     var material = Material(Vec3f.zero())
@@ -359,26 +357,26 @@ fn scene_intersect(
 
 #     var diffuse_light_intensity: Float32 = 0
 #     for i in range(lights.size):
-#         let light_dir = (lights[i].position - point).normalize()
+#         var light_dir = (lights[i].position - point).normalize()
 #         diffuse_light_intensity += lights[i].intensity * max(0, light_dir @ N)
 
 #     return material.color * diffuse_light_intensity
 
 
 fn create_image_with_spheres_and_lights(
-    spheres: DynamicVector[Sphere],
-    lights: DynamicVector[Light],
+    spheres: List[Sphere],
+    lights: List[Light],
     height: Int,
     width: Int,
 ) -> Image:
-    let image = Image(height, width)
+    var image = Image(height, width)
 
     @parameter
     fn _process_row(row: Int):
-        let y = -((2.0 * row + 1) / height - 1)
+        var y = -((2.0 * row + 1) / height - 1)
         for col in range(width):
-            let x = ((2.0 * col + 1) / width - 1) * width / height
-            let dir = Vec3f(x, y, -1).normalize()
+            var x = ((2.0 * col + 1) / width - 1) * width / height
+            var dir = Vec3f(x, y, -1).normalize()
             image.set(row, col, cast_ray(Vec3f.zero(), dir, spheres, lights).color)
 
     parallelize[_process_row](height)
@@ -396,8 +394,8 @@ fn reflect(I: Vec3f, N: Vec3f) -> Vec3f:
 fn cast_ray(
     orig: Vec3f,
     dir: Vec3f,
-    spheres: DynamicVector[Sphere],
-    lights: DynamicVector[Light],
+    spheres: List[Sphere],
+    lights: List[Light],
 ) -> Material:
     var point = Vec3f.zero()
     var material = Material(Vec3f.zero())
@@ -408,7 +406,7 @@ fn cast_ray(
     var diffuse_light_intensity: Float32 = 0
     var specular_light_intensity: Float32 = 0
     for i in range(lights.size):
-        let light_dir = (lights[i].position - point).normalize()
+        var light_dir = (lights[i].position - point).normalize()
         diffuse_light_intensity += lights[i].intensity * max(0, light_dir @ N)
         specular_light_intensity += (
             pow(
@@ -418,10 +416,10 @@ fn cast_ray(
             * lights[i].intensity
         )
 
-    let result = material.color * diffuse_light_intensity * material.albedo.data[
+    var result = material.color * diffuse_light_intensity * material.albedo.data[
         0
     ] + Vec3f(1.0, 1.0, 1.0) * specular_light_intensity * material.albedo.data[1]
-    let result_max = max(result[0], max(result[1], result[2]))
+    var result_max = max(result[0], max(result[1], result[2]))
     # Cap the resulting vector
     if result_max > 1:
         return result * (1.0 / result_max)
@@ -429,19 +427,19 @@ fn cast_ray(
 
 
 fn create_image_with_spheres_and_specular_lights(
-    spheres: DynamicVector[Sphere],
-    lights: DynamicVector[Light],
+    spheres: List[Sphere],
+    lights: List[Light],
     height: Int,
     width: Int,
 ) -> Image:
-    let image = Image(height, width)
+    var image = Image(height, width)
 
     @parameter
     fn _process_row(row: Int):
-        let y = -((2.0 * row + 1) / height - 1)
+        var y = -((2.0 * row + 1) / height - 1)
         for col in range(width):
-            let x = ((2.0 * col + 1) / width - 1) * width / height
-            let dir = Vec3f(x, y, -1).normalize()
+            var x = ((2.0 * col + 1) / width - 1) * width / height
+            var dir = Vec3f(x, y, -1).normalize()
             image.set(row, col, cast_ray(Vec3f.zero(), dir, spheres, lights).color)
 
     parallelize[_process_row](height)
@@ -455,8 +453,8 @@ from math import abs
 fn cast_ray(
     orig: Vec3f,
     dir: Vec3f,
-    spheres: DynamicVector[Sphere],
-    lights: DynamicVector[Light],
+    spheres: List[Sphere],
+    lights: List[Light],
     bg: Image,
 ) -> Material:
     var point = Vec3f.zero()
@@ -465,20 +463,20 @@ fn cast_ray(
     if not scene_intersect(orig, dir, spheres, material, point, N):
         # Background
         # Given a direction vector `dir` we need to find a pixel in the image
-        let x = dir[0]
-        let y = dir[1]
+        var x = dir[0]
+        var y = dir[1]
 
         # Now map x from [-1,1] to [0,w-1] and do the same for y.
-        let w = bg.width
-        let h = bg.height
-        let col = ((1.0 + x) * 0.5 * (w - 1)).to_int()
-        let row = ((1.0 + y) * 0.5 * (h - 1)).to_int()
+        var w = bg.width
+        var h = bg.height
+        var col = ((1.0 + x) * 0.5 * (w - 1)).to_int()
+        var row = ((1.0 + y) * 0.5 * (h - 1)).to_int()
         return Material(bg.pixels[bg._pos_to_index(row, col)])
 
     var diffuse_light_intensity: Float32 = 0
     var specular_light_intensity: Float32 = 0
     for i in range(lights.size):
-        let light_dir = (lights[i].position - point).normalize()
+        var light_dir = (lights[i].position - point).normalize()
         diffuse_light_intensity += lights[i].intensity * max(0, light_dir @ N)
         specular_light_intensity += (
             pow(
@@ -488,10 +486,10 @@ fn cast_ray(
             * lights[i].intensity
         )
 
-    let result = material.color * diffuse_light_intensity * material.albedo.data[
+    var result = material.color * diffuse_light_intensity * material.albedo.data[
         0
     ] + Vec3f(1.0, 1.0, 1.0) * specular_light_intensity * material.albedo.data[1]
-    let result_max = max(result[0], max(result[1], result[2]))
+    var result_max = max(result[0], max(result[1], result[2]))
     # Cap the resulting vector
     if result_max > 1:
         return result * (1.0 / result_max)
@@ -499,20 +497,20 @@ fn cast_ray(
 
 
 fn create_image_with_spheres_and_specular_lights(
-    spheres: DynamicVector[Sphere],
-    lights: DynamicVector[Light],
+    spheres: List[Sphere],
+    lights: List[Light],
     height: Int,
     width: Int,
     bg: Image,
 ) -> Image:
-    let image = Image(height, width)
+    var image = Image(height, width)
 
     @parameter
     fn _process_row(row: Int):
-        let y = -((2.0 * row + 1) / height - 1)
+        var y = -((2.0 * row + 1) / height - 1)
         for col in range(width):
-            let x = ((2.0 * col + 1) / width - 1) * width / height
-            let dir = Vec3f(x, y, -1).normalize()
+            var x = ((2.0 * col + 1) / width - 1) * width / height
+            var dir = Vec3f(x, y, -1).normalize()
             image.set(row, col, cast_ray(Vec3f.zero(), dir, spheres, lights, bg).color)
 
     parallelize[_process_row](height)
@@ -521,7 +519,7 @@ fn create_image_with_spheres_and_specular_lights(
 
 
 fn main() raises:
-    let image = Image(192, 256)
+    var image = Image(192, 256)
 
     for row in range(image.height):
         for col in range(image.width):
@@ -537,17 +535,17 @@ fn main() raises:
     # create_image_with_sphere(Sphere(Vec3f(-3, 0, -16), 2, shiny_yellow), H, W)
     # )    # step 2
 
-    var spheres = DynamicVector[Sphere]()
-    spheres.push_back(Sphere(Vec3f(-3, 0, -16), 2, shiny_yellow))
-    spheres.push_back(Sphere(Vec3f(-1.0, -1.5, -12), 1.8, green_rubber))
-    spheres.push_back(Sphere(Vec3f(1.5, -0.5, -18), 3, green_rubber))
-    spheres.push_back(Sphere(Vec3f(7, 5, -18), 4, shiny_yellow))
+    var spheres = List[Sphere]()
+    spheres.append(Sphere(Vec3f(-3, 0, -16), 2, shiny_yellow))
+    spheres.append(Sphere(Vec3f(-1.0, -1.5, -12), 1.8, green_rubber))
+    spheres.append(Sphere(Vec3f(1.5, -0.5, -18), 3, green_rubber))
+    spheres.append(Sphere(Vec3f(7, 5, -18), 4, shiny_yellow))
 
     # _ = render(create_image_with_spheres(spheres, H, W))   # step 3
 
-    var lights = DynamicVector[Light]()
-    lights.push_back(Light(Vec3f(-20, 20, 20), 1.0))
-    lights.push_back(Light(Vec3f(20, -20, 20), 0.5))
+    var lights = List[Light]()
+    lights.append(Light(Vec3f(-20, 20, 20), 1.0))
+    lights.append(Light(Vec3f(20, -20, 20), 0.5))
 
     # _ = render(create_image_with_spheres_and_lights(spheres, lights, H, W))  # step 4
 
@@ -558,7 +556,7 @@ fn main() raises:
     # step 6:
     # Unhandled exception caught during execution: An error occurred in Python.
     # mojo: error: execution exited with a non-zero result: 1
-    # let bg = load_image("images/background.png")
+    # var bg = load_image("images/background.png")
     # _ = render(
     #     create_image_with_spheres_and_specular_lights(spheres, lights, H, W, bg) # step 6
     # )

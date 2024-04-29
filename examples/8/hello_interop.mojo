@@ -20,7 +20,7 @@ from python import Python
 def main():
     try:
         Python.add_to_path(".")
-        let test_module = Python.import_module("simple_interop")  # 1
+        var test_module = Python.import_module("simple_interop")  # 1
         test_module.test_interop_func()                           # 2
     except e:
         print(e)

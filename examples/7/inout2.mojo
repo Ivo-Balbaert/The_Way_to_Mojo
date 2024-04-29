@@ -17,9 +17,9 @@ struct MyInt:
        self = self + rhs  
 
 fn main():
-    let m = MyInt(10)
-    let n = MyInt(20)
-    let o = n + m
+    var m = MyInt(10)
+    var n = MyInt(20)
+    var o = n + m
     print(o.value)  # => 30
     
     var x: MyInt = 42

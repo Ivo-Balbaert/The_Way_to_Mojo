@@ -1,3 +1,7 @@
+# warning: transfer from a value of trivial register type 'SIMD[si8, 1]' has no effect and can be removed
+#     print(sum(a^, b^))  # => 5
+#                ^
+
 fn sum(owned a: Int8, owned b: Int8) -> Int8:
     a = 3
     b = 2

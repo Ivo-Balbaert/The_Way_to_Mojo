@@ -8,7 +8,7 @@ from random import rand, random_float64
 from sys.info import simdwidthof
 from algorithm import vectorize, parallelize
 
-let python_gflops = 0.005430089939864052
+var python_gflops = 0.005430089939864052
 alias nelts = simdwidthof[DType.float32]()  # The SIMD vector width.
 
 # Parallelize the code by using the builtin parallelize function
@@ -71,12 +71,12 @@ fn benchmark_parallel[
     fn test_fn():
         _ = func(C, A, B)
 
-    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    var secs = Float64(Benchmark().run[test_fn]()) / 1e9
     print("Mojo seconds: ", secs)
     # Prevent the matrices from being freed before the benchmark run
     _ = (A, B, C)
-    let gflops = ((2 * M * N * K) / secs) / 1e9
-    let speedup: Float64 = gflops / python_gflops
+    var gflops = ((2 * M * N * K) / secs) / 1e9
+    var speedup: Float64 = gflops / python_gflops
     # print(gflops, "GFLOP/s", speedup, " speedup")
     print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
 

@@ -32,7 +32,7 @@ fn matrix_append(self: object, value: object) raises -> object:
 
 
 fn matrix_init(rows: Int, cols: Int) raises -> object:
-    let value = object([])
+    var value = object([])
     return object(
         Attr("value", value),
         Attr("__getitem__", matrix_getitem),
@@ -66,16 +66,16 @@ def benchmark_matmul_untyped(M: Int, N: Int, K: Int, python_gflops: Float64):
         except:
             pass
 
-    let secs = Float64(benchmark.run[test_fn]()) / 1e9
+    var secs = Float64(benchmark.run[test_fn]()) / 1e9
     print("Mojo seconds: ", secs)
     _ = (A, B, C)
-    let gflops = ((2 * M * N * K) / secs) / 1e9
-    let speedup: Float64 = gflops / python_gflops
+    var gflops = ((2 * M * N * K) / secs) / 1e9
+    var speedup: Float64 = gflops / python_gflops
     print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
 
 
 fn main() raises:
-    let python_gflops = 0.005356575518265889
+    var python_gflops = 0.005356575518265889
     _ = benchmark_matmul_untyped(512, 512, 512, python_gflops)
 
 

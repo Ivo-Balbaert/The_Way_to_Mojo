@@ -1,7 +1,7 @@
 
 fn mojo():
-    let a: String = "mojo"
-    let b = set_fire(a^)
+    var a: String = "mojo"
+    var b = set_fire(a^)
     # print(a)        # error: use of uninitialized value 'a'
     print(b)          # => "mojo🔥"
 

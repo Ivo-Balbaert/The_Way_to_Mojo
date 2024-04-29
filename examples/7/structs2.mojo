@@ -31,7 +31,7 @@ def main():
     var sender_country: String = 'Spain'
     var recipient_country: String = 'Austria'
     try:
-        let package = Package(sender_country, recipient_country, 5)
+        var package = Package(sender_country, recipient_country, 5)
         raise Error('Package is too small, cannot send')
     except Error:
         pass
@@ -53,7 +53,7 @@ def main():
         raise Error('Package within Canada is not international')
     
     # test 4
-    let cents_per_gram: Int = 3
+    var cents_per_gram: Int = 3
     package = Package(sender_country, recipient_country, 1500)
 
     if package.get_fees(cents_per_gram) != 4500 or package.get_fees(cents_per_gram * 2) != 9000:

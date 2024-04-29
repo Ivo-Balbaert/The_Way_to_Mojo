@@ -15,7 +15,7 @@ It takes the function name, return type, and up to five argument types as parame
 It is defined in module sys.intrinsics, but this doesn't need an import: `from sys.intrinsics import external_call` is not necessary.
 
 See `external_call.mojo`:
-```mojo
+```py
 fn main() raises:
     let eightball = external_call[
         "rand", Int32
@@ -35,7 +35,7 @@ fn main() raises:
 This calls the rand function in the C stdlib, with return type Int32 (first parameter) and no function arguments.
 
 See `mojo_calls_c_ec.mojo`:
-```mojo
+```py
 # Declare the return type struct, a pair of int32_t values
 @register_passable('trivial')
 struct div_t:
@@ -54,7 +54,7 @@ def main():
 Declare a function pointer type, and just ... call it! Mojo appears to use the platform C calling convention for at least simple fn alias declarations. Such function pointers may be loaded using sys.ffi.DLHandle (undocumented) and then called.
 
 See `mojo_calls_c_fp.mojo`:
-```mojo
+```py
 from sys import ffi
 
 alias c_atof_type = fn(s: Pointer[Int8]) -> Float64
@@ -73,7 +73,7 @@ This example demonstrates calling atof to parse a C string and return a double v
 The following example calls the gmtime function:
 
 See `calling_gmtime.mojo`:
-```mojo
+```py
 # definition of `struct tm`
 alias int = Int32
 @value

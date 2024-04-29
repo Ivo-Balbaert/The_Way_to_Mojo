@@ -28,17 +28,17 @@ struct HeapArray:                   # 1
         self.data.free()
 
     fn dump(self):
-        print_no_newline("[")
+        print("[", end="")
         for i in range(self.size):
             if i > 0:
-                print_no_newline(", ")
-            print_no_newline(self.data.load(i))
+                print(", ", end="")
+            print(self.data.load(i), end="")
         print("]")
 
 fn main():
-    let a = HeapArray(3, 1)
+    var a = HeapArray(3, 1)
     a.dump()   # => [1, 1, 1]
-    let b = a
+    var b = a
 
     b.dump()   # => [1, 1, 1]
     a.dump()   # => [1, 1, 1]

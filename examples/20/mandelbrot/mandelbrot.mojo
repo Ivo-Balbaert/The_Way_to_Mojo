@@ -1,3 +1,4 @@
+# This works 2024-04-25
 # ===----------------------------------------------------------------------=== #
 # Copyright (c) 2023, Modular Inc. All rights reserved.
 #
@@ -38,8 +39,8 @@ fn mandelbrot_kernel_SIMD[
     simd_width: Int
 ](c: ComplexSIMD[float_type, simd_width]) -> SIMD[float_type, simd_width]:
     """A vectorized implementation of the inner mandelbrot computation."""
-    let cx = c.re
-    let cy = c.im
+    var cx = c.re
+    var cy = c.im
     var x = SIMD[float_type, simd_width](0)
     var y = SIMD[float_type, simd_width](0)
     var y2 = SIMD[float_type, simd_width](0)
@@ -58,32 +59,30 @@ fn mandelbrot_kernel_SIMD[
 
 
 fn main() raises:
-    let t = Tensor[float_type](height, width)
+    var t = Tensor[float_type](height, width)
 
     @parameter
     fn worker(row: Int):
-        let scale_x = (max_x - min_x) / width
-        let scale_y = (max_y - min_y) / height
+        var scale_x = (max_x - min_x) / width
+        var scale_y = (max_y - min_y) / height
 
         @parameter
         fn compute_vector[simd_width: Int](col: Int):
             """Each time we operate on a `simd_width` vector of pixels."""
-            let cx = min_x + (col + iota[float_type, simd_width]()) * scale_x
-            let cy = min_y + row * scale_y
-            let c = ComplexSIMD[float_type, simd_width](cx, cy)
-            t.data().simd_store[simd_width](
-                row * width + col, mandelbrot_kernel_SIMD[simd_width](c)
-            )
+            var cx = min_x + (col + iota[float_type, simd_width]()) * scale_x
+            var cy = min_y + row * scale_y
+            var c = ComplexSIMD[float_type, simd_width](cx, cy)
+            t.data().store(row * width + col, mandelbrot_kernel_SIMD[simd_width](c))
 
         # Vectorize the call to compute_vector where call gets a chunk of pixels.
-        vectorize[simd_width, compute_vector](width)
+        vectorize[compute_vector, simd_width](width)
 
     @parameter
     fn bench[simd_width: Int]():
         for row in range(height):
             worker(row)
 
-    let vectorized = benchmark.run[bench[simd_width]]().mean()
+    var vectorized = benchmark.run[bench[simd_width]]().mean()
     print("Number of threads:", num_physical_cores())
     print("Vectorized:", vectorized, "s")
 
@@ -92,11 +91,12 @@ fn main() raises:
     fn bench_parallel[simd_width: Int]():
         parallelize[worker](height, height)
 
-    let parallelized = benchmark.run[bench_parallel[simd_width]]().mean()
+    var parallelized = benchmark.run[bench_parallel[simd_width]]().mean()
     print("Parallelized:", parallelized, "s")
     print("Parallel speedup:", vectorized / parallelized)
 
     _ = t  # Make sure tensor isn't destroyed before benchmark is finished
+
 
 # Number of threads: 12
 # Vectorized: 0.01275217564864865 s

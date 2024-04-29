@@ -13,13 +13,13 @@ struct Matrix:
     fn __del__(owned self):
         return self.data.free()
 
-    # This allows you to use let x = obj[1]
+    # This allows you to use var x = obj[1]
     fn __getitem__(self, row: Int) -> SIMD[DType.uint8, 8]:
-        return self.data.simd_load[8](row * 8)
+        return self.data.load[width=8](row * 8)
 
     # This allows you to use obj[1] = SIMD[DType.uint8]()
     fn __setitem__(self, row: Int, data: SIMD[DType.uint8, 8]):
-        return self.data.simd_store[8](row * 8, data)
+        return self.data.store[](row * 8, data)
 
     fn print_all(self):
         print("--------matrix--------")
@@ -27,7 +27,7 @@ struct Matrix:
             print(self[i])
 
 fn main():
-    let matrix = Matrix()       # 1
+    var matrix = Matrix()       # 1
     matrix.print_all()
 # =>
 # --------matrix--------

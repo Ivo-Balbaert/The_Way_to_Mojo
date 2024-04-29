@@ -1,11 +1,11 @@
 from algorithm.sort import sort
 
 fn main():
-    var v = DynamicVector[Int](3)
+    var v = List[Int](3)
 
-    v.push_back(20)
-    v.push_back(10)
-    v.push_back(70)
+    v.append(20)
+    v.append(10)
+    v.append(70)
 
     sort(v)
 

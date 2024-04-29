@@ -1,10 +1,8 @@
-from collections.vector import DynamicVector
-
 fn main():
-    var vec = DynamicVector[Int](8)  # 1
+    var vec = List[Int](8)  # 1
 
-    vec.push_back(10)
-    vec.push_back(20)
+    vec.append(10)
+    vec.append(20)
     print(len(vec))     # 2 => 2
     print(vec.size)     # => 2
 
@@ -19,7 +17,7 @@ fn main():
     vec[6] = 10         # 6
     print(len(vec))     # => 2
 
-    let vec2 = vec      # 7
+    var vec2 = vec      # 7
     vec[0] = 99
     print(vec2[0])      # => 99
     vec[1] = 100

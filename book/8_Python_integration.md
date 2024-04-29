@@ -21,7 +21,7 @@ print("The answer is", 42)
 
 ## 8.0 Comparing the same program in Python and Mojo
 See `adding.py`:
-```mojo
+```py
 def add(x, y):
     return x + y
 
@@ -29,7 +29,7 @@ z = add(3, 5)
 print(z) # => 8
 ```
 versus `adding.mojo`:
-```mojo
+```py
 fn add(x: Int, y: Int) -> Int:
     return x + y
 
@@ -45,7 +45,7 @@ Mojo is 2_422_525 times faster than Python!
 To execute a Python expression, you can use the `evaluate` method:  
 
 See `python1.mojo`:
-```mojo
+```py
 from python import Python
 
 fn main() raises:
@@ -77,7 +77,7 @@ The rhs (right hand side) of lines 1 and 2 are of type `PythonObject`. PythonObj
 (The _ = are needed to avoid the warning: 'PythonObject' value is unused)
 The above code is equivalent to the following when used in a Jupyter notebook running Mojo (see § 2):
 
-```mojo
+```py
 %%python
 x = 5 + 10
 print(x)
@@ -87,7 +87,7 @@ In the Mojo playground, using `%%python` at the top of a cell will run code thro
 Python objects are all allocated on the heap, so x is a heap reference.
 
 All the Python keywords can be accessed by importing `builtins`:
-```mojo
+```py
 let py = Python.import_module("builtins")
 py.print("this uses the python print keyword")
 ```
@@ -95,19 +95,19 @@ py.print("this uses the python print keyword")
 >Note: The py.print statements work alright, but they generate a warning: "'PythonObject' value is unused", to let this disappear, prefix it with _ =.
 
 Now we can use the `type` built-in from Python to see what the dynamic type of x is:
-```mojo
+```py
 py.print(py.type(x))  # => <class 'int'>
 ```
 
 The address where the value of x is stored on the heap is given by the Python built-in `id`. This address itself is stored on the stack. (?? schema)
 
-```mojo
+```py
 py.print(py.id(x))   # =>  139787831339296
 ```
 
 When Mojo uses a PythonObject, accessing the value actually uses the address in the stack to lookup the data on the heap, even for a simple integer. The heap object contains a reference count, and the runtime will free the object's memory when the count reaches 0. 
 A Python object also can change its type dynamically (provided you declare it with var in a fn), which is also stored in the heap object:
-```mojo
+```py
 x = "mojo"            
 print(x)              # => mojo
 ```
@@ -119,7 +119,7 @@ All this makes programming easier, but comes with a performance cost!
 The equivalent Mojo code is:
 
 See `equivalent.mojo`:
-```mojo
+```py
 fn main():
     let x = 5 + 10
     print(x)    # => 15
@@ -130,7 +130,7 @@ We've just unlocked our first Mojo optimization! Instead of looking up an object
 Here is a simple example of using `matplotlib`:
 (If you first need to install this package, use the command: `sudo apt-get install python3-matplotlib`)
 See `simple_matplotlib.mojo`:
-```mojo
+```py
 from python import Python
 
 fn main() raises:
@@ -161,7 +161,7 @@ In the 2nd case, the code is compiled to native code, and then run, which is obv
 As already indicated in § 3.6.2, here is how you import a Python module, in this case numpy. After importing it, we exercise a few basic functions from numpy, as if writing in Python, see lines 3-4. All variables created (ar, arr, array) are PythonObjects.
 
 See `numpy.mojo`:
-```mojo
+```py
 from python import Python                    # 1
 
 fn main() raises:
@@ -192,7 +192,7 @@ Importing a module could give an error when that module is not locally installed
 A better way to handle this is to use a try/except construct, as in the following program, where we assume the Python pandas module is not locally installed.
 
 See `importing_error.mojo`:
-```mojo
+```py
 from python import Python
 
 fn main():
@@ -229,7 +229,7 @@ In intInt.mojo in § 4 we saw how you can emulate a big integer type by using Py
 (?? Combine both programs here, reference to it in § 4)
 Here are some other useful examples:
 See `pythonobject.mojo`:
-```mojo
+```py
 from python import python
 
 alias str = PythonObject
@@ -249,7 +249,7 @@ fn main() raises:
 This is illustrated in the following program, the comments show you when you are in Python land, and when in Mojo land!
 
 See `interaction_python_mojo.mojo`:
-```mojo
+```py
 from python import Python, PythonObject    # 0
 
 
@@ -283,7 +283,7 @@ In line 6,  i is automatically converted to Python object by method __init__ of 
 In line 7, the `append` is a Python method of the list class, because x is a PythonObject!
 (append is in Python land and Mojo can call it!). Note that append is not a method of PythonObject  (https://docs.modular.com/mojo/stdlib/python/object.html). It lives in Python land and Mojo is able to find it inside the python object.  
 This is why it is possible to import any created Python file, as in:
-```mojo
+```py
 var my_python_file = Python.import_module("my_python_file_name")
 my_python_file.my_function([1,2,3])
 ```
@@ -294,7 +294,7 @@ In line 11, the values (or results) comes from numpy. The Python object class is
 
 *An example using SIMD* (perhaps as an exercise?)
 See `py_mojo_simd.mojo`:
-```mojo
+```py
 from python import Python, PythonObject
 from math import math
 from time import now
@@ -353,7 +353,7 @@ Add the code to plot the result.
 This works just like in the preceding §. In the following example, the local Python module `simple_interop.py` is imported through Mojo in line 1. Then in line 2, its `test_interop_func` is called:
 
 See `hello_interop.mojo`:
-```mojo
+```py
 from python import Python
     
 def main():
@@ -369,7 +369,7 @@ Because this could potentially raise an exception, the call to Python is enclose
 The Python code imports numpy, printing a "hello" message and then a numpy array:
 
 See ``simple_interop.py`:
-```mojo
+```py
 import importlib
 import sys
 import subprocess
@@ -397,6 +397,9 @@ If the .py file is somewhere in a different folder, instead of: `Python.add_to_p
 A subfolder `__pycache__` is created which contains the byte-compiled versions (.pyc) of the Python code.  
 For another example, see `matmul.mojo` and `pymatmul.py` with output:  
 ```
+
+!! Update matmul with latest code!!
+
 $ mojo matmul.mojo
 Throughput of a 128x128 matrix multiplication in Python:
 0.004103122307077609 GFLOP/s
@@ -418,7 +421,7 @@ Throughput of a 512x512 {tiled + unrolled + vectorized + parallelized} matrix mu
 Mojo primitive types (bools, integers, floats, strings, lists and tuples (see § 9)) implicitly convert into Python objects. 
 
 See `mojo_types.mojo`: (works only in a cell in a Jupyter notebook)
-```mojo
+```py
 %%python
 def type_printer(my_list, my_tuple, my_int, my_string, my_float):
     print(type(my_list))

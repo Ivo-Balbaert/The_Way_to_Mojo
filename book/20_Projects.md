@@ -66,7 +66,7 @@ For adding two 1000-dimensional vectors, it achieves a throughput of about 1.774
 ### 20.1.3 - A Mojo version of the naive Python implementation
 
 See `calc_vecsum.mojo`:
-```mojo
+```py
 from memory.unsafe import DTypePointer
 from random import rand
 import benchmark
@@ -118,7 +118,7 @@ inf  Gflops/s
 ### 20.1.4 - Using SIMD and vectorize
 
 See `calc_vecsum_vectorized.mojo`:
-```mojo
+```py
 from memory.unsafe import DTypePointer
 from random import rand
 import benchmark
@@ -187,7 +187,7 @@ We first write a pure Python implementation, a naive one, and then one using num
 
 ### 20.2.1 - Python and Numpy version
 See `euclid_distance.py`:
-```mojo
+```py
 import time
 import numpy as np
 from math import sqrt
@@ -242,7 +242,7 @@ Run it as `python3 euclid_distance.py`.
 Go directly to euclid_distance2.mojo
 
 See `euclid_distance.mojo`:
-```mojo
+```py
 # Create numpy arrays anp and bnp:
 from python import Python      
 from tensor import Tensor
@@ -269,7 +269,7 @@ The Tensor parametric type declaration has this format:  `Tensor[DType.float64](
 In Mojo *parameters* represent a compile-time value. In this example we’re telling the compiler, Tensor is a container for 64-bit floating point values. And *arguments* in Mojo represent runtime values, in this case we’re passing n=10_000_000 to Tensor’s constructor to instantiate a 1-dimensional array of 10 million values.
 
 Calculation of Euclid distance:
-```mojo
+```py
 def mojo_naive_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
     s = 0.0
     n = a.num_elements()
@@ -313,7 +313,7 @@ As a consequence: Tensor values are passed by reference so no copies are made.
 Strict typing and declaring all variables is now enforced.
 
 See `euclid_distance2.mojo`
-```mojo
+```py
 fn mojo_fn_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
     var s: Float64 = 0.0
     let n = a.num_elements()
@@ -348,7 +348,7 @@ First, let's gather the `simd_width` for the specific `dtype` on the specific CP
 To vectorize our naive `mojo_dist` function, we'll write a closure that is parameterized on `simd_width`. Rather than operate on individual elements, we'll work with `simd_width` number of elements, which gives us speed ups. You can access `simd_width` elements using `simd_load`.
 
 See `euclid_distance3.mojo`
-```mojo
+```py
 # Create numpy arrays anp and bnp:
 from python import Python
 from tensor import Tensor
@@ -494,7 +494,7 @@ STEPS:
 3- The algorithm code (`def matmul_untyped`) is exactly the same as in the Python implementation from § 20.3.1
 
 See `matmul1.mojo`:
-```mojo
+```py
 import benchmark
 from sys.intrinsics import strided_load
 from math import div_ceil, min
@@ -580,7 +580,7 @@ STEPS:
 3- Define a helper function benchmark.
 
 See `matmul2.mojo`:
-```mojo
+```py
 import benchmark
 from sys.intrinsics import strided_load
 from utils.list import VariadicList
@@ -689,7 +689,7 @@ STEPS:
 1- Replace fn matmul_naive by fn matmul_vectorized_0
 
 See `matmul3.mojo`:
-```mojo
+```py
 fn matmul_vectorized_0(C: Matrix, A: Matrix, B: Matrix):
     for m in range(C.rows):
         for k in range(A.cols):
@@ -715,7 +715,7 @@ STEPS:
 2- Replace fn matmul_naive by fn matmul_vectorized_1
 
 See `matmul4.mojo`:
-```mojo
+```py
 # Simplify the code by using the builtin vectorize function
 from algorithm import vectorize
 fn matmul_vectorized_1(C: Matrix, A: Matrix, B: Matrix):
@@ -744,7 +744,7 @@ For parallel code, we need to introduce a benchmark function that shares the thr
 2- Replace fn matmul_vectorized_1 by matmul_parallelized: modify the matmul implementation and make it multi-threaded by using the builtin parallelize function(for simplicity, we only parallelize on the M dimension):
 
 See `matmul5.mojo`:
-```mojo
+```py
 fn matmul_parallelized(C: Matrix, A: Matrix, B: Matrix):
     @parameter
     fn calc_row(m: Int):
@@ -769,7 +769,7 @@ STEPS:
 2- Define a `tile` function
 3- Replace the matmul function by `fn matmul_tiled_parallelized`
 
-```mojo
+```py
 # Perform 2D tiling on the iteration space defined by end_x and end_y.
 fn tile[tiled_fn: Tile2DFunc, tile_x: Int, tile_y: Int](end_x: Int, end_y: Int):
     # Note: this assumes that ends are multiples of the tiles.
@@ -782,7 +782,7 @@ The above will perform 2 dimensional tiling over a 2D iteration space defined to
 ((0,endx), (0, endy)). Once we define it above, we can use it within our matmul kernel. For simplicity we choose 4 as the tile height and since we also want to vectorize we use 4 * nelts as the tile width (since we vectorize on the columns).  
 
 See `matmul6.mojo`:
-```mojo
+```py
 # Use the above tile function to perform tiled matmul.
 fn matmul_tiled_parallelized(C: Matrix, A: Matrix, B: Matrix):
     @parameter
@@ -860,7 +860,7 @@ For the Python version see `sudoku_solver.py`. This is the time it took:
 
 Here is the Mojo version:
 See `sudoku_solver.mojo`:
-```mojo
+```py
 from memory.unsafe import Pointer
 from memory.buffer import NDBuffer
 from utils.list import DimList
@@ -1045,7 +1045,7 @@ The body of the def is unaltered.
 
 See `mandelbrot_0.mojo`:
 (23.9 x speedup)
-```mojo
+```py
 def mandelbrot_kernel_0(c: ComplexFloat64) -> Int:
     z = c
     nv = 0
@@ -1064,7 +1064,7 @@ We can opt into the Mojo "strict" mode, by using fn instead of def and declaring
 (24.2 x speedup)
 
 See `mandelbrot_1.mojo`:
-```mojo
+```py
 fn mandelbrot_kernel_1(c: ComplexFloat64) -> Int:
     var z = c
     var nv = 0
@@ -1089,7 +1089,7 @@ Removing redundant computations:
 Squared addition is a common operation, and the Mojo standard library provides a special function for it called `squared_add`, which is implemented using FMA instructions for maximum performance.
 (89 x speedup)
 
-```mojo
+```py
 struct Complex[type: DType]:
     ...
     fn squared_add(self, c: Self) -> Self:
@@ -1100,7 +1100,7 @@ struct Complex[type: DType]:
 
 Rewriting the mandelbrot function now gives us:
 See `mandelbrot2.mojo`:
-```mojo
+```py
 fn mandelbrot_2(c: ComplexFloat64) -> Int:
     var z = c
     var nv = 0
@@ -1117,7 +1117,7 @@ The complete code to run it and display the resulting graph with matplotlib is s
 ### 20.5.5 Adding supporting code
 We need some supporting declarations and code to iterate through the pixels in the image and compute the membership in the set:
 
-```mojo
+```py
 alias height = 4096
 alias width = 4096
 alias min_x = -2.0
@@ -1139,16 +1139,16 @@ We also need:
 * def compute_mandelbrot() -> Tensor[float_type]:
 * def show_plot(tensor: Tensor[float_type]):
 and the starting point:
-```mojo
+```py
 fn main() raises:
     _ = show_plot(compute_mandelbrot())
 ```
 
 ### 20.5.6 - Vectorizing the code
-Vectorization is also known as Single Instruction Multiple Data (SIMD). By vectorizing the loop, we can compute multiple pixels simultaneously. `vectorize` is a higher order generator.
+Applying SIMD on calculations in a loop is called *vectorization*. By vectorizing the loop, we can compute multiple pixels simultaneously. `vectorize` is a higher order generator.
 
 See `mandelbrot_3.mojo`:
-```mojo
+```py
 from python import Python
 from math import abs, iota
 from complex import ComplexSIMD, ComplexFloat64
@@ -1321,7 +1321,7 @@ if __name__ == "__main__":
 The Mojo version:
 
 See pi.mojo
-```mojo
+```py
 from time import now
 
 fn calculate_pi(terms: Int) -> Float64:
@@ -1348,7 +1348,7 @@ The only difference is that we used fn functions in the Mojo version, so all var
 ## 20.9 - Timing a for loop
 In Python:
 See `forloop.py`:
-```mojo
+```py
 import time
 
 def call1():
@@ -1369,7 +1369,7 @@ print(res1)
 
 Here is a Mojo version:
 See `forloop.mojo`:
-```mojo
+```py
 from time import now
 
 def call():

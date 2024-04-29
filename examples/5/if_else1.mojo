@@ -1,7 +1,7 @@
 fn func1():
-    let x: Int = 42
-    let y: Float64 = 17.0
-    let z: Float32   
+    var x: Int = 42
+    var y: Float64 = 17.0
+    var z: Float32   
 
     if x != 0:       # 1
         z = 1.0      

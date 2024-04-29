@@ -24,8 +24,8 @@ fn mandelbrot_kernel_SIMD[
     simd_width: Int
 ](c: ComplexSIMD[float_type, simd_width]) -> SIMD[float_type, simd_width]:
     """A vectorized implementation of the inner mandelbrot computation."""
-    let cx = c.re
-    let cy = c.im
+    var cx = c.re
+    var cy = c.im
     var x = SIMD[float_type, simd_width](0)
     var y = SIMD[float_type, simd_width](0)
     var y2 = SIMD[float_type, simd_width](0)
@@ -44,19 +44,19 @@ fn mandelbrot_kernel_SIMD[
 
 
 fn vectorized():
-    let t = Tensor[float_type](height, width)
+    var t = Tensor[float_type](height, width)
 
     @parameter
     fn worker(row: Int):
-        let scale_x = (max_x - min_x) / width
-        let scale_y = (max_y - min_y) / height
+        var scale_x = (max_x - min_x) / width
+        var scale_y = (max_y - min_y) / height
 
         @parameter
         fn compute_vector[simd_width: Int](col: Int):
             """Each time we oeprate on a `simd_width` vector of pixels."""
-            let cx = min_x + (col + iota[float_type, simd_width]()) * scale_x
-            let cy = min_y + row * scale_y
-            let c = ComplexSIMD[float_type, simd_width](cx, cy)
+            var cx = min_x + (col + iota[float_type, simd_width]()) * scale_x
+            var cy = min_y + row * scale_y
+            var c = ComplexSIMD[float_type, simd_width](cx, cy)
             t.data().simd_store[simd_width](
                 row * width + col, mandelbrot_kernel_SIMD[simd_width](c)
             )
@@ -69,7 +69,7 @@ fn vectorized():
         for row in range(height):
             worker(row)
 
-    let vectorized = Benchmark().run[bench[simd_width]]() / 1e6
+    var vectorized = Benchmark().run[bench[simd_width]]() / 1e6
     print("Vectorized", ":", vectorized, "ms")
 
     try:
@@ -104,7 +104,7 @@ def show_plot(tensor: Tensor[float_type]):
 
 
 fn main() raises:
-    let python_secs = 11.530147033001413
+    var python_secs = 11.530147033001413
     vectorized()
 
 

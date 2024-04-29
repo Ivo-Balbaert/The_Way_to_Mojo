@@ -1,7 +1,7 @@
 from memory.unsafe import Pointer
 
 def print_pointer(ptr: Pointer):
-    print(ptr.__as_index())
+    print(ptr.__int__())
 
 def main():
     a = 1

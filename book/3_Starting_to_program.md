@@ -30,7 +30,7 @@ Use `docstrings` if you need more structured comments that can be gathered by th
 These are defined with the symbol `""" ... """`, and can be multi-line comments. They are mostly written after the header of a function, like here for the __init__ function:
 
 Here is a program with docstrings: (see § 7.4.1)
-```mojo
+```py
 struct Complex:
     var re: Float32
     var im: Float32
@@ -233,7 +233,7 @@ After all, the computer needs to know where to start executing your program!
 
 In Mojo syntax, this looks like:
 
-```mojo
+```py
 fn main(): 
 ```
 This is simply a *function* with name `main`.
@@ -248,7 +248,7 @@ Now try `mojo hello_world.mojo`. As you probably expect, it doesn't produce any 
 Let's now add a Mojo statement:
 
 See `hello_world.mojo`:
-```mojo
+```py
 fn main(): 
     print("Hello World from Mojo!")
 ```
@@ -263,7 +263,7 @@ Hello World from Mojo!
 
 >Note: In Python main() is not necessary, and you can use stand-alone top-level statements. If you try this in Mojo:
 
-```mojo
+```py
 print("Hello World from Mojo!")
 ```
 
@@ -293,7 +293,7 @@ print("Hello", "Mojo", sep=", ", end="!!!\n") # prints Hello, Mojo!!!
 sep defaults to the empty string and end defaults to "\n".
 
 See `hello_world.mojo`:
-```mojo
+```py
 fn main():
     print("Hello World from Mojo!")
     print("  - starts at the same line as the following print: ", end="")
@@ -318,7 +318,7 @@ For example: `mojo build hello_world.mojo`
 Now an executable `hello_world` is build. This can be run with: `./hello_world` (on Linux/MacOS) or hello_world, producing the same output as above.
 ?? Output is relatively big some 44Mb ?? issue 
 [BUG]: Mojo hello world binary size unreasonably large #599 
-(closed - open a new issue if necessary)
+(closed - open a new issue ??)
 
 ```
 A Mojo app can be compiled into a small, standalone, fast-launching binary, making it easy to deploy while taking advantage of available cores and acceleration. 
@@ -339,7 +339,7 @@ Later (see ??) we'll see that code can also be run at compile-time, to do what i
 We'll now go back to discussing the last code snippet of § 2.
 
 See `first.mojo`:
-```mojo
+```py
 fn main():
     var n: Int = 1      # 1
     n += 1              # 2
@@ -354,7 +354,7 @@ Why didn't we write the Python form `def main()`, instead of `fn main()`?
 Here is the equivalent version with def main():
 
 See `first_def.mojo`:
-```mojo
+```py
 def main():
     n = 1      # 1
     n += 1
@@ -371,7 +371,7 @@ Supporting both `def` and `fn` makes it easier to port Python functions to Mojo.
 * Declarations can include type specifiers, patterns, and late initialization.
 
 See `late_initialization.mojo`:
-```mojo
+```py
 fn main():
     var discount_rate: Float64  # no initialization yet! 
     var book_id: Int = 123      # typing and initialization
@@ -412,7 +412,7 @@ Also in line 1, we see that the type of n is declared as `Int`, an integer. *Dec
 Here is an example snippet which uses `var` for declarations: 
 
 See `var.mojo`:
-```mojo
+```py
 fn do_math():
     var x: Int = 1   # 1
     var y = 2        # 2
@@ -435,7 +435,7 @@ Lines 5-6 show late initialization, a feature that does not exist in Python.
 https://github.com/modularml/mojo/issues/1573
 Mojo also supports *global variables*:  
 See `global_vars.mojo`:
-```mojo
+```py
 var n = 42
 var str = "Hello from Mojo!"
 
@@ -454,10 +454,8 @@ Also alias is heavily used at the global level (see § 4.4).
 
 Mojo variables are much more like C variables than like Python variables: a name in Mojo is attached to an object.
 
-XYZ
-
 See `variable_addresses.mojo`:
-```mojo
+```py
 from memory.unsafe import Pointer
 
 def print_pointer(ptr: Pointer):
@@ -465,16 +463,16 @@ def print_pointer(ptr: Pointer):
 
 def main():
     a = 1
-    p1 = Pointer.address_of(a)  # => 140726871503576
-    print_pointer(p1)
+    p1 = Pointer.address_of(a)  
+    print_pointer(p1)           # => 140726871503576
 
     a = 2
     p2 = Pointer.address_of(a)
     print_pointer(p2)           # => 140726871503576
 ```
-This means that there is only one integer variable a, which has been modified in-place with the statement a = 2 . In contrast, in equivalent Python code:
+This means that there is only one integer variable a, which has been modified in-place with the statement a = 2. In contrast, in equivalent Python code:
 
-```python
+```py
 a = 1
 print(id(a)) # => 140163769254128
 a = 2
@@ -485,13 +483,13 @@ such that id(2) - id(1) is 32. The name (the reference) a first points towards t
 
 In Python, references are everywhere (the names are references, elements in a list/tuple are references, function arguments are passed as references). It does not work like that with Mojo, which has strong consequences. For example, in Python a = "py"; b = a creates two references pointing towards one object ( "py" ). In contrast, a = "mojo"; b = a creates two different objects at two different locations in memory so that:
 
-```mojo
-    b = "mojo"
-    p = Pointer.address_of(b) # => 140722059283008
+```py
+    a = "mojo"
+    p = Pointer.address_of(a) # => 140722059283008
     print_pointer(p)
 
-    c = b  # <- this copies the String object "mojo"
-    p = Pointer.address_of(c) # => 140722059283024
+    b = a  # <- this copies the String object "mojo"
+    p = Pointer.address_of(b) # => 140722059283024
     print_pointer(p)
 ```
 
@@ -502,7 +500,7 @@ If the type is omitted, it is inferred by the compiler, that is: derived from th
 Mojo is also a *strongly-typed language", contrary to Python, which is *loosely typed*:
 
 See `change_type.mojo`:
-```mojo
+```py
 fn main():
     var x = UInt8(1)          
     x = "will cause an error" # error
@@ -530,30 +528,30 @@ The most common code is stored in the package  `builtin`, like bool, int and dty
 
 Other modules can be imported like this:
 
-```mojo
-from benchmark import Benchmark
+```py
+from benchmark import benchmark
 ```
 
 Then you can use the type Benchmark with the dot-notation to access its members like this:  
-`Benchmark.num_warmup`
+`benchmark.run`
 
 To avoid name-clashes or simply to shorten the name, you can use `as` to define an alias:  
-```mojo
-from benchmark import Benchmark as bm
+```py
+from benchmark import benchmark as bm
 ```
 
-Then access its members with: `bm.num_warmup`
+Then access its members with: `bm.run`
 
 `memory` is a package, containing the modules anypointer, memory and unsafe. To import something from the unsafe module, write the following:
 
-```mojo
+```py
 from memory.unsafe import Pointer
 ```
 
 >Note: These from statements can be written everywhere in code, but code clarity can be enhanced by grouping them at the start of a code file.
 
 If you have many types to import, enclose them within (), like this:
-```mojo
+```py
 from sys.info import (
     alignof,
     sizeof,
@@ -568,7 +566,7 @@ To import all types and functions from a module (say math), use:
 However, it is recommended to only import the things you need.
 
 >Note: You can also use:
-```mojo
+```py
 import benchmark
 # or:
 import benchmark as bm
@@ -583,7 +581,7 @@ Mojo can access the whole Python ecosystem by importing Python modules.
 Importing and using a Python package in Mojo is very easy.  
 Here's an example (from a Jupyter notebook cell) of how to import the NumPy package:
 
-```mojo
+```py
 from python import Python                   # 1
 
 let np = Python.import_module("numpy")      # 2

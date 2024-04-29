@@ -715,7 +715,7 @@ To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to
 The first is the usual "Hello World!" program: 
 
 See `hello_world.mojo`:
-```mojo
+```py
 fn main():
     print("Hello World from Mojo!") # => Hello World! from Mojo
 ```
@@ -726,7 +726,7 @@ In a Mojo source file we have to use a starting point function called `main()` (
 
 A version with `def` instead of `fn` is also a valid Mojo program:
 See `hello_world_def.mojo`:
-```mojo
+```py
 def main():
     print("Hello World from Mojo!") # => Hello World! from Mojo
 ```
@@ -742,7 +742,7 @@ To show the output of statements in code sections, we'll show them in a comment 
 
 The second snippet shows a main function, which declares an integer x, increments it and then prints it out. 
 See `using_main.mojo`:
-```mojo
+```py
 fn main():
     var x: Int = 1
     x += 1

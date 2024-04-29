@@ -7,7 +7,7 @@ fn sum_inout(inout x: Int, inout y: Int) -> Int:  # 1
 fn main():
     var a = 1
     var b = 2
-    let c = sum_inout(a, b)
+    var c = sum_inout(a, b)
     print(a)  # => 2
     print(b)  # => 3
     print(c)  # => 5  

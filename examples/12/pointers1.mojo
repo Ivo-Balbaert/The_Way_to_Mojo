@@ -8,7 +8,7 @@ struct Coord:
 
 fn main():
     var p1 = Pointer[Coord].alloc(2)   # 1
-    let p2 = Pointer[Coord].alloc(2)
+    var p2 = Pointer[Coord].alloc(2)
 
     memset_zero(p1, 2)                 # 2 
     memset_zero(p2, 2)
@@ -45,7 +45,7 @@ fn main():
     # 10
     
     # undefined behavior:
-    let third_coord = p1.load(2)
+    var third_coord = p1.load(2)
     print(third_coord.x)  # => 7
     print(third_coord.y)  # => 7
 

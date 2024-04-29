@@ -4,7 +4,7 @@ from time import now
 
 fn plot_from_mojo(values: PythonObject) raises:   # 9
     print(values.__class__.__name__)  # => ndarray
-    let plt = Python.import_module("matplotlib.pyplot")   # 10  
+    var plt = Python.import_module("matplotlib.pyplot")   # 10  
     _ = plt.plot(values)                          # 11              
     _ = plt.show()                                # 12
 
@@ -17,6 +17,7 @@ struct np_loader:
             self.lib = Python.import_module("numpy")
             self.loaded = True
         except e:
+            self.lib = ""
             self.loaded = False
 
     fn __getitem__(inout self, key:StringLiteral) raises -> PythonObject:
@@ -25,15 +26,15 @@ struct np_loader:
 fn main() raises:
     var np = np_loader()                                        # 1 
     if np.loaded:                                               # 2
-        let python_result = np["linspace"](0, 255, 256)         # 3
+        var python_result = np["linspace"](0, 255, 256)         # 3
         print(python_result) 
         # =>
         # [  0.   1.   2.   3.   4.   5.   6.   7.   8.   9.  10.  11.  12.  13.
         # 14.  15.  16.  17.  ...   253. 254. 255.]
         var simd_mojo_array = SIMD[DType.float64, 256]()        # 4
-        let pi = np["pi"].to_float64()                          # 5
+        var pi = np["pi"].to_float64()                          # 5
     
-        let size: Int = python_result.size.to_float64().to_int()   # 6 
+        var size: Int = python_result.size.to_float64().to_int()   # 6 
         for x in range(size):                                      # 7
             simd_mojo_array[x] = python_result[x].to_float64()    
 

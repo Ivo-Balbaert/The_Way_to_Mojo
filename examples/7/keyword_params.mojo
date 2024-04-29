@@ -14,11 +14,10 @@ struct SquareMatrix[dtype: DType = DType.float32, dim: Int = 4]():
 
         @parameter
         fn fill_val[simd_width: Int](idx: Int) -> None:
-            self.mat.simd_store(
-                idx, self.mat.simd_load[simd_width](idx).splat(val)
-            )  # works, but ??
+            self.mat.store(idx, self.mat.load[simd_width](idx).splat(val))
+            # works, but ??
 
-        vectorize[simd_width, fill_val](self.mat.num_elements())
+        vectorize[fill_val, simd_width](self.mat.num_elements())
 
     fn __getitem__(self, x: Int, y: Int) -> SIMD[dtype, 1]:
         return self.mat[x, y]
@@ -37,14 +36,14 @@ struct SquareMatrix[dtype: DType = DType.float32, dim: Int = 4]():
 
     @staticmethod
     fn load[dtype: DType,dim: Int](fpath:String) raises -> Tensor[dtype]:
-        let load_mat = Tensor[dtype].fromfile(fpath)
-        let new_tensor = Tensor[dtype](dim,dim)
+        var load_mat = Tensor[dtype].fromfile(fpath)
+        var new_tensor = Tensor[dtype](dim,dim)
         memcpy(new_tensor.data(),load_mat.data(),load_mat.num_elements())
         _ = load_mat
         return new_tensor
 
     fn save(self, fname: String='saved_matrix') raises -> String:
-        let fpath = self.prepare_filename(fname)
+        var fpath = self.prepare_filename(fname)
         self.mat.tofile(fpath)
         print('File saved:',fpath)
         return fpath
@@ -53,15 +52,15 @@ struct SquareMatrix[dtype: DType = DType.float32, dim: Int = 4]():
 
 fn multiply(sm: SquareMatrix, val: SIMD[sm.dtype, 1]) -> Tensor[sm.dtype]:
     alias simd_width: Int = simdwidthof[sm.dtype]()
-    let result_tensor = Tensor[sm.dtype](sm.mat.shape())
+    var result_tensor = Tensor[sm.dtype](sm.mat.shape())
 
     @parameter
     fn vectorize_multiply[simd_width: Int](idx: Int) -> None:
-        result_tensor.simd_store[simd_width](
-            idx, mul[sm.dtype, simd_width](sm.mat.simd_load[simd_width](idx), val)
+        result_tensor.store[simd_width](
+            idx, mul[sm.dtype, simd_width](sm.mat.load[simd_width](idx), val)
         )
 
-    vectorize[simd_width, vectorize_multiply](sm.mat.num_elements())
+    vectorize[vectorize_multiply, simd_width](sm.mat.num_elements())
     return result_tensor
 
 
@@ -81,15 +80,15 @@ fn main() raises:
 
     #
     sm = SquareMatrix(5)
-    let res = multiply(sm, 100.0)
+    var res = multiply(sm, 100.0)
     print(res)
 
-    let m = SquareMatrix()
+    var m = SquareMatrix()
     m.print()
-    let fpath = m.save('saved_matrix')
+    var fpath = m.save('saved_matrix')
     print('Loading Tensor from file:',fpath)
     print()
-    let load_mat = SquareMatrix.load[DType.float32,4](fpath)
+    var load_mat = SquareMatrix.load[DType.float32,4](fpath)
     print(load_mat)
 
 

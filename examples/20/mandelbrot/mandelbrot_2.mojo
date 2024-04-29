@@ -78,12 +78,12 @@ def benchmark_mandelbrot(python_secs: Float64):
         except:
             pass
 
-    let mojo_secs = Benchmark().run[test_fn]() / 1e9
+    var mojo_secs = Benchmark().run[test_fn]() / 1e9
     print("mojo seconds:", mojo_secs)
     print("speedup:", python_secs / mojo_secs)
 
 fn main() raises:
-    let python_secs = 11.530147033001413
+    var python_secs = 11.530147033001413
     _ = benchmark_mandelbrot(python_secs)
 
     # _ = show_plot(compute_mandelbrot())

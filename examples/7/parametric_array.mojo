@@ -17,6 +17,6 @@ struct Array[T: AnyRegType]:                           # 1
         self.data.free()                    # 6
 
 fn main():
-    let v = Array[Float32](4, 3.14)         # 3
+    var v = Array[Float32](4, 3.14)         # 3
     print(v[0], v[1], v[2], v[3])
     # => 3.1400001049041748 3.1400001049041748 3.1400001049041748 3.1400001049041748

@@ -1,8 +1,8 @@
 from python import Python
 
 fn main() raises:
-    let requests = Python.import_module("requests")
-    let response = requests.get("https://www.standaard.be/")
+    var requests = Python.import_module("requests")
+    var response = requests.get("https://www.standaard.be/")
     print(response.text)
 
 # =>

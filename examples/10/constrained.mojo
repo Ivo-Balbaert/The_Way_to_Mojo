@@ -4,6 +4,6 @@ fn add_positives[x: Int, y: Int]() -> UInt8:
     return x + y
 
 fn main():
-    let res = add_positives[2, 4]()
+    var res = add_positives[2, 4]()
     print(res)  # => 6
     # _ = add_positives[-2, 4]()  # 2

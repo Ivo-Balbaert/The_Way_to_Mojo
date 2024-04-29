@@ -41,8 +41,8 @@ def main():
         os = "macOS"
     else:
         os = "windows"
-    let cpu = String(_current_cpu())
-    let arch = String(_triple_attr())
+    var cpu = String(_current_cpu())
+    var arch = String(_triple_attr())
     var cpu_features = String(" ")
     if has_sse4():
         cpu_features = cpu_features.join(" sse4")

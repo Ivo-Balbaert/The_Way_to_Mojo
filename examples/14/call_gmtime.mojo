@@ -30,13 +30,13 @@ struct C_tm:
 
 fn main():
     var rawTime: Int = 0
-    let rawTimePtr = Pointer[Int].address_of(rawTime)
+    var rawTimePtr = Pointer[Int].address_of(rawTime)
     __mlir_op.`pop.external_call`[
         func = "time".value,
         _type = None,
     ](rawTimePtr.address)
 
-    let tm = __mlir_op.`pop.external_call`[
+    var tm = __mlir_op.`pop.external_call`[
         func = "gmtime".value,
         _type = Pointer[C_tm],
     ](rawTimePtr).load()

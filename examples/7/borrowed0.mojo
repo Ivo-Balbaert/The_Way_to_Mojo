@@ -26,11 +26,11 @@ struct HeapArray:
         self.data.free()
 
     fn dump(self):
-        print_no_newline("[")
+        print("[", end="")
         for i in range(self.size):
             if i > 0:
-                print_no_newline(", ")
-            print_no_newline(self.data.load(i))
+                print(", ", end="")
+            print(self.data.load(i), end="")
         print("]")
 
 struct SomethingBig:
@@ -55,8 +55,8 @@ fn use_something_big(borrowed a: SomethingBig, b: SomethingBig):
     b.print_id()  # => 20
 
 fn main():
-    let a = SomethingBig(10)
-    let b = SomethingBig(20)
+    var a = SomethingBig(10)
+    var b = SomethingBig(20)
     use_something_big(a, b)
 
 

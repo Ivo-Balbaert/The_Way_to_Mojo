@@ -1,10 +1,10 @@
-from tensor import Tensor, TensorShape, TensorSpec
+from tensor import Tensor, TensorShape, TensorSpec, rand
 from math import trunc, mod
 from memory import memset_zero
 from sys.info import simdwidthof, simdbitwidth
-from algorithm import vectorize, parallelize, vectorize_unroll
+from algorithm import vectorize, parallelize
 from utils.index import Index
-from random import rand, seed
+from random import seed
 from python import Python
 import time
 
@@ -29,11 +29,11 @@ fn tensor_mean_vectorize_parallelized[dtype: DType](t: Tensor[dtype]) -> Tensor[
     fn parallel_reduce_rows(idx1: Int) -> None:
         @parameter
         fn vectorize_reduce_row[simd_width: Int](idx2: Int) -> None:
-            new_tensor[idx1] += t.simd_load[simd_width](
+            new_tensor[idx1] += t.load[width=simd_width](
                 idx1 * t.dim(1) + idx2
             ).reduce_add()
 
-        vectorize[2 * simd_width, vectorize_reduce_row](t.dim(1))
+        vectorize[vectorize_reduce_row, 2 * simd_width](t.dim(1))
         new_tensor[idx1] /= t.dim(1)
 
     parallelize[parallel_reduce_rows](t.dim(0), 8)
@@ -44,7 +44,7 @@ fn main() raises:
     print("SIMD bit width", simdbitwidth())  # => SIMD bit width 256
     print("SIMD Width", simd_width)  # => SIMD Width 8
 
-    let tx = rand[dtype](5, 12)
+    var tx = rand[dtype](5, 12)
     print(tx)
     # =>
     # Tensor([[0.1315377950668335, 0.458650141954422, 0.21895918250083923, ..., 0.066842235624790192, 0.68677270412445068, 0.93043649196624756],
@@ -54,8 +54,8 @@ fn main() raises:
     # [0.84151065349578857, 0.41539460420608521, 0.46791738271713257, ..., 0.84203958511352539, 0.21275150775909424, 0.13042725622653961]], dtype=float32, shape=5x12)
 
     seed(42)
-    let t = rand[dtype](1000, 100_000)
-    let result = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
+    var t = rand[dtype](1000, 100_000)
+    var result = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
 
     print(
         "Input Matrix shape:", t.shape().__str__()
@@ -67,28 +67,28 @@ fn main() raises:
 
     # Naive approach in Mojo
     alias reps = 10
-    let tm1 = time.now()
+    var tm1 = time.now()
     for i in range(reps):
         _ = tensor_mean[dtype](t)
-    let dur1 = time.now() - tm1
+    var dur1 = time.now() - tm1
     print("Mojo naive mean:", dur1 / reps / 1000000, "ms")
 
     # NumPy approach
-    let np = Python.import_module("numpy")
-    let dim0 = t.dim(0)
-    let dim1 = t.dim(1)
-    let t_np = np.random.rand(dim0, dim1).astype(np.float32)
-    let tm2 = time.now()
+    var np = Python.import_module("numpy")
+    var dim0 = t.dim(0)
+    var dim1 = t.dim(1)
+    var t_np = np.random.rand(dim0, dim1).astype(np.float32)
+    var tm2 = time.now()
     for i in range(reps):
         _ = np.mean(t_np, 1)
-    let dur2 = time.now() - tm2
+    var dur2 = time.now() - tm2
     print("Numpy mean:", dur2 / reps / 1000000, "ms")
 
     # Vectorized and parallelized approach in Mojo
-    let tm3 = time.now()
+    var tm3 = time.now()
     for i in range(reps):
         _ = tensor_mean_vectorize_parallelized[dtype](t)
-    let dur3 = time.now() - tm3
+    var dur3 = time.now() - tm3
     print("Mojo Vectorized and parallelized mean:", dur3 / reps / 1000000, "ms")
 
 

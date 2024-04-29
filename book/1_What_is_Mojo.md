@@ -18,7 +18,7 @@ First the MLIR compiler was built. Then Python was chosen as the syntax, because
 
 It combines the usability of Python with the performance of C++/C and the safety of Rust.
 
-It largely uses the *Python syntax and semantics* model: it already can run a lot of Python code. It will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
+It largely uses the *Python syntax and semantics* model: it can already run a lot of Python code. It will eventually become a *superset of Python*, able to execute all existing Python code, as well as specific Mojo code.
 A superset of Python: in a way like TypeScript is a superset of JavaScript. This is true in the sense that Mojo also enhances Python-like code with types. But Mojo isn't translated to Python, and it provides many more features for performance acceleration than TypeScript.
 
 
@@ -41,7 +41,7 @@ This will lead to accelerated development and production-use of AI technologies.
 
 ## 1.2 The super powers of Mojo
 At the bottom: MLIR
-At the top: Compile time metaprogramming: like what Python does, except that Python has to do it at runtime.
+At the top: Compile time metaprogramming: somewhat like Python does, except that Python has to do it at runtime.
 
 *Design of the language*
 Push language design into libraries.

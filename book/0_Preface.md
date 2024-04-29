@@ -25,10 +25,10 @@ Code examples are always completely shown in the text (unless otherwise stated),
 
 Here are some conventions we'll use in the text:
 
-Code will be shown slightly highlighted (using the ```mojo Python markdown feature from GitHub). This is because Mojo's and Python's syntax are nearly identical.
+Code will be shown slightly highlighted (using the ```py Python markdown feature from GitHub). This is because Mojo's and Python's syntax are nearly identical.
 
 It works like this:
-```mojo
+```py
 fn main():
     var x: Int = 1
     x += 1

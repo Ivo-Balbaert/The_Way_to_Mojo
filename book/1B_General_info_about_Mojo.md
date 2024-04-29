@@ -31,34 +31,29 @@ The universe of all things Mojo is called the *Modverse*.
 To search on internet for info on Mojo, use the search terms  "Mojo programming language" or "mojolang". 
 
 ## 1B.2 Website, community and communication channels
-Here is the Mojo [portal - website](https://mojolang.org/) (at the current moment it is only a frontpage).
+Here is the official Mojo [portal - website](https://www.modular.com/max/mojo)
 
 [GitHub](https://github.com/modularml/mojo) repo for issues, discussion, examples, source standard library
+[Links for example code:](https://github.com/modularml/devrel-extras/tree/main/blogs/)
 
-Closed Beta Local SDK:
-[Developer portal](https://developer.modular.com)
+Documentation and manuals can be found at the Modular/Mojo [Website](https://www.modular.com/mojo), particularly in the [Docs section](https://docs.modular.com/mojo/).
 
-Much more information can be found at the Modular/Mojo [Website](https://www.modular.com/mojo), particularly in the [Docs section](https://docs.modular.com/mojo/).
+Local SDK: [Developer portal](https://developer.modular.com)
 
 [Weekly newsletter:](https://www.modular.com/newsletters/)
 
 [Wikipedia page:](https://en.wikipedia.org/wiki/Mojo_(programming_language))
 
 To come into contact with other Mojo users or the Modular team: 
+* [Mojo Discord channel](https://discord.com/invite/modular) or https://discord.gg/modular
 * [GitHub discussions](https://github.com/modularml/mojo/discussions)
 * [GitHub issues](https://github.com/modularml/mojo/issues)
+* [Twitter channel](https://twitter.com/modular_ai), it regularly contains Mojo tutorials.
 
-* [Mojo Discord channel](https://discord.com/invite/modular) or https://discord.gg/modular
-* [Twitter channel](https://twitter.com/modular_ai)
-* [Forum](https://mojo-forum.com/) ?? doesn't exist anymore
+An overview of educational material and links to community projects can be found [here](https://github.com/mojicians/awesome-mojo)
 
-A tutorial site:   [mojodojo](https://mojodojo.dev/) created by Jack Clayton (mojodojodev@gmail.com)
+An outdated tutorial site:   [mojodojo](https://mojodojo.dev/) created by Jack Clayton (mojodojodev@gmail.com)
 
-An overview of [educational material and links to community projects](https://github.com/mojicians/awesome-mojo)
-
-[Links for examples](https://github.com/modularml/devrel-extras/tree/main/blogs/)
-
-?? wrong link - The [X Modular channel](https://twitter.com/modular_ai) regularly contains Mojo tutorials.
 
 
 ## 1B.3 A brief history, status and roadmap 
@@ -72,7 +67,7 @@ Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native suppo
 * 2023 Sep 22: Mojo v 0.3.0
 * 2023 Sep 29: Mojo v 0.3.1 (for installation and lsp problems)
 * 2023 Oct 5:  Mojo v 0.4.0 (default parameters for structs and functions - file I/O)
-* 2023 Oct 19: Mojo v 0.4.0 for Mac (support for Mac (Apple silicon))
+* 2023 Oct 19: Mojo v 0.4.0 with support for Mac (Apple silicon)
 * 2023 Nov 2:  Mojo v 0.5.0 and the Modular CLI 💻  v0.2.2
 * 2023 Dec 4:  Mojo v 0.6.0 was announced/published during the 1st MODCON conference. Also MAX was introduced, and partnerships with AWS, replit, and NVidia.
 * 2024 Jan 25: v0.7.0: (basics) of traits, lifetimes, Dict, Reference, ...
@@ -83,8 +78,9 @@ Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native suppo
     Modular version 24.2.0-c2427bc5-release
     mojo 24.2.0 (c2427bc5) / max 24.2.0 (c2427bc5)
 
+
 Goals / Roadmap:
-* 2024 Jan??: Windows version
+* 2024 : Windows version
 * 2023 Jun 17 - A rough estimate mentioned by the team is that the language might be very usable for a lot of things in 18 months, so about 2024 Dec
 
 
@@ -128,12 +124,12 @@ The company *Modular* is funded by VC (Venture Capital).
 ## 1B.6 Some one-liners
 * Mojo🔥: The Language of AI
 * Python++
-* Mojo was created to integrate Python’s usability with C’s performance
+* Mojo integrates Python’s usability with C’s performance
 * Mojo is as simple as Python and as fast as Rust.
 * Mojo: a super-charged Python for AI.
 * "It's time to get your Mojo 🔥 back!"
 * Mojo is to Python like TypeScript is to JavaScript.
-* If Mojo can defeat Go in terms of parallelism, Rust in terms of safety, Julia in terms of affinity, it will reach unprecedented popularity among developers.
+* If Mojo can defeat Go in terms of parallelism, Rust in terms of safety, Julia in terms of affinity, then it will reach unprecedented popularity among developers.
 * Faster than C++, more hackable than Nvidia’s CUDA, and as safe as Rust.
 * The best of multiple worlds: the ease of use and clear syntax of Python, with the speed and memory safety of Rust.
 * Mojo may become the lingua franca of the programming world.

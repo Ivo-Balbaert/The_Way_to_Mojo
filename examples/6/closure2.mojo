@@ -2,7 +2,7 @@ fn outer(f: fn() escaping -> Int):
     print(f())
 
 fn call_it():
-    let a = 5               # 1
+    var a = 5               # 1
     fn inner() -> Int:      # 2  
         return a
 

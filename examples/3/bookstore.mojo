@@ -1,12 +1,12 @@
 def bookstore_management1(new_books, sold_books):
-    # Declaring an immutable variable 'total_books' with 'let'
-    let total_books = new_books
+    # Declaring an immutable var iable 'total_books' with 'let'
+    var total_books = new_books
     print("Total books:")
     print(total_books)
     # Uncommenting the next line would result in an error because 'total_books' is immutable
     # total_books = total_books - 40  # error: 'total_books' is immutable
     # Declaring a mutable variable 'current_books' with 'var'
-    var current_books = new_books
+    var  current_books = new_books
     print("Current books:")
     print(current_books)
     # Selling some books and reducing the current_books number
@@ -14,9 +14,9 @@ def bookstore_management1(new_books, sold_books):
     print("Current books after reduction:")
     print(current_books)
 
-    # Both 'let' and 'var' support name shadowing and lexical scoping
+    # Both 'let' and 'var ' support name shadowing and lexical scoping
     if total_books != current_books:
-        let total_books = current_books
+        var total_books = current_books
         print("Total books with lexical scoping, declared inside nested scope:")
         print(total_books)
     print("Total books in bookstore management function is still:")
@@ -30,26 +30,26 @@ def run_bookstore1():
     bookstore_management1(new_books, sold_books)
 
 def bookstore_management2(new_books: Int, sold_books: Int):
-    # Declaring an immutable variable 'total_books' with 'let'
-    let total_books: Int = new_books
+    # Declaring an immutable var iable 'total_books' with 'let'
+    var total_books: Int = new_books
     print("Total books in store:", total_books)
 
-    # Declaring a mutable variable 'current_books' with 'var'
-    var current_books: Int = new_books
+    # Declaring a mutable var iable 'current_books' with 'var '
+    var  current_books: Int = new_books
     print("Current books in store:", current_books)
 
     # Selling some books and reducing the current_books number
     current_books = current_books - sold_books
     print("Current books after selling:", current_books)
 
-    # Both 'let' and 'var' support name shadowing and lexical scoping
+    # Both 'let' and 'var ' support name shadowing and lexical scoping
     if total_books != current_books:
-        let total_books: Int = current_books
+        var total_books: Int = current_books
         print("Total books with lexical scoping, declared inside nested scope:", total_books)
 
     # Late initialization and pattern matching
-    let discount_rate: Float64
-    let book_category: String = "Mystery"
+    var discount_rate: Float64
+    var book_category: String = "Mystery"
     if book_category == "Mystery":
         discount_rate = 0.2  # 20% discount for mystery books
     elif book_category == "Fantasy":
@@ -60,10 +60,10 @@ def bookstore_management2(new_books: Int, sold_books: Int):
 
 def run_bookstore2():
     # Received 100 new books
-    let new_books: Int = 100
+    var new_books: Int = 100
 
     # Sold 20 books
-    let sold_books: Int = 20
+    var sold_books: Int = 20
 
     bookstore_management2(new_books, sold_books)
 

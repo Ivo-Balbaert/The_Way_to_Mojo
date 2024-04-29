@@ -7,13 +7,13 @@ from sys.info import simdwidthof
 alias simd_width_u8 = simdwidthof[DType.uint8]()
 
 fn chars_len[simd_width: Int](s: StringLiteral) -> Int:
-    let p = s.data().bitcast[DType.uint8]()
-    let l = len(s)
+    var p = s.data().bitcast[DType.uint8]()
+    var l = len(s)
     var offset = 0
     var result = 0
     while l - offset >= simd_width:
         result += (
-            ((p.simd_load[simd_width](offset) >> 6) != 0b10)
+            ((p.load[width=simd_width](offset) >> 6) != 0b10)
             .cast[DType.uint8]()
             .reduce_add()
             .to_int()
@@ -21,11 +21,11 @@ fn chars_len[simd_width: Int](s: StringLiteral) -> Int:
         offset += simd_width
 
     if offset < l:
-        let rest_p: DTypePointer[DType.uint8] = stack_allocation[simd_width, UInt8, 1]()
+        var rest_p: DTypePointer[DType.uint8] = stack_allocation[simd_width, UInt8, 1]()
         memset_zero(rest_p, simd_width)
         memcpy(rest_p, p.offset(offset), l - offset)
         result += (
-            ((rest_p.simd_load[simd_width]() >> 6) != 0b10)
+            ((rest_p.load[width=simd_width]() >> 6) != 0b10)
             .cast[DType.uint8]()
             .reduce_add()
             .to_int()
@@ -35,41 +35,41 @@ fn chars_len[simd_width: Int](s: StringLiteral) -> Int:
     return result
 
 fn chars_count(s: StringLiteral) -> Int:
-    let p = s.data().bitcast[DType.uint8]()
-    let string_byte_length = len(s)
+    var p = s.data().bitcast[DType.uint8]()
+    var string_byte_length = len(s)
     var result = 0
     
     @parameter
     fn count[simd_width: Int](offset: Int):
-        result += ((p.simd_load[simd_width](offset) >> 6) != 0b10).cast[DType.uint8]().reduce_add().to_int()
+        result += ((p.load[width=simd_width](offset) >> 6) != 0b10).cast[DType.uint8]().reduce_add().to_int()
     
-    vectorize[simd_width_u8, count](string_byte_length)
+    vectorize[count,simd_width_u8](string_byte_length)
     return result
 
 fn main():
     # StringLiteral
-    let s = "hello"
-    # let p = Pointer(s.data()) # error: cannot construct 'Pointer' from 'DTypePointer[si8]' value in 'let' initializ
+    var s = "hello"
+    # var p = Pointer(s.data()) # error: cannot construct 'Pointer' from 'DTypePointer[si8]' value in 'var' initializ
     # for i in range(len(s)):
     #     print_no_newline(p[i], " - ")
     # # => 104  - 101  - 108  - 108  - 111  -
     # String
     print()
-    let s2: String = "hello"
+    var s2: String = "hello"
     for i in range(len(s2)):
-        print_no_newline(s2[i], " - ")
+        print(s2[i], " - ", end="")
     # => h  - e  - l  - l  - o  -
     # String with non ASCII Unicode character
     print()
-    let s3: String = "hello 🔥"
+    var s3: String = "hello 🔥"
     for i in range(len(s3)):
-        print_no_newline(s3[i], " - ")
+        print(s3[i], " - ", end="")
     # => h  - e  - l  - l  - o  -    - �  - �  - �  - �  -
     # via StringLiteral
     print()
     print(len(s3))  # => 10
-    let s4 = "hello 🔥"
-    # let p4 = Pointer(s4.data()) # same as previous error
+    var s4 = "hello 🔥"
+    # var p4 = Pointer(s4.data()) # same as previous error
     # for i in range(len(s4)):
     #     print_no_newline(p[i], " - ")
     # # => 104  - 101  - 108  - 108  - 111  - 0  - 0  - 0  - 0  - 0  -

@@ -7,7 +7,7 @@ See § 20.3.4.2
 ## 16.1.1 Vectorize SIMD cosine
 
 See `vectorize1.mojo`:
-```mojo
+```py
 import math
 from sys.info import simdwidthof
 from algorithm import vectorize

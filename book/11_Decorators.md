@@ -6,7 +6,7 @@ Mojo also uses decorators to modify the properties and behaviors of types (like 
 
 There is a difference between `signature decorators` (like @value) and `body decorators` (like @register_passable):
 If used like this:  
-```mojo
+```py
 @register_passable
 @value
 struct Coord:
@@ -15,7 +15,7 @@ struct Coord:
 you get the error: signature decorator cannot come after body decorator.
 
 This is ok:
-```mojo
+```py
 @value
 @register_passable
 struct Coord:
@@ -34,7 +34,7 @@ The @value decorator makes defining simple aggregates of fields very easy; it sy
 You cannot make a struct instance without having defined an __init_ method. If you try, you get the error: `'Coord' does not implement any '__init__' methods in 'let' initializer`
 
 See `value.mojo`:
-```mojo
+```py
 struct Coord:
     var x: Int
     var y: Int
@@ -52,7 +52,7 @@ fn main():
 
 However, this is easily remedied by prefixing the struct with the `@value` decorator.
 
-```mojo
+```py
 @value
 struct Coord:
     var x: Int
@@ -64,7 +64,7 @@ fn main():
 ```
 
 So if you write the following:  
-```mojo
+```py
 @value
 struct MyPet:
     var name: String
@@ -73,7 +73,7 @@ struct MyPet:
 
 the compiler generates the following boilerplate code:
 
-```mojo
+```py
 struct MyPet:
     var name: String
     var age: Int
@@ -93,7 +93,7 @@ struct MyPet:
 
 Here is a complete example with the Pet struct:
 See `value2.mojo`:
-```mojo
+```py
 @value
 struct Pet:
     var name: String
@@ -128,7 +128,7 @@ A String contains a pointer that requires special constructor and destructor beh
 A UInt32 is just 32 bits for the actual value and can be directly copied into and out of machine registers.
 If you have a struct which contains only field values that can be passed into registers, mark the struct with @register_passable to enable this behavior for the whole struct, for example:
 
-```mojo
+```py
 @register_passable
 struct Pair:
     var a: UInt32
@@ -140,7 +140,7 @@ This decorator is used to specify that a struct can be passed in a register inst
 In § 3.11 we saw an example of a tuple that contains a struct instance.  
 You can't get items from such a tuple however: 
 
-```mojo
+```py
 @value
 struct Coord:
     var x: Int
@@ -156,7 +156,7 @@ A memory-only type means it can't be passed through registers.
 Marking the struct with the decorator `@register_passable` solves this:
 
 See `register_passable.mojo`:
-```mojo
+```py
 @value
 @register_passable
 struct Coord:
@@ -190,7 +190,7 @@ Some examples:
 You can use it to define a debug_only assert, as in lines 1 and 1B.  
 
 See `parameter1.mojo`:
-```mojo
+```py
 from testing import assert_true
 
 alias debug_mode = True  # 1
@@ -216,7 +216,7 @@ In line 2, only if true will the code will be "included" at compile time. The if
 See also § 7.9.6 (ctime_logic.mojo), § 10.6 (os_is_linux)
 
 See `parameter3.mojo`:  (not yet fully understood, doesn't work after v5)
-```mojo
+```py
 from testing import assert_true
 
 fn example[T: AnyType](arg: T):
@@ -243,7 +243,7 @@ fn main():
 
 ## 11.4 - @parameter runs a function at compile-time
 See `parameter2.mojo`:
-```mojo
+```py
 fn add_print[a: Int, b: Int](): 
     @parameter
     fn add[a: Int, b: Int]() -> Int:
@@ -257,7 +257,7 @@ fn main():
 ```
 
 The above code will run at compile time, so that you pay no runtime price for anything inside the function. This translates at compile-time to:
-```mojo
+```py
 fn add_print(): 
     let x = 15
     print(x)
@@ -274,7 +274,7 @@ The add calculation ran at compile time, so those extra instructions don't happe
 
 Here is a simple example:
 See `static_method1.mojo`
-```mojo
+```py
 struct helpers:
     @staticmethod
     fn is_even(value: Int) -> Bool:
@@ -286,7 +286,7 @@ fn main():
 ```
 
 Example (see § 20.6 - `ray_tracing.mojo`):
-```mojo
+```py
 struct Vec3f:
     var data: SIMD[DType.float32, 4]
 
@@ -313,7 +313,7 @@ See matmul
 
 ## 11.8 - @unroll
 See `unroll1.mojo`:
-```mojo
+```py
 @always_inline
 fn print_and_increment(inout x: Int):
     print(x)
@@ -332,7 +332,7 @@ fn main():
 ```
 
 After working out the decorators, this becomes:
-```mojo
+```py
 fn main():
     var i = 0
     print(i)
@@ -347,7 +347,7 @@ The program is faster by not doing `if i<3` on each iteration and by not having 
 
 Examples: see `nbody.mojo`:
 
-```mojo
+```py
     @unroll
     for i in range(NUM_BODIES):
         p += bodies[i].velocity * bodies[i].mass

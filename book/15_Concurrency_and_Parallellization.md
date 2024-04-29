@@ -11,7 +11,7 @@ The autobus analogy:
 With only one instruction, we can calculate the entire autobus in the same amount of time it would have taken to calculate a single number in a non-simd way.
 
 See `parallel1.mojo`:
-```mojo
+```py
 from algorithm import parallelize
 
 
@@ -47,7 +47,7 @@ This parallellize function implements:
 The autobus analogy: see https://github.com/rd4com/mojo-learning/blob/main/tutorials/multi-core-parallelize-with-simd .md
 
 See `parallel2.mojo`:
-```mojo
+```py
 from algorithm import parallelize
 from memory.unsafe import DTypePointer
 from sys.info import simdwidthof
@@ -112,7 +112,7 @@ This is very similar to async/await in other languages: coroutines execute seque
 In the following example,  we calculate the row-wise `mean()` of a matrix, by vectorizing across colums and parallelizing across rows.
 
 See `matrix_mean_row.mojo`:
-```mojo
+```py
 from tensor import Tensor, TensorShape, TensorSpec
 from math import trunc, mod
 from memory import memset_zero
@@ -226,7 +226,7 @@ Vectorized and parallelized way: see fn
 Now we copy our vectorized and parallelized implementation of row-wise mean() and make it a function in a custom Struct based on Tensor type:
 
 See ``matrix_mean_row2.mojo`:
-```mojo
+```py
 from tensor import Tensor, TensorShape, TensorSpec
 from math import trunc, mod
 from memory import memset_zero

@@ -8,5 +8,5 @@ struct enum_type:
     alias float32 = 15
 
 fn main():
-    let en = enum_type.bool
+    var en = enum_type.bool
     print(en)  # => 1

@@ -1,5 +1,5 @@
 fn swap(inout lhs: Int, inout rhs: Int):
-    let tmp = lhs
+    var tmp = lhs
     lhs = rhs
     rhs = tmp
 

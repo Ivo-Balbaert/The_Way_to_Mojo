@@ -1,18 +1,16 @@
 fn main():
-    let list = [1,2,3]                   # 1
-    print(list) # => [1, 2, 3]
-    let explicit_list: ListLiteral[Int, Int, Int] = [1, 2, 3]
-    print(explicit_list) # => [1, 2, 3]
+    var list = List[Int](1, 2, 3)                  # 1
+    # var explicit_list: ListLiteral[Int, Int, Int] = [1, 2, 3]
+    print(list[0]) # => 1
+    for i in range(len(list)):
+        print(list[i])
 
-    let list2 = [1, 5.0, "Mojo🔥"]
-    print(list2.get[2, StringLiteral]())  # 2B => Mojo🔥
-    let mixed_list: ListLiteral[Int, FloatLiteral, StringLiteral] 
-            = [1, 5.0, "Mojo🔥"] 
-    print(mixed_list.get[2, StringLiteral]())  # 2A => Mojo🔥
+    # var list2 = (1, 5.0, "Mojo🔥")
+    # print(list2.get[0, Int]()) # => 1
+    # print(list2.get[2, StringLiteral]())  # 2B => Mojo🔥
 
-    print(len(mixed_list)) # => 3
-    print(mixed_list.get[0, Int]()) # => 1
-
+    # print(len(list2)) # => 3
+ 
     
     
 

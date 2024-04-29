@@ -28,7 +28,7 @@ Coding with pointers is inherently unsafe, so you have to import the Pointer typ
 >> PROBLEM: pointers0.mojo
 Simpler example, see `pointers0.mojo`:  ?? near infinite output ??
 address_of / casting the type with bitcast / Null pointers
-```mojo
+```py
 fn main() raises:
     # Create a Pointer to an existing variable:
     var x: Int = 42  # x must be mutable to pass as a reference
@@ -58,7 +58,7 @@ fn main() raises:
 ```
 
 See `pointers1.mojo`:  
-```mojo
+```py
 from memory.unsafe import Pointer
 from memory import memset_zero
 ```
@@ -66,7 +66,7 @@ from memory import memset_zero
 Create a struct Coord that we will use as the type for the pointer.  
 Then in line 1, we define a pointer p1 to point to a Coord instance, and we allocate 2 bytes in memory for the 2 Uint8 fields (same for p2). 
 
-```mojo
+```py
 @register_passable
 struct Coord:
     var x: UInt8 
@@ -80,7 +80,7 @@ fn main():
 All the values will in the allocated memory will be garbage. We need to manually zero them if there is a chance we might read the value before writing it, otherwise it'll be undefined behavior (UB). This is done with the `memset_zero` function from module memory.
 
 
-```mojo
+```py
 fn main():
     # ...
     memset_zero(p1, 2)                 # 2 
@@ -88,7 +88,7 @@ fn main():
 ```
 As we see in lines 3 and 4, we can test if two pointers are equal with ==. A pointer that has been allocated tests True in an if statement.  
 
-```mojo
+```py
 fn main():
     # ...
     if p1:                             # 3
@@ -101,7 +101,7 @@ fn main():
 
 If we want to use the struct instance with `p1[0]`, we must annotate the struct with @register_passable:
 
-```mojo
+```py
 @register_passable
 struct Coord:
     var x: UInt8 
@@ -109,7 +109,7 @@ struct Coord:
 ```
 
 Then we can write:
-```mojo
+```py
 fn main():
     # ...
     let coord = p1[0]
@@ -117,7 +117,7 @@ fn main():
 ```
 
 We can set the values, but p1[0] hasn't been modified. This is because coord is an identifier to memory on the stack or in a register. 
-```mojo
+```py
 fn main():
     # ...
     coord.x = 5
@@ -127,7 +127,7 @@ fn main():
 ```
 
 We need to write the data with `store`:
-```mojo
+```py
 fn main():
     # ...
     p1.store(0, coord)
@@ -135,7 +135,7 @@ fn main():
 ```
 
 Let's add 5 to it and store it at offset 1, and then print both the records:
-```mojo
+```py
 fn main():
     # ...
     coord.x += 5
@@ -152,7 +152,7 @@ fn main():
 ```
 
 Here is an example to show how easy it is to get undefined behavior:  
-```mojo
+```py
     let third_coord = p1.load(2)
     print(third_coord.x)  # => 7
     print(third_coord.y)  # => 7
@@ -161,7 +161,7 @@ Here is an example to show how easy it is to get undefined behavior:
 The values printed out are garbage values, we've done something very dangerous that will cause undefined behavior, and allow attackers to access data they shouldn't.
 
 Let's do arithmetic with the pointer p1:
-```mojo
+```py
  p1 += 2
     for i in range(2):
         print(p1[i].x)
@@ -175,7 +175,7 @@ Let's do arithmetic with the pointer p1:
 The values printed out are garbage!
 Let's move back to where we were and free the memory, if we forget to free the memory, that will cause a memory leak if this code runs a lot:
 
-```mojo
+```py
     p1 -= 2
     p1.free()
 ```
@@ -202,7 +202,7 @@ fn __del__(owned self):
 As we saw in the previous §, it's easy to make mistakes when playing with pointers. So let's make the code of our struct more robust to reduce the surface area of potential errors. We enclose our struct Coord in another struct Coords which contains a data field that is a Pointer[Coord]. Then we can build in safeguards, for example in the __getitem__ method we make sure that the index stays within the bounds of the length of Coords.
 
 See `pointers2.mojo`:
-```mojo
+```py
 from memory.unsafe import Pointer
 from memory import memset_zero
 
@@ -262,7 +262,7 @@ Much faster than Pointer!
 A DTypePointer stores an address with a given DType, allowing you to allocate, load and modify data with convenient access to SIMD operations.
 
 See `dtypepointer1.mojo`:
-```mojo
+```py
 from memory.unsafe import DTypePointer
 from random import rand
 from memory import memset_zero
@@ -327,7 +327,7 @@ In line 11, we introduce a security vulnerability by using the pointer after fre
 As in § 12.3, let's now write safe pointer code by building a safe struct abstraction around it that interacts with the pointer, so we have less surface area for potential mistakes:
 
 See `dtypepointer2.mojo`:
-```mojo
+```py
 from memory.unsafe import DTypePointer
 from random import rand
 from memory import memset_zero
@@ -432,7 +432,7 @@ As another example, lets take the fourth row, doubling it, and then writing that
 Here is a simple example of how to sort a ListLiteral by using a Pointer to it:
 
 See `bubble_sort.mojo`:
-```mojo
+```py
 from memory.unsafe import Pointer
 
 fn main():

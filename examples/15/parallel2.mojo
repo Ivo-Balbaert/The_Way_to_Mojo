@@ -21,7 +21,7 @@ fn main():
         # 3 simd instructions:
         numbers = math.iota[element_type, group_size](x * group_size)
         numbers *= numbers
-        array.simd_store[group_size](x * group_size, numbers)
+        array.store(x * group_size, numbers)
 
     parallelize[compute_number](groups, computer_cores)
 

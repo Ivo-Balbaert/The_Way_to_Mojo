@@ -6,7 +6,7 @@ The general format follows the Python syntax: `if cond:  ... else:  ... `
 Here is a first example of using the if-else flow in Mojo, using several numerical types and two functions:
 
 See `if_else1.mojo`:
-```mojo
+```py
 fn func1():
     let x: Int = 42
     let y: Float64 = 17.0
@@ -32,7 +32,7 @@ The 2nd example `guess.mojo` shows function that returns a Bool value (line 1). 
 `!=` is the inverse of `==`.
 
 See `guess.mojo`:
-```mojo
+```py
 fn main():
     print(guessLuckyNumber(37)) # => True
 
@@ -50,7 +50,7 @@ fn guessLuckyNumber(guess: Int) -> Bool:    # 1
 ```
 
 Just like in Python, this can be expanded with one or more elif branches:
-```mojo
+```py
 if cond1:
     ...
 elif cond2:
@@ -66,12 +66,37 @@ else:
 
 Also if statements can be nested inside each other.
 
+If an Int or a Float value does not equal 0 or 0.0, it returns True in an if statement:
+```py
+if 1.0:
+    print("not 0.0")  # => not 0.0
+
+if not 0.0:
+    print("is 0.0")   # => is 0.0
+
+if 0:       # or 0.0
+    print("this does not print!")
+```
+
+Note that these if statements generate a warning: 
+```
+warning: if statement with constant condition 'if True'
+    if 1.0:
+       ^
+/home/ivo/mojo/test/floats.mojo:33:8: warning: if statement with constant condition 'if False'
+    if 0:                 # or 0.0
+       ^
+```
+
+
+
+
 ## 5.2 Using for loops
 The following program shows how to use a for in range-loop:
 (see also previous exemples: String)
 
 See `for_range.mojo`:
-```mojo
+```py
 def main():
     for x in range(9, 0, -3):   # 1
         print(x)
@@ -88,7 +113,7 @@ The loop in line 1 goes from start 9 to end 0, step -3. The end value 0 is not i
 Just like in Python, you can make a loop with a condition through `while`:
 
 See `while.mojo`:
-```mojo
+```py
 fn main():
     var n = 0
     while n <= 10_000_000:
@@ -101,7 +126,7 @@ fn main():
 ?? better move to § 9.4
 
 If your code is expected to possibly raise an exception, either the enveloping function must be postfixed with `raises`, or you can enclose the code like this:  
-```mojo
+```py
     try:
         # possible dangerous code
     except:
@@ -113,7 +138,7 @@ If your code is expected to possibly raise an exception, either the enveloping f
 For a concrete example, see `try_except.mojo` in § 6.2 
 
 Enhanced example: see `try_except2.mojo`:
-```mojo
+```py
 from random import random_float64, seed
 
 alias flip_a_coin = random_float64
@@ -195,7 +220,7 @@ In Python the with statement is used to create a context. Whatever statements we
 It is commonly used as `with open(file)` to read a file and close it automatically at the end of the context (see § 10.12).  
 
 For example:
-```mojo
+```py
 with open("my_file.txt", "r") as file:
     print(file.read())
 
@@ -210,7 +235,7 @@ bar()
 For any value defined at the entrance to a with statement (like `file` here), Mojo will keep that value alive until the end of the with statement.
 
 In Mojo it is used to create a parallelization context (no longer the same code!), for example in mandelbrot_4.mojo:
-```mojo
+```py
 from runtime.llcl import num_cores, Runtime
 
 with Runtime() as rt:
@@ -232,7 +257,7 @@ Example: ??
 This will eventually be implemented. For now you can use this function:
 
 See `exit.mojo`:
-```mojo
+```py
 fn main():
     print("before exit")  # => before exit
     _ = exit(-2)          # exit the program

@@ -1,28 +1,25 @@
 fn main():
-    var x: Bool = True
+    var x: Bool = True   # equivalent: var x = True
     print(x)        # => True
-    print(x.value)  # => True
-
     x = False
-    print(x)    # 1 => False
+    print(x)        # 1 => False
 
-    # 2 - Invert:
-    print(True.__invert__())  # => False
-    print(~False)             # => True
+    # 2 - Invert (~)
+    print(~False)             # => True  # equivalent:  print(False.__invert__()) 
 
-    # 3 - eq and ne
-    print(True.__eq__(True))  # => True
-    print(True == False)      # => False
+    # 3 - eq and ne (== !=)
+    print(True == False)      # => False # equivalent:  print(True.__eq__(False))  
+    print(True != False)      # => True  # equivalent:  print(True.__ne__(False))  
 
-    print(True.__ne__(True))  # => False
-    print(True != False)      # => True
-    
     # 4 - and, or and xor
-    print(True.__and__(True)) # => True
-    print(True & False)       # => False
-    print(True.__or__(False)) # => True
-    print(False | False)      # => False
-    print(True.__xor__(True)) # => False
-    print(True ^ False)       # => True
-    print(False ^ True)       # => True
-    print(False ^ False)      # => False
+    print(True & False)       # => False # equivalent:  print(True.__and__(False)) 
+    print(False | False)      # => False # equivalent:  print(False.__or__(False))
+    print(True ^ False)       # => True  # equivalent:  print(True.__xor__(False))
+
+    # 5 Conversion to Bool:
+    var b1 = (42).__bool__()
+    print(b1)                  # => True
+    var b2 = (0).__bool__()
+    print(b2)                  # => False
+    var b3 = ("Mojo").__bool__()
+    print(b3)                  # => True

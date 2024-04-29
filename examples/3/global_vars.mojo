@@ -1,6 +1,6 @@
 var n = 42
-let str = "Hello from Mojo!"
+var str = "Hello from Mojo!"
 
 fn main():
-    print(n)  # => 42
-    print(str)  # => Hello from Mojo!
+    print("n=", n)      # => n= 0
+    print("str=", str)  # => str= 

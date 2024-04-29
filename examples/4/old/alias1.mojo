@@ -14,4 +14,4 @@ fn main():
     alias width = 960
     alias height = 960
     for i in range(MAX_ITERS):  # 3
-        print_no_newline(i, " ") # => 0  1  2  3  4  5  6  ... 198 199
+        print(i, " ", end="") # => 0  1  2  3  4  5  6  ... 198 199

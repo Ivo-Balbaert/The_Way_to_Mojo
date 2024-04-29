@@ -8,21 +8,21 @@ alias dtype = DType.float64
 
 fn mojo_fn_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
     var s: Float64 = 0.0
-    let n = a.num_elements()
+    var n = a.num_elements()
     for i in range(n):
-        let dist = a[i] - b[i]
+        var dist = a[i] - b[i]
         s += dist*dist
     return sqrt(s)
 
 fn print_formatter(string: String, value: Float64):
-    print_no_newline(string)
+    print(string, end="")
     print(value)
 
 fn main() raises:
-    let np = Python.import_module("numpy")
-    let n = 10_000_000
-    let anp = np.random.rand(n)
-    let bnp = np.random.rand(n)
+    var np = Python.import_module("numpy")
+    var n = 10_000_000
+    var anp = np.random.rand(n)
+    var bnp = np.random.rand(n)
 
     var a = Tensor[dtype](n)
     var b = Tensor[dtype](n)
@@ -31,9 +31,9 @@ fn main() raises:
         a[i] = anp[i].to_float64()
         b[i] = bnp[i].to_float64()
 
-    let eval_begin = now()
-    let fn_dist = mojo_fn_dist(a, b)
-    let eval_end = now()
+    var eval_begin = now()
+    var fn_dist = mojo_fn_dist(a, b)
+    var eval_end = now()
 
     print_formatter("mojo_fn_dist value: ", fn_dist)
     print_formatter("mojo_fn_dist time (ms): ",Float64((eval_end - eval_begin)) / 1e6)

@@ -11,7 +11,7 @@ The items are immutable, ListLiteral only includes getter methods for accessing 
 When you initialize the list the types can be inferred (as shown in line 1) or explicitly specified (see line 2). However when retrieving an item with `get` you need to provide the item's index as well as the type as parameters (lines 2A,2B):
 
 See `listliteral.mojo`:
-```mojo
+```py
 fn main():
     let list = [1,2,3]                   # 1
     print(list) # => [1, 2, 3]
@@ -36,14 +36,14 @@ Examples:
 this parametric function f2 has a variable number of parameters of type Int
 
 
-**Implementing a List like behavior with PythonObject**
+**Implementing a List like behavior with PythonObject** 
 See `list_pythonobject.mojo`:
-```mojo
+```py
 fn main() raises:
     let x = PythonObject([])
     _ = x.append("hello")
     _ = x.append(1.1)
-    let s: String = x[0].__str__()
+    let s: String = x[0]  # x[0].__str__()
     let f: Float64 = x[1].to_float64()
     print(x)  # => ['hello', 1.1]
 ```
@@ -57,7 +57,7 @@ The `len` function returns the number of items.
 The `get` method together with an index and a type allows you to extract the item at that index.
 
 See `tuple.mojo`:
-```mojo
+```py
 @value
 struct Coord:
     var x: Int
@@ -89,7 +89,7 @@ If we don't specify a start, it will default to 0. We can initialize slices by s
 So for example using Python syntax, you could write as in line 1:
 
 See ``slice.mojo`:
-```mojo
+```py
 fn main():
     let original = String("MojoDojo")
     print(original[0:4])  # => Mojo
@@ -119,7 +119,7 @@ The Error type (defined in built-in module `error`) is used to handle errors in 
 Code can raise an error with the `Error` type, which accepts a String message. When `raise` is executed, "Error: error_message" is displayed:
 
 See `error.mojo`:
-```mojo
+```py
 fn main() raises:
     print(return_error())
 
@@ -135,7 +135,7 @@ mojo: error: execution exited with a non-zero result: 1
 ```
 Errors can be initialized as empty, with custom messages, or even with string references:
 
-```mojo
+```py
 var err : Error = Error()
 raise err
 
@@ -150,14 +150,14 @@ raise errref
 
 The `value` field is the error message itself (see line 1).
 
-```mojo
+```py
 var err2 : Error = Error("something is wrong")
 print(err2.value) # 1 => something is wrong
 ```
 
 An internal method __copyinit__ allows an error to be copied:
 
-```mojo
+```py
 var err3 : Error = Error("hey")
 var other : Error = err3
 raise other  # => Error: hey

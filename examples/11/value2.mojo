@@ -5,14 +5,14 @@ struct Pet:
 
 fn main():
     # Creating a new pet
-    let myCat = Pet("Wia", 6)
+    var myCat = Pet("Wia", 6)
     print("Original cat name: ", myCat.name)
     print("Original cat age: ", myCat.age)
     # Copying a pet
-    let copiedCat = Pet(myCat.name, 7)
+    var copiedCat = Pet(myCat.name, 7)
     print("Copied cat name: ", copiedCat.name)
     print("Copied cat age: ", copiedCat.age)
-    let movedCat = myCat
+    var movedCat = myCat
     print("Moved cat name: ", movedCat.name)
     print("Moved cat age: ", movedCat.age)
 # =>

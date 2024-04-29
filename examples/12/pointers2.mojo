@@ -34,9 +34,9 @@ struct Coords:
 fn main() raises:
     var coords = Coords(5)
 
-    let coord1 = Coord(1, 2)
-    let coord2 = Coord(3, 4)
-    let coord3 = Coord(5, 6)
+    var coord1 = Coord(1, 2)
+    var coord2 = Coord(3, 4)
+    var coord3 = Coord(5, 6)
     coords[0] = coord1
     coords[1] = coord2
     print(coords[0].x, coords[0].y, coords[1].x, coords[1].y,) # => 1 2 3 4
@@ -46,7 +46,7 @@ fn main() raises:
 
 
 # when uncommented => error
-    # let coords = Coords(5)
+    # var coords = Coords(5)
     # print(coords[5].x)
 
 # =>

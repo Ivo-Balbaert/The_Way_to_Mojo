@@ -5,7 +5,7 @@ fn sleeper():
     sleep(.01)
 
 fn main():
-    let report = benchmark.run[sleeper]()
+    var report = benchmark.run[sleeper]()
     print(report.mean())   # => 0.010147911948148149
     report.print()
     print("")

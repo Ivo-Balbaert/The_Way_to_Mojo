@@ -10,9 +10,9 @@ fn calculate_pi(terms: Int) -> Float64:
     return pi
 
 fn main():
-    let start = now()     # 2
+    var start = now()     # 2
     print(calculate_pi(100000000))
-    let calc_time = now() - start
+    var calc_time = now() - start
     print("Mojo pi2 Calculates PI in ", calc_time/1e9, " seconds")
 
 # => 3.141592643589326

@@ -1,15 +1,15 @@
 from python import Python
 
 fn main() raises:
-    let w: Int = 42
+    var w: Int = 42
     var x = Python.evaluate('5 + 10')   # 1
     print(x)   # => 15
 
-    let py = Python()
-    let py_string = py.evaluate("'This string was built' + ' inside of python'")
+    var py = Python()
+    var py_string = py.evaluate("'This string was built' + ' inside of python'")
     print(py_string)  # => This string was built inside of python
  
-    let pybt = Python.import_module("builtins")
+    var pybt = Python.import_module("builtins")
     _ = pybt.print("this uses the python print keyword") # => this uses the python print keyword
     _ = pybt.print("The answer is", w) # => The answer is 42
     _ = pybt.print(pybt.type(x))  # => <class 'int'>

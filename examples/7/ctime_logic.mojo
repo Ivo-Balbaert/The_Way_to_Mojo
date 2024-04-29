@@ -14,12 +14,12 @@ fn reduce_add[ty: DType, size: Int](x: SIMD[ty, size]) -> Int:
 
     # Extract the top/bottom halves, add them, sum the elements.
     alias half_size = size // 2
-    let lhs = slice[ty, half_size, size](x, 0)
-    let rhs = slice[ty, half_size, size](x, half_size)
+    var lhs = slice[ty, half_size, size](x, 0)
+    var rhs = slice[ty, half_size, size](x, half_size)
     return reduce_add[ty, half_size](lhs + rhs)
     
 fn main():
-    let x = SIMD[DType.index, 4](1, 2, 3, 4)
+    var x = SIMD[DType.index, 4](1, 2, 3, 4)
     print(x) # => [1, 2, 3, 4]
     print("Elements sum:", reduce_add[DType.index, 4](x))
     # => Elements sum: 10

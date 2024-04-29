@@ -1,5 +1,3 @@
-from collections.vector import DynamicVector
-
 @value
 @register_passable
 struct Planet:
@@ -23,23 +21,19 @@ fn make_larger(owned p: Planet):
     p.mass *= 2
 
 fn main():
-    let rocky = Planet(300)
+    var rocky = Planet(300)
     print(rocky.mass)
 # => 300
     print(is_gas_giant(rocky)) # => False
     make_larger(rocky^)
     # print(rocky.mass) # => 600
 
-    let planets = [Planet(200), Planet(500)]
-    print(planets) # => [200, 500]
-    # for planet in planets:   # error: 
-    #     print(planet)
-
-    var planets2 = DynamicVector[Planet]()
-    planets2.push_back(Planet(100))
+    var planets = List[Planet]()
+    planets.append(Planet(200))
+    planets.append(Planet(500))
     # print(planets2) # => [200, 500]
     # for planet in planets:   # error: 
     #     print(planet)
-    for i in range(len(planets2)):
-        print(planets2[i].mass)
+    for i in range(len(planets)):
+        print(planets[i].mass)
     # => 100

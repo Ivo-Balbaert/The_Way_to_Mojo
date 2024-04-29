@@ -23,8 +23,8 @@ fn mandelbrot_kernel_SIMD[
     simd_width: Int
 ](c: ComplexSIMD[float_type, simd_width]) -> SIMD[float_type, simd_width]:
     """A vectorized implementation of the inner mandelbrot computation."""
-    let cx = c.re
-    let cy = c.im
+    var cx = c.re
+    var cy = c.im
     var x = SIMD[float_type, simd_width](0)
     var y = SIMD[float_type, simd_width](0)
     var y2 = SIMD[float_type, simd_width](0)
@@ -43,19 +43,19 @@ fn mandelbrot_kernel_SIMD[
 
 
 fn main():
-    let t = Tensor[float_type](height, width)
+    var t = Tensor[float_type](height, width)
 
     @parameter
     fn worker(row: Int):
-        let scale_x = (max_x - min_x) / width
-        let scale_y = (max_y - min_y) / height
+        var scale_x = (max_x - min_x) / width
+        var scale_y = (max_y - min_y) / height
 
         @parameter
         fn compute_vector[simd_width: Int](col: Int):
             """Each time we operate on a `simd_width` vector of pixels."""
-            let cx = min_x + (col + iota[float_type, simd_width]()) * scale_x
-            let cy = min_y + row * scale_y
-            let c = ComplexSIMD[float_type, simd_width](cx, cy)
+            var cx = min_x + (col + iota[float_type, simd_width]()) * scale_x
+            var cy = min_y + row * scale_y
+            var c = ComplexSIMD[float_type, simd_width](cx, cy)
             t.data().simd_store[simd_width](
                 row * width + col, mandelbrot_kernel_SIMD[simd_width](c)
             )
@@ -68,7 +68,7 @@ fn main():
         for row in range(height):
             worker(row)
 
-    let vectorized_ms = Benchmark().run[bench[simd_width]]() / 1e6
+    var vectorized_ms = Benchmark().run[bench[simd_width]]() / 1e6
     print("Number of threads:", num_cores())
     print("Vectorized:", vectorized_ms, "ms")
 
@@ -77,7 +77,7 @@ fn main():
     fn bench_parallel[simd_width: Int]():
             parallelize[worker](height, height)
 
-    let parallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
+    var parallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
     print("Parallelized:", parallelized_ms, "ms")
     print("Parallel speedup:", vectorized_ms / parallelized_ms)
 

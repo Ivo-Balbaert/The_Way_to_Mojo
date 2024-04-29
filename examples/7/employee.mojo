@@ -30,7 +30,7 @@ fn print_details(name: String, age: Int, department: String):
 fn main():
     # Create employee instances
     var employee1 = Employee("Alice Thompson", 30, "Engineering", 5000.0)
-    let employee2 = Employee("Robert Davis", 35, "Sales", 4500.0)
+    var employee2 = Employee("Robert Davis", 35, "Sales", 4500.0)
     employee1.age = 33
 
     # Print employee details

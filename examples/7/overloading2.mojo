@@ -17,10 +17,10 @@ struct Rectangle:
 
 fn main():
     # Constructing a rectangle with width 10.0 and height 20.0
-    let rectangle1 = Rectangle(10.0, 20.0)  
+    var rectangle1 = Rectangle(10.0, 20.0)  
     rectangle1.display()
     # => width:  10.0 height:  20.0
     # Constructing a rectangle by copying rectangle1
-    let rectangle2 = Rectangle(rectangle1)  
+    var rectangle2 = Rectangle(rectangle1)  
     rectangle2.display()
     # => width:  10.0 height:  20.0

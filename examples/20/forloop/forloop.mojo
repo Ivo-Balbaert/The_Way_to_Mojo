@@ -7,9 +7,9 @@ def call():
    return x
 
 def main():
-    let start_time = now()
-    let res = call()
-    let end_time = now()
+    var start_time = now()
+    var res = call()
+    var end_time = now()
     print('duration in seconds:',(end_time - start_time)/1e9)
     print(res)
 

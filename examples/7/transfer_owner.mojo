@@ -20,7 +20,7 @@ fn use_ptr(borrowed p: UniquePointer):
     print(p.ptr)      # => 100
     
 fn work_with_unique_ptrs():
-    let p = UniquePointer(100)
+    var p = UniquePointer(100)
     use_ptr(p)    # Pass to borrowing function.
     take_ptr(p^)  # 1 
 

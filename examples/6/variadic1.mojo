@@ -1,5 +1,5 @@
 fn my_func(*args_w: String):  # 1
-    let args = VariadicList(args_w)
+    var args = VariadicList(args_w)
     for i in range(len(args)):
         pass
         # print(args[i])   # error: no matching value in call to print

@@ -4,5 +4,5 @@ struct helpers:
         return (value & 1) == 0
 
 fn main():
-    let x = 2
+    var x = 2
     print(helpers.is_even(x))   # => True

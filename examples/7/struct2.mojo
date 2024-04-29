@@ -16,11 +16,11 @@ struct IntPair:
         print(self.second)
 
 fn pair_test() -> Bool:
-    let p = IntPair(1, 2)   # 4 
+    var p = IntPair(1, 2)   # 4 
     # return p < 4          # => error
     p.dump()                # => 1
                             # => 2
-    let q = IntPair(2, 3)
+    var q = IntPair(2, 3)
     if p < q:  # this is automatically translated to __lt__
         print("p < q")  # => p < q
 

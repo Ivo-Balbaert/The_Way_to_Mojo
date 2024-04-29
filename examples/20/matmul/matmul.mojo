@@ -18,12 +18,12 @@
 import benchmark
 from memory import memset_zero, stack_allocation
 from random import rand
-from algorithm import vectorize, parallelize, vectorize_unroll
+from algorithm import vectorize, parallelize
 from algorithm import Static2DTileUnitFunc as Tile2DFunc
 from python import Python
 from tensor import Tensor
 from utils.index import Index
-from memory.buffer import NDBuffer
+from buffer import NDBuffer
 
 alias M = 512
 alias N = 512
@@ -54,7 +54,7 @@ struct Matrix:
     ## Initialize with random values
     @staticmethod
     fn rand(rows: Int, cols: Int) -> Self:
-        let data = DTypePointer[type].alloc(rows * cols)
+        var data = DTypePointer[type].alloc(rows * cols)
         rand(data, rows * cols)
         return Self(rows, cols, data)
 
@@ -65,28 +65,28 @@ struct Matrix:
         return self.store[1](y, x, val)
 
     fn load[nelts: Int](self, y: Int, x: Int) -> SIMD[DType.float32, nelts]:
-        return self.data.simd_load[nelts](y * self.cols + x)
+        return self.data.load[width=nelts](y * self.cols + x)
 
     fn store[nelts: Int](self, y: Int, x: Int, val: SIMD[DType.float32, nelts]):
-        return self.data.simd_store[nelts](y * self.cols + x, val)
+        return self.data.store(y * self.cols + x, val)
 
 
 def run_matmul_python() -> Float64:
     Python.add_to_path(".")
-    let pymatmul: PythonObject = Python.import_module("pymatmul")
-    let py = Python.import_module("builtins")
+    var pymatmul: PythonObject = Python.import_module("pymatmul")
+    var py = Python.import_module("builtins")
 
-    let gflops = pymatmul.benchmark_matmul_python(128, 128, 128).to_float64()
+    var gflops = pymatmul.benchmark_matmul_python(128, 128, 128).to_float64()
     py.print(py.str("{:<13}{:>8.3f} GFLOPS").format("Python:", gflops))
 
     return gflops
 
 
 def run_matmul_numpy() -> Float64:
-    let pymatmul: PythonObject = Python.import_module("pymatmul")
-    let py = Python.import_module("builtins")
+    var pymatmul: PythonObject = Python.import_module("pymatmul")
+    var py = Python.import_module("builtins")
 
-    let gflops = pymatmul.benchmark_matmul_numpy(M, N, K).to_float64()
+    var gflops = pymatmul.benchmark_matmul_numpy(M, N, K).to_float64()
     py.print(py.str("{:<13}{:>8.3f} GFLOPS").format("Numpy:", gflops))
 
     return gflops
@@ -114,7 +114,7 @@ fn matmul_vectorized(inout C: Matrix, A: Matrix, B: Matrix):
                     m, n, C.load[nelts](m, n) + A[m, k] * B.load[nelts](k, n)
                 )
 
-            vectorize[nelts, dot](C.cols)
+            vectorize[dot, nelts](C.cols)
 
 
 # Parallelize the code by using the builtin parallelize function
@@ -129,7 +129,7 @@ fn matmul_parallelized(inout C: Matrix, A: Matrix, B: Matrix):
                     m, n, C.load[nelts](m, n) + A[m, k] * B.load[nelts](k, n)
                 )
 
-            vectorize[nelts, dot](C.cols)
+            vectorize[dot, nelts](C.cols)
 
     parallelize[calc_row](C.rows, C.rows)
 
@@ -161,7 +161,7 @@ fn matmul_tiled(inout C: Matrix, A: Matrix, B: Matrix):
                         + A[m, k] * B.load[nelts](k, n + x),
                     )
 
-                vectorize[nelts, dot](tile_x)
+                vectorize[dot, nelts](tile_x)
 
         # We hardcode the tile factor to be 4.
         alias tile_size = 4
@@ -171,7 +171,6 @@ fn matmul_tiled(inout C: Matrix, A: Matrix, B: Matrix):
 
 
 # Unroll the vectorized loop by a constant factor.
-# from Functional import vectorize_unroll
 fn matmul_unroll(inout C: Matrix, A: Matrix, B: Matrix):
     @parameter
     fn calc_row(m: Int):
@@ -192,7 +191,7 @@ fn matmul_unroll(inout C: Matrix, A: Matrix, B: Matrix):
 
                 # Vectorize by nelts and unroll by tile_x/nelts
                 # Here unroll factor is 4
-                vectorize_unroll[nelts, tile_x // nelts, dot](tile_x)
+                vectorize[dot, nelts, unroll_factor=tile_x // nelts](tile_x)
 
         alias tile_size = 4
         tile[calc_tile, nelts * tile_size, tile_size](C.cols, B.rows)
@@ -207,7 +206,7 @@ fn tile_parallel[
     # Note: this assumes that ends are multiples of the tiles.
     @parameter
     fn row(yo: Int):
-        let y = tile_y * yo
+        var y = tile_y * yo
         for x in range(0, end_x, tile_x):
             tiled_fn[tile_x, tile_y](x, y)
 
@@ -237,9 +236,9 @@ fn accumulate_registers(inout C: Matrix, A: Matrix, B: Matrix):
                         + A[io + i, k] * B.load[nelts](k, jo + j),
                     )
 
-                vectorize_unroll[nelts, tile_j // nelts, calc_tile_cols](tile_j)
+                vectorize[calc_tile_cols, nelts, unroll_factor=tile_j // nelts](tile_j)
 
-            unroll[tile_i, calc_tile_row]()
+            unroll[calc_tile_row, tile_i]()
 
         # Copy the local tile to the output
         for i in range(tile_i):
@@ -264,16 +263,16 @@ fn bench[
     fn test_fn():
         _ = func(C, A, B)
 
-    let secs = benchmark.run[test_fn]().mean()
+    var secs = benchmark.run[test_fn]().mean()
     # Prevent the matrices from being freed before the benchmark run
     A.data.free()
     B.data.free()
     C.data.free()
-    let gflops = ((2 * M * N * K) / secs) / 1e9
-    let speedup: Float64 = gflops / base_gflops
-    let numpy_speedup: Float64 = gflops / numpy_gflops
+    var gflops = ((2 * M * N * K) / secs) / 1e9
+    var speedup: Float64 = gflops / base_gflops
+    var numpy_speedup: Float64 = gflops / numpy_gflops
 
-    let py = Python.import_module("builtins")
+    var py = Python.import_module("builtins")
     _ = py.print(
         py.str("{:<13}{:>8.3f} GFLOPS {:>9.2f}x Python {:>5.2f}x Numpy").format(
             name, gflops, speedup, numpy_speedup
@@ -297,10 +296,10 @@ fn test[
 fn test_all() raises:
     constrained[M == N, "M and N must be equal for matrix multiplication"]()
 
-    let A = Matrix.rand(M, K)
-    let B = Matrix.rand(K, N)
+    var A = Matrix.rand(M, K)
+    var B = Matrix.rand(K, N)
 
-    let result = test[matmul_naive](A, B)
+    var result = test[matmul_naive](A, B)
 
     if test[matmul_vectorized](A, B) != result:
         raise Error("Vectorize output does not match")
@@ -321,8 +320,8 @@ fn main() raises:
     # Uncomment below to test correctness of Matmuls
     # test_all()
     print("CPU Results\n")
-    let python_gflops = run_matmul_python()
-    let numpy_gflops = run_matmul_numpy()
+    var python_gflops = run_matmul_python()
+    var numpy_gflops = run_matmul_numpy()
 
     bench[matmul_naive, "Naive:"](python_gflops, numpy_gflops)
     bench[matmul_vectorized, "Vectorized: "](python_gflops, numpy_gflops)

@@ -18,7 +18,7 @@ To complement this, Mojo provides an `fn` declaration which is like a "strict mo
 Consider the following example: 
 
 See `try_except.mojo`:
-```mojo
+```py
 def func1(a, b):
     let c = a
     if c != b:
@@ -43,14 +43,14 @@ note: or mark surrounding function as 'raises'
 ```
 
 So one of the following two forms solves this:
-```mojo
+```py
 fn main() raises:
     _ = func1(2, 3)
 ```
 
 or
 
-```mojo
+```py
 fn main():
     try:
         _ = func1(2, 3)
@@ -62,14 +62,14 @@ fn main():
 Functions declared as `fn` in Mojo must specify the types of their arguments. If a value is returned, its type must be specified after a `->` symbol and before the body of the function.
 
 Here is a function that returns a Float32 value:
-```mojo
+```py
 fn func() -> Float32:     
     return 3.14
 ```
 
 This is illustrated in the `sum` function in the following example (see line 1), which returns an Int value:  
 See `sum.mojo`:
-```mojo
+```py
 fn sum(x: Int, y: Int) -> Int:  # 1
     return x + y
 
@@ -98,7 +98,7 @@ A function can be recursive (see Fibonacci example § 10.3)
 You can give arguments a default value, in case it doesn't get a value when the function is called (see line 1). You can also pass arguments explicitly with an assignment and their parameter name as in lines 2 and 3.
 
 See `default_named_args.mojo`:
-```mojo
+```py
 fn greet(times: Int = 1, message: String = "!!!"):  # 1
     for i in range(times):
         print("Hello " + message)
@@ -127,7 +127,7 @@ A def argument without an explicit type annotation defaults to object.
 * All values passed into a `Mojo fn` function are *immutable (read-only)references* by default. This means it is not a copy and the function can read the original object, but it cannot modify the object at all: this is called *borrowing*.
 The default argument convention for fn functions is *borrowed*. You can make this explicit by prefixing the argument's names with the word `borrowed`:  
 
-```mojo
+```py
 fn sum(borrowed x: Int, borrowed y: Int) -> Int:  
     return x + y
 ```
@@ -140,7 +140,7 @@ For a function's arguments to be mutable, you need to declare them as *inout*. T
 This is illustrated in the following example:  
 
 See `inout.mojo`:
-```mojo
+```py
 fn main():
     var a = 1
     var b = 2
@@ -164,7 +164,7 @@ An even stronger option is to declare an argument as *owned*. Then the function 
 For example:  
 
 See `owned.mojo`:
-```mojo
+```py
 fn mojo():
     let a: String = "mojo"
     let b = set_fire(a)
@@ -193,7 +193,7 @@ The ^ operator ends the lifetime of a value binding and transfers the value owne
 If you change in the example above the call to set_fire() to look like this:
 
 See `owned_transfer.mojo`:
-```mojo
+```py
 let b = set_fire(a^)   # this doesn't make a copy
 print(a)               # => error: use of uninitialized value 'a'
 ```
@@ -203,7 +203,7 @@ because the transfer operator effectively destroys the variable a, so when the f
 If you delete or comment out print(a), then it works fine.
 
 Simpler example:
-```mojo
+```py
 fn main():
     var counter = 0
     counter += 1
@@ -222,7 +222,7 @@ See also § 7.8 for an example with a struct.
 
 **Summary of the different ways arguments can be passed:**
 See `inout.mojo`:
-```mojo
+```py
 fn sum(inout a: Int8, inout b: Int8) -> Int8:
     # with inout the values can be changed (they must be declared as var)
     a = 3
@@ -239,7 +239,7 @@ fn main():
 ```
 
 See `borrowed.mojo`:
-```mojo
+```py
 fn sum(borrowed a: Int8, borrowed b: Int8) -> Int8:
     # a = 3 # error: expression must be mutable in assignment
     return a + b
@@ -258,7 +258,7 @@ fn main():
 ```
 
 See `owned.mojo`:
-```mojo
+```py
 fn sum(owned a: Int8, owned b: Int8) -> Int8:
     a = 3
     b = 2
@@ -276,7 +276,7 @@ fn main():
 ```
 
 See `owned_transfer.mojo`:
-```mojo
+```py
 fn sum(owned a: Int8, owned b: Int8) -> Int8:
     a = 3
     b = 2
@@ -304,7 +304,7 @@ So the inner function must conform to this type.
 Here -> None is required.
 
 See `closure1.mojo`:
-```mojo
+```py
 fn outer(f: fn() -> None):   # 2
     f()                      # 3
 
@@ -320,7 +320,7 @@ fn main():
 
 ## 6.5.2 Example of a capturing closure
 See `closure2.mojo`:
-```mojo
+```py
 fn outer(f: fn() escaping -> Int):
     print(f())
 
@@ -342,7 +342,7 @@ The keyword escaping is necessary.
 This is indicated by prefixing the parameter name in the function header with *, for example args_w in the function my_func:
 
 See `variadic1.mojo`:   print out doesn't work anymore (2023 Nov 5), removed from test_way
-```mojo
+```py
 fn my_func(*args_w: String):  # 1
     let args = VariadicList(args_w)
     for i in range(len(args)):
@@ -369,7 +369,7 @@ Example: parallelize[func: fn(Int) capturing -> None]()
 ## 6.8 Running a function at compile-time and run-time
 There are two times of execution: compile-time and runtime.
 Mojo has two ‘spaces’, the ‘parameter’ space (which operates during compile time and the ‘value’ space (which operates during run time). Mojo functions can do computations in both spaces, the `[]` accepts arguments for the ‘parameter’ space, and `()` accepts arguments for the ‘value’ space:
-```mojo
+```py
 fn bar[a: Int](b: Int):
     print("bar[a: Int](b: Int)")
 ```
@@ -377,7 +377,7 @@ fn bar[a: Int](b: Int):
 By using alias for the return variable, you can run a function at compile-time:
 
 See `compile_time1.mojo`:
-```mojo
+```py
 fn squared(n: Int) -> Pointer[Int]:
     let tmp = Pointer[Int].alloc(n)
     for i in range(n):
@@ -410,7 +410,7 @@ If you get the error: `cannot use a dynamic value in a type parameter`, Mojo say
 ## 6.9 Callbacks through parameters
 
 See `callbacks_params.mojo`:
-```mojo
+```py
 @value
 struct Markdown:
     var content: String
@@ -430,7 +430,7 @@ def readme():
     md |= '''
     # hello mojo
     this is markdown
-    ```python
+    ```py
     fn main():
         print("ok")
     ```
@@ -449,7 +449,7 @@ def main():
 # =>
 # hello mojo
     # this is markdown
-    # ```python
+    # ```py
     # fn main():
     #     print("ok")
     # ```

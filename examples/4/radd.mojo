@@ -4,10 +4,10 @@ struct MyNumber:
     fn __init__(inout self, num: FloatLiteral):
         self.value = num
 
-    fn __radd__(self, rhs: FloatLiteral) -> FloatLiteral:
+    fn __radd__(self, lhs: FloatLiteral) -> FloatLiteral:
         print("running MyNumber 'radd' implementation") # => running MyNumber 'radd' implementation
-        return self.value + rhs
+        return self.value + lhs
 
 fn main():
-    let num = MyNumber(40.0)
+    var num = MyNumber(40.0)
     print(2.0 + num) # => 42.0

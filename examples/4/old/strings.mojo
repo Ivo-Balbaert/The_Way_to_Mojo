@@ -1,9 +1,8 @@
 from memory.unsafe import DTypePointer
-from collections.vector import DynamicVector
 
 fn main():
     # StringLiteral:
-    let lit = "This is my StringLiteral"  # 1
+    var lit = "This is my StringLiteral"  # 1
     print(lit)  # => This is my StringLiteral
 
     # lit = 20  # => error: Expression [9]:26:11: cannot implicitly convert 'Int' value to 'StringLiteral' in assignment
@@ -26,49 +25,49 @@ fn main():
     print(x.__ne__(z))  # => True
     print(x != y)  # => False
 
-    let x1 = "hello "
-    let y1 = "world"
-    let c = x.__add__(y)
-    let d = x1 + y1
+    var x1 = "hello "
+    var y1 = "world"
+    var c = x.__add__(y)
+    var d = x1 + y1
     print(c)  # => hello world
     print(d)  # => hello world
-
+   
     x = "string"
     print(x.__len__())  # => 6
     print(len(x))  # => 6
 
     x = "string"
-    let y2 = x.data()
+    var y2 = x.data()
     x = "alo"
     print(y2)  # => string
     print(x)  # => alo
 
     # print(("hello world")[0]) # => Error: `StringLiteral` is not subscriptable
-    # let s2 = "hello world" # s2 is a `StringLiteral`
+    # var s2 = "hello world" # s2 is a `StringLiteral`
     # print(s2[:5]) # ERROR: `StringLiteral` is not subscriptable
 
     # String:
-    let s = String("Mojo🔥")  # 3 - is conversion(casting)
+    var s = String("Mojo🔥")  # 3 - is conversion(casting)
     # alternative:
-    let s9: String = "Mojo🔥"
+    var s9: String = "Mojo🔥"
     print(s)  # => Mojo🔥
     print(s[0])  # 4 => M
     print(String("hello world")[0])  # => h
     print(ord(s[0]))  # => 77
 
     # building a string with a DynamicVector:
-    var vec = DynamicVector[Int8](2)  # 5
-    vec.push_back(78)
-    vec.push_back(79)
+    var vec = List[Int8](2)  # 5
+    vec.append(78)
+    vec.append(79)
 
     # 6:
     # error: cannot construct 'DTypePointer[si8, 0]' from 'AnyPointer[SIMD[si8, 1]]' value
-    # let vec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
+    # var vec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
     # print(vec_str_ref)  # 7 => NO
 
     # vec[1] = 78
     # print(vec_str_ref)  # 8 => NN
-    # let vec_str = String(vec_str_ref)  # 9
+    # var vec_str = String(vec_str_ref)  # 9
     # print(vec_str)  # => NN
 
     vec[0] = 65
@@ -77,31 +76,31 @@ fn main():
     # print(vec_str)  # 10 => NN
 
     # StringRef:
-    let isref = StringRef("i")
+    var isref = StringRef("i")
     # var isref : StringRef = StringRef("a")
     print(isref.data)  # => i
     print(isref.length)  # => 1
     print(isref)  # => i
 
     ## by using the pointer:
-    let x3 = "Mojo"
-    let ptr = x3.data()
-    let str_ref = StringRef(ptr)
+    var x3 = "Mojo"
+    var ptr = x3.data()
+    var str_ref = StringRef(ptr)
     print(str_ref)  # => Mojo
 
-    let y3 = "string_2"
-    let ptry = y3.data()
-    let length = len(y)
-    let str_ref2 = StringRef(ptry, length)
+    var y3 = "string_2"
+    var ptry = y3.data()
+    var length = len(y)
+    var str_ref2 = StringRef(ptry, length)
     print(str_ref2.length)  # => 8
     print(str_ref2)  # => string_2
 
-    let x2 = StringRef("hello")
+    var x2 = StringRef("hello")
     print(x2.__getitem__(0))  # => h
     print(x2[0])  # => h
 
-    let s1 = StringRef("Mojo")
-    let s2 = StringRef("Mojo")
+    var s1 = StringRef("Mojo")
+    var s2 = StringRef("Mojo")
     print(s1.__eq__(s2))  # => True
     print(s1 == s2)  # => True
     print(s1.__ne__(s2))  # => False

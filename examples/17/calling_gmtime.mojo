@@ -30,9 +30,9 @@ fn main():
     # time_t ts
     var ts : Int = 0
     # time(&ts);
-    let tsPtr = Pointer[Int].address_of(ts)
+    var tsPtr = Pointer[Int].address_of(ts)
     _ = external_call["time", Int, Pointer[Int]](tsPtr)
     # struct tm *tm = gmtime(&ts)
-    let tmPtr = external_call["gmtime", Pointer[C_tm], Pointer[Int]](tsPtr)
-    let tm = tmPtr.load()
+    var tmPtr = external_call["gmtime", Pointer[C_tm], Pointer[Int]](tsPtr)
+    var tm = tmPtr.load()
     print(tm.tm_hour, ":", tm.tm_min, ":", tm.tm_sec) # => 10 : 35 : 46

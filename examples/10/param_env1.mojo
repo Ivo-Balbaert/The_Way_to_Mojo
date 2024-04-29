@@ -5,5 +5,5 @@ alias float_type: DType = DType.float32 if is_defined["FLOAT32"]() else DType.fl
 
 fn main():
     print("float_type is: ", float_type)  # => float_type is:  float32
-    let spec = TensorSpec(float_type, 256, 256)
-    let image = Tensor[float_type](spec)
+    var spec = TensorSpec(float_type, 256, 256)
+    var image = Tensor[float_type](spec)

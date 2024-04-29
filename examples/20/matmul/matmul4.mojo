@@ -9,7 +9,7 @@ from sys.info import simdwidthof
 from runtime.llcl import Runtime
 from algorithm import vectorize
 
-let python_gflops = 0.005430089939864052
+var python_gflops = 0.005430089939864052
 alias nelts = simdwidthof[DType.float32]()  # The SIMD vector width.
 
 fn matmul_vectorized_1(C: Matrix, A: Matrix, B: Matrix):
@@ -69,12 +69,12 @@ fn benchmark[
     fn test_fn():
         _ = func(C, A, B)
 
-    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+    var secs = Float64(Benchmark().run[test_fn]()) / 1e9
     print("Mojo seconds: ", secs)
     # Prevent the matrices from being freed before the benchmark run
     _ = (A, B, C)
-    let gflops = ((2 * M * N * K) / secs) / 1e9
-    let speedup: Float64 = gflops / python_gflops
+    var gflops = ((2 * M * N * K) / secs) / 1e9
+    var speedup: Float64 = gflops / python_gflops
     print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
 
 

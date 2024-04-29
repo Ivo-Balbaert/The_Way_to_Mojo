@@ -27,4 +27,4 @@ fn main() raises:
     # print("c = ", c.__into_int__())  # Should print "c = 600"
     # print(c)
 
-    let plus = U24[600]() + U24[650]()
+    var plus = U24[600]() + U24[650]()

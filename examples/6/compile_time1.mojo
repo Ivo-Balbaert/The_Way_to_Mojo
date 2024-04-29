@@ -1,5 +1,5 @@
 fn squared(n: Int) -> Pointer[Int]:
-    let tmp = Pointer[Int].alloc(n)
+    var tmp = Pointer[Int].alloc(n)
     for i in range(n):
         tmp.store(i, i * i)
     return tmp
@@ -8,7 +8,7 @@ alias n_numbers = 5
 alias precalculated = squared(n_numbers)     # 1
 
 fn main():
-    # let precalculated = squared(n_numbers) # 2
+    # var precalculated = squared(n_numbers) # 2
 
     for i in range(n_numbers):
         print(precalculated.load(i))
