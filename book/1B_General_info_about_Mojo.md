@@ -6,7 +6,7 @@ The company's goals are based on two pillars:
  An integrated, composable suite of products that simplify your AI infrastructure and give you everything you need to deploy low-latency, high-throughput generative and traditional inference pipelines into production. MAX will be available in a free, non-commercial Developer Edition and a paid, commercial Enterprise Edition in early 2024.
 2- *Mojo*, as the next generation AI software development platform. All the kernels that power MAX are written in Mojo.
 
-Mojo is designed and developed by **Chris Lattner** (the creator of the Swift programming language and LLVM Compiler Infrastructure - CEO of Modular) and Tim Davis (MLIR Product Manager at Google - Chief Product Officer of Modular), together with their team at Modular.
+Mojo is designed and developed by **Chris Lattner** (the creator of the Swift programming language and LLVM Compiler Infrastructure - CEO of Modular) and Tim Davis (MLIR Product Manager at Google - Chief Product Officer of Modular), with their team at Modular and the open-source developer community.
 
 Mojo was announced in a [Product launch keynote](https://www.youtube.com/watch?v=-3Kf2ZZU-dg&t=0s) on May 2 2023.
 Its design and implementation started on Sep 27, 2022, when the first piece of Mojo was added (a lexer).

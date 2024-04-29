@@ -3,6 +3,8 @@ import math
 fn main():
     var a = SIMD[DType.uint8, 4](1, 2, 3, 4)  # 1
     print(a)  # => [1, 2, 3, 4]
+    print(a.element_type) # => uint8
+    print(len(a)) # => 4
 
     a *= 10                                   # 2
     print(a)  # => [10, 20, 30, 40]
@@ -14,7 +16,6 @@ fn main():
 
     var numbers = SIMD[DType.uint8, 8]()
     print(numbers) # => [0, 0, 0, 0, 0, 0, 0, 0]
-    print(len(numbers)) # => 8
     # fill them with numbers from 0 to 7
     numbers = math.iota[DType.uint8, 8](0)    # 4
     print(numbers) # => [0, 1, 2, 3, 4, 5, 6, 7]

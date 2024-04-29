@@ -4,7 +4,8 @@
 
 **Target OS’s and platforms** 
 2023 Aug 26: Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher, other distro's)
-2023 Oct 19: Support for Apple silicon
+2023 Oct 19: Now support for Apple silicon is added (M1 and M2 processors)
+
 Native support for Apple (Intel) and Windows is coming.
 
 The LLVM/MLIR compiler infrastructure together form a cutting-edge compiler and code generation system. Because Mojo uses this system, it can target a very wide spectrum of operating systems, computation environments and hardware platforms.
@@ -27,7 +28,7 @@ Structure of compiler: video 2023 LLVM Dev Mtg:
 OrcJit is used for Just in Time compilation, but also for generating static archive .a file. The system linker then transforms this into an executable file.
 
 **Runtime**
-- needed to call the CPython interpreter, and call with the Mojo compiler ??
+- for Python code: calls the CPython interpreter, which talks toh the Mojo compiler ??
 - a built-in GC to clean up Python objects, based on reference counting
 
 
@@ -66,15 +67,15 @@ Version 24.2.0 (2024 Mar 29) ships with the following 20 packages, containing 83
 
 ?? adapt
 
-
 You can execute code also in the [Online Playground](https://docs.modular.com/mojo/playground)
 
 
-## 2.2 Using a Mojo binary release
-?? These can be downloaded from [here]().
-
+## 2.2 Installing the Modular and Mojo toolkit
 ### 2.2.1 On Windows
 This is currently (??) still in a testing phase.
+
+### 2.2.2 On MacOS 
+See [Mojo website](https://docs.modular.com/mojo/manual/get-started/index.html)
 
 ### 2.2.2 On Linux Ubuntu 20-22 (or WSL2 on Windows)
 2023 Aug 26: Mojo can be used on Windows with a Linux container (like WSL) or remote system.
@@ -85,422 +86,61 @@ https://gist.github.com/Sharktheone/79da849c96db13f21eefa2be9430d9ec
 STEPS:
 For an up to date version, [see](https://docs.modular.com/mojo/manual/get-started/)
 
-1- Install VS Code, the WSL extension, and the Mojo extension.
-2- Install Ubuntu 22.04 for WSL and open it.
-3- In the Ubuntu terminal, install the Modular CLI:
-    `curl https://get.modular.com | \
-        MODULAR_AUTH=mut_e793ec8f3c514c5c9e794607eec73c84 \
-        sh -`
+1- Install VS Code, the WSL extension, and the [Mojo extension](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo).
+2- On Windows: Install Ubuntu 22.04 for WSL and open it.
+3- In the Ubuntu terminal, install the `modular CLI (command-line interface)` with:  
+`curl -s https://get.modular.com | sh -`
+4- Sign in to your Modular account with this command:  
+`modular auth`
 
-Output:  
+Now the `modular` tool is installed:
+Try `$ modular -h` to see what it can do and `$ modular -v` to see which version is installed.
 ```
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100  3176  100  3176    0     0  13282      0 --:--:-- --:--:-- --:--:-- 13288
-[sudo] password for ivo:
-Executing the  setup script for the 'modular/installer' repository ...
-
-   OK: Checking for required executable 'curl' ...
-   OK: Checking for required executable 'apt-get' ...
-   OK: Detecting your OS distribution and release using system methods ...
- ^^^^: ... Detected/provided for your OS/distribution, version and architecture:
- >>>>:
- >>>>: ... distro=ubuntu  version=22.04  codename=jammy  arch=x86_64
- >>>>:
- NOPE: Checking for apt dependency 'apt-transport-https' ...
-   OK: Updating apt repository metadata cache ...
-   OK: Attempting to install 'apt-transport-https' ...
-   OK: Checking for apt dependency 'ca-certificates' ...
-Selecting previously unselected package python3-distutils.
-Preparing to unpack .../08-python3-distutils_3.10.8-1~22.04_all.deb ...
-Unpacking python3-distutils (3.10.8-1~22.04) ...
-Selecting previously unselected package python3-setuptools.
-Preparing to unpack .../09-python3-setuptools_59.6.0-1.2ubuntu0.22.04.1_all.deb ...
-Unpacking python3-setuptools (59.6.0-1.2ubuntu0.22.04.1) ...
-Selecting previously unselected package python3-wheel.
-Preparing to unpack .../10-python3-wheel_0.37.1-2ubuntu0.22.04.1_all.deb ...
-Unpacking python3-wheel (0.37.1-2ubuntu0.22.04.1) ...
-Selecting previously unselected package python3-pip.
-Preparing to unpack .../11-python3-pip_22.0.2+dfsg-1ubuntu0.3_all.deb ...
-Unpacking python3-pip (22.0.2+dfsg-1ubuntu0.3) ...
-Selecting previously unselected package modular.
-Preparing to unpack .../12-modular_0.1.2_amd64.deb ...
-Unpacking modular (0.1.2) ...
-Selecting previously unselected package python3.10-dev.
-Preparing to unpack .../13-python3.10-dev_3.10.12-1~22.04.2_amd64.deb ...
-Unpacking python3.10-dev (3.10.12-1~22.04.2) ...
-Selecting previously unselected package python3-dev.
-Preparing to unpack .../14-python3-dev_3.10.6-1~22.04_amd64.deb ...
-Unpacking python3-dev (3.10.6-1~22.04) ...
-Setting up javascript-common (11+nmu1) ...
-Setting up libexpat1-dev:amd64 (2.4.7-1ubuntu0.2) ...
-Setting up libpython3.10-dev:amd64 (3.10.12-1~22.04.2) ...
-Setting up python3.10-dev (3.10.12-1~22.04.2) ...
-Setting up libjs-jquery (3.6.0+dfsg+~3.5.13-1) ...
-Setting up python3-lib2to3 (3.10.8-1~22.04) ...
-Setting up libjs-underscore (1.13.2~dfsg-2) ...
-Setting up python3-distutils (3.10.8-1~22.04) ...
-Setting up libpython3-dev:amd64 (3.10.6-1~22.04) ...
-Setting up python3-setuptools (59.6.0-1.2ubuntu0.22.04.1) ...
-Setting up python3-wheel (0.37.1-2ubuntu0.22.04.1) ...
-Setting up python3-pip (22.0.2+dfsg-1ubuntu0.3) ...
-Setting up libjs-sphinxdoc (4.3.2-1) ...
-Setting up python3-dev (3.10.6-1~22.04) ...
-Setting up modular (0.1.2) ...
-Processing triggers for man-db (2.10.2-1) ...
-  __  __           _       _
- |  \/  | ___   __| |_   _| | __ _ _ __
- | |\/| |/ _ \ / _` | | | | |/ _` | '__|
- | |  | | (_) | (_| | |_| | | (_| | |
- |_|  |_|\___/ \__,_|\__,_|_|\__,_|_|
-
-Welcome to the Modular CLI!
-For info about this tool, type "modular --help".
-
-To install Mojo🔥, type "modular install mojo".
-
-For Mojo documentation, see https://docs.modular.com/mojo.
-To chat on Discord, visit https://discord.gg/modular.
-To report issues, go to https://github.com/modularml/mojo/issues.
+$ modular -v
+modular 0.7.2 (d0adc668)
 ```
 
-Now the `Modular` tool is installed:
+Mojo is one of the packages you can install with the modular tool (the MAX inference engine is another one): 
+5- Install the Mojo SDK:  `modular install mojo`
+
+Àll went well if you see the output ending with `🔥 Mojo installed! 🔥`
+
+Now run the following command in Bash:
 ```
-ivo@megaverse:~$ modular --help
-NAME
-        modular — The Modular command line interface.
-
-SYNOPSIS
-        modular <command>
-        modular [options]
-
-DESCRIPTION
-        Interact with Modular's products.
-
-COMMANDS
-        install   — Install a package.
-        uninstall — Uninstall a package.
-        auth      — Auth to the modular service.
-        clean     — Clean all packages and settings.
-        host-info — Get hardware information about host hardware.
-
-OPTIONS
-    Diagnostic options
-        --version, -v
-            Prints the Modular version and exits.
-
-    Common options
-        --help, -h
-            Displays help information.
-
-ivo@megaverse:~$ modular -v
-modular 0.1.2
-ivo@megaverse:~$ modular host-info
-  Host Information
-  ================
-
-  Target Triple: x86_64-unknown-linux
-  CPU: alderlake
-  CPU Features: 64bit, adx, aes, avx, avx2, avxvnni, bmi, bmi2, cldemote, clflushopt, clwb, cmov, crc32, cx16, cx8, f16c, fma, fsgsbase, fxsr, gfni, hreset, invpcid, kl, lzcnt, mmx, movbe, movdir64b, movdiri, pclmul, pconfig, pku, popcnt, prfchw, ptwrite, rdpid, rdrnd, rdseed, sahf, serialize, sgx, sha, shstk, sse, sse2, sse3, sse4.1, sse4.2, ssse3, vaes, vpclmulqdq, waitpkg, widekl, x87, xsave, xsavec, xsaveopt, xsaves
+  MOJO_PATH=$(modular config mojo.path) \
+  && BASHRC=$( [ -f "$HOME/.bash_profile" ] && echo "$HOME/.bash_profile" || echo "$HOME/.bashrc" ) \
+  && echo 'export MODULAR_HOME="'$HOME'/.modular"' >> "$BASHRC" \
+  && echo 'export PATH="'$MOJO_PATH'/bin:$PATH"' >> "$BASHRC" \
+  && source "$BASHRC"
 ```
 
-4- Install the Mojo SDK:  
+An environment variable `MODULAR_HOME` with value `$HOME/.modular` was made.
+An environment variable `MOJO_PATH` with value `$MODULAR_HOME/pkg/packages.modular.com_mojo`
+`MOJO_PATH/bin` which contains the `mojo` tool, the lsp-server, an lldb tool, a crashpad handler,etc., is added to the PATH variable.
+`$HOME/.modular/pkg/packages.modular.com_mojo/lib/mojo` contains the pre-compiles Mojo packages.
 
-What's contained in the Mojo SDK?  See A view of the Mojo SDK.png
-* mojo driver: provides a shell (for read-eval-print-loop or REPL), and allows you to build and run Mojo programs, package Mojo modules (including support for the 🔥 extension!), generate docs, and format code‍
-* Extension for Visual Studio Code (VS Code): supports various productivity features such as syntax highlighting, code completion, and more ‍
-* Jupyter kernel: supports building and running Mojo notebooks, including Python code‍
-* Debugging support: step into and inspect running Mojo programs, even intermixing C++ and Mojo stack frames
-
-
-A. Via an installation script:
-
-`modular install mojo`
-
-Output:
+?? Alternatively you can enter the following code manually at the end of your .profile and/or .bashrc script:
 ```
-# Found release for https://packages.modular.com/mojo @ 0.2.0, installing to /home/ivo/.modular/pkg/packages.modular.com_mojo
-# Downloads complete, setting configs...
-# Configs complete, running post-install hooks...
-Defaulting to user installation because normal site-packages is not writeable
-Collecting find_libpython==0.3.0
-  Downloading find_libpython-0.3.0-py3-none-any.whl (8.5 kB)
-Collecting papermill==2.4.0
-  Downloading papermill-2.4.0-py3-none-any.whl (38 kB)
-Collecting jupyter_client>=8.3.0
-  Downloading jupyter_client-8.3.0-py3-none-any.whl (103 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 103.2/103.2 KB 3.2 MB/s eta 0:00:00
-Collecting click
-  Downloading click-8.1.7-py3-none-any.whl (97 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 97.9/97.9 KB 7.9 MB/s eta 0:00:00
-Collecting nbclient>=0.2.0
-  Downloading nbclient-0.8.0-py3-none-any.whl (73 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 73.1/73.1 KB 6.6 MB/s eta 0:00:00
-Collecting tqdm>=4.32.2
-  Downloading tqdm-4.66.1-py3-none-any.whl (78 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.3/78.3 KB 6.2 MB/s eta 0:00:00
-Collecting tenacity
-  Downloading tenacity-8.2.3-py3-none-any.whl (24 kB)
-Collecting nbformat>=5.1.2
-  Downloading nbformat-5.9.2-py3-none-any.whl (77 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 77.6/77.6 KB 5.8 MB/s eta 0:00:00
-Requirement already satisfied: pyyaml in /usr/lib/python3/dist-packages (from papermill==2.4.0->-r /home/ivo/.modular/pkg/packages.modular.com_mojo/scripts/post-install/requirements.txt (line 2)) (5.4.1)
-Collecting ansiwrap
-  Downloading ansiwrap-0.8.4-py2.py3-none-any.whl (8.5 kB)
-Collecting requests
-  Downloading requests-2.31.0-py3-none-any.whl (62 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.6/62.6 KB 5.6 MB/s eta 0:00:00
-Collecting entrypoints
-  Downloading entrypoints-0.4-py3-none-any.whl (5.3 kB)
-Collecting jupyter-core!=5.0.*,>=4.12
-  Downloading jupyter_core-5.3.1-py3-none-any.whl (93 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 93.7/93.7 KB 6.3 MB/s eta 0:00:00
-Collecting traitlets>=5.3
-  Downloading traitlets-5.9.0-py3-none-any.whl (117 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 117.4/117.4 KB 7.2 MB/s eta 0:00:00
-Collecting tornado>=6.2
-  Downloading tornado-6.3.3-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (427 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 427.7/427.7 KB 9.4 MB/s eta 0:00:00
-Collecting python-dateutil>=2.8.2
-  Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 KB 8.4 MB/s eta 0:00:00
-Collecting pyzmq>=23.0
-  Downloading pyzmq-25.1.1-cp310-cp310-manylinux_2_28_x86_64.whl (1.1 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 10.2 MB/s eta 0:00:00
-Collecting platformdirs>=2.5
-  Downloading platformdirs-3.10.0-py3-none-any.whl (17 kB)
-Collecting jsonschema>=2.6
-  Downloading jsonschema-4.19.0-py3-none-any.whl (83 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 83.4/83.4 KB 6.5 MB/s eta 0:00:00
-Collecting fastjsonschema
-  Downloading fastjsonschema-2.18.0-py3-none-any.whl (23 kB)
-Requirement already satisfied: six>=1.5 in /usr/lib/python3/dist-packages (from python-dateutil>=2.8.2->jupyter_client>=8.3.0->-r /home/ivo/.modular/pkg/packages.modular.com_mojo/scripts/post-install/requirements.txt (line 3)) (1.16.0)
-Collecting textwrap3>=0.9.2
-  Downloading textwrap3-0.9.2-py2.py3-none-any.whl (12 kB)
-Collecting urllib3<3,>=1.21.1
-  Downloading urllib3-2.0.4-py3-none-any.whl (123 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 123.9/123.9 KB 7.9 MB/s eta 0:00:00
-Collecting charset-normalizer<4,>=2
-  Downloading charset_normalizer-3.2.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (201 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 201.8/201.8 KB 8.7 MB/s eta 0:00:00
-Collecting certifi>=2017.4.17
-  Downloading certifi-2023.7.22-py3-none-any.whl (158 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 158.3/158.3 KB 8.2 MB/s eta 0:00:00
-Collecting idna<4,>=2.5
-  Downloading idna-3.4-py3-none-any.whl (61 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.5/61.5 KB 4.7 MB/s eta 0:00:00
-Collecting attrs>=22.2.0
-  Downloading attrs-23.1.0-py3-none-any.whl (61 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.2/61.2 KB 5.0 MB/s eta 0:00:00
-Collecting referencing>=0.28.4
-  Downloading referencing-0.30.2-py3-none-any.whl (25 kB)
-Collecting jsonschema-specifications>=2023.03.6
-  Downloading jsonschema_specifications-2023.7.1-py3-none-any.whl (17 kB)
-Collecting rpds-py>=0.7.1
-  Downloading rpds_py-0.9.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.2 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 10.3 MB/s eta 0:00:00
-Installing collected packages: textwrap3, find_libpython, fastjsonschema, urllib3, traitlets, tqdm, tornado, tenacity, rpds-py, pyzmq, python-dateutil, platformdirs, idna, entrypoints, click, charset-normalizer, certifi, attrs, ansiwrap, requests, referencing, jupyter-core, jupyter_client, jsonschema-specifications, jsonschema, nbformat, nbclient, papermill
-  WARNING: The script find_libpython is installed in '/home/ivo/.local/bin' which is not on PATH.
-  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script tqdm is installed in '/home/ivo/.local/bin' which is not on PATH.
-  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script normalizer is installed in '/home/ivo/.local/bin' which is not on PATH.
-  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The scripts jupyter, jupyter-migrate and jupyter-troubleshoot are installed in '/home/ivo/.local/bin' which is not on PATH.
-  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The scripts jupyter-kernel, jupyter-kernelspec and jupyter-run are installed in '/home/ivo/.local/bin' which is not on PATH.
-  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script jsonschema is installed in '/home/ivo/.local/bin' which is not on PATH.
-  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script jupyter-trust is installed in '/home/ivo/.local/bin' which is not on PATH.
-  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script jupyter-execute is installed in '/home/ivo/.local/bin' which is not on PATH.
-  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-  WARNING: The script papermill is installed in '/home/ivo/.local/bin' which is not on PATH.
-  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-Successfully installed ansiwrap-0.8.4 attrs-23.1.0 certifi-2023.7.22 charset-normalizer-3.2.0 click-8.1.7 entrypoints-0.4 fastjsonschema-2.18.0 find_libpython-0.3.0 idna-3.4 jsonschema-4.19.0 jsonschema-specifications-2023.7.1 jupyter-core-5.3.1 jupyter_client-8.3.0 nbclient-0.8.0 nbformat-5.9.2 papermill-2.4.0 platformdirs-3.10.0 python-dateutil-2.8.2 pyzmq-25.1.1 referencing-0.30.2 requests-2.31.0 rpds-py-0.9.2 tenacity-8.2.3 textwrap3-0.9.2 tornado-6.3.3 tqdm-4.66.1 traitlets-5.9.0 urllib3-2.0.4
-Testing `MODULAR_HOME=/home/ivo/.modular`
-* `/home/ivo/.modular/pkg/packages.modular.com_mojo/bin/mojo`...
-TEST: `mojo --help`... OK
-TEST: `mojo run --help`... OK
-TEST: `mojo build test_mandelbrot.mojo`... OK
-TEST: `mojo build test_python.mojo`... OK
-TEST: `mojo demangle`... OK
-reformatted /tmp/tmpzyqvco3j/test_format.mojo
+# Mojo
+export MODULAR_HOME="$HOME/.modular"
+export PATH="$MODULAR_HOME/pkg/packages.modular.com_mojo/bin:$PATH"
+# export PATH="$MODULAR_HOME/pkg/packages.modular.com_max/bin:$PATH"
+```
 
-All done! ✨ 🍰 ✨
-1 file reformatted.
-TEST: `mojo format`... OK
-TEST: `mojo package`... OK
-TEST: `mojo test_mandelbrot.mojo`... OK
-TEST: `mojo test_python.mojo`... OK
-TEST: `mojo repl`... OK
-
-🔥 Mojo installed! 🔥
-
-Now run the following commands:
-
-echo 'export MODULAR_HOME="/home/ivo/.modular"' >> ~/.bashrc
-echo 'export PATH="/home/ivo/.modular/pkg/packages.modular.com_mojo/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-
-Then enter 'mojo' to start the Mojo REPL.
+You can see the environment variables with the `env` command and the PATH with `echo $PATH`.
+Check also `echo $MODULAR_HOME` and `echo $MOJO_PATH`.
 
 For tool help, enter 'mojo --help'.
 For more docs, see https://docs.modular.com/mojo.
-```
 
-Now Mojo (the mojo tool, the lsp-server, an lldb tool, a crashpad handler) is installed in `/home/ivo/.modular/pkg/packages.modular.com_mojo/bin/mojo`
-
-`/home/ivo/.modular/pkg/packages.modular.com_mojo/lib/mojo` contains the pre-compiles Mojo packages.
-
-An environment variable `MODULAR_HOME=/home/ivo/.modular` was made.
-To update the PATH variable, enter the following commands:
-```
-echo 'export MODULAR_HOME="/home/ivo/.modular"' >> ~/.bashrc
-echo 'export PATH="/home/ivo/.modular/pkg/packages.modular.com_mojo/bin:$PATH"' >> ~/.bashrc
-echo 'export PATH="/home/ivo/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
-```
-
-Getting help:
-$ mojo --help
-NAME
-        mojo — The Mojo🔥 command line interface.
-
-SYNOPSIS
-        mojo <command>
-        mojo [run-options] <path>
-        mojo [options]
-        mojo
-
-DESCRIPTION
-        The `mojo` CLI provides all the tools you need for Mojo development, such
-        as commands to run, compile, and package Mojo code. A list of all
-        commands are listed below, and you can learn more about each one by
-        adding the `--help` option to the command (for example, `mojo package
-        --help`).
-
-        However, you may omit the `run` and `repl` commands. That is, you can run
-        a Mojo file by simply passing the filename to `mojo`:
-
-            mojo hello.mojo
-
-        And you can start a REPL session by running `mojo` with no commands.
-
-COMMANDS
-        run      — Builds and executes a Mojo file.
-        build    — Builds an executable from a Mojo file.
-        repl     — Launches the Mojo REPL.
-        package  — Compiles a Mojo package.
-        format   — Formats Mojo source files.
-        doc      — Compiles docstrings from a Mojo file.
-        demangle — Demangles the given name.
-
-OPTIONS
-    Diagnostic options
-        --version, -v
-            Prints the Mojo version and exits.
-
-    Common options
-        --help, -h
-            Displays help information.
-
+Display the currently installed Mojo version with:
 $ mojo -v
-mojo 0.2.0 (4c0ef274)
+mojo 24.2.0 (c2427bc5)
 
 **Info about debug options**
 $ mojo build -h
 
-This gives the following output:  
-```
-$ mojo build -h
-NAME
-        mojo-build — Builds an executable from a Mojo file.
-
-SYNOPSIS
-        mojo build [options] <path>
-
-DESCRIPTION
-        Compiles the Mojo file at the given path into an executable.
-
-        By default, the executable is saved to the current directory and named
-        the same as the input file, but without a file extension.
-
-OPTIONS
-    Output options
-        -o <PATH>
-            Sets the path and filename for the executable output. By default, it
-            outputs the executable to the same location as the Mojo file, with
-            the same name and no extension.
-
-    Compilation options
-        --no-optimization, -O0
-            Disables compiler optimizations. This might reduce the amount of time
-            it takes to compile the Mojo source file. It might also reduce the
-            runtime performance of the compiled executable.
-
-        --target-triple <TRIPLE>
-            Sets the compilation target triple. Defaults to the host target.
-
-        --target-cpu <CPU>
-            Sets the compilation target CPU. Defaults to the host CPU.
-
-        --target-features <FEATURES>
-            Sets the compilation target CPU features. Defaults to the host
-            features.
-
-        -march <ARCHITECTURE>
-            Sets the architecture to generate code for.
-        -mcpu <CPU>
-            Sets the CPU to generate code for.
-
-        -mtune <TUNE>
-            Sets the CPU to tune code for.
-
-        -I <PATH>
-            Appends the given path to the list of directories to search for
-            imported Mojo files.
-
-        -D <KEY=VALUE>
-            Defines a named value that can be used from within the Mojo source
-            file being executed. For example, `-D foo=42` defines a name `foo`
-            that, when queried with the `ParamEnv` module from within the Mojo
-            program, would yield the compile-time value `42`.
-
-        --parsing-stdlib
-            Parses the input file(s) as the Mojo standard library.
-
-    Diagnostic options
-        --warn-missing-doc-strings
-            Emits warnings for missing or partial docstrings.
-
-        --max-notes-per-diagnostic <INTEGER>
-            When the Mojo compiler emits diagnostics, it sometimes also prints
-            notes with additional information. This option sets an upper
-            threshold on the number of notes that can be printed with a
-            diagnostic. If not specified, the default maximum is 10.
-
-    Experimental compilation options
-        --debug-level <LEVEL>
-            Sets the level of debug info to use at compilation. The value must be
-            one of: `none` (the default value), `line-tables`, or `full`. Please
-            note that there are issues when generating debug info for some Mojo
-            programs that have yet to be addressed.
-
-        --sanitize <CHECK>
-            Turns on runtime checks. The following values are supported:
-            `address` (detects memory issues), and `thread` (detects
-            multi-threading issues). Please note that these checks are not
-            currently supported when executing Mojo programs.
-
-    Common options
-        --help, -h
-            Displays help information.
-
-
-
-**Starting the Mojo REPL**  
+## 2.3 Starting the Mojo REPL
 ```
 $ mojo
 Welcome to Mojo! 🔥
@@ -513,34 +153,12 @@ Type `:mojo help` for further assistance.
 (Int) n = 3
 3>
 ```
-
-!!!
-??? Doesn't work (2024/5): 
-[User] error: Expression [0]:1:2: unexpected token in expression
- %%python
-If you want to run Python code, use %%python:  
-```
-1> %%python
-2. import sys
-3. print("Python version from python:", sys.version)
-4.
-Python version from python: 3.10.12 (main, Jun 11 2023, 05:26:28) [GCC 11.4.0]
-(PythonObject) sys = {
-  (PyObjectPtr) py_object = {
-    (pointer<scalar<si8>>) value = 0x00007fd70b6c6390
-  }
-}
-```
-!!!
-
-Top-level python declarations are available in subsequent Mojo expressions (example ??).
-
 Type TAB to get code completion.
 
 The Mojo REPL is based on LLDB, the complete set of LLDB debugging commands is also available as described below (?? examples).  
 Type :quit or :q to leave the REPL.
 
-**Testing the mojo command**  
+## 2.4 Testing the mojo command
 Create folder $HOME/mojo.  
 Copy in examples from § 2.
 
@@ -552,63 +170,34 @@ $ $ mojo using_main.mojo
 Hello Mojo!
 2
 
-B. Manual installation instructions: ?? not needed
-(Ubuntu 16.04 and later)  
-
-Open a terminal, as root give the command:
-```
-apt-get install -y apt-transport-https
-  keyring_location=/usr/share/keyrings/modular-installer-archive-keyring.gpg
-  curl -1sLf 'https://dl.modular.com/bBNWiLZX5igwHXeu/installer/gpg.0E4925737A3895AD.key' |  gpg --dearmor >> ${keyring_location}
-  curl -1sLf 'https://dl.modular.com/bBNWiLZX5igwHXeu/installer/config.deb.txt?distro=debian&codename=wheezy' > /etc/apt/sources.list.d/modular-installer.list
-  apt-get update
-  apt-get install modular
-```
-
-If the package has been installed manually, you will need to do the auth manually as well, e.g.:
-```
-modular auth mut_e793ec8f3c514c5c9e794607eec73c84
-modular install mojo
-```
-
-**Some info on WSL**  
+## 2.5 Some info on WSL
 You can view Linux folders in Explorer by giving the following command in WSL: `explorer.exe .`
 When having trouble starting a remote WSL window in VSCode, uninstall and reinstall the Remote WSL Window extension in VSCode; restart VSCode.
 When the WSL terminal doesn’t start up, disable Windows Hypervisor in Windows Features, reboot, enable Windows Hypervisor in Windows Features , reboot.
 (Alternatively, you can do wsl --terminate and wsl --update)   
 See also: [Troubleshooting Windows Subsystem for Linux | Microsoft Docs](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting)
 
-**How to update Mojo**
-Simpler: 
+## 2.6 How to update Modular and Mojo
+STEPS:
 1- `sudo apt-get update`
 2- `sudo apt-get install modular`
-2- `modular update mojo`
+3- `modular update mojo`
 
 If there is an error about a missing lib, do:
 1- Execute the command:         `modular clean`
 2- Then do a fresh install:     `modular install mojo`
-displaying:
-```
-# Found release for https://packages.modular.com/mojo @ 0.2.1, installing to /home/ivo/.modular/pkg/packages.modular.com_mojo
-# ...
-```
 
 To install the Python virtual environment:  
 `sudo apt install python3.10-venv`
 
-**How to remove Mojo**
-Issue the command: `modular uninstall`. (?? adding mojo)
+## 2.7 How to remove Mojo
+Issue the command: `modular uninstall mojo`
 
 The total size of the Mojo SDK is about 345 Mb. (??)
 
-### 2.2.3 On MacOS
-See Mojo website
+## 2.8 Downloading the Mojo source code
+The [Mojo repo](https://github.com/modularml/mojo) currently (May 2024) only contains the source of the Mojo standard library.
 
-## 2.3 Testing the installation - Mojo's option flags
-
-?? ## 2.5 Building Mojo from source
-
-### 2.5.1 Downloading the Mojo source code
 For this you need the `git` tool.  
 If you don't already have git installed:  
 * On Windows: Install via chocolatey:
@@ -636,21 +225,16 @@ Receiving objects: 100% (208673/208673), 88.53 MiB | 11.05 MiB/s, done.d 203795
 Resolving deltas: 100% (142374/142374), done.
 ```
 
-### 2.5.2  Building Mojo
-
-## 2.6  Mojo configuration file
+## 2.9  Mojo configuration file
 There is a configuration file at `/home/username/.modular/modular.cfg`, which contains a number of mainly path environment variables, which can be edited. 
 For example:  
 `import_path`, which has as default value /home/username/.modular/pkg/packages.modular.com_mojo/lib/mojo. This contains the path where Mojo searches for packages used in code. You can add your own package folder(s) to the default value (separated by a ;).
 
-
-## 2.7  Editors
-
-## 2.7.1 A vim plugin
+## 2.10  Editors
+## 2.10.1 A vim plugin
 See https://github.com/czheo/mojo.vim for Mojo syntax highlighting.
 
-
-## 2.7.2 Working with a Jupyter notebook
+## 2.10.2 Working with a Jupyter notebook
 Mojo works in a REPL environment, like a Jupyter notebooks. To do that, it is interpreted, or JIT (Just In Time) compiled through OrcJIT. 
 When working with Jupyter notebooks, it's not allowed to mix Python and Mojo code in one cell. 
 The `%%python` is used at the top of a notebook cell in Mojo to indicate that the cell contains Python code. Variables, functions, and imports defined in a Python cell are available for access in future Mojo cells. This allows you to write and execute normal Python code within a Mojo notebook.
@@ -669,7 +253,7 @@ Don't worry about the program code, that will all be explained in the coming sec
 
 See also: § 2.7.2 for how to work with a Jupyter notebook in VS Code.
 
-## 2.7.3 Visual Studio Code (VS Code)
+## 2.10.3 Visual Studio Code (VS Code)
 This is one of the most popular programmer’s editors today (https://code.visualstudio.com/)
 
 The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo). It features (v 24.2.1):
@@ -681,14 +265,12 @@ The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https:/
 * Run Mojo File
 * Showing docs
 
-
-## 2.7.4 How to work with a Jupyter notebook in VS Code 
-**Here are the steps:**     
+## 2.10.4 How to work with a Jupyter notebook in VS Code 
 1- Install the [Jupyter VS Code extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)  
 2- From the Command Palette (CTRL+SHIFT+P or CMD+SHIFT+P) select "Create: New Jupyter Notebook"  
 3- Then from the Command Palette again select Notebook: "Select Notebook Kernel" and follow the options:  
 
-Start up a Jupyter notebook as explained in § 2.7.1
+Start up a Jupyter notebook as explained in § 2.10.2
 
 Now you can write Mojo code and run it within a cell of the notebook!  
 See next section for a screenshot of code in this environment.
@@ -701,15 +283,16 @@ See:
 * https://github.com/microsoft/vscode-jupyter/wiki/Connecting-to-a-remote-Jupyter-server-from-vscode.dev
 
 
-## 2.7.5 Using a Docker file (?? updating)
+## 2.10.5 Using a Docker file (?? updating)
 The repo website https://github.com/modularml/mojo/tree/main/examples/docker contains a Docker example file `Dockerfile.mojosdk`. The following [article](https://medium.com/@1ce.mironov/how-to-install-mojo-locally-using-docker-5346bc23a9fe) goes into detail of how to create and use a Docker image.
 See also the following [video](https://www.youtube.com/watch?v=cHyYmF-RhUk).
 
 
-## 2.7.6 PyCharm plugin
+## 2.10.6 PyCharm plugin
 [See here](https://plugins.jetbrains.com/plugin/23371-mojo)
 
-# 2.8 Compiling and executing a simple program
+
+# 2.11 Compiling and executing a simple program
 To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  
 
 The first is the usual "Hello World!" program: 

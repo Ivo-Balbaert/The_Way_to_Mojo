@@ -380,6 +380,8 @@ import math
 fn main():
     var a = SIMD[DType.uint8, 4](1, 2, 3, 4)  # 1
     print(a)  # => [1, 2, 3, 4]
+    print(a.element_type) # => uint8
+    print(len(a)) # => 4
 
     a *= 10                                   # 2
     print(a)  # => [10, 20, 30, 40]
@@ -391,7 +393,6 @@ fn main():
 
     var numbers = SIMD[DType.uint8, 8]()
     print(numbers) # => [0, 0, 0, 0, 0, 0, 0, 0]
-    print(len(numbers)) # => 8
  
     # fill them with numbers from 0 to 7
     numbers = math.iota[DType.uint8, 8](0)    # 4
@@ -410,6 +411,8 @@ If all items have the same value, use the shorthand notation as in line 3B for v
 
 math.iota (line 4) fills an array with numbers incremented by 1.
 Line 5 also performs a SIMD instruction: x*x for each number simultaneously.
+
+On SIMD vectors of the same size and type you can apply all operators like *, /, %, **. You can cast them to Bool type with cast[DType.bool]() and then apply &, |, ^ and so on.
 
 
 ## 4.4.2 SIMD system properties
@@ -444,7 +447,7 @@ We use this in line 5 to declare a SIMD vector with as size the default type wid
 ## 4.4.3 Using element type and group size as compile-time constants
 Using the alias keyword, we can define the SIMD element type and group size as compile-time constants, as in the code below:
 
-See `simd_vector.mojo`:
+See `simd_comptime.mojo`:
 ```py
 from sys.info import simdwidthof
 import math
@@ -483,17 +486,52 @@ Hint: Use a loop: for i in range(4):
 (see `exerc4.2.🔥`)
 
 
-## 4.4.4 
+## 4.4.4  Splat, join and cast
+The `splat` method sets all elements of the SIMD vector to the given value (it 'broadcasts' the value), like in the following example in line 1:
+
+See `simd_methods.mojo`:
+```py
+from math import rsqrt
+alias dtype = DType.float32
 
 
+fn main():
+    var a = SIMD[dtype].splat(0.5)  # 1
+    print("SIMD a:", a)  # => SIMD a: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
 
-Other example: see `simd2.mojo`:
-`cast[DType.float32]()`
-	the cast() method is a generic method definition that gets instantiated at compile-time instead of runtime, based on the parameter value. cast is a SIMD specific method.
+    var big_vec = SIMD[DType.float16, 32].splat(1.0)  # 2
+    var bigger_vec = (big_vec + big_vec).cast[DType.float32]()  # 3
+    print(bigger_vec)
+    # [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]
 
-**The splat and join operations**: see `simd_splat_join.mojo`.
+    var b = SIMD[dtype].splat(2.5)
+    print("SIMD a.join(b):", a.join(b))   # 4
+    # => SIMD a.join(b): 
+    # [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5]
 
+    print(rsqrt[DType.float16, 4](42))    # 5
+    # => [0.154296875, 0.154296875, 0.154296875, 0.154296875]
 
+    var d = SIMD[DType.int8, 4](42, 108, 7, 13)
+    print(d.shuffle[1, 3, 2, 0]())  # 6  => [108, 13, 7, 42]
+```
+
+We don't indicate the size of the SIMD vector, so it is the default size 8 for float32. 
+>Note: splat makes it explicit, but as we saw in § 4.4.1, you can leave it out.
+
+In line 2, we make a vector of type Float16 and size 32. In line 3, we add all the elements to themselves in one SIMD operation, and cast them to float32.  
+Line 4 shows how to `join` (concatenate) 2 vectors of the same size.
+Line 5 shows how the math function rsqrt is called upon a SIMD vector of size 4 and elements 42.
+
+In line 6 the `shuffle` method is used, which takes a mask of permutation indices and permutes the vector accordingly.
+The `interleave` method in line 7 combines two SIMD vectors into one by taking one element from the first and another from the second, weaving the vectors together.
+
+*Exercise*
+The `join` function already exists. But say you had to reinvent it and write a concat function with the following header that does the same thing:  
+`fn concat[ty: DType, len1: Int, len2: Int](lhs: SIMD[ty, len1], rhs: SIMD[ty, len2]) -> SIMD[ty, len1+len2]:`
+
+For a SIMD vector `a = SIMD[DType.float32, 2](1, 2)` and another vector with elements 3 and 4, write the code for the function concat.
+(solution: see simd_concat.mojo)
 
 (See also Vectorization: § 20.5.6)
 
