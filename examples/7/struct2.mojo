@@ -12,14 +12,12 @@ struct IntPair:
                self.second < rhs.second)
     
     fn dump(self):
-        print(self.first)
-        print(self.second)
+        print(self.first, self.second)
 
 fn pair_test() -> Bool:
     var p = IntPair(1, 2)   # 4 
     # return p < 4          # => error
-    p.dump()                # => 1
-                            # => 2
+    p.dump()                # => 1 2
     var q = IntPair(2, 3)
     if p < q:  # this is automatically translated to __lt__
         print("p < q")  # => p < q

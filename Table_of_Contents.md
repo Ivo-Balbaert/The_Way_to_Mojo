@@ -151,7 +151,7 @@
 ## 10.6 Querying the host target info with module sys.info
 ## 10.7 The time module
 ## 10.8 Vectors from the module collections.vector
-### 10.8.1 DynamicVector
+### 10.8.1 List
 ### 10.8.2 InlinedFixedVector
 ## 10.9 The Tensor type from module tensor
 ## 10.10 Working with command-line arguments

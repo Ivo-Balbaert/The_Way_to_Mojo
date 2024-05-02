@@ -34,7 +34,7 @@ fn add(x: Int, y: Int) -> Int:
     return x + y
 
 fn main():
-    let z = add(3, 5)
+   varz = add(3, 5)
     print(z) # => 8
 ```
 
@@ -49,15 +49,15 @@ See `python1.mojo`:
 from python import Python
 
 fn main() raises:
-    let w: Int = 42
+   varw: Int = 42
     var x = Python.evaluate('5 + 10')   # 1 - this is of type `PythonObject`
     print(x)   # => 15
 
-    let py = Python()
-    let py_string = py.evaluate("'This string was built' + ' inside of python'")
+   varpy = Python()
+   varpy_string = py.evaluate("'This string was built' + ' inside of python'")
     print(py_string)  # => This string was built inside of python
  
-    let pybt = Python.import_module("builtins") # 2
+   varpybt = Python.import_module("builtins") # 2
     _ = pybt.print("this uses the python print keyword") # => this uses the python print keyword
     _ = py.print("The answer is", w) # => 
     _ = pybt.print(pybt.type(x))  # => <class 'int'>
@@ -92,7 +92,7 @@ let py = Python.import_module("builtins")
 py.print("this uses the python print keyword")
 ```
 
->Note: The py.print statements work alright, but they generate a warning: "'PythonObject' value is unused", to let this disappear, prefix it with _ =.
+>Note: The py.print statements work alright, but they generate a warning: "'PythonObject' value is unused", tovarthis disappear, prefix it with _ =.
 
 Now we can use the `type` built-in from Python to see what the dynamic type of x is:
 ```py
@@ -121,7 +121,7 @@ The equivalent Mojo code is:
 See `equivalent.mojo`:
 ```py
 fn main():
-    let x = 5 + 10
+   varx = 5 + 10
     print(x)    # => 15
 ```
 
@@ -134,10 +134,10 @@ See `simple_matplotlib.mojo`:
 from python import Python
 
 fn main() raises:
-    let plt = Python.import_module("matplotlib.pyplot")
+   varplt = Python.import_module("matplotlib.pyplot")
 
-    let x = [1, 2, 3, 4]
-    let y = [30, 20, 50, 60]
+   varx = [1, 2, 3, 4]
+   vary = [30, 20, 50, 60]
     _ = plt.plot(x, y)
     _ = plt.show()
 ```
@@ -158,16 +158,16 @@ In the 2nd case, the code is compiled to native code, and then run, which is obv
 
 
 ## 8.3 Working with Python modules
-As already indicated in § 3.6.2, here is how you import a Python module, in this case numpy. After importing it, we exercise a few basic functions from numpy, as if writing in Python, see lines 3-4. All variables created (ar, arr, array) are PythonObjects.
+Here is how you import a Python module, in this case numpy. After importing it, we exercise a few basic functions from numpy, as if writing in Python, see lines 3-4. All variables created (ar, arr, array) are PythonObjects.
 
 See `numpy.mojo`:
 ```py
 from python import Python                    # 1
 
 fn main() raises:
-    let np = Python.import_module("numpy")   # 2
+   varnp = Python.import_module("numpy")   # 2
 
-    let array = np.array([1, 2, 3])          # 3
+   vararray = np.array([1, 2, 3])          # 3
     print(array)  # => [1  2  3]
 
     var arr = np.ndarray([5])        
@@ -176,7 +176,7 @@ fn main() raises:
     arr = "this will work fine"  # Python is loosely typed, so:
     print(arr)                   # => this will work fine
 
-    let ar = np.arange(15).reshape(3, 5)
+    var ar = np.arange(15).reshape(3, 5)
     print(ar)
     # =>
     # [[ 0  1  2  3  4]
@@ -186,7 +186,7 @@ fn main() raises:
     # => (3, 5)
 ```
 
-You can import any other Python module in a similar manner. Keep in mind that you must import the whole Python module.  You cannot import individual members (such as a single Python class or function) directly - you must import the whole Python module and then access members through the variable name you gave the module.
+You can import any other Python module in a similar manner. Keep in mind that you must import the whole Python module. You cannot import individual members (such as a single Python class or function) directly - you must import the whole Python module and then access members through the variable name you gave the module. The module must also be installed locally.    
 
 Importing a module could give an error when that module is not locally installed. That's why we must indicate that fn main() could raise an error with: `fn main() raises`.  
 A better way to handle this is to use a try/except construct, as in the following program, where we assume the Python pandas module is not locally installed.
@@ -197,7 +197,7 @@ from python import Python
 
 fn main():
     try:
-        let pd = Python.import_module("pandas")
+       varpd = Python.import_module("pandas")
         print(pd.DataFrame([1,2,3,4,5]))
     except ImportError:
         print('error importing pandas module')
@@ -212,8 +212,8 @@ See `http_request_from_py.mojo`:
 from python import Python
 
 fn main() raises:
-    let requests = Python.import_module("requests")
-    let response = requests.get("https://www.standaard.be/")
+   varrequests = Python.import_module("requests")
+   varresponse = requests.get("https://www.standaard.be/")
     print(response.text)
 
 # =>
@@ -237,11 +237,11 @@ alias float = PythonObject
 
 
 fn main() raises:
-    let f: float = 0.6
+   varf: float = 0.6
     print(f.hex())  # => 0x1.3333333333333p-1
     # f is a Python `float` object
 
-    let s1: str = "xxbaaa"
+   vars1: str = "xxbaaa"
     print(s1.upper())  # => XXBAAA
     # s1 is a Python `str` object
 ```
@@ -255,15 +255,15 @@ from python import Python, PythonObject    # 0
 
 fn plot_from_mojo(values: PythonObject) raises:   # 9
     print(values.__class__.__name__)  # => ndarray
-    let plt = Python.import_module("matplotlib.pyplot")   # 10  
+   varplt = Python.import_module("matplotlib.pyplot")   # 10  
     _ = plt.plot(values)                          # 11              
     _ = plt.show()                                # 12
 
 fn numpy_array_from_mojo() raises -> PythonObject:
-    let np = Python.import_module("numpy")   # 3    
+   varnp = Python.import_module("numpy")   # 3    
 
-    let x = PythonObject([])         # 4           
-    let range_size: Int = 256        # 5           
+   varx = PythonObject([])         # 4           
+   varrange_size: Int = 256        # 5           
     for i in range(range_size):      # 6          
         _ = x.append(i)              # 7 
     print(x)   # => [0, 1, 2, 3, 4, ..., 253, 254, 255]
@@ -271,7 +271,7 @@ fn numpy_array_from_mojo() raises -> PythonObject:
     return np.cos(np.array(x)*np.pi*2.0/256.0)  # 8 
 
 def main():            
-    let results = numpy_array_from_mojo()   # 1    
+   varresults = numpy_array_from_mojo()   # 1    
     plot_from_mojo(results)                 # 2    
 ```
 
@@ -316,15 +316,15 @@ struct np_loader:
 fn main() raises:
     var np = np_loader()                                        # 1 
     if np.loaded:                                               # 2
-        let python_result = np["linspace"](0, 255, 256)         # 3
+       varpython_result = np["linspace"](0, 255, 256)         # 3
         print(python_result) 
         # =>
         # [  0.   1.   2.   3.   4.   5.   6.   7.   8.   9.  10.  11.  12.  13.
         # 14.  15.  16.  17.  ...   253. 254. 255.]
         var simd_mojo_array = SIMD[DType.float64, 256]()        # 4
-        let pi = np["pi"].to_float64()                          # 5
+       varpi = np["pi"].to_float64()                          # 5
     
-        let size: Int = python_result.size.to_float64().to_int()   # 6 
+       varsize: Int = python_result.size.to_float64().to_int()   # 6 
         for x in range(size):                                      # 7
             simd_mojo_array[x] = python_result[x].to_float64()    
 
@@ -359,7 +359,7 @@ from python import Python
 def main():
     try:
         Python.add_to_path(".")
-        let test_module = Python.import_module("simple_interop")  # 1
+       vartest_module = Python.import_module("simple_interop")  # 1
         test_module.test_interop_func()                           # 2
     except e:
         print(e)  # => No module named 'simple_interop'

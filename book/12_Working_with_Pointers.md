@@ -32,7 +32,7 @@ address_of / casting the type with bitcast / Null pointers
 fn main() raises:
     # Create a Pointer to an existing variable:
     var x: Int = 42  # x must be mutable to pass as a reference
-    let xPtr = Pointer[Int].address_of(x)
+   varxPtr = Pointer[Int].address_of(x)
      # print the address:
     print(xPtr.__as_index()) # => 140722471124352
     # print the value (dereference the pointer):
@@ -40,9 +40,9 @@ fn main() raises:
 
 
     # Casting type of Pointer with bitcast:
-    let yPtr: Pointer[UInt8] = xPtr.bitcast[UInt8]()
+   varyPtr: Pointer[UInt8] = xPtr.bitcast[UInt8]()
 
-    let array = Pointer[Int].alloc(3)
+   vararray = Pointer[Int].alloc(3)
     array.store(0, 1)
     array.store(1, 2)
     print(array.load(0))  # => 1
@@ -112,7 +112,7 @@ Then we can write:
 ```py
 fn main():
     # ...
-    let coord = p1[0]
+   varcoord = p1[0]
     print(coord.x) # => 0
 ```
 
@@ -153,7 +153,7 @@ fn main():
 
 Here is an example to show how easy it is to get undefined behavior:  
 ```py
-    let third_coord = p1.load(2)
+   varthird_coord = p1.load(2)
     print(third_coord.x)  # => 7
     print(third_coord.y)  # => 7
 ```
@@ -237,9 +237,9 @@ struct Coords:
 fn main() raises:
     var coords = Coords(5)
 
-    let coord1 = Coord(1, 2)
-    let coord2 = Coord(3, 4)
-    let coord3 = Coord(5, 6)
+   varcoord1 = Coord(1, 2)
+   varcoord2 = Coord(3, 4)
+   varcoord3 = Coord(5, 6)
     coords[0] = coord1
     coords[1] = coord2
     print(coords[0].x, coords[0].y, coords[1].x, coords[1].y,) # => 1 2 3 4
@@ -247,7 +247,7 @@ fn main() raises:
     coords[1] = coord3
     print(coords[0].x, coords[0].y, coords[1].x, coords[1].y,) # => 1 2 5 6
 
-    let coords = Coords(5)
+   varcoords = Coords(5)
     print(coords[5].x)
 
 # =>
@@ -269,7 +269,7 @@ from memory import memset_zero
 
 fn main():
     var p1 = DTypePointer[DType.uint8].alloc(8)    # 1
-    let p2 = DTypePointer[DType.uint8].alloc(8)
+   varp2 = DTypePointer[DType.uint8].alloc(8)
 
     # 2 - Operations:
     if p1:
@@ -343,7 +343,7 @@ struct Matrix:
     fn __del__(owned self):
         return self.data.free()
 
-    # This allows you to use let x = obj[1]
+    # This allows you to usevarx = obj[1]
     fn __getitem__(self, row: Int) -> SIMD[DType.uint8, 8]:
         return self.data.simd_load[8](row * 8)
 
@@ -357,7 +357,7 @@ struct Matrix:
             print(self[i])
 
 fn main():
-    let matrix = Matrix()       # 1
+   varmatrix = Matrix()       # 1
     matrix.print_all()
 # =>
 # --------matrix--------
@@ -436,9 +436,9 @@ See `bubble_sort.mojo`:
 from memory.unsafe import Pointer
 
 fn main():
-    let n = 10
+   varn = 10
     var mylist = [9, 6, 0, 8, 2, 5, 1, 3, 7, 4]  # 1 - a ListLiteral
-    let arr = Pointer.address_of(mylist).bitcast[Int]()   # 2
+   vararr = Pointer.address_of(mylist).bitcast[Int]()   # 2
 
     # bubblesort
     print(mylist)  # => [9, 6, 0, 8, 2, 5, 1, 3, 7, 4]

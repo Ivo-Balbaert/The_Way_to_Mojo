@@ -47,15 +47,16 @@ fn main():
     # print(s2[:5]) # ERROR: `StringLiteral` is not subscriptable
 
     # String:
-    var s = String("Mojo🔥")  # 3 - is conversion(casting)
-    # alternative:
-    var s9: String = "Mojo🔥"
+    var s9 : String = "Mojo🔥"
+    var s = String("Mojo🔥")    # 3 - is conversion(casting)
     print(s)  # => Mojo🔥
     print(s[0])  # 4 => M
-    print(String("hello world")[0])  # => h
     print(ord(s[0]))  # => 77
+    print(String("hello world")[0])  # => h
+    var s8 : String = 1 # implicit type conversion, uses constructor __init__(inout self, num: Int)
+ 
 
-    # building a string with a DynamicVector:
+    # building a string with a List:
     var vec = List[Int8](2)  # 5
     vec.append(78)
     vec.append(79)

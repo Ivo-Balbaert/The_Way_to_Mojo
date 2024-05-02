@@ -1,8 +1,11 @@
 # 2 - Setting up a development environment
 
+You can execute code in the [Online Playground](https://docs.modular.com/mojo/playground) or install it locally, see §2.2.
+
+
 ## 2.1 Architectures and compilers
 
-**Target OS’s and platforms** 
+### 2.1.1 Target OS’s and platforms
 2023 Aug 26: Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher, other distro's)
 2023 Oct 19: Now support for Apple silicon is added (M1 and M2 processors)
 
@@ -16,23 +19,24 @@ The LLVM/MLIR compiler infrastructure together form a cutting-edge compiler and 
 
     For specific hardware and accelerators, the dialects used can vary. For example, Modular uses LLVM level dialects and leverages LLVM for the targets it supports, such as talking directly to both the Apple and Intel AMX instructions.
 
-**Compiler**  
+### 2.1.2 Compiler
 The compiler is written in C++, based on MLIR and LLVM.
-By default, Mojo code is AOT (Ahead Of Time) compiled.  
-But Mojo can also be interpreted for metaprogramming, or JIT-compiled, as in the Mojo REPL.
+By default, Mojo code is AOT (Ahead Of Time) compiled, which is needed for AI deployment. 
+But Mojo can also be interpreted for metaprogramming, or JIT-compiled, as in the Mojo REPL or Jupyter notebook.
 If the Mojo app contains dynamic (Python) code, this is executed by running the dynamic code at compile time with an embedded CPython interpreter. This mechanism also makes possible compile-time meta-programming.
 
 Structure of compiler: video 2023 LLVM Dev Mtg:
     https://www.youtube.com/watch?v=SEwTjZvy8vw  (21' / 24')
     compiler pipeline, Elaborator
+
 OrcJit is used for Just in Time compilation, but also for generating static archive .a file. The system linker then transforms this into an executable file.
 
-**Runtime**
+### 2.1.3 Runtime
 - for Python code: calls the CPython interpreter, which talks toh the Mojo compiler ??
 - a built-in GC to clean up Python objects, based on reference counting
 
 
-**Standard library**   
+### 2.1.4 Standard library**   
 Mojo has a growing standard library called `MojoStdlib` or SDK, which already contains a growing number of *packages*, such as algorithm, benchmark, list, os, tensor, testing, and so on.
 
 It is documented here [here](https://docs.modular.com/mojo/lib).
@@ -67,7 +71,6 @@ Version 24.2.0 (2024 Mar 29) ships with the following 20 packages, containing 83
 
 ?? adapt
 
-You can execute code also in the [Online Playground](https://docs.modular.com/mojo/playground)
 
 
 ## 2.2 Installing the Modular and Mojo toolkit
@@ -77,7 +80,7 @@ This is currently (??) still in a testing phase.
 ### 2.2.2 On MacOS 
 See [Mojo website](https://docs.modular.com/mojo/manual/get-started/index.html)
 
-### 2.2.2 On Linux Ubuntu 20-22 (or WSL2 on Windows)
+### 2.2.3 On Linux Ubuntu 20-22 (or WSL2 on Windows)
 2023 Aug 26: Mojo can be used on Windows with a Linux container (like WSL) or remote system.
 
 For installation on ArchLinux, see:
@@ -225,7 +228,7 @@ Receiving objects: 100% (208673/208673), 88.53 MiB | 11.05 MiB/s, done.d 203795
 Resolving deltas: 100% (142374/142374), done.
 ```
 
-## 2.9  Mojo configuration file
+## 2.9 The Mojo configuration file
 There is a configuration file at `/home/username/.modular/modular.cfg`, which contains a number of mainly path environment variables, which can be edited. 
 For example:  
 `import_path`, which has as default value /home/username/.modular/pkg/packages.modular.com_mojo/lib/mojo. This contains the path where Mojo searches for packages used in code. You can add your own package folder(s) to the default value (separated by a ;).
@@ -235,11 +238,10 @@ For example:
 See https://github.com/czheo/mojo.vim for Mojo syntax highlighting.
 
 ### 2.10.2 Working with a Jupyter notebook
-Mojo works in a REPL environment, like a Jupyter notebooks. To do that, it is interpreted, or JIT (Just In Time) compiled through OrcJIT. 
-When working with Jupyter notebooks, it's not allowed to mix Python and Mojo code in one cell. 
-The `%%python` is used at the top of a notebook cell in Mojo to indicate that the cell contains Python code. Variables, functions, and imports defined in a Python cell are available for access in future Mojo cells. This allows you to write and execute normal Python code within a Mojo notebook.
+Mojo works in a REPL environment, like a Jupyter notebooks. 
 
-To install Jupyter notebook locally:  
+1) First you have to install the Mojo SDK. 
+2) To install Jupyter notebook locally:  
 * First install Python from `https://www.python.org/downloads/`
 * `pip install notebook`
 Then the `jupyter lab` or `jupyter notebook` command starts up a local browser page where you can start a new notebook with the `.ipynb` extension.
@@ -248,8 +250,12 @@ Example:
 Start a new notebook with:  
 > File > New Notebook
 
-Then add some code and push the run button  "▶" and the computation result is shown below the cell.  
+Then add some code, choose Mojo as kernel, and push the run button  "▶" and the computation result is shown below the cell.  
 Don't worry about the program code, that will all be explained in the coming sections.
+3) You can clone the Mojo notebooks sources with `git clone <https://github.com/modularml/mojo.git>`.
+
+When working with Jupyter notebooks, it's not allowed to mix Python and Mojo code in one cell. 
+The `%%python` is used at the top of a notebook cell in Mojo to indicate that the cell contains Python code. Variables, functions, and imports defined in a Python cell are available for access in future Mojo cells. This allows you to write and execute normal Python code within a Mojo notebook.
 
 See also: § 2.7.2 for how to work with a Jupyter notebook in VS Code.
 
@@ -266,6 +272,10 @@ The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https:/
 * Showing docs
 
 ### 2.10.4 How to work with a Jupyter notebook in VS Code 
+Doesn't work ??
+
+" The current Mojo SDK version is incompatible with this version of the Mojo extension. Please update your SDK to ensure the extension behaves correctly. "
+
 1- Install the [Jupyter VS Code extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)  
 2- From the Command Palette (CTRL+SHIFT+P or CMD+SHIFT+P) select "Create: New Jupyter Notebook"  
 3- Then from the Command Palette again select Notebook: "Select Notebook Kernel" and follow the options:  

@@ -1,4 +1,81 @@
 # 13 Modules and packages
+
+## 3.6 Importing modules 
+(does this need to be here??)
+Mojo can import Python modules as well as modules written in Mojo itself. Here we show you the general syntax for doing so. We'll encounter many more concrete examples later on.
+
+## 3.6.1 Mojo modules
+The code of the standard library is written in *modules*. Modules are sometimes bundled together in *packages*. Module- and package names are written in all lowercase, like in Python.  
+
+The most common code is stored in the package `builtin`, like modules bool, int and dtype. Their code is automatically imported, so the types and functions of these modules are always available in your Mojo programs. 
+
+Other modules can be imported like this: (better example ??)
+
+```py
+from benchmark import benchmark
+```
+
+Then you can use the type benchmark with the dot-notation to access its members like this:  
+`benchmark.run`
+
+To avoid name-clashes or simply to shorten the name, you can use `as` to define an alias:  
+```py
+from benchmark import benchmark as bm
+```
+
+Then access its members with: `bm.run`
+
+`memory` is a package, containing the modules anypointer, memory and unsafe. To import something from the unsafe module, write the following:
+
+```py
+from memory.unsafe import Pointer
+```
+
+>Note: These from statements can be written everywhere in code, but code clarity can be enhanced by grouping them at the start of a code file.
+
+If you have many types to import, enclose them within (), like this:
+```py
+from sys.info import (
+    alignof,
+    sizeof,
+    bitwidthof,
+    simdwidthof,
+    simdbitwidth,
+    simdbytewidth,
+)
+```
+To import all types and functions from a module (say math), use:  
+`from math import *`.  
+However, it is recommended to only import the things you need.
+
+>Note: You can also use:
+```py
+import benchmark
+# or:
+import benchmark as bm
+```
+
+But then you have to access its members with: `benchmark.Benchmark.num_warmup` or `bm.Benchmark.num_warmup`, prefixing the member name with the module name. This is better than using from ... import *, because doing so you loose the info from which module the function/type is imported.
+
+For some examples see: ??
+
+## 3.6.2 Python modules
+Mojo can access the whole Python ecosystem by importing Python modules.
+Importing and using a Python package in Mojo is very easy.  
+Here's an example (from a Jupyter notebook cell) of how to import the NumPy package:
+
+```py
+from python import Python                   # 1
+alias np = Python.import_module("numpy")      # 2
+```
+
+First you have to import the Python module as in line 1: `from python import Python`.  
+Then you can use the `Python.import_module()` function with the module name (see line 2). You give it a constant name (here `np`), which can be used later to call module methods.
+(The equivalent of this line in Python would be: `import numpy as np`.) 
+Note that the .py extension for the module is not needed.
+For some concrete examples see: ??
+
+--------------------------------------------------------------------------------------------------
 We talked about how to import modules from the standard libraries of Mojo and Python in § 3.6, and how to import a local custom Python module in § 8.4. 
 Now we'll see how we import a local custom Mojo module in § 13.2.
 Mojo provides a packaging system that allows you to organize and compile code libraries into importable files.  
@@ -52,13 +129,13 @@ import mymodule                    # 2
 import mymodule as mp              # 3
 
 fn main():
-    let mine = MyPair(2, 4)    # 3
+   varmine = MyPair(2, 4)    # 3
     mine.dump()     # => 2 4
-    let mine2 = mp1(2, 4)    # 3
+   varmine2 = mp1(2, 4)    # 3
     mine2.dump()     # => 2 4
-    let mine3 = mymodule.MyPair(2, 4)    
+   varmine3 = mymodule.MyPair(2, 4)    
     mine3.dump()    # => 2 4
-    let mine4 = mp.MyPair(2, 4)    
+   varmine4 = mp.MyPair(2, 4)    
     mine4.dump()    # => 2 4
 ```
 
@@ -96,13 +173,13 @@ import mypackage.mymodule
 import mypackage.mymodule as mp              
 
 fn main():
-    let mine = MyPair(2, 4)    # 3
+   varmine = MyPair(2, 4)    # 3
     mine.dump()     # => 2 4
-    let mine2 = mp1(2, 4)    # 3
+   varmine2 = mp1(2, 4)    # 3
     mine2.dump()     # => 2 4
-    let mine3 = mymodule.MyPair(2, 4)    
+   varmine3 = mymodule.MyPair(2, 4)    
     mine3.dump()    # => 2 4
-    let mine4 = mp.MyPair(2, 4)    
+   varmine4 = mp.MyPair(2, 4)    
     mine4.dump()    # => 2 4
 ```
 

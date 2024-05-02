@@ -34,7 +34,6 @@ The following code shows how to define a scalar with the `Scalar` type:
 `s = Scalar[DType.int32](42)`
 
 The following code shows that a scalar is equivalent to its numeric type.  
->Note: Instead of printing out whether 2 variables a and b are equal: `print(a = b)`, we can also use `assert_equal(a, b) from module testing`. This now will only print out a message with ASSERTION ERROR, when a is not equal to b.
 
 See `int_scalar.mojo`:
 ```py
@@ -45,7 +44,6 @@ def main():
     b = Scalar[DType.int32](42)
     assert_equal(a, b) #  # Int32 is Scalar[DType.int32]
 ```
-
 
 ## 4.2  The Bool type
 Defined in the module `bool` as a struct, `Bool` has only 2 values: `True` and `False`. 
@@ -313,7 +311,7 @@ struct MyNumber:
         return False
 
 fn main():
-    let my_number = MyNumber(1.0) 
+   varmy_number = MyNumber(1.0) 
     print(True & my_number)   
     # => Called MyNumber's __rand__ function
     # => True
@@ -324,7 +322,7 @@ fn main():
 
 
 ## 4.4 SIMD
-Mojo relies heavily on using [SIMD](https://en.wikipedia.org/wiki/Single_instruction,_multiple_data) in calculations to enhance performance. That's why the `SIMD` type is also defined as a struct in its own module `builtin.simd`. 
+Mojo relies heavily on using [SIMD](https://en.wikipedia.org/wiki/Single_instruction,_multiple_data) in calculations to enhance performance. All math functions work on SIMD items. That's why the `SIMD` type is also defined as a struct in its own module `builtin.simd`. 
 
 ## 4.4.1 Defining SIMD vectors
 Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you to do the same operation on all elements of a 'vector' in a single instruction, greatly improving performance. They are fast because the vector registers are the fastest kind of memory access at the hardware level. 
@@ -658,15 +656,15 @@ The string value is heap-allocated, but the String itself is actually a pointer 
 
 ```py
     # String:
+    var s9: String = "Mojo🔥" # normal type annotation
     var s = String("Mojo🔥")  # 3 - is conversion(casting)
-    # alternative:
-    var s9: String = "Mojo🔥"
     print(s)  # => Mojo🔥
     print(s[0])  # 4 => M
-    print(String("hello world")[0])  # => h
     print(ord(s[0]))  # => 77
+    print(String("hello world")[0])  # => h
+    var s8 : String = 1 # implicit type conversion, uses constructor __init__(inout self, num: Int)
 
-    # building a string with a DynamicVector:
+    # building a string with a List:
     var vec = List[Int8](2)  # 5
     vec.append(78)
     vec.append(79)
@@ -687,24 +685,25 @@ The string value is heap-allocated, but the String itself is actually a pointer 
     # print(vec_str)  # 10 => NN
 ```
 
-One way to make a String is to convert a StringLiteral value with `String(value)`, as in line 3.  
+One way to make a String is to convert a StringLiteral value with `String(value)`, as in line 3. This works exactly the same as the `var s9: String = "Mojo🔥"` in the previous line.
+  
 Strings are 0-index based, and the i-th ASCII character can be read with `s[i]` (see line 4). The `ord` function gives the corresponding ASCII value of the character. You can work with Unicode characters by working with slices (see line 11).
 
-This works because a String is backed by a data structure known as `DynamicVector[SIMD[si8, 1]]` or `DynamicVector[Int8]`. This is similar to a Python list, here it's storing multiple int8's that represent the characters.  
-You can build a string starting from a DynamicVector (see line 5), and add two ASCII characters to it. 
+This works because a String is backed by a data structure known as `List[SIMD[si8, 1]]` or `List[Int8]`. This is similar to a Python list, here it's storing multiple int8's that represent the characters.  
+You can build a string starting from a List (see line 5), and add two ASCII characters to it. 
 
 To display it, print(vec) doesn't work. To do that, we can use a `StringRef` to get a pointer to the same location in memory, but with the methods required to output the numbers as text, see lines 6-7.
 
 ```py
-    # building a string with a DynamicVector:
-    from collections.vector import DynamicVector
-    var vec = DynamicVector[Int8](2)    # 5
+    # building a string with a List:
+    from collections.vector import List
+    var vec = List[Int8](2)    # 5
     vec.push_back(78)
     vec.push_back(79)
 
 #     from memory.unsafe import DTypePointer
 #     # 6:
-#     let vec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
+#    varvec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
 #     print(vec_str_ref) # 7 => NO
 # ```
 
@@ -718,7 +717,7 @@ Because it points to the same location in heap memory, changing the original vec
 In line (9) we make a deep copy `vec_str` of the string. Having made a copy of the data to a new location in heap memory, we can now modify the original and it won't effect our copy (see line 10):
 
 ```py
-    # let vec_str = String(vec_str_ref)  # 9
+    #varvec_str = String(vec_str_ref)  # 9
     # print(vec_str)      # => NN
 
     # vec[0] = 65
@@ -837,7 +836,7 @@ Only get every second item after the start position (line 5).
 
 Both slicing and indexing work with bytes, not characters, for example an emoji is 4 bytes so you need to use this slice of 4 bytes to print the character (see line 11):
 ```py
-    let emoji = String("🔥😀")
+   varemoji = String("🔥😀")
     print("fire:", emoji[0:4])    # 11 => fire: 🔥
     print("smiley:", emoji[4:8])  # => smiley: 😀
 ```
@@ -886,7 +885,7 @@ fn main():
 ```
 
 Line 1B shows that an alias constant is often capitalized.
-Line 2 and following work, because alias is also a way to define a compile-time temporary value,  just like var and let define resp. a runtime variable and constant. alias is kind of a let at comptime. You can also make a user-defined type with it (see § 1B). All occurences of the alias name get substituted with the value at comptime, so it has a bit of a performance benifit. This is ideal to set parameter values of the problem at hand.
+Line 2 and following work, because alias is also a way to define a compile-time temporary value,  just like var andvardefine resp. a runtime variable and constant. alias is kind of avarat comptime. You can also make a user-defined type with it (see § 1B). All occurences of the alias name get substituted with the value at comptime, so it has a bit of a performance benifit. This is ideal to set parameter values of the problem at hand.
 So line 3 is changed at compile time to `for i in range(MAX_ITERS):`.
 
 Both None and AnyType are defined as type aliases in the builtin module `type_aliases` as metatypes:
@@ -916,7 +915,7 @@ struct enum_type:
     alias float32 = 15
 
 fn main():
-    let en = enum_type.bool
+   varen = enum_type.bool
     print(en)  # => 1
 ```
 
@@ -968,7 +967,7 @@ This is pure Mojo code that does not use the Python interpreter.
 The following function shows how an object can be initialized and its attributes defined:
 ```
 fn matrix_init(rows: Int, cols: Int) raises -> object:
-    let value = object([])
+   varvalue = object([])
     return object(
         Attr("value", value), Attr("__getitem__", matrix_getitem), Attr("__setitem__", matrix_setitem), 
         Attr("rows", rows), Attr("cols", cols), Attr("append", matrix_append),

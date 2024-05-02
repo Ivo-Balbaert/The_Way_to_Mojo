@@ -1,6 +1,47 @@
 # 5 Control flow
 
-## 5.1 if else and Bool values
+## 5.1 Code blocks
+Functions have a code block as their body. But also conditions and loops have a code block.
+The block starts indented (with 4 spaces) at the line following the `:` symbol, as in the following code snippet: 
+
+See `code_block.mojo`:
+```py
+def loop():                 # level 1
+    for x in range(5):      # <-- new code block, level 2 
+        if x % 2 == 0:      # <-- new code block, level 3
+            print(x, end=" / ") # <-- new code block, level 4
+
+fn main() raises:
+    loop()  # => 0 / 2 / 4 /
+```
+
+A code statement can span several lines if you indent the following lines. For example: 
+See `mult_lines.mojo`:
+```py
+def print_line():
+    long_text = "This is a long line of text that is a lot easier to read if"
+                " it is broken up across two lines instead of one long line."
+    print(long_text)
+
+fn main() raises:
+    print_line()
+    # => This is a long line of text that is a lot easier to read if it is broken up across two lines instead of one long line.
+```
+
+Function calls can also be chained across multiple lines:
+See `mult_func_calls.mojo`:
+```py
+def print_hello():
+    text = String(",")
+          .join("Hello", " world!")
+    print(text) 
+    
+fn main() raises:
+    print_hello()
+    # => Hello, world!
+```
+
+## 5.2 if else and Bool values
 
 The general format follows the Python syntax: `if cond:  ... else:  ... `
 Here is a first example of using the if-else flow in Mojo, using several numerical types and two functions:
@@ -8,9 +49,9 @@ Here is a first example of using the if-else flow in Mojo, using several numeric
 See `if_else1.mojo`:
 ```py
 fn func1():
-    let x: Int = 42
-    let y: Float64 = 17.0
-    let z: Float32   
+   varx: Int = 42
+   vary: Float64 = 17.0
+   varz: Float32   
 
     if x != 0:       # 1
         z = 1.0      
@@ -37,7 +78,7 @@ fn main():
     print(guessLuckyNumber(37)) # => True
 
 fn guessLuckyNumber(guess: Int) -> Bool:    # 1
-    let luckyNumber: Int = 37
+   varluckyNumber: Int = 37
     var result: StringLiteral = ""      # 2
     if guess == luckyNumber:            # 3
         result = "You guessed right!"   # => You guessed right!
@@ -244,7 +285,7 @@ with Runtime() as rt:
         fn bench_parallel[simd_width: Int]():
             parallelize[worker](rt, height, height)
 
-        let parallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
+       varparallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
 ```
 
 ## 5.6 The walrus operator :=

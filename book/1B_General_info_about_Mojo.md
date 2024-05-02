@@ -38,6 +38,8 @@ Here is the official Mojo [portal - website](https://www.modular.com/max/mojo)
 
 Documentation and manuals can be found at the Modular/Mojo [Website](https://www.modular.com/mojo), particularly in the [Docs section](https://docs.modular.com/mojo/).
 
+[Online Playground](https://docs.modular.com/mojo/playground): here you can experiment with code online, download it when you could use it locally, or share it through a GitHub gist.
+
 Local SDK: [Developer portal](https://developer.modular.com)
 
 [Weekly newsletter:](https://www.modular.com/newsletters/)
@@ -53,7 +55,6 @@ To come into contact with other Mojo users or the Modular team:
 An overview of educational material and links to community projects can be found [here](https://github.com/mojicians/awesome-mojo)
 
 An outdated tutorial site:   [mojodojo](https://mojodojo.dev/) created by Jack Clayton (mojodojodev@gmail.com)
-
 
 
 ## 1B.3 A brief history, status and roadmap 
@@ -133,3 +134,4 @@ The company *Modular* is funded by VC (Venture Capital).
 * Faster than C++, more hackable than Nvidia’s CUDA, and as safe as Rust.
 * The best of multiple worlds: the ease of use and clear syntax of Python, with the speed and memory safety of Rust.
 * Mojo may become the lingua franca of the programming world.
+* Mojo is SIMD first (see § 4.4)

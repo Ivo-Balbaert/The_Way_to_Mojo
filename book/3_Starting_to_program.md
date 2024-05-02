@@ -6,17 +6,20 @@
 * Source files follow the Python syntax code conventions. For example:  
     no need for semi-colons to end lines, 
     no curly braces around functions or methods,
-    each new level of code is indented with 4 spaces, 
+    each new level of code (a so-called code block) is indented with 4 spaces, 
+         an indentation mistake will result in a compiler error.
     use only spaces: convert all tabs to spaces if necessary 
     (?? other noteworthy conventions)
 
 * Code file names are written usually in lowercase, separated by _ if needed, like *deviceinfo.mojo* or *simple_interop.mojo*. 
-Never use Python or Mojo or their keywords as a filename, this will result in an error by confusing the Mojo compiler!
+Never use Python or Mojo or their keywords as a filename, this will confuse the Mojo compiler and result in an error. 
 Never use space characters in a Mojo filename, several OS's don't like that!  
   > Note:
   > If you really need to work with a source file containing spaces (like in *space invaders.mojo*), you can use "" on Windows to compile the source like this: `mojo "space invaders.mojo"`.  
   
 * For a list of keywords, see *keywords.txt*. Keywords normally cannot be used as identifiers. It is not recommended, but if it is really necessary, you can enclose a keyword in backticks `` to force its use as an identifier (see error.mojo in § 9.4 where keyword ref is used as a variable name).
+
+* A number of consecutive code lines with the same indentation form a *code block* (seel also § 5.1). Code blocks can be nested: the nested block is indented as a whole.
 
 
 ## 3.2 Comments and Doc comments
@@ -26,10 +29,10 @@ Documenting your code is crucial for maintenance. This can be done in Mojo with 
 As in Python, code comments start with the `#` symbol. This can be used for a single-line comment, at the start of the line or in the middle of a line. Subsequent uses of # at the start of lines form a multi-line comment.   
 
 ## 3.2.2 Doc comments with """
-Use `docstrings` if you need more structured comments that can be gathered by the mojo doc tool.
+Use `docstrings` if you need more structured comments (for example: API documentation) that can be gathered by the `mojo doc` tool.
 These are defined with the symbol `""" ... """`, and can be multi-line comments. They are mostly written after the header of a function, like here for the __init__ function:
 
-Here is a program with docstrings: (see § 7.4.1)
+Here is a program with docstrings: (see § 7.4.1  overloading.mojo)
 ```py
 struct Complex:
     var re: Float32
@@ -46,7 +49,7 @@ struct Complex:
         self.im = i
 
 fn main():
-    let c1 = Complex(7)
+    var c1 = Complex(7)
     print (c1.re)  # => 7.0
     print (c1.im)  # => 0.0
     var c2 = Complex(42.0, 1.0)
@@ -219,13 +222,12 @@ Open this folder in VSCode by selecting File, Open Folder.
 Now create a new (empty) text file, and save it as 
 *hello_world.mojo*. 
 
-## 3.3.1 The main function is necessary
 Now try to compile this empty file: `mojo hello_world.mojo`
-(You can do this on the command-line, or from within VSCode (see § 2.7.2.1))
+(You can do this on the command-line, or from within VSCode (see § 2.10.3))
 
 The compiler protests with:  
 `mojo: error: error: module does not define a `main` function`
-In other words: the mojo compiler doesn't find a main() function from where to start compiling/executing.
+In other words: the mojo compiler doesn't find a main() function from where to start execution.
 
 What does this mean?
 Every executable Mojo program contained in a source file needs a so called *entry point* called **main**.  This is the starting point for code execution, as in many other languages.  
@@ -283,10 +285,13 @@ This suggests that someday this will also be possible in Mojo, as it is already 
 For clarity it is best to place the `main` function at the bottom of the code file, beneath all data and other function definitions.
 
 
-## 3.3.2 The print function
-The `print` function displays any string (enclosed in "") Try out if you can also use '' to envelop strings. This `print` function automatically adds a new line. So if you just want a newline, use `print()`.
-This function can also be used to print a series of elements, joined by spaces (see the last line in the following example).
-`print()` takes sep and end keyword arguments. This means that you can write:
+## 3.4 The print function
+We need a way to show us the values of variables: `print` does that for us.
+The `print` function displays any string (enclosed in "", try out if you can also use '' to envelop strings). `print` can also be used to print a series of elements, joined by spaces (see the last line in the following example).
+  
+The `print` function automatically adds a new line. So if you just want a newline, use `print()`.
+`print` takes sep and end keyword arguments. This means that you can write:
+
 ```
 print("Hello", "Mojo", sep=", ", end="!!!\n") # prints Hello, Mojo!!!
 ```
@@ -307,35 +312,60 @@ Hello World from Mojo!
   - starts at the same line as the following print: Hello World from Mojo! - 2
 A B 42 3.1400000000000001
 ```
+## 3.5 Using assert_equal
+Instead of printing out two variables a and b to see whether they are equal: `print(a == b)`,   
+we can also use `assert_equal(a, b)` from module testing.
 
-## 3.3.3 Building a Mojo source file
+See `assert_eq.mojo`:
+```py
+from testing import assert_equal
+
+fn main() raises:
+    var a = 1
+    var b = 2   # 2
+    # var b = a   # 3
+    assert_equal(a, b)  
+
+# =>
+# Unhandled exception caught during execution: AssertionError: `left == right` comparison failed:
+#   left: 1
+#   right: 2
+```
+
+This now will only print out a message with AssertionError when a is not equal to b. 
+(In fact it is even worse, it crashed the program!)
+Replace line 2 by line 3 to make the message disappear. So normally using assert_equal, we trust that a == b and no output is produced.
+(Look in the docs for the other assert_ functions in module testing)
+
+## 3.6 Building a Mojo source file
 The command `mojo source.mojo` compiles and then runs the compiled code. It works exactly the same as `mojo run source.mojo`.   
 If you want to get a compiled binary, use `mojo build source.mojo`.
 For example: `mojo build hello_world.mojo`
 
->Note: When developing, you probably don't want to bother with building an executable. You will only start to need then when you're going to deploy into a test or production environment. But also for benchmarking it is important to do this: an executable runs at higher performance than mojo (run) itself.
+>Note: When developing, you probably don't want to bother with building an executable. You will only start to need this when you're going to deploy into a test or production environment. But also for benchmarking it is important to do this: an executable runs at higher performance than mojo (run) itself.
 
 Now an executable `hello_world` is build. This can be run with: `./hello_world` (on Linux/MacOS) or hello_world, producing the same output as above.
 ?? Output is relatively big some 44Mb ?? issue 
 [BUG]: Mojo hello world binary size unreasonably large #599 
 (closed - open a new issue ??)
 
-```
-A Mojo app can be compiled into a small, standalone, fast-launching binary, making it easy to deploy while taking advantage of available cores and acceleration. 
-```
+>Note: A Mojo app can be compiled into a small, standalone, fast-launching binary, making it easy to deploy while taking advantage of available cores and acceleration. 
 
 In development, the simple `mojo` command is just fine. But when you want to deploy your program to another environment, you need the executable. Luckily, this is only one binary with a small size, so easily deployable to cloud or embedded environments.
 
-By splitting compilation from execution, we also make the difference between:  
-* Compile-time: here the compiler scans your program and generates errors or warnings. If no errors are found, an executable is generated. 
+
+## 3.7 Compile-time and runtime
+Using `mojo build` splits compilation from execution. This means we can also make the difference between:  
+* *Compile-time*: here the compiler scans your program and generates errors or warnings. If no errors are found, an executable (native code) is generated. 
 Data that is known at compile-time is said to be *statically known*.
 
-* Run-time: when the executable runs on your machine.
+* *Run-time*: when the executable runs on your machine.
 Often data is not known at compile-time, but only at run-time, for example because it is read in or calculated at run-time. Such data is said to be *dynamically known*.
 
-Later (see ??) we'll see that code can also be run at compile-time, to do what is called *meta-programming*.
+Later (see ??) we'll see that code can also be run at compile-time, to do what is called *meta-programming*. This enables Mojo to do simulate some types of dynamic programming.
 
-## 3.4  Variables and types - def and fn
+## 3.8 Variables, types and addresses
+### 3.8.1 Using def and fn
 We'll now go back to discussing the last code snippet of § 2.
 
 See `first.mojo`:
@@ -346,7 +376,7 @@ fn main():
     print(n)            # => 2
 ```
 
-In line 1 a variable `n` is declared with the keyword `var`, which means it is a real mutable variable whose value can change. The typing n: Int is optional, Mojo has type inference.
+In line 1 a variable `n` is declared with the keyword `var`, which means it is a real mutable variable whose value can change. The typing `n: Int` is optional, Mojo has type inference.
 
 Like in Python, `main()` has no parameters and no return value.
 
@@ -362,13 +392,36 @@ def main():
 ```
 
 So both forms of function can be used in Mojo, but they have a different meaning: 
-* `def` functions are dynamic, flexible and types are optional
+* `def` functions are dynamic, flexible and types are optional; using `var` is also not necessary.
 * `fn` is meant for stricter code: it enforces strongly-typed and memory-safe behavior
 
 Supporting both `def` and `fn` makes it easier to port Python functions to Mojo.
 
-* Name shadowing can occur, allowing variables in inner scopes to have the same name as variables in outer scopes. So in a nested scope, you can create a variable with a name that already exists in an outer scope. These variables will be totally independent of each other. Shadowing prevents unintended interference between variables of the same name in different scopes.
-* Declarations can include type specifiers, patterns, and late initialization.
+If var is omitted in line # 1 in the `fn` version, you get another error:
+```
+error: use of unknown declaration 'n', 'fn' declarations require explicit variable declarations
+    n: Int = 1      # 1
+    ^
+```
+Unlike in def functions, in `fn` functions you need to use var when a local variable is declared!
+
+Why is this useful? Because Python doesn't give you an error if you mistype a variable name in an assignment, while Mojo does point this out when declaring variables with var in an `fn` function:
+
+```py
+var last_name = "Jones"
+# ...
+lst_name = "Carter"  # error: use of unknown declaration 'lst_name'
+```
+
+Also in line 1, we see that the type of n is declared as `Int`, an integer. *Declaring the type is not required for local variables in fn*, but it can be useful, making the code safer.
+
+>Note: In a def function as well as in the REPL, you can declare untyped variables just by assigning them a value, and without using `var` (but you can also use var inside defs).
+
+All variables in Mojo are *mutable*: their value can be changed. If you want to define constant values, use *alias* (see § 4.4).
+
+
+### 3.8.2 Late initialization
+Variables can also get a value some time after they have been declared (so-called late initialization):
 
 See `late_initialization.mojo`:
 ```py
@@ -377,60 +430,86 @@ fn main():
     var book_id: Int = 123      # typing and initialization
     # Late initialization and pattern matching with if/else
     if book_id == 123:
-        discount_rate = 0.2  # 20% discount for mystery books
+        discount_rate = 0.2   # 20% discount for mystery books
     else:
         discount_rate = 0.05  # 5% discount for other book categories
     print("Discount rate for Book with ID ", book_id, "is:", discount_rate)
 # => Discount rate for Book with ID  123 is: 0.20000000000000001
 ```
 
-If line 1 is commented out like this:  #  1 - let discount_rate: Float64  # no initialization yet! 
+If line 1 is commented out like this:  #  1 - var discount_rate: Float64  # no initialization yet! 
 you get the error: `error: use of unknown declaration 'discount_rate'`
 So every variable must be declared before it is used.
 
-See also: bookstore.mojo
+See also as a more elaborate example: bookstore.mojo
 
->Note: In `fn` functions all variables need to be declared with var.
-
-Why is this useful? Because Python doesn't give you an error if you mistype a variable name in an assignment, while Mojo does point this out when declaring variables with var.
-
-If var is omitted, you get another error:
-```
-error: use of unknown declaration 'n', 'fn' declarations require explicit variable declarations
-    n: Int = 1      # 1
-    ^
-```
-
-Unlike in def functions, in fn functions you need to use var when a local variable is declared!
-
-Also in line 1, we see that the type of n is declared as `Int`, an integer. *Declaring the type is not required for local variables in fn*, but it can be useful and increases performance.
-
->Note: A def used in Mojo allows to declare untyped variables just by assigning them a value. But you can also use var inside defs!
-
->Note: When using Mojo in a REPL environment (such as a Jupyter notebook), top-level variables (variables that live outside a function or struct) are treated like variables in a def, so they allow implicit value type declarations (they do not require var declarations, nor type declarations). This matches the Python REPL behavior.
-
-Here is an example snippet which uses `var` for declarations: 
-
+Here is another example using where main() calls another function domath(), which uses explicit typing and inference:
 See `var.mojo`:
 ```py
 fn do_math():
     var x: Int = 1   # 1
     var y = 2        # 2
     var z = 7        # 3
-    var w: Int       # 5
+    var w: Int       # 4
     print(x, y, x + y)     # => 1 2 3
-    w = 42           # 6
+    w = 42           # 5
 
 fn main():
     do_math()
 ```
 
 Here we see how `main` calls another fn function `do_math`.
-A constant x of type Int (integer) is declared and initialized in line 1. Note the general format: `var varname: Type = value`
-In line 2, the type of variable `y` is not declared, but inferred by the compiler to be Int (we could do this also in line 1). Note that you cannot write: `var w`, the statement must contain either a type or an initializing value.
+A constant x of type Int (integer) is declared and initialized in line 1.  
+Note the general format: `var varname: Type = value`
+In line 2, the type of variable `y` is not declared, but inferred by the compiler to be Int (we could do this also in line 1). Note that you cannot write: `var w` in line 4: the statement must contain either a type or an initializing value.
+Lines 5 shows late initialization, a feature that does not exist in Python.
 
-Lines 5-6 show late initialization, a feature that does not exist in Python.
+### 3.8.3 Lexical scoping and name shadowing
+Let's examine the following code:
+`scoping.mojo`:
+```py
+fn lexical_scopes():      # fn could also be def
+    var num = 10
+    var dig = 1
+    if True:
+        print("num:", num)  # Reads the outer-scope "num"
+        var num = 20        # Creates new inner-scope "num"  # 1
+        print("num:", num)  # Reads the inner-scope "num"
+        dig = 2             # Edits the outer-scope "dig"
+    print("num:", num)      # Reads the outer-scope "num"
+    print("dig:", dig)      # Reads the outer-scope "dig"
 
+def function_scopes():
+    num = 1
+    if num == 1:
+        print(num)   # Reads the function-scope "num"
+        num = 2      # Updates the function-scope variable # 2
+        print(num)   # Reads the function-scope "num"
+    print(num)       # Reads the function-scope "num"
+
+
+fn main() raises:
+    lexical_scopes() # =>
+    # num: 10
+    # num: 20
+    # num: 10
+    # dig: 2
+    function_scopes() #  
+    # 1
+    # 2
+    # 2
+```
+
+Variables declared with var as in `fn lexical_scopes()` obey so-called *lexical scoping* :
+*  a nested code block can read and modify variables defined in an outer scope,
+*  but an outer scope cannot read variables defined in an inner scope.
+
+So name shadowing can occur: you can create a variable in a nested scope with a name that already exists in an outer scope. The variable `num` in line 1 shadows (or hides) the outer `num` variable. The inner `num` is only known inside the if-block.
+These variables will be totally independent of each other. Shadowing prevents unintended interference between variables of the same name in different scopes.
+
+In `def function_scopes()` the variables are NOT declared with var. The inner num variable in line 2 updates the value of the outer num variable, as you see in the last printed output. In this case, variables follow *function scoping* as in Python. 
+
+### 3.8.4 Global variables
 ?? doesn't work as of 2024-04-20:
 https://github.com/modularml/mojo/issues/1573
 Mojo also supports *global variables*:  
@@ -448,10 +527,12 @@ fn main():
 0
 
 
-The current design of Mojo does not support the use of global variables inside functions, except for main (tes() works) ?? see https://github.com/modularml/mojo/discussions/448)
+The current design of Mojo does not support the use of global variables inside functions, except for main (see https://github.com/modularml/mojo/discussions/448)
 
 Also alias is heavily used at the global level (see § 4.4).
 
+### 3.8.5 Variable addresses
+(?? Include images for the pointers)
 Mojo variables are much more like C variables than like Python variables: a name in Mojo is attached to an object.
 
 See `variable_addresses.mojo`:
@@ -493,7 +574,7 @@ In Python, references are everywhere (the names are references, elements in a li
     print_pointer(p)
 ```
 
-## 3.5  Typing in Mojo
+## 3.9  Typing in Mojo
 Mojo has so-called *progressive typing*: adding more types leads to better performance and error checking, the code becomes safer and more reliable.
 If the type is omitted, it is inferred by the compiler, that is: derived from the type of value the variable is initialized with.
 
@@ -512,83 +593,11 @@ Trying to change a variable's type as in the code above leads to a compiler erro
 #     x = "will cause an error"
 #         ^~~~~~~~~~~~~~~~~~~~~
 ```
-UInt8 is an unsigned, 1 byte integer value.
+*Exercise*:
+Try this in Python, it will work without problem!
 
 Finally, here is a naming convention, following Python's example:  
 * variable and function names start with a lowercase letter, with words separated by underscores as necessary to improve readability (example: lucky_number).
 * types (like `Int`) start with an uppercase letter, and follow PascalCase style (example: IntPair).
 
-## 3.6 Importing modules
-Mojo can import Python modules as well as modules written in Mojo itself. Here we show you the general syntax for doing so. We'll encounter many more concrete examples later on.
 
-## 3.6.1 Mojo modules
-The code of the standard library is written in *modules*. Modules are sometimes bundled together in *packages*. Module- and package names are written in all lowercase, like in Python.  
-
-The most common code is stored in the package  `builtin`, like bool, int and dtype. Their code is automatically imported, so the types and functions of these modules are always available in your Mojo programs. 
-
-Other modules can be imported like this:
-
-```py
-from benchmark import benchmark
-```
-
-Then you can use the type Benchmark with the dot-notation to access its members like this:  
-`benchmark.run`
-
-To avoid name-clashes or simply to shorten the name, you can use `as` to define an alias:  
-```py
-from benchmark import benchmark as bm
-```
-
-Then access its members with: `bm.run`
-
-`memory` is a package, containing the modules anypointer, memory and unsafe. To import something from the unsafe module, write the following:
-
-```py
-from memory.unsafe import Pointer
-```
-
->Note: These from statements can be written everywhere in code, but code clarity can be enhanced by grouping them at the start of a code file.
-
-If you have many types to import, enclose them within (), like this:
-```py
-from sys.info import (
-    alignof,
-    sizeof,
-    bitwidthof,
-    simdwidthof,
-    simdbitwidth,
-    simdbytewidth,
-)
-```
-To import all types and functions from a module (say math), use:  
-`from math import *`.  
-However, it is recommended to only import the things you need.
-
->Note: You can also use:
-```py
-import benchmark
-# or:
-import benchmark as bm
-```
-
-But then you have to access its members with: `benchmark.Benchmark.num_warmup` or `bm.Benchmark.num_warmup`, prefixing the member name with the module name. This is better than using from ... import *, because doing so you loose the info from which module the function/type is imported.
-
-For some examples see: ??
-
-## 3.6.2 Python modules
-Mojo can access the whole Python ecosystem by importing Python modules.
-Importing and using a Python package in Mojo is very easy.  
-Here's an example (from a Jupyter notebook cell) of how to import the NumPy package:
-
-```py
-from python import Python                   # 1
-
-let np = Python.import_module("numpy")      # 2
-```
-
-First you have to import the Python module as in line 1: `from python import Python`.  
-Then you can use the `Python.import_module()` function with the module name (see line 2). You give it a constant name (here `np`), which can be used later to call module methods.
-(The equivalent of this line in Python would be: `import numpy as np`.) 
-Note that the .py extension for the module is not needed.
-For some concrete examples see: ??

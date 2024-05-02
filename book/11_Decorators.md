@@ -40,14 +40,14 @@ struct Coord:
     var y: Int
 
 fn main():
-    let p = Coord(0, 0)  # error!
+   varp = Coord(0, 0)  # error!
 ```
 
 (https://mojodojo.dev/guides/decorators/value.html elaborates this further:
-- implement __init__ --> let pair = Pair(5, 10) works
-- let pair2 = pair doesn't work, error: not copyable
+- implement __init__ -->varpair = Pair(5, 10) works
+-varpair2 = pair doesn't work, error: not copyable
 - implement __moveinit__ and __copyinit__
-- now # Move object let pair2 = pair^ and # Copy object let pair3 = pair2 works
+- now # Move objectvarpair2 = pair^ and # Copy objectvarpair3 = pair2 works
 - but you can achieve the same by just using @value)
 
 However, this is easily remedied by prefixing the struct with the `@value` decorator.
@@ -59,7 +59,7 @@ struct Coord:
     var y: Int
 
 fn main():
-    let p = Coord(0, 0)
+   varp = Coord(0, 0)
     print(p.y) # => 0
 ```
 
@@ -101,14 +101,14 @@ struct Pet:
 
 fn main():
     # Creating a new pet
-    let myCat = Pet("Wia", 6)
+   varmyCat = Pet("Wia", 6)
     print("Original cat name: ", myCat.name)
     print("Original cat age: ", myCat.age)
     # Copying a pet
-    let copiedCat = Pet(myCat.name, 7)
+   varcopiedCat = Pet(myCat.name, 7)
     print("Copied cat name: ", copiedCat.name)
     print("Copied cat age: ", copiedCat.age)
-    let movedCat = myCat
+   varmovedCat = myCat
     print("Moved cat name: ", movedCat.name)
     print("Moved cat age: ", movedCat.age)
 # =>
@@ -249,7 +249,7 @@ fn add_print[a: Int, b: Int]():
     fn add[a: Int, b: Int]() -> Int:
         return a + b
 
-    let x = add[a, b]()
+   varx = add[a, b]()
     print(x)
 
 fn main():
@@ -259,7 +259,7 @@ fn main():
 The above code will run at compile time, so that you pay no runtime price for anything inside the function. This translates at compile-time to:
 ```py
 fn add_print(): 
-    let x = 15
+   varx = 15
     print(x)
 
 fn main():
@@ -281,7 +281,7 @@ struct helpers:
         return (value & 1) == 0
 
 fn main():
-    let x = 2
+   varx = 2
     print(helpers.is_even(x))   # => True
 ```
 

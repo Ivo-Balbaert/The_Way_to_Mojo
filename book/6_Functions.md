@@ -1,18 +1,48 @@
 # 6 Functions
 
-A key trick in Mojo is that you can opt in at any time to a faster 'mode' as a developer, by using `fn` instead of `def` to create your function. In this mode, you have to declare exactly what the type of every variable is, and as a result Mojo can create optimized machine code to implement your function.
+As we've seen, in Mojo you can both use `def` or `fn` functions, unlike in Python. Choose the one which you think is best for the project at hand.
+
+A key trick in Mojo is that you can opt in at any time to a faster and safer 'mode' as a developer, by using `fn` instead of `def` to create your function. In the `fn` mode Mojo can create optimized machine code to implement your function.
 
 ## 6.1 Difference between fn and def
-Unlike Python, Mojo utilizes two keywords ( def and fn ) for defining functions. It’s crucial to grasp that both keywords define the same function objects. It is not at all “ def for Python-like functions and fn for static functions”. The difference in keywords is only about default argument passing mechanics and strictness in terms of variable declaration. By default, arguments are copied for def and borrowed (immutable reference) for fn . With fn , explicit specification of argument types, parameters, and the return value is mandatory. Conversely, for def , the default argument type is object, representing a particular Mojo type designed for dynamic code.
+`def` is defined to be very dynamic, flexible and generally compatible with Python: arguments are copied and mutable, local variables are implicitly declared on first use, and scoping isn’t enforced. The default argument type is `object`, representing a particular Mojo type designed for dynamic code.
 
-`def` is defined by necessity to be very dynamic, flexible and generally compatible with Python: arguments are mutable, local variables are implicitly declared on first use, and scoping isn’t enforced. This is great for high level programming and scripting, but is not always great for systems programming.  
+Example:
+```py
+def calc(a, b):
+    return (a + b) * (a - b)
+```
+
+In this code, the types of `a` and `b` are `object`, as is the return type.
+This is great for high level programming and scripting, but is not always great for systems programming.  
+
 To complement this, Mojo provides an `fn` declaration which is like a "strict mode" for def.
+With fn, explicit specification of argument types (except `self`), parameters, and the return value is mandatory.
+Also arguments are so-called `borrowed`, they are immutable references. Argument values default to being immutable in the body of the function. 
+>Note: In § 6.4 some more detail on function arguments is given.
 
-`fn`'s have a number of limitations compared to def functions:
-* Argument values default to being immutable in the body of the function (like a let), instead of mutable (like a var). This catches accidental mutations, and permits the use of non-copyable types as arguments.
-* Argument values require a type specification (except for self in a method), catching accidental omission of type specifications. Similarly, a missing return type specifier is interpreted as returning `None` instead of an unknown return type. Note that both can be explicitly declared to return `object`, which allows one to opt-in to the behavior of a def if desired.
-* Implicit declaration of local variables is disabled, so all locals must be declared. This catches name typos with the scoping provided by let and var.
-* Both support raising exceptions, but this must be explicitly declared on an fn with the `raises` keyword.
+Example:
+```py
+fn calc(a: Int, b: Int) -> Int:
+    return (a + b) * (a - b)
+```
+
+We see here that the argument type of `name` and the return type are both restricted to `String`.
+If the value of `name` would not fit that type, `fn` would give an error at compile-time, `def` would crash the running program!
+
+Similarly, a missing return type specifier is interpreted as returning `None` instead of an unknown return type. 
+
+>Note that both can be explicitly declared to return `object`, which allows one to opt-in to the behavior of a def if desired.
+
+All local variables must be declared with `var`, the type is either explicitly given, or inferred by the compiler. This catches name typos!
+
+Both `def` and `fn` support raising exceptions, but this must be explicitly declared on an fn with the `raises` keyword, as shown in the following section.
+
+*Exercise:*
+Write a complete program with a main() function, and call both the def and the fn functions. Experiment with the types of the arguments a and b (see exc6.1.mojo)
+>Note: For the `def` function, first read the next section.
+
+XYZ
 
 ## 6.2  An fn that calls a def needs a try/except
 Consider the following example: 
@@ -20,9 +50,9 @@ Consider the following example:
 See `try_except.mojo`:
 ```py
 def func1(a, b):
-    let c = a
+   varc = a
     if c != b:
-        let d = b
+       vard = b
         print(d)  # => 3
 
 fn main():
@@ -75,7 +105,7 @@ fn sum(x: Int, y: Int) -> Int:  # 1
 
 fn main():
     _ = sum(1, 2).
-    let z = sum(1, 2)
+   varz = sum(1, 2)
     print(z)    # => 3
 ```
 
@@ -166,8 +196,8 @@ For example:
 See `owned.mojo`:
 ```py
 fn mojo():
-    let a: String = "mojo"
-    let b = set_fire(a)
+   vara: String = "mojo"
+   varb = set_fire(a)
     print(a)        # => "mojo"
     print(b)        # => "mojo🔥"
 
@@ -325,7 +355,7 @@ fn outer(f: fn() escaping -> Int):
     print(f())
 
 fn call_it():
-    let a = 5               # 1
+   vara = 5               # 1
     fn inner() -> Int:      # 2  
         return a
 
@@ -344,7 +374,7 @@ This is indicated by prefixing the parameter name in the function header with *,
 See `variadic1.mojo`:   print out doesn't work anymore (2023 Nov 5), removed from test_way
 ```py
 fn my_func(*args_w: String):  # 1
-    let args = VariadicList(args_w)
+   varargs = VariadicList(args_w)
     for i in range(len(args)):
         pass
         # print(args[i])   # error: no matching value in call to print
@@ -367,19 +397,30 @@ Example: parallelize[func: fn(Int) capturing -> None]()
 `fn(Int) capturing -> None` is the function type.
 
 ## 6.8 Running a function at compile-time and run-time
-There are two times of execution: compile-time and runtime.
-Mojo has two ‘spaces’, the ‘parameter’ space (which operates during compile time and the ‘value’ space (which operates during run time). Mojo functions can do computations in both spaces, the `[]` accepts arguments for the ‘parameter’ space, and `()` accepts arguments for the ‘value’ space:
-```py
-fn bar[a: Int](b: Int):
-    print("bar[a: Int](b: Int)")
-```
-
-By using alias for the return variable, you can run a function at compile-time:
+As we saw in § 3.7, there are two times of execution: compile-time and runtime.
+Mojo has two ‘spaces’, the ‘parameter’ space (which operates during compile time) and the ‘value’ space (which operates during run time). Mojo functions can do computations in both spaces, the `[]` accept arguments for the ‘parameter’ space, and `()` accept arguments for the ‘value’ space:
 
 See `compile_time1.mojo`:
 ```py
+fn repeat[count: Int](msg: String):
+    for i in range(count):
+        print(msg)
+
+fn main():
+     repeat[3]("Hello")
+    # => Hello
+    # Hello
+    # Hello
+```
+
+count is a compile-time parameter which becomes a run-time constant. The compiler makes a specific version of repeat with a fixed count value, which is then executed.
+
+By using alias for the return variable, you can run a function at compile-time:
+
+See `compile_time2.mojo`:
+```py
 fn squared(n: Int) -> Pointer[Int]:
-    let tmp = Pointer[Int].alloc(n)
+   vartmp = Pointer[Int].alloc(n)
     for i in range(n):
         tmp.store(i, i * i)
     return tmp
@@ -404,7 +445,7 @@ The function squared can be used both during comptime and runtime. The alias in 
 If we comment this line and uncomment line 2, precalculated is computed at runtime.
 
 A parameter enclosed in [] is a compile-time (or static) value (1).
-A parameter(??) enclosed in () is a run-time (or dynamic) value (2).
+An argument enclosed in () is a run-time (or dynamic) value (2).
 If you get the error: `cannot use a dynamic value in a type parameter`, Mojo says that you used a runtime value as a compile-time parameter (case (1)).
 
 ## 6.9 Callbacks through parameters

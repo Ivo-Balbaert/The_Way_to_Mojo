@@ -159,7 +159,7 @@ fn main() raises:
     print("SIMD bit width", simdbitwidth())  # => SIMD bit width 256
     print("SIMD Width", simd_width)  # => SIMD Width 8
 
-    let tx = rand[dtype](5, 12)
+   vartx = rand[dtype](5, 12)
     print(tx)
     # =>
     # Tensor([[0.1315377950668335, 0.458650141954422, 0.21895918250083923, ..., 0.066842235624790192, 0.68677270412445068, 0.93043649196624756],
@@ -169,8 +169,8 @@ fn main() raises:
     # [0.84151065349578857, 0.41539460420608521, 0.46791738271713257, ..., 0.84203958511352539, 0.21275150775909424, 0.13042725622653961]], dtype=float32, shape=5x12)
 
     seed(42)
-    let t = rand[dtype](1000, 100_000)
-    let result = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
+   vart = rand[dtype](1000, 100_000)
+   varresult = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
 
     print(
         "Input Matrix shape:", t.shape().__str__()
@@ -182,28 +182,28 @@ fn main() raises:
 
     # Naive approach in Mojo
     alias reps = 10
-    let tm1 = time.now()
+   vartm1 = time.now()
     for i in range(reps):
         _ = tensor_mean[dtype](t)
-    let dur1 = time.now() - tm1
+   vardur1 = time.now() - tm1
     print("Mojo naive mean:", dur1 / reps / 1000000, "ms")
 
     # NumPy approach
-    let np = Python.import_module("numpy")
-    let dim0 = t.dim(0)
-    let dim1 = t.dim(1)
-    let t_np = np.random.rand(dim0, dim1).astype(np.float32)
-    let tm2 = time.now()
+   varnp = Python.import_module("numpy")
+   vardim0 = t.dim(0)
+   vardim1 = t.dim(1)
+   vart_np = np.random.rand(dim0, dim1).astype(np.float32)
+   vartm2 = time.now()
     for i in range(reps):
         _ = np.mean(t_np, 1)
-    let dur2 = time.now() - tm2
+   vardur2 = time.now() - tm2
     print("Numpy mean:", dur2 / reps / 1000000, "ms")
 
     # Vectorized and parallelized approach in Mojo
-    let tm3 = time.now()
+   vartm3 = time.now()
     for i in range(reps):
         _ = tensor_mean_vectorize_parallelized[dtype](t)
-    let dur3 = time.now() - tm3
+   vardur3 = time.now() - tm3
     print("Mojo Vectorized and parallelized mean:", dur3 / reps / 1000000, "ms")
 
 
@@ -267,8 +267,8 @@ struct myTensor[dtype: DType]:
         return Self(new_tensor)
 
     fn print(self, prec: Int=4)->None:
-        let t = self.t
-        let rank = t.rank()
+       vart = self.t
+       varrank = t.rank()
         if rank == 0:
             print("Error: Nothing to print. Tensor rank = 0")
             return
@@ -311,15 +311,15 @@ struct myTensor[dtype: DType]:
                         val = t[j,k]
                     if rank==3:
                         val = t[i,j,k]
-                    let int_str: String
+                   varint_str: String
                     if val > 0:
                         int_str = String(trunc(val).cast[DType.int32]())
                     else:
                         int_str = "-"+String(trunc(val).cast[DType.int32]())
                         val = -val
-                    let float_str: String
+                   varfloat_str: String
                     float_str = String(mod(val,1))
-                    let s = int_str+"."+float_str[2:prec+2]
+                   vars = int_str+"."+float_str[2:prec+2]
                     if k==0:
                         print_no_newline(s)
                     else:
@@ -334,15 +334,15 @@ struct myTensor[dtype: DType]:
 
 
 fn main():
-    let tx = myTensor[dtype](5, 10)
+   vartx = myTensor[dtype](5, 10)
     tx.print()
     tx.mean().print()
 
-    let tx2 = myTensor[dtype](1000, 100_000)
-    let tm = time.now()
+   vartx2 = myTensor[dtype](1000, 100_000)
+   vartm = time.now()
     for i in range(reps):
         _ = tx2.mean()
-    let dur = time.now() - tm
+   vardur = time.now() - tm
     print("Mojo Vectorized and parallelized mean in a struct:", dur / reps / 1000000, "ms")
 
 # [[0.1315   0.4586   0.2189   0.6788   0.9346   0.5194   0.0345   0.5297   0.0076   0.0668]

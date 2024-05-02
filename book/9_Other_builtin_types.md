@@ -13,14 +13,14 @@ When you initialize the list the types can be inferred (as shown in line 1) or e
 See `listliteral.mojo`:
 ```py
 fn main():
-    let list = [1,2,3]                   # 1
+   varlist = [1,2,3]                   # 1
     print(list) # => [1, 2, 3]
-    let explicit_list: ListLiteral[Int, Int, Int] = [1, 2, 3]   # 2
+   varexplicit_list: ListLiteral[Int, Int, Int] = [1, 2, 3]   # 2
     print(explicit_list) # => [1, 2, 3]
 
-    let list2 = [1, 5.0, "Mojo🔥"]
+   varlist2 = [1, 5.0, "Mojo🔥"]
     print(list2.get[2, StringLiteral]())       # 2A => Mojo🔥
-    let mixed_list: ListLiteral[Int, FloatLiteral, StringLiteral] 
+   varmixed_list: ListLiteral[Int, FloatLiteral, StringLiteral] 
             = [1, 5.0, "Mojo🔥"] 
     print(mixed_list.get[2, StringLiteral]())  # 2B => Mojo🔥
 
@@ -40,11 +40,11 @@ this parametric function f2 has a variable number of parameters of type Int
 See `list_pythonobject.mojo`:
 ```py
 fn main() raises:
-    let x = PythonObject([])
+   varx = PythonObject([])
     _ = x.append("hello")
     _ = x.append(1.1)
-    let s: String = x[0]  # x[0].__str__()
-    let f: Float64 = x[1].to_float64()
+   vars: String = x[0]  # x[0].__str__()
+   varf: Float64 = x[1].to_float64()
     print(x)  # => ['hello', 1.1]
 ```
 
@@ -64,14 +64,14 @@ struct Coord:
     var y: Int
 
 fn main():
-    let t1 = (1, 2, 3)          # type is inferred because of ()
-    # let t1 = Tuple(1, 2, 3)  
-    let tup = (42, "Mojo", 3.14)
-    # let tup: Tuple[Int, StringLiteral, FloatLiteral] = (42, "Mojo", 3.14)
+   vart1 = (1, 2, 3)          # type is inferred because of ()
+    #vart1 = Tuple(1, 2, 3)  
+   vartup = (42, "Mojo", 3.14)
+    #vartup: Tuple[Int, StringLiteral, FloatLiteral] = (42, "Mojo", 3.14)
     print(tup.get[0, Int]())    # => 42
     print("Length of the tuple:", len(tup))   # => Length of the tuple: 3
 
-    let x = (Coord(5, 10), 5.5)     # 4
+   varx = (Coord(5, 10), 5.5)     # 4
     # Exercise:
     print(return_tuple().get[1, Int]())  # => 2
     
@@ -91,20 +91,20 @@ So for example using Python syntax, you could write as in line 1:
 See ``slice.mojo`:
 ```py
 fn main():
-    let original = String("MojoDojo")
+   varoriginal = String("MojoDojo")
     print(original[0:4])  # => Mojo
     print(original[0:8])  # => MojoDojo
     print(original[1:8:2])  # => oooo
     print(original[0:4:2])  # => Mj
 
     print(original[slice(0, 4)])      # => Mojo
-    let slice_expression = slice(0, 4)
+   varslice_expression = slice(0, 4)
     print(original[slice_expression]) # => Mojo
 
-    let x = String("slice it!")
-    let a: slice = slice(5)
-    let b: slice = slice(5, 9)
-    let c: slice = slice(1, 4, 2)
+   varx = String("slice it!")
+   vara: slice = slice(5)
+   varb: slice = slice(5, 9)
+   varc: slice = slice(1, 4, 2)
 
     print(x[a])  # => slice
     print(x[b])  # =>  it!

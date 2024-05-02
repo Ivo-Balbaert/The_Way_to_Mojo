@@ -78,7 +78,7 @@ fn add_naive(arr1: MojoArr, arr2: MojoArr, result: MojoArr, dim: Int):
         result.store(i, arr1.load(i) + arr2.load(i))
 
 fn create_mojo_arr(dim: Int) -> MojoArr:
-    let arr: MojoArr = MojoArr.alloc(dim)
+   vararr: MojoArr = MojoArr.alloc(dim)
     rand[DType.float32](arr, dim)
     return arr
 
@@ -86,18 +86,18 @@ fn create_mojo_arr(dim: Int) -> MojoArr:
 fn benchmark[func: fn(MojoArr, MojoArr, MojoArr, Int) -> None]
             (dim: Int) -> Float64:
 
-    let arr1: MojoArr = create_mojo_arr(dim)
-    let arr2: MojoArr = create_mojo_arr(dim)
-    let result: MojoArr = MojoArr.alloc(dim)
+   vararr1: MojoArr = create_mojo_arr(dim)
+   vararr2: MojoArr = create_mojo_arr(dim)
+   varresult: MojoArr = MojoArr.alloc(dim)
 
     @always_inline
     @parameter
     fn call_add_fn():
         _ = func(arr1, arr2, result, dim)
 
-    let secs = Float64(Benchmark().run[call_add_fn]()) / 1_000_000_000
+   varsecs = Float64(Benchmark().run[call_add_fn]()) / 1_000_000_000
     print(secs, " seconds")
-    let gflops = dim/secs
+   vargflops = dim/secs
     arr1.free()
     arr2.free()
     result.free()
@@ -137,7 +137,7 @@ fn add_simd(arr1: MojoArr, arr2: MojoArr, result: MojoArr, dim: Int):
     vectorize[nelts, add_simd](dim)
 
 fn create_mojo_arr(dim: Int) -> MojoArr:
-    let arr: MojoArr = MojoArr.alloc(dim)
+   vararr: MojoArr = MojoArr.alloc(dim)
     rand[DType.float32](arr, dim)
     return arr
 
@@ -145,18 +145,18 @@ fn create_mojo_arr(dim: Int) -> MojoArr:
 fn benchmark[func: fn(MojoArr, MojoArr, MojoArr, Int) -> None]
             (dim: Int) -> Float64:
 
-    let arr1: MojoArr = create_mojo_arr(dim)
-    let arr2: MojoArr = create_mojo_arr(dim)
-    let result: MojoArr = MojoArr.alloc(dim)
+   vararr1: MojoArr = create_mojo_arr(dim)
+   vararr2: MojoArr = create_mojo_arr(dim)
+   varresult: MojoArr = MojoArr.alloc(dim)
 
     @always_inline
     @parameter
     fn call_add_fn():
         _ = func(arr1, arr2, result, dim)
 
-    let secs = Float64(Benchmark().run[call_add_fn]()) / 1_000_000_000
+   varsecs = Float64(Benchmark().run[call_add_fn]()) / 1_000_000_000
     print(secs, " seconds")
-    let gflops = dim/secs
+   vargflops = dim/secs
     arr1.free()
     arr2.free()
     result.free()
@@ -252,10 +252,10 @@ from time import now
 alias dtype = DType.float64
 
 fn main() raises:
-    let np = Python.import_module("numpy")
-    let n = 10_000_000
-    let anp = np.random.rand(n)
-    let bnp = np.random.rand(n)
+   varnp = Python.import_module("numpy")
+   varn = 10_000_000
+   varanp = np.random.rand(n)
+   varbnp = np.random.rand(n)
 
     var a = Tensor[dtype](n)
     var b = Tensor[dtype](n)
@@ -284,9 +284,9 @@ fn print_formatter(string: String, value: Float64):
 
 fn main():
     # ...
-    let eval_begin = now()
-    let naive_dist = mojo_naive_dist(a, b)
-    let eval_end = now()
+   vareval_begin = now()
+   varnaive_dist = mojo_naive_dist(a, b)
+   vareval_end = now()
 
     print_formatter("mojo_naive_dist value", naive_dist)
     print_formatter("mojo_naive_dist time (ms)",Float64((eval_end - eval_begin)) / 1e6)
@@ -299,7 +299,7 @@ What did we change?
 def mojo_naive_dist:  
 - function arguments are typed  
 - function return value is typed  
-- local variables declared with either var or let  
+- local variables declared with either var orvar 
 - local variables typed  
 
 Here the DType.float64 parameter of our Tensor specifies that it contains 64-bit floating point values. Float64 return type represents a Mojo SIMD type, which is a low-level scalar value on the machine register. We also declare the variable s with the var keyword which tells the Mojo compiler that s is a mutable variable of type Float64.
@@ -316,16 +316,16 @@ See `euclid_distance2.mojo`
 ```py
 fn mojo_fn_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
     var s: Float64 = 0.0
-    let n = a.num_elements()
+   varn = a.num_elements()
     for i in range(n):
-        let dist = a[i] - b[i]
+       vardist = a[i] - b[i]
         s += dist*dist
     return sqrt(s)
 
 fn main():
-    let eval_begin = now()
-    let fn_dist = mojo_fn_dist(a, b)
-    let eval_end = now()
+   vareval_begin = now()
+   varfn_dist = mojo_fn_dist(a, b)
+   vareval_end = now()
 
     print("=== Mojo Performance with fn, declarations and typing and ===")
     print_formatter("mojo_fn_dist value", fn_dist)
@@ -369,7 +369,7 @@ fn mojo_dist_vectorized(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
 
     @parameter
     fn simd_norm[simd_width: Int](idx: Int):
-        let diff = a.simd_load[simd_width](idx) - b.simd_load[simd_width](idx)
+       vardiff = a.simd_load[simd_width](idx) - b.simd_load[simd_width](idx)
         sq_dist += (diff * diff).reduce_add()
 
     vectorize[simd_width, simd_norm](a.num_elements())
@@ -378,10 +378,10 @@ fn mojo_dist_vectorized(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
 
 fn main() raises:
     print("simdwidth:", simd_width)
-    let np = Python.import_module("numpy")
-    let n = 10_000_000
-    let anp = np.random.rand(n)
-    let bnp = np.random.rand(n)
+   varnp = Python.import_module("numpy")
+   varn = 10_000_000
+   varanp = np.random.rand(n)
+   varbnp = np.random.rand(n)
 
     var arr1_tensor = Tensor[dtype](n)
     var arr2_tensor = Tensor[dtype](n)
@@ -390,9 +390,9 @@ fn main() raises:
         arr1_tensor[i] = anp[i].to_float64()
         arr2_tensor[i] = bnp[i].to_float64()
 
-    let eval_begin = now()
-    let mojo_arr_vec_sum = mojo_dist_vectorized(arr1_tensor, arr2_tensor)
-    let eval_end = now()
+   vareval_begin = now()
+   varmojo_arr_vec_sum = mojo_dist_vectorized(arr1_tensor, arr2_tensor)
+   vareval_end = now()
 
     print_formatter("mojo_vectorized_dist value: ", mojo_arr_vec_sum)
     print_formatter("mojo_fn_vectorized time (ms): ",Float64((eval_end - eval_begin)) / 1e6)
@@ -523,7 +523,7 @@ fn matrix_append(self: object, value: object) raises -> object:
     return None
 
 fn matrix_init(rows: Int, cols: Int) raises -> object:
-    let value = object([])
+   varvalue = object([])
     return object(
         Attr("value", value), Attr("__getitem__", matrix_getitem), Attr("__setitem__", matrix_setitem), 
         Attr("rows", rows), Attr("cols", cols), Attr("append", matrix_append),
@@ -552,15 +552,15 @@ def benchmark_matmul_untyped(M: Int, N: Int, K: Int, python_gflops: Float64):
         except:
             pass
 
-    let secs = Float64(Benchmark().run[test_fn]()) / 1e9
+   varsecs = Float64(Benchmark().run[test_fn]()) / 1e9
     print("Mojo seconds: ", secs)
     _ = (A, B, C)
-    let gflops = ((2*M*N*K)/secs) / 1e9
-    let speedup : Float64 = gflops / python_gflops
+   vargflops = ((2*M*N*K)/secs) / 1e9
+   varspeedup : Float64 = gflops / python_gflops
     print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
 
 fn main() raises:
-    let python_gflops = 0.005356575518265889
+   varpython_gflops = 0.005356575518265889
     _ = benchmark_matmul_untyped(128, 128, 128, python_gflops)
 ```
 
@@ -647,11 +647,11 @@ fn benchmark[
     fn test_fn():
         _ = func(C, A, B)
 
-    let secs = Float64(Benchmark().run[test_fn]()) / 1_000_000_000
+   varsecs = Float64(Benchmark().run[test_fn]()) / 1_000_000_000
     # Prevent the matrices from being freed before the benchmark run
     _ = (A, B, C)
-    let gflops = ((2 * M * N * K) / secs) / 1e9
-    let speedup: Float64 = gflops / python_gflops
+   vargflops = ((2 * M * N * K) / secs) / 1e9
+   varspeedup: Float64 = gflops / python_gflops
     print(gflops, "GFLOP/s, a", speedup.value, "x speedup over Python")
 
 fn main() raises:
@@ -879,14 +879,14 @@ struct Board[grid_size: Int]:
     alias elements = grid_size**2
 
     fn __init__(inout self, *values: Int) raises:
-        let args_list = VariadicList(values)
+       varargs_list = VariadicList(values)
         if len(args_list) != self.elements:
             raise Error(
                 "The amount of elements must be equal to the grid_size parameter"
                 " squared"
             )
 
-        let sub_size = sqrt(Float64(grid_size))
+       varsub_size = sqrt(Float64(grid_size))
         if sub_size - sub_size.cast[DType.int64]().cast[DType.float64]() > 0:
             raise Error(
                 "The square root of the grid grid_size must be a whole number 9 = 3,"
@@ -920,8 +920,8 @@ struct Board[grid_size: Int]:
                 return False
 
         # Check the given number in the box
-        let start_row = row - row % self.sub_size
-        let start_col = col - col % self.sub_size
+       varstart_row = row - row % self.sub_size
+       varstart_col = col - col % self.sub_size
         for i in range(self.sub_size):
             for j in range(self.sub_size):
                 if self[i + start_row, j + start_col] == num:
@@ -959,12 +959,12 @@ fn bench(python_secs: Float64):
 
     fn solve():
         try:
-            let board = init_board()
+           varboard = init_board()
             _ = board.solve()
         except:
             pass
 
-    let mojo_secs = Benchmark().run[solve]() / 1e9
+   varmojo_secs = Benchmark().run[solve]() / 1e9
     print("mojo seconds:", mojo_secs)
     print("speedup:", python_secs / mojo_secs)
 
@@ -1175,8 +1175,8 @@ fn mandelbrot_kernel_SIMD[
     simd_width: Int
 ](c: ComplexSIMD[float_type, simd_width]) -> SIMD[float_type, simd_width]:
     """A vectorized implementation of the inner mandelbrot computation."""
-    let cx = c.re
-    let cy = c.im
+   varcx = c.re
+   varcy = c.im
     var x = SIMD[float_type, simd_width](0)
     var y = SIMD[float_type, simd_width](0)
     var y2 = SIMD[float_type, simd_width](0)
@@ -1195,19 +1195,19 @@ fn mandelbrot_kernel_SIMD[
 
 
 fn vectorized():
-    let t = Tensor[float_type](height, width)
+   vart = Tensor[float_type](height, width)
 
     @parameter
     fn worker(row: Int):
-        let scale_x = (max_x - min_x) / width
-        let scale_y = (max_y - min_y) / height
+       varscale_x = (max_x - min_x) / width
+       varscale_y = (max_y - min_y) / height
 
         @parameter
         fn compute_vector[simd_width: Int](col: Int):
             """Each time we oeprate on a `simd_width` vector of pixels."""
-            let cx = min_x + (col + iota[float_type, simd_width]()) * scale_x
-            let cy = min_y + row * scale_y
-            let c = ComplexSIMD[float_type, simd_width](cx, cy)
+           varcx = min_x + (col + iota[float_type, simd_width]()) * scale_x
+           varcy = min_y + row * scale_y
+           varc = ComplexSIMD[float_type, simd_width](cx, cy)
             t.data().simd_store[simd_width](
                 row * width + col, mandelbrot_kernel_SIMD[simd_width](c)
             )
@@ -1220,7 +1220,7 @@ fn vectorized():
         for row in range(height):
             worker(row)
 
-    let vectorized = Benchmark().run[bench[simd_width]]() / 1e6
+   varvectorized = Benchmark().run[bench[simd_width]]() / 1e6
     print("Vectorized", ":", vectorized, "ms")
 
     try:
@@ -1255,7 +1255,7 @@ def show_plot(tensor: Tensor[float_type]):
 
 
 fn main() raises:
-    let python_secs = 11.530147033001413
+   varpython_secs = 11.530147033001413
     vectorized()
 ```
 
@@ -1334,15 +1334,15 @@ fn calculate_pi(terms: Int) -> Float64:
     return pi
 
 fn main():
-    let start = now()     # 2
+   varstart = now()     # 2
     print(calculate_pi(100000000))
-    let calc_time = now() - start
+   varcalc_time = now() - start
     print("Mojo pi2 Calculates PI in ", calc_time/1e9, " seconds")
 
 # => 3.141592643589326
 # => Mojo pi2 Calculates PI in  1.160146935  seconds
 ```
-The only difference is that we used fn functions in the Mojo version, so all variables have to be declared with let or var, and given a type. Mojo runs 17.7 x faster than Python.
+The only difference is that we used fn functions in the Mojo version, so all variables have to be declared withvaror var, and given a type. Mojo runs 17.7 x faster than Python.
 
 
 ## 20.9 - Timing a for loop
@@ -1379,9 +1379,9 @@ def call():
    return x
 
 def main():
-    let start_time = now()
-    let res = call()
-    let end_time = now()
+   varstart_time = now()
+   varres = call()
+   varend_time = now()
     print('duration in seconds:',(end_time - start_time)/1e9)
     print(res)
 

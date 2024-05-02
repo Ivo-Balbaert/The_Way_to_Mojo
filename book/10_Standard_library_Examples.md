@@ -16,7 +16,7 @@ fn add_positives[x: Int, y: Int]() -> UInt8:
     return x + y
 
 fn main():
-    let res = add_positives[2, 4]()
+   varres = add_positives[2, 4]()
     print(res)  # => 6
     # _ = add_positives[-2, 4]()  # 2
 ```
@@ -73,29 +73,29 @@ from testing import *
 
 
 fn main():
-    let b1 = 3 < 5
+   varb1 = 3 < 5
     print(assert_true(b1, "This is false!"))  # => None
     print(assert_false(b1, "This is false!"))
     # => ASSERT ERROR: This is false!
     # => False
-    let b2 = 3 > 5
+   varb2 = 3 > 5
     print(assert_true(b2, "This is false!"))
     # => ASSERT ERROR: This is false!
     # => False
     print(assert_false(b2, "This is false!"))
     # => True
 
-    let n = 41
-    let m = 42
+   varn = 41
+   varm = 42
     print(assert_equal(n, m))  # => False
     print(assert_not_equal(n, m))  # => True
 
-    let p = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
-    let q = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
+   varp = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
+   varq = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
     print(assert_equal(p, q))  # => True
 
-    let p2 = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
-    let q2 = SIMD[DType.float16, 4](1.1, 2.2, 3.3, 4.4)
+   varp2 = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
+   varq2 = SIMD[DType.float16, 4](1.1, 2.2, 3.3, 4.4)
     print(assert_almost_equal(p2, q2))
     # => ASSERT ERROR: The input value [1.0, 2.099609375, 3.19921875, 4.30078125] is not close to
     # [1.099609375, 2.19921875, 3.30078125, 4.3984375] with a diff of
@@ -124,7 +124,7 @@ fn sleeper():
     sleep(.01)
 
 fn main():
-    let report = benchmark.run[sleeper]()
+   varreport = benchmark.run[sleeper]()
     print(report.mean())   # => 0.010147911948148149
     report.print()
     print("")
@@ -182,7 +182,7 @@ fn fib_iterative(n: Int) -> Int:
     var n2 = 1
 
     while count < n:
-        let nth = n1 + n2
+       varnth = n1 + n2
         n1 = n2
         n2 = nth
         count += 1
@@ -195,12 +195,12 @@ fn sleeper():
 
 
 fn test_fib():
-    let n = 35
+   varn = 35
     for i in range(n):
         _ = fib(i)
 
 fn test_fib_iterative():
-    let n = 35
+   varn = 35
     for i in range(n):
         _ = fib_iterative(i)
 
@@ -279,7 +279,7 @@ fn row_mean_fast[dtype: DType](t: Tensor[dtype]) -> Tensor[dtype]:
 
 
 fn main():
-    let t = rand[dtype](1000, 1000)
+   vart = rand[dtype](1000, 1000)
     var result = Tensor[dtype](t.dim(0), 1)
 
     @parameter
@@ -290,16 +290,16 @@ fn main():
     fn bench_mean_fast():
         _ = row_mean_fast(t)
 
-    let report = benchmark.run[bench_mean]()
-  #  let report = benchmark.run[row_mean_naive(t)]()
-    let report_fast = benchmark.run[bench_mean_fast]()
+   varreport = benchmark.run[bench_mean]()
+  # varreport = benchmark.run[row_mean_naive(t)]()
+   varreport_fast = benchmark.run[bench_mean_fast]()
     report.print()
     report_fast.print()
     print("Speed up:", report.mean() / report_fast.mean())
 
 
 # => 202.3 Nov 11: for  main():
-#    let t = rand[dtype](1000,100000)
+#   vart = rand[dtype](1000,100000)
 # [29195:29195:20231111,103553.196898:ERROR file_io_posix.cc:144] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
 # [29195:29195:20231111,103553.196940:ERROR file_io_posix.cc:144] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
 # Please submit a bug report to https://github.com/modularml/mojo/issues and include the crash backtrace along with all the relevant source codes.
@@ -351,8 +351,8 @@ from memory.buffer import Buffer
 from memory.unsafe import DTypePointer
 
 fn main():
-    let p = DTypePointer[DType.uint8].alloc(8)  
-    let x = Buffer[8, DType.uint8](p)           # 1
+   varp = DTypePointer[DType.uint8].alloc(8)  
+   varx = Buffer[8, DType.uint8](p)           # 1
     x.zero()
     print(x.simd_load[8](0))                    # 2
     # => [0, 0, 0, 0, 0, 0, 0, 0]
@@ -369,8 +369,8 @@ fn main():
     # => [0, 10, 20, 30, 4, 5, 6, 7]    
 
     # SIMD:
-    let first_half = x.simd_load[4](0) * 2
-    let second_half = x.simd_load[4](4) * 10
+   varfirst_half = x.simd_load[4](0) * 2
+   varsecond_half = x.simd_load[4](4) * 10
 
     x.simd_store(0, first_half)
     x.simd_store(4, second_half)
@@ -424,7 +424,7 @@ struct Tensor[rank: Int, shape: DimList, type: DType]:      # 1
     var buffer: NDBuffer[rank, shape, type]
 
     fn __init__(inout self):
-        let size = shape.product[rank]().get()
+       varsize = shape.product[rank]().get()
         self.data = DTypePointer[type].alloc(size)
         memset_zero(self.data, size)
         self.buffer = NDBuffer[rank, shape, type](self.data)
@@ -448,7 +448,7 @@ struct Tensor[rank: Int, shape: DimList, type: DType]:      # 1
         return self.buffer.simd_load[1](VariadicList[Int](idx))
 
 fn main() raises:
-    let x = Tensor[3, DimList(2, 2, 2), DType.uint8]()          # 2
+   varx = Tensor[3, DimList(2, 2, 2), DType.uint8]()          # 2
     x.data.simd_store(0, SIMD[DType.uint8, 8](1, 2, 3, 4, 5, 6, 7, 8))
     print(x.buffer.num_elements())  # 3  => 8
 
@@ -460,7 +460,7 @@ fn main() raises:
     print(x.buffer[1, 1, 1])        # => 50  
     print(x.buffer[1, 1, 2])        # 7 => 88
 
-    let x2 = Tensor[3, DimList(2, 2, 2), DType.uint64]()
+   varx2 = Tensor[3, DimList(2, 2, 2), DType.uint64]()
     x2.data.simd_store(0, SIMD[DType.uint64, 8](0, 1, 2, 3, 4, 5, 6, 7))
     # print(x2[0, 2, 0])              # 9 
     # => Unhandled exception caught during execution: index out of bounds
@@ -479,13 +479,13 @@ fn main() raises:
     print(x.buffer.bytecount())    # => 8
     print(x.buffer.dim[0]())       # => 2
     print(x.buffer[1, 1, 1])       # => 10
-    let y = x.buffer.flatten()
+   vary = x.buffer.flatten()
     print(y[7])                    # => 10    
     print(x.buffer.get_nd_index(5)) # => (1, 0, 1)
     print(x.buffer.get_rank())     # => 3
     print(x.buffer.get_shape())    # => (2, 2, 2) 
     print(x.buffer.size())         # => 8
-    let new = x.buffer.stack_allocation()
+   varnew = x.buffer.stack_allocation()
     print(new.size())              # => 8
     print(x.buffer.stride(0))      # => 4
     print(x.buffer.get_nd_index(4)) # => (1, 0, 0)
@@ -636,8 +636,8 @@ def main():
         os = "macOS"
     else:
         os = "windows"
-    let cpu = String(_current_cpu())
-    let arch = String(_triple_attr())
+   varcpu = String(_current_cpu())
+   vararch = String(_triple_attr())
     var cpu_features = String(" ")
     if has_sse4():
         cpu_features = cpu_features.join(" sse4")
@@ -686,7 +686,7 @@ fn measure():
     fn closure():
         sleep1ms()
 
-    let nanos = time_function[closure]()   # 3
+   varnanos = time_function[closure]()   # 3
     print("sleeper took", nanos, "nanoseconds to run")
     # => sleeper took 1066729 nanoseconds to run
 
@@ -694,9 +694,9 @@ fn main():
     print(now())    # 1 => 227897314188
 
     # sleep()
-    let tic = now()     # 2
+   vartic = now()     # 2
     sleep(0.001)
-    let toc = now() - tic
+   vartoc = now() - tic
     print("slept for", toc, "nanoseconds")
     # => slept for 1160397 nanoseconds
 
@@ -729,19 +729,19 @@ time_function() (used in line 3) tells you how long it takes (in nanoseconds) fo
 
 InlinedFixedVector: small-vector optimization
 UnsafeFixedVector: fixed-capacity vector without bounds checks
-DynamicVector: dynamic resizing vector
+List: dynamic resizing vector
 
-### 10.8.1 DynamicVector
+### 10.8.1 List
 (see also § 4.3.2, 4.5, 7.9.2)
 This Vector type dynamically allocates memory to store elements.
 It supports pushing and popping from the back, resizing the underlying storage to accommodate more elements as needed. 
 
-See `dynamicvector1.mojo`:
+See `List1.mojo`:
 ```py
-from collections.vector import DynamicVector
+from collections.vector import List
 
 fn main():
-    var vec = DynamicVector[Int](8)  # 1
+    var vec = List[Int](8)  # 1
 
     vec.push_back(10)
     vec.push_back(20)
@@ -763,7 +763,7 @@ ptable, it does not implement the `__getitem__`/`__setitem__` methods
     vec[6] = 10         # 6
     print(len(vec))     # => 2
 
-    let vec2 = vec      # 7
+   varvec2 = vec      # 7
     vec[0] = 99
     print(vec2[0])      # => 99
     vec[1] = 100
@@ -796,7 +796,7 @@ Other useful variables are:
 > when setting new elements with vec[i]=  (as in line 6), len doesn't change. If you need len, only use push_back
 > ?? until now (2023 Sep 19) there is no bounds checking
 
-Copying a DynamicVector (line 7) will result in a shallow copy. vec2 will be a pointer to the same location in memory (schema ??). If we modify vec, then vec2 will also be updated.  
+Copying a List (line 7) will result in a shallow copy. vec2 will be a pointer to the same location in memory (schema ??). If we modify vec, then vec2 will also be updated.  
 
 Use a deep copy (line 8) to copy all the data to a different location in memory so it's independent from the original. Modifying the original then won't effect the new copy.
 
@@ -808,7 +808,7 @@ The `resize` method discards elements if smaller than current size, or adds unin
 
 The `clear` method deallocates all items in the vector (line 12, doesn't seem to work). The size is set to 0.
 
-### 10.8.2 Sorting a DynamicVector
+### 10.8.2 Sorting a List
 The sort module in package algorithms implements different sorting functions. Here is an example of usage:  
 
 See `sorting1.mojo`:
@@ -816,7 +816,7 @@ See `sorting1.mojo`:
 from algorithm.sort import sort
 
 fn main():
-    var v = DynamicVector[Int](3)
+    var v = List[Int](3)
 
     v.push_back(20)
     v.push_back(10)
@@ -881,7 +881,7 @@ To make a shallow or deep copy, or clear all elements, tee § 10.8.1
 - From v 0.5.0: 
 Tensor has new fromfile() and tofile() methods to save and load as bytes from a file.
 The built-in print() function now works on the Tensor type.
-TensorShape and TensorSpec now have constructors that take DynamicVector[Int] and StaticIntTuple to initialize shapes.
+TensorShape and TensorSpec now have constructors that take List[Int] and StaticIntTuple to initialize shapes.
 
 A tensor is a higher-dimensional matrix, its type Tensor is defined in module tensor (see line 1).  
 The tensor type manages its own data (unlike NDBuffer and Buffer which are just views), that is:  the tensor type performs its own memory allocation and freeing. Here is a simple example of using the tensor type to represent an RGB image and convert it to grayscale:
@@ -893,7 +893,7 @@ See `tensor0.mojo`:
 from tensor import Tensor
 
 fn main():
-    let t = Tensor[DType.int32](2, 2)
+   vart = Tensor[DType.int32](2, 2)
     print(t.simd_load[4](0, 1, 2, 3)) # => [0, 1970038374, 26739, 33] 
     t.simd_store[4](0, 1)  # 4 values from start get value 1
     print(t)
@@ -914,18 +914,18 @@ let channels = 3
 fn main():
     # Create the tensor of dimensions height, width, channels
     # and fill with random values.
-    let image = rand[DType.float32](height, width, channels) # -> Tensor
+   varimage = rand[DType.float32](height, width, channels) # -> Tensor
 
     # Declare the grayscale image.
-    let spec = TensorSpec(DType.float32, height, width)
+   varspec = TensorSpec(DType.float32, height, width)
     var gray_scale_image = Tensor[DType.float32](spec)
 
     # Perform the RGB to grayscale transform.
     for y in range(height):
         for x in range(width):
-            let r = image[y,x,0]
-            let g = image[y,x,1]
-            let b = image[y,x,2]
+           varr = image[y,x,0]
+           varg = image[y,x,1]
+           varb = image[y,x,2]
             gray_scale_image[Index(y,x)] = 0.299 * r + 0.587 * g + 0.114 * b
 
     print(gray_scale_image.shape().__str__()) # => 256x256
@@ -960,7 +960,7 @@ fn tensor_math_vectorized(t: Tensor[type]) -> Tensor[type]:
 
 
 fn main():
-    let t = rand[type](2,2)
+   vart = rand[type](2,2)
     print(t.shape().__str__()) # 3x3
     print(t.spec().__str__())  # 3x3xfloat32
     # print(t[0]) # => 0.1315377950668335
@@ -973,12 +973,12 @@ fn main():
        print(t[i]) 
 
     print()
-    let t1 = tensor_math(t)
+   vart1 = tensor_math(t)
     for i in range(t1.num_elements()):
        print(t1[i]) 
 
     print()
-    let t2 = tensor_math_vectorized(t)
+   vart2 = tensor_math_vectorized(t)
     for i in range(t2.num_elements()):
        print(t2[i]) 
 
@@ -1020,7 +1020,7 @@ See also:  Buffer § 10.4, 10.5
 See examples memset, memcpy, memset_zero
 
 The `stack_allocation` function lets you allocate data buffer space on the stack, given a data type and number of elements, for example:  
-` let rest_p: DTypePointer[DType.uint8] = stack_allocation[simd_width, UInt8, 1]()`
+`varrest_p: DTypePointer[DType.uint8] = stack_allocation[simd_width, UInt8, 1]()`
 
 
 ## 10.12 Working with files
@@ -1054,8 +1054,8 @@ alias float_type: DType = DType.float32 if is_defined["FLOAT32"]() else DType.fl
 
 fn main():
     print("float_type is: ", float_type)  # => float_type is:  float32
-    let spec = TensorSpec(float_type, 256, 256)
-    let image = Tensor[float_type](spec)
+   varspec = TensorSpec(float_type, 256, 256)
+   varimage = Tensor[float_type](spec)
 ```
 
 In the same way, you can also use name-value pairs, like -D customised=1234. In that case use the functions env_get_int or env_get_string.

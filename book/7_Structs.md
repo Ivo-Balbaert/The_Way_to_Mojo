@@ -2,13 +2,17 @@
 A struct is a custom data structure that groups related variables of different data types into a single unit that holds multiple values.
 
 Structs exist in all lower-level languages like C/C++ and Rust. You can build high-level abstractions for types (or "objects") in a *struct*. 
-A struct in Mojo is similar to a class in Python: they both support methods, fields, operator overloading, decorators for metaprogramming, and so on. To gain performance structs are by default stored on the stack, and all fields are memory inlined.
+A struct in Mojo is similar to a class in Python: they both support methods, fields, operator overloading, decorators for metaprogramming, and so on. 
+
+To gain performance, structs are by default stored on the stack, and all fields are memory inlined.
 
 >Note: At this time (Aug 2023), Mojo doesn't have the concept of "class", equivalent to that in Python; but it is on the roadmap.
 
 >Note: Python classes are dynamic: they allow for dynamic dispatch, monkey-patching (or "swizzling"), and dynamically binding instance properties at runtime. However, Mojo structs are completely static - they are bound at compile-time and you cannot add methods at runtime, so they do not allow dynamic dispatch or any runtime changes to the structure. Structs allow you to trade flexibility for performance while being safe and easy to use.
 
  By using a 'struct' (instead of 'class'), the attributes (fields) will be tightly packed into memory, such that they can even be used in data structures without chasing pointers around.
+
+XYZ
 
 ## 7.1 First example
 The following example demonstrates a struct MyInteger with one field called value. In line 2 an instance of the struct called myInt is made. This calls the constructor __init__ from line 1.
@@ -52,14 +56,12 @@ struct IntPair:
                self.second < rhs.second)
     
     fn dump(self):
-        print(self.first)
-        print(self.second)
+        print(self.first, self.second)
 
 fn pair_test() -> Bool:
-    let p = IntPair(1, 2)   # 4 
-    p.dump()                # => 1
-                            # => 2
-    let q = IntPair(2, 3)
+   varp = IntPair(1, 2)   # 4 
+   p.dump()                # => 1 2
+   varq = IntPair(2, 3)
     if p < q:           # 5 
         print("p < q")  # => p < q
 
@@ -69,7 +71,7 @@ fn main():
    print(pair_test()) # => True
 ```
 
-The fields of a struct (here lines 1-2) need to be defined as var when they are not initialized (2023 Sep: let fields are not yet allowed), and a type is necessary. 
+The fields of a struct (here lines 1-2) need to be defined as var when they are not initialized (2023 Sep:varfields are not yet allowed), and a type is necessary. 
 To make a struct, you need an __init__ method (see however § 11.1). 
 The `fn __init__` function (line 3) is an "initializer" - it behaves like a constructor in other languages. It is called in line 4. 
 All methods like it that start and end with __ are called *dunder*  (double-underscore) methods. They are widely used in internal code in MojoStdLib. They can be used directly as a method call, but there are often shortcuts or operators to call them (see the StringLiteral examples in strings.mojo).  
@@ -134,7 +136,7 @@ Overloading a function (or method) name occurs when two or more functions or met
 
 
 ### 7.4.1 Overloaded functions and methods
-Like in Python, you can define functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs and let *dynamic dispatch* decide how to handle the data. However, when you want to ensure type safety, Mojo also offers full support for overloaded functions and methods, a feature that does not exist in Python.  
+Like in Python, you can define functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs andvar*dynamic dispatch* decide how to handle the data. However, when you want to ensure type safety, Mojo also offers full support for overloaded functions and methods, a feature that does not exist in Python.  
 This allows you to define multiple functions with the same name but with different arguments. This is a common feature called *overloading*, as seen in many languages, such as C++, Java, and Swift.  
 When resolving a function call, Mojo tries each candidate and uses the one that works (if only one works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous if it can’t figure out which one to pick. In the latter case, you can resolve the ambiguity by adding an explicit cast on the call site.  
 
@@ -157,7 +159,7 @@ struct Complex:
         self.im = i
 
 fn main():
-    let c1 = Complex(7)
+   varc1 = Complex(7)
     print (c1.re)  # => 7.0
     print (c1.im)  # => 0.0
     var c2 = Complex(42.0, 1.0)
@@ -194,17 +196,17 @@ struct Rectangle:
         print("Rectangle created with length:", self.length, "and width:", self.width)
 
     fn area(self) -> Float32:
-        let area: Float32 = self.length * self.width
+       vararea: Float32 = self.length * self.width
         print("The area of the rectangle is:", area)
         return area
     
     fn area(self, side: Float32) -> Float32:
-        let area: Float32 = side * side
+       vararea: Float32 = side * side
         print("The area of the square is:", area)
         return area
 
     fn perimeter(self) -> Float32:
-        let perimeter: Float32 = 2 * (self.length + self.width)
+       varperimeter: Float32 = 2 * (self.length + self.width)
         print("The perimeter of the rectangle is:", perimeter)
         return perimeter
 
@@ -213,18 +215,18 @@ struct Rectangle:
                 self.width + other.width)
 
 fn main():
-    let square = Rectangle(10.0, 10.0)
+   varsquare = Rectangle(10.0, 10.0)
     # => Rectangle created with length: 10.0 and width: 10.0
-    let rect = Rectangle(5.0, 7.0)
+   varrect = Rectangle(5.0, 7.0)
     # => Rectangle created with length: 5.0 and width: 7.0
-    let squareArea = square.area()
+   varsquareArea = square.area()
     # => The area of the rectangle is: 100.0
-    let squareArea2 = square.area(10.0)
+   varsquareArea2 = square.area(10.0)
     # => The area of the square is: 100.0
-    let rect2 = square + rect                   # 2
+   varrect2 = square + rect                   # 2
     # => Rectangle created with length: 15.0 and width: 17.0
     # this is the same as calling:              
-    let rect2b = square.__add__(rect)           # 3
+   varrect2b = square.__add__(rect)           # 3
     # => Rectangle created with length: 15.0 and width: 17.0
 ```
 
@@ -276,7 +278,7 @@ struct HeapArray:                   # 1
 fn main():
     var a = HeapArray(3, 1)
     a.dump()  
-    let b = a  # <-- copy error: value of type 'HeapArray' cannot be copied into its destination
+   varb = a  # <-- copy error: value of type 'HeapArray' cannot be copied into its destination
     b.dump()   
     a.dump()   
 ```
@@ -296,9 +298,9 @@ fn __copyinit__(inout self, rhs: Self):         # 2
             self.data.store(i, rhs.data.load(i))
 
 fn main():
-    let a = HeapArray(3, 1)
+   vara = HeapArray(3, 1)
     a.dump()   # => [1, 1, 1]
-    let b = a
+   varb = a
     b.dump()   # => [1, 1, 1]
     a.dump()   # => [1, 1, 1]
 ```
@@ -370,8 +372,8 @@ fn use_something_big(borrowed a: SomethingBig, b: SomethingBig):
     b.print_id()  # => 20
 
 fn main():
-    let a = SomethingBig(10)
-    let b = SomethingBig(20)
+   vara = SomethingBig(10)
+   varb = SomethingBig(20)
     use_something_big(a, b)
 ```
 
@@ -401,9 +403,9 @@ struct MyInt:
        self = self + rhs  
 
 fn main():
-    let m = MyInt(10)
-    let n = MyInt(20)
-    let o = n + m
+   varm = MyInt(10)
+   varn = MyInt(20)
+   varo = n + m
     print(o.value)  # => 30
     
     var x: MyInt = 42
@@ -448,7 +450,7 @@ fn use_ptr(borrowed p: UniquePointer):
     print(p.ptr)      # => 100
     
 fn work_with_unique_ptrs():
-    let p = UniquePointer(100)
+   varp = UniquePointer(100)
     use_ptr(p)    # Pass to borrowing function.
     take_ptr(p^)  # 1 
 
@@ -493,13 +495,13 @@ The arguments are used as values within the function ("argument" and "expression
 Parametric code gets compiled (at compile-time, not JIT-TED at runtime) into multiple specialized versions parameterized by the concrete types used during program execution. 
     
 ## 7.9.2 Parametric structs
-We first encountered this concept in § 4.2.1, where we defined a DynamicVector as follows:  
-`var vec = DynamicVector[Int]()` 
+We first encountered this concept in § 4.2.1, where we defined a List as follows:  
+`var vec = List[Int]()` 
 But it could also have been: 
-`var vec = DynamicVector[Float]()` 
-`var vec = DynamicVector[String]()` 
+`var vec = List[Float]()` 
+`var vec = List[String]()` 
 
-A DynamicVector can be made for any type of items (type `AnyType`). The type is parametrized and indicated between the `[]`.
+A List can be made for any type of items (type `AnyType`). The type is parametrized and indicated between the `[]`.
 
 Another example of a parametric struct is the SIMD struct (see § 7.9.3).  
 See also § 12.2.
@@ -534,7 +536,7 @@ struct Array[T: AnyRegType]:                           # 1
         self.data.free()                    # 6
 
 fn main():
-    let v = Array[Float32](4, 3.14)         # 3
+   varv = Array[Float32](4, 3.14)         # 3
     print(v[0], v[1], v[2], v[3])
     # => 3.1400001049041748 3.1400001049041748 3.1400001049041748 3.1400001049041748
 ```
@@ -583,9 +585,9 @@ fn concat[ty: DType, len1: Int, len2: Int](
     return result
 
 fn main():
-    let a = SIMD[DType.float32, 2](1, 2)
-    let b = SIMD[DType.float32, 2](3, 4)
-    let x = concat[DType.float32, 2, 2](a, b)
+   vara = SIMD[DType.float32, 2](1, 2)
+   varb = SIMD[DType.float32, 2](3, 4)
+   varx = concat[DType.float32, 2, 2](a, b)
     print(x) # => [1.0, 2.0, 3.0, 4.0]
 
     print('result type:', x.element_type, 'length:', len(x))
@@ -597,8 +599,8 @@ Here the function `concat[ty: DType, len1: Int, len2: Int](lhs: SIMD[ty, len1], 
 * arguments: lhs and rhs are resp. a and b, len1 and len2 are both 2
 
 For:  
-    let a = SIMD[DType.float32, 2](1, 2)
-    let b = SIMD[DType.float32, 4](3, 4, 5, 6)
+   vara = SIMD[DType.float32, 2](1, 2)
+   varb = SIMD[DType.float32, 4](3, 4, 5, 6)
 we get as result:  
     [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
     result type: float32 length: 6
@@ -624,12 +626,12 @@ fn reduce_add[ty: DType, size: Int](x: SIMD[ty, size]) -> Int:
 
     # Extract the top/bottom halves, add them, sum the elements.
     alias half_size = size // 2
-    let lhs = slice[ty, half_size, size](x, 0)
-    let rhs = slice[ty, half_size, size](x, half_size)
+   varlhs = slice[ty, half_size, size](x, 0)
+   varrhs = slice[ty, half_size, size](x, half_size)
     return reduce_add[ty, half_size](lhs + rhs)
     
 fn main():
-    let x = SIMD[DType.index, 4](1, 2, 3, 4)
+   varx = SIMD[DType.index, 4](1, 2, 3, 4)
     print(x) # => [1, 2, 3, 4]
     print("Elements sum:", reduce_add[DType.index, 4](x))
     # => Elements sum: 10
