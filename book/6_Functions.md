@@ -5,7 +5,7 @@ As we've seen, in Mojo you can both use `def` or `fn` functions, unlike in Pytho
 A key trick in Mojo is that you can opt in at any time to a faster and safer 'mode' as a developer, by using `fn` instead of `def` to create your function. In the `fn` mode Mojo can create optimized machine code to implement your function.
 
 ## 6.1 Difference between fn and def
-`def` is defined to be very dynamic, flexible and generally compatible with Python: arguments are copied and mutable, local variables are implicitly declared on first use, and scoping isn’t enforced. The default argument type is `object`, representing a particular Mojo type designed for dynamic code.
+`def` is defined to be very dynamic, flexible and generally compatible with Python: arguments are copied and mutable, local variables are implicitly declared on first use, and scoping isn’t enforced. The default argument type is `object` (see § 4.5), representing a particular Mojo type designed for dynamic code.
 
 Example:
 ```py
@@ -16,9 +16,9 @@ def calc(a, b):
 In this code, the types of `a` and `b` are `object`, as is the return type.
 This is great for high level programming and scripting, but is not always great for systems programming.  
 
-To complement this, Mojo provides an `fn` declaration which is like a "strict mode" for def.
-With fn, explicit specification of argument types (except `self`), parameters, and the return value is mandatory.
-Also arguments are so-called `borrowed`, they are immutable references. Argument values default to being immutable in the body of the function. 
+Mojo additionally provides an `fn` declaration, which is like a "strict mode" for def.
+With fn, explicit specification of argument types (except for the `self` argument in struct methods, see § 7), parameters, and the return value is mandatory.
+Also arguments are so-called `borrowed`, they are *immutable references*. This means that argument values by default cannot be changed in the body of the function. 
 >Note: In § 6.4 some more detail on function arguments is given.
 
 Example:
@@ -30,21 +30,15 @@ fn calc(a: Int, b: Int) -> Int:
 We see here that the argument type of `name` and the return type are both restricted to `String`.
 If the value of `name` would not fit that type, `fn` would give an error at compile-time, `def` would crash the running program!
 
-Similarly, a missing return type specifier is interpreted as returning `None` instead of an unknown return type. 
+Similarly, a missing return type specifier is interpreted as returning `None` (instead of an unknown return type). `None` means there the function has no return value.  
 
 >Note that both can be explicitly declared to return `object`, which allows one to opt-in to the behavior of a def if desired.
 
-All local variables must be declared with `var`, the type is either explicitly given, or inferred by the compiler. This catches name typos!
-
 Both `def` and `fn` support raising exceptions, but this must be explicitly declared on an fn with the `raises` keyword, as shown in the following section.
-
-*Exercise:*
-Write a complete program with a main() function, and call both the def and the fn functions. Experiment with the types of the arguments a and b (see exc6.1.mojo)
->Note: For the `def` function, first read the next section.
 
 XYZ
 
-## 6.2  An fn that calls a def needs a try/except
+## 6.2  An fn that calls a def needs the raises keyword
 Consider the following example: 
 
 See `try_except.mojo`:
@@ -87,6 +81,10 @@ fn main():
     except:  
         print("error")
 ```
+
+*Exercise:*
+Write a complete program with a main() function, and call both the def and the fn functions from § 6.1. Experiment with the types of the arguments a and b (see exc6.1.mojo)
+
 
 ## 6.3 Function arguments and return type
 Functions declared as `fn` in Mojo must specify the types of their arguments. If a value is returned, its type must be specified after a `->` symbol and before the body of the function.

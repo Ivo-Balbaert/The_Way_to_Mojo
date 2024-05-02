@@ -427,8 +427,49 @@ We can loop through and set the values, one row at a time with SIMD using the ab
 Because it's returning a SIMD[DType.u8, 8], we can also modify the column value using __setitem__ from the SIMD implementation (line 3).  
 As another example, lets take the fourth row, doubling it, and then writing that to the first row (line 4).
 
-## 12.5 Sorting with pointers
-### 12.5.1 Sorting with Bubblesort
+## 12.5 Random numbers
+This functionality is implemented in the `random` package.
+
+See `random1.mojo`:
+```py
+from random import seed, rand, randint, random_float64, random_si64, random_ui64
+from memory import memset_zero
+
+fn main():
+    var p1 = DTypePointer[DType.uint8].alloc(8)    # 1
+    var p2 = DTypePointer[DType.float32].alloc(8)  # 
+    memset_zero(p1, 8)
+    memset_zero(p2, 8)
+    print('values at p1:', p1.load[width=8](0))
+    # => values at p1: [0, 0, 0, 0, 0, 0, 0, 0]
+    print('values at p2:', p2.load[width=8](0))
+    # => values at p2: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    rand[DType.uint8](p1, 8)        # 2A
+    rand[DType.float32](p2, 8)      # 2B
+    print('values at p1:', p1.load[width=8](0))
+    # => values at p1: [0, 33, 193, 117, 136, 56, 12, 173]
+    print('values at p2:', p2.load[width=8](0))
+    # => values at p2: [0.93469291925430298, 0.51941639184951782, 0.034572109580039978, 0.52970021963119507, 0.007698186207562685, 0.066842235624790192, 0.68677270412445068, 0.93043649196624756]
+
+    randint[DType.uint8](p1, 8, 0, 10)  # 3
+    print(p1.load[width=8](0))
+    # => [9, 5, 1, 7, 4, 7, 10, 8]
+
+    print(random_float64(0.0, 1.0)) # 4 => 0.047464513386311948
+    print(random_si64(-10, 10)) # 5 => 5
+    print(random_ui64(0, 10)) # 6 => 3
+```
+
+In lines 1 and following we create two variables to store new addresses on the heap and allocate space for 8 values, note the different DType, uint8 and float32 respectively. Zero out the memory to ensure we don't read garbage memory.
+Now in lines 2A-B, we fill them both with 8 random numbers.
+To generate random integers in a range, for example 1 - 10, use the function randint (see line 3).  
+The function random_float64 returns a single random Float64 value within a specified range e.g 0.0 to 1.0 (see line 4).
+The function random_si64 returns a single random Int64 value within a specified range e.g -10 to +10 (see line 5).
+The function random_ui64 returns a single random UInt64 value within a specified range e.g 0 to +10 (see line 6).
+
+## 12.6 Sorting with pointers
+### 12.6.1 Sorting with Bubblesort
 Here is a simple example of how to sort a ListLiteral by using a Pointer to it:
 
 See `bubble_sort.mojo`:

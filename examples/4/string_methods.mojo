@@ -4,16 +4,11 @@ fn main() raises:    # raised needed because of atoi
 
     print(s[0]) # => a
     for i in range(len(s)):     # 1
-        print(s[i])
-    # a
-    # b
-    # c
-    # d
-    # e
+        print(s[i], end=" ")    # => a b c d e
     # Slicing:
     print(s[2:4]) # => cd       # 2
     print(s[1:])  # => bcde     # 3
-    print(s[:5]) # => abcde
+    print(s[:5])  # => abcde
     print(s[:-1]) # => abcd     # 4
     print(s[::2]) # => ace      # 5
     
@@ -36,9 +31,10 @@ fn main() raises:    # raised needed because of atoi
     var sit = StaticIntTuple[3](1,2,3)
     print(j.join(sit)) # => 1🔥2🔥3       # 8
 
+    # Conversion from String to integer: atol
     var n = atol("19")
-    print(n)                               # 9
-    # var e = atol("hi") # => Unhandled except ion caught during execution: 
+    print(n)                               # 9 =>
+    # var e = atol("hi") # => Unhandled exception caught during execution: 
     # String is not convertible to integer.
     # print(e) 
 

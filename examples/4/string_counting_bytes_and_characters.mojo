@@ -47,14 +47,6 @@ fn chars_count(s: StringLiteral) -> Int:
     return result
 
 fn main():
-    # StringLiteral
-    var s = "hello"
-    # var p = Pointer(s.data()) # error: cannot construct 'Pointer' from 'DTypePointer[si8]' value in 'var' initializ
-    # for i in range(len(s)):
-    #     print_no_newline(p[i], " - ")
-    # # => 104  - 101  - 108  - 108  - 111  -
-    # String
-    print()
     var s2: String = "hello"
     for i in range(len(s2)):
         print(s2[i], " - ", end="")

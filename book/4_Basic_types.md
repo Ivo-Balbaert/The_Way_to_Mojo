@@ -118,6 +118,10 @@ The integer types are defined in modules `int` and `int_literal`.
 
 A small handy detail: _ can be used to separate thousands:  `10_000_000`
 
+Equality is checked with ==, the inverse is !=
+The following normal operators exist: -, <, >, <=, >=, + (add), - (sub), *, / (returns a Float).
+Mojo allows you to define custom bitwidth integers (see § 14.6 Custom bitwidth integers).
+
 ### 4.3.1.1 Using Ints as indexes
 Integers can also be used as indexes, as shown in the following example. Here the parametrized type List (from module `collections.list`) takes Int as the type of its elements:
 
@@ -198,9 +202,6 @@ fn main() raises:
     print(2**100)  # => 0
 ```
 
-Equality is checked with ==, the inverse is !=
-The following normal operators exist: -, <, >, <=, >=, + (add), - (sub), *, / (returns a Float).
-See § 
 
 ### 4.3.2 The Float types
 The floating point types live in module `float_literal`.
@@ -534,69 +535,24 @@ For a SIMD vector `a = SIMD[DType.float32, 2](1, 2)` and another vector with ele
 (See also Vectorization: § 20.5.6)
 
 
-## 4.2.3 Random numbers
-This functionality is implemented in the `random` package.
+## 4.5 The String types
+Mojo has no equivalent of a char type for individual characters.
 
-See `random1.mojo`:
-```py
-from random import seed, rand, randint, random_float64, random_si64, random_ui64
-from memory import memset_zero
+### 4.5.1 The StringLiteral type
+The `StringLiteral` type is built-in. In `strings.mojo` a value of the type `StringLiteral` is made in line 1. (Guess the error when you try to give it the value 20 and test it out.)
+The value can be delimited by "" or ''. 
 
-fn main():
-    var p1 = DTypePointer[DType.uint8].alloc(8)    # 1
-    var p2 = DTypePointer[DType.float32].alloc(8)  # 
-    memset_zero(p1, 8)
-    memset_zero(p2, 8)
-    print('values at p1:', p1.load[width=8](0))
-    # => values at p1: [0, 0, 0, 0, 0, 0, 0, 0]
-    print('values at p2:', p2.load[width=8](0))
-    # => values at p2: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-    rand[DType.uint8](p1, 8)        # 2A
-    rand[DType.float32](p2, 8)      # 2B
-    print('values at p1:', p1.load[width=8](0))
-    # => values at p1: [0, 33, 193, 117, 136, 56, 12, 173]
-    print('values at p2:', p2.load[width=8](0))
-    # => values at p2: [0.93469291925430298, 0.51941639184951782, 0.034572109580039978, 0.52970021963119507, 0.007698186207562685, 0.066842235624790192, 0.68677270412445068, 0.93043649196624756]
-
-    randint[DType.uint8](p1, 8, 0, 10)  # 3
-    print(p1.load[width=8](0))
-    # => [9, 5, 1, 7, 4, 7, 10, 8]
-
-    print(random_float64(0.0, 1.0)) # 4 => 0.047464513386311948
-    print(random_si64(-10, 10)) # 5 => 5
-    print(random_ui64(0, 10)) # 6 => 3
-```
-
-In lines 1 and following we create two variables to store new addresses on the heap and allocate space for 8 values, note the different DType, uint8 and float32 respectively. Zero out the memory to ensure we don't read garbage memory.
-Now in lines 2A-B, we fill them both with 8 random numbers.
-To generate random integers in a range, for example 1 - 10, use the function randint (see line 3).  
-The function random_float64 returns a single random Float64 value within a specified range e.g 0.0 to 1.0 (see line 4).
-The function random_si64 returns a single random Int64 value within a specified range e.g -10 to +10 (see line 5).
-The function random_ui64 returns a single random UInt64 value within a specified range e.g 0 to +10 (see line 6).
-
-## 4.3 The String types
-Mojo has no equivalent of a char type.
-
-Summary:
-* StringLiteral is compile time known, static lifetime, immutable. 
-* String owns the underlying buffer, backed by List, hence mutable, 0 terminated.  
-* StringRef does not own underlying buffer, is immutable, not 0 terminated. 
-
-### 4.3.1 The StringLiteral type
-The `StringLiteral` type is built-in. In `strings.mojo` a value of that type is made in line 1. (Guess the error when you try to give it the value 20 and test it out.)  
-It is written directly into the data segment of the binary. When the program starts, it's loaded into read-only memory, which means it's constant and lives for the duration of the program.
 String literals are all null-terminated for compatibility with C APIs (but this is subject to change). String literals store their length as an integer, and this does not include the null terminator.
 
-They can be converted to a Bool value (see lines 1B-C): an empty string is False, an non-empty is True. (Bool() doesn't work here).
-?? also examples with ''
+They can be converted to a Bool value (see lines 1B-C): an empty StringLiteral is False, a non-empty is True. (Bool() doesn't work here).
+
 
 See `strings.mojo`:
 ```py
-fn main():
-    # StringLiteral:
-    var lit = "This is my StringLiteral"  # 1
+fn main() raises:
+    var lit = "This is my StringLiteral"       # 1
     print(lit)  # => This is my StringLiteral
+    var lit2 = 'This is also a StringLiteral'  # 1A
 
     # lit = 20  # => error: Expression [9]:26:11: cannot implicitly convert 'Int' value to 'StringLiteral' in assignment
 
@@ -609,49 +565,48 @@ fn main():
     x = "abc"
     y = "abc"
     var z = "ab"
-    print(x.__eq__(y))  # 1D => True
-    print(x.__eq__(z))  # => False
-    print(x == y)  # 1E => True
+    print(x == y)  # 1D => True # equivalent to x.__eq__(y)
+    print(x == z)  # => False
 
     z = "ab"
-    print(x.__ne__(y))  # => False
-    print(x.__ne__(z))  # => True
     print(x != y)  # => False
+    print(x != z)  # => True
 
     var x1 = "hello "
     var y1 = "world"
-    var c = x.__add__(y)
-    var d = x1 + y1
-    print(c)  # => hello world
-    print(d)  # => hello world
+    var d = x1 + y1  # equivalent to x1.__add__(y1)
+    print(d)         # => hello world
    
     x = "string"
-    print(x.__len__())  # => 6
-    print(len(x))  # => 6
+    print(len(x))  # => 6   # equivalent to x.__len__()  
 
-    x = "string"
     var y2 = x.data()
     x = "alo"
-    print(y2)  # => string
-    print(x)  # => alo
+    print(y2)  # 2 => 0x7f72bc000170
+    print(x)   # => alo
+
+    print(int("19"))    # 2 => 19
+    print(int("Mojo"))  # => Unhandled exception caught during execution: String is not convertible to integer.
 
     # print(("hello world")[0]) # => Error: `StringLiteral` is not subscriptable
     # var s2 = "hello world" # s2 is a `StringLiteral`
     # print(s2[:5]) # ERROR: `StringLiteral` is not subscriptable
 ```
 
-Equality is tested with the method __eq__ or the == operator. (1D-E). Not equality with __ne__ or != .
-You can join or concatenate two StringLiterals with __add__ or the + operator.
-The length of a string is given by the __len__ method or len() function.
+Equality is tested with the == operator (or the method __eq__, see lines 1D-E). Not equality with != (or  __ne__).
+You can join or concatenate two StringLiterals the + operator or __add__.
+The length of a string is given by the len() function or __len__ method.
 
-`data` gets the raw pointer to the underlying data; this method has as return type 
-DTypePointer[si8, 0]. This means that the method returns a pointer to the underlying data of the string literal. The `si8` indicates that the data is a sequence of 8-bit signed integers, which is a common way to represent characters in a string (signed ??).
+`data` gets the raw pointer to the underlying data, see line 2.
+This could be useful if you need to pass the string data to a function that requires a pointer, or if you want to perform low-level operations on the string data.
 
-So, if you have a StringLiteral object, you can call data() on it to get a pointer to its underlying data. This could be useful if you need to pass the string data to a function that requires a pointer, or if you want to perform low-level operations on the string data.
+>Note: this method has as return type DTypePointer[si8, 0]. This means that the method returns a pointer to the underlying data of the string literal. The `si8` indicates that the data is a sequence of 8-bit signed integers, which is a common way to represent characters in a string (signed ??).
 
+### 4.5.1.1   Converting a StringLiteral to an integer
+Use the `int()` method, see line 2.
 
-### 4.3.2 The String type
-The `String` type represents an immutable(??) string. The `string` module contains basic methods for working with strings. Mojo uses UTF-8 encoding to store strings. The length len corresponds to the number of bytes, not number of characters.
+### 4.5.2 The String type
+The `String` type represents a mutable string. The `string` module contains basic methods for working with strings. UTF-8 encoding is used to store strings. The length len corresponds to the number of bytes, not number of characters.
 The string value is heap-allocated, but the String itself is actually a pointer to the heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture ??)
 
 ```py
@@ -663,26 +618,6 @@ The string value is heap-allocated, but the String itself is actually a pointer 
     print(ord(s[0]))  # => 77
     print(String("hello world")[0])  # => h
     var s8 : String = 1 # implicit type conversion, uses constructor __init__(inout self, num: Int)
-
-    # building a string with a List:
-    var vec = List[Int8](2)  # 5
-    vec.append(78)
-    vec.append(79)
-
-    # 6:
-    # error: cannot construct 'DTypePointer[si8, 0]' from 'AnyPointer[SIMD[si8, 1]]' value
-    # var vec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
-    # print(vec_str_ref)  # 7 => NO
-
-    # vec[1] = 78
-    # print(vec_str_ref)  # 8 => NN
-    # var vec_str = String(vec_str_ref)  # 9
-    # print(vec_str)  # => NN
-
-    vec[0] = 65
-    vec[1] = 65
-    # print(vec_str_ref)  # => AA
-    # print(vec_str)  # 10 => NN
 ```
 
 One way to make a String is to convert a StringLiteral value with `String(value)`, as in line 3. This works exactly the same as the `var s9: String = "Mojo🔥"` in the previous line.
@@ -690,44 +625,24 @@ One way to make a String is to convert a StringLiteral value with `String(value)
 Strings are 0-index based, and the i-th ASCII character can be read with `s[i]` (see line 4). The `ord` function gives the corresponding ASCII value of the character. You can work with Unicode characters by working with slices (see line 11).
 
 This works because a String is backed by a data structure known as `List[SIMD[si8, 1]]` or `List[Int8]`. This is similar to a Python list, here it's storing multiple int8's that represent the characters.  
-You can build a string starting from a List (see line 5), and add two ASCII characters to it. 
 
-To display it, print(vec) doesn't work. To do that, we can use a `StringRef` to get a pointer to the same location in memory, but with the methods required to output the numbers as text, see lines 6-7.
+You can build a string starting from a List (see line 5 in the code below), and add some ASCII characters to it. In line 6, we convert the List to a String.
 
 ```py
     # building a string with a List:
-    from collections.vector import List
-    var vec = List[Int8](2)    # 5
-    vec.push_back(78)
-    vec.push_back(79)
-
-#     from memory.unsafe import DTypePointer
-#     # 6:
-#    varvec_str_ref = StringRef(DTypePointer[DType.int8](vec.data).address, vec.size)
-#     print(vec_str_ref) # 7 => NO
-# ```
-
-Because it points to the same location in heap memory, changing the original vector will also change the value retrieved by the reference:
-
-```py
-    # vec[1] = 78
-    # print(vec_str_ref)  # 8 => NN
+    var buf = List[Int8](2)  # 5
+    buf.append(65)
+    buf.append(79)
+    buf[0] = 78
+    buf.append(0)
+    var str = String(buf)  # 6
+    print(str)  # => NA0
 ```
 
-In line (9) we make a deep copy `vec_str` of the string. Having made a copy of the data to a new location in heap memory, we can now modify the original and it won't effect our copy (see line 10):
-
-```py
-    #varvec_str = String(vec_str_ref)  # 9
-    # print(vec_str)      # => NN
-
-    # vec[0] = 65
-    # vec[1] = 65
-    # print(vec_str_ref)  # => AA
-    # print(vec_str)      # 10 => NN
-```
-
-### 4.3.3 The StringRef type
+### 4.5.3 The StringRef type
+(defined in the utils module)
 A value of type `StringRef` represents a constant reference to a string, namely: a sequence of characters and a length, which need not be null terminated.
+
 See the code examples for how this can be used, directly or by using the pointer .data(), optionally with the length:  
 * data: A pointer to the beginning of the string data being referenced
 * length: The length of the string being referenced.
@@ -739,7 +654,6 @@ It has the methods `getitem`, equal, not equal and length:
 ```py
     # StringRef:
     var isref = StringRef("i")
-    # var isref : StringRef = StringRef("a")
     print(isref.data)  # => i
     print(isref.length)  # => 1
     print(isref)  # => i
@@ -750,26 +664,22 @@ It has the methods `getitem`, equal, not equal and length:
     var str_ref = StringRef(ptr)
     print(str_ref)  # => Mojo
 
-    var y3 = "string_2"
-    var ptry = y3.data()
-    var length = len(y)
-    var str_ref2 = StringRef(ptry, length)
-    print(str_ref2.length)  # => 8
-    print(str_ref2)  # => string_2
-
     var x2 = StringRef("hello")
     print(x2.__getitem__(0))  # => h
     print(x2[0])  # => h
 
     var s1 = StringRef("Mojo")
     var s2 = StringRef("Mojo")
-    print(s1.__eq__(s2))  # => True
     print(s1 == s2)  # => True
-    print(s1.__ne__(s2))  # => False
     print(s1 != s2)  # => False
-    print(s1.__len__())  # => 4
     print(len(s1))  # => 4
 ```
+
+Summary:
+* StringLiteral is compile time known, static lifetime. 
+* String owns the underlying buffer, backed by List, hence it is mutable, 0-terminated.  
+* StringRef does not own underlying buffer, is immutable(??), not 0-terminated. 
+
 
 ### 4.3.4 Some String methods
 See `string_methods.mojo`:
@@ -780,16 +690,11 @@ fn main() raises:    # raised needed because of atoi
 
     print(s[0]) # => a
     for i in range(len(s)):     # 1
-        print(s[i])
-    # a
-    # b
-    # c
-    # d
-    # e
+        print(s[i], end=" ")    # => a b c d e
     # Slicing:
     print(s[2:4]) # => cd       # 2
     print(s[1:])  # => bcde     # 3
-    print(s[:5]) # => abcde
+    print(s[:5])  # => abcde
     print(s[:-1]) # => abcd     # 4
     print(s[::2]) # => ace      # 5
     
@@ -812,9 +717,10 @@ fn main() raises:    # raised needed because of atoi
     var sit = StaticIntTuple[3](1,2,3)
     print(j.join(sit)) # => 1🔥2🔥3       # 8
 
+    # Conversion from String to integer: atol
     var n = atol("19")
-    print(n)                               # 9
-    # var e = atol("hi") # => Unhandled except ion caught during execution: 
+    print(n)                               # 9 =>
+    # var e = atol("hi") # => Unhandled exception caught during execution: 
     # String is not convertible to integer.
     # print(e) 
 
@@ -826,7 +732,7 @@ fn main() raises:    # raised needed because of atoi
 
     var s2 = String(42)
     print(s2) # => 42
-    ```
+```
 
 Looping over a string is shown in line 1.  
 Using a slice to print part of the string (here: from 2 up to 4 non-inclusive) in line 2.
@@ -836,7 +742,7 @@ Only get every second item after the start position (line 5).
 
 Both slicing and indexing work with bytes, not characters, for example an emoji is 4 bytes so you need to use this slice of 4 bytes to print the character (see line 11):
 ```py
-   varemoji = String("🔥😀")
+    var emoji = String("🔥😀")
     print("fire:", emoji[0:4])    # 11 => fire: 🔥
     print("smiley:", emoji[4:8])  # => smiley: 😀
 ```
@@ -845,7 +751,7 @@ Appending: Returns a new string by copying memory (see line 6).
 The join function has a similar syntax to Python's join. You can join elements using the current string as a delimiter (see line 7).
 You can also use it to join elements of a StaticIntTuple (line 8).
 
-`atol`: The term comes from the C stdlib for ASCII to long-integer, it converts a string to an Int (currently just works with base-10 / decimal).
+`atol`: The term comes from the C stdlib for ASCII to long-integer, it converts a String to an Int (currently just works with base-10 / decimal).
 
 Use `chr` to convert an integer between 0 and 255 to a string containing the single character. ord stands for ordinal which means the position of the character in ASCII. Only 1 byte utf8 (ASCII) characters currently work, anything outside will currently wrap (see line 9).
 
@@ -853,9 +759,20 @@ Use String(integer) to convert an integer to a string.
 
 The `isdigit` function checks if the character passed in is a valid decimal between 0 and 9, which in ASCII is 48 to 57.
 
-See also `string_counting_bytes_and_characters.mojo`
 
-- v 0.5.0: The String type has the count() and find() methods to enable counting the number of occurrences or finding the offset index of a substring in a string. It also has a replace() method which allows you to replace a substring with another string.
+**Other useful methods**
+* strip : to remove whitespace
+* count : counting the number of occurrences of a substring in a string
+* find : finding the offset index of a substring in a string 
+* replace : replace a substring with another string.
+* split : split the string by a delimiter
+* lower - upper
+* startswith - endswith
+* isdigit, isupper, islower, isspace
+
+( See also `string_counting_bytes_and_characters.mojo`: advanced, but works)
+
+XYZ
 
 
 ## 4.4 Defining alias types
@@ -926,7 +843,12 @@ See also § 6.8
 
 ## 4.5 The object type
 `object` is defined in module `object` in the `builtin` package, so it is not a Python object.  
-It is used to represent untyped values. This is the type of arguments in def functions that do not have a type annotation, such as the type of x in `def f(x): pass`. A value of any type can be passed in as the x argument in that case.
+It is used to represent *untyped values*. 
+* This is the type of arguments in def functions that do not have a type annotation, such as the type of x in `def f(x): pass`. A value of any type can be passed in as the x argument in that case. 
+* `object` is also the return type of any def without return type 
+
+The object type allows for dynamic typing because it can actually represent any type in the Mojo standard library, and the actual type is inferred at runtime. This makes it compatible with Python.  However the lack of type enforcement can lead to *runtime errors* when a function receives or returns an unexpected type.
+
 
 Here is an example of creating an object:
 
@@ -943,7 +865,7 @@ fn main() raises:
     print_object(obj)   # => [123, 'hello world']
 ```
 
-An object acts like a Python reference.
+An object acts like a Python reference:
 
 See `object2.mojo`:
 ```py
@@ -963,11 +885,11 @@ def main():
 
 This is pure Mojo code that does not use the Python interpreter. 
 
-`matmul1.mojo` in § 20. shows an example of its use.
+`matmul1.mojo` in § 20. shows an example of the use of object.
 The following function shows how an object can be initialized and its attributes defined:
 ```
 fn matrix_init(rows: Int, cols: Int) raises -> object:
-   varvalue = object([])
+    varvalue = object([])
     return object(
         Attr("value", value), Attr("__getitem__", matrix_getitem), Attr("__setitem__", matrix_setitem), 
         Attr("rows", rows), Attr("cols", cols), Attr("append", matrix_append),
@@ -979,4 +901,3 @@ Objects do have types and can be type-checked.
 
 Usage: They fit into a tiny space (+- 38K), so could be used in WASM and microcontrollers.
 
-Mojo allows you to define custom bitwidth integers (see §  ## 14.6 Custom bitwidth integers )
