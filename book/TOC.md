@@ -59,3 +59,33 @@
 ### 3.8.4 Global variables
 ### 3.8.5 Variable addresses
 ## 3.9  Typing in Mojo
+
+# 4 Basic types
+## 4.1 The data type DType
+## 4.2  The Bool type
+## 4.3 Numerical types
+### 4.3.1 The Integer types
+#### 4.3.1.1 Using Ints as indexes
+#### 4.3.1.2 Converting integers
+#### 4.3.1.3 Converting Bool to Int
+#### 4.3.1.4 Handling big integers
+### 4.3.2 The Float types
+#### 4.3.2.1 Declarations and conversions
+#### 4.3.2.2 The i (in-place) operations
+#### 4.3.2.3 The r (right hand side or rhs) operations
+#### 4.3.2.4 Comparing a FloatLiteral and a Bool
+## 4.4 SIMD
+### 4.4.1 Defining SIMD vectors
+### 4.4.2 SIMD system properties
+### 4.4.3 Using element type and group size as compile-time constants
+### 4.4.4  Splat, join and cast
+## 4.5 The String types
+### 4.5.1 The StringLiteral type
+#### 4.5.1.1   Converting a StringLiteral to an integer
+### 4.5.2 The String type
+### 4.5.3 The StringRef type
+### 4.5.4 Some String methods
+## 4.6 Defining constants and types with alias types
+### 4.6.1 Using of alias
+### 4.6.2 Defining an enum type using alias
+## 4.7 The object type

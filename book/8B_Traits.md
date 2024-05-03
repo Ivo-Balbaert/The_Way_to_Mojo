@@ -35,3 +35,14 @@ fn main():
 Notice that in line 1 we pass a struct instance to the function, but the function in line 2 accepts this as a generic trait type T, which is defined as a parameter. The function works for all structs that implement the trait.
 
 " The function can accept any type for x as long as it conforms to SomeTrait. Thus, fun_with_traits() is known as a *generic function* because it accepts a generalized type instead of a specific type.
+
+## 8.2 Common traits
+### 8.2.1 Stringable
+This trait confirms that a type that can be converted to a string,  
+using String(value) or str(value).
+Nearly all of the standard library types are Stringable.
+
+### 8.2.2 Boolable
+A type implements Boolable if it has a boolean representation.  
+Strings evaluate as True if they have a non-zero length.
+Collections evaluate as True if they contain any elements.

@@ -1,4 +1,5 @@
 # 4 Basic types
+All data values have a corresponding data *type*.
 Mojo's basic types are defined as built-ins, defined in the package `builtin`. They are automatically imported in code. These include the Bool, Int, IntLiteral, FloatLiteral, String and StringLiteral types, which we'll discuss in this section. They are all defined as a struct (see § 7).
 
 ## 4.1 The data type DType
@@ -122,7 +123,7 @@ Equality is checked with ==, the inverse is !=
 The following normal operators exist: -, <, >, <=, >=, + (add), - (sub), *, / (returns a Float).
 Mojo allows you to define custom bitwidth integers (see § 14.6 Custom bitwidth integers).
 
-### 4.3.1.1 Using Ints as indexes
+#### 4.3.1.1 Using Ints as indexes
 Integers can also be used as indexes, as shown in the following example. Here the parametrized type List (from module `collections.list`) takes Int as the type of its elements:
 
 See `ints_indexes.mojo`:
@@ -167,7 +168,7 @@ fn main():
 
 The integer type is different from the Python int type (see: https://docs.modular.com/mojo/programming-manual.html#int-vs-int). One difference is that Mojo's Int type is fixed, it can't work with big numbers. But the Python int can, so we can use that from Mojo! 
 
-### 4.3.1.3 Converting Bool to Int
+#### 4.3.1.3 Converting Bool to Int
 This is simply one by converting with UInt8(), as we did in the previous section.
 
 See `convert_bool.mojo`:
@@ -183,7 +184,7 @@ fn main():
 
 We see that True converts to 1, and False to 0.
 
-### 4.3.1.4 Handling big integers
+#### 4.3.1.4 Handling big integers
 Here is a simple trick to work with Python int's, which can handle big integers, in a Mojo program.
 (see § ?? for how to work with Python)
 
@@ -207,7 +208,7 @@ fn main() raises:
 The floating point types live in module `float_literal`.
 A FloatLiteral takes the machine word-size (for example 64 bit) as default type. 
 
-### 4.3.2.1 Declarations and conversions
+#### 4.3.2.1 Declarations and conversions
 Conversions in Mojo are performed by using the constructor as a conversion function as in: 
 `Float32(value_to_convert)`. 
 
@@ -250,7 +251,7 @@ All normal operations exist.
 ** (pow)
 
 
-### 4.3.2.2 The i (in-place) operations
+#### 4.3.2.2 The i (in-place) operations
 These are the i operations: iadd (with operator +=), isub, imul, itruediv, ifloordiv, imod, ipow
 i stands for in-place, the lhs becomes the result of the operation, a new object is not created.
 
@@ -264,7 +265,7 @@ Same for: -=, *=, /=, %=, //=, **=
 
 >Note: In the following sections we use a simple struct definition MyNumber. __init__ is kind of a constructor, called when an instance of the struct is made. For more details, see § 7.
 
-### 4.3.2.3 The r (right hand side or rhs) operations
+#### 4.3.2.3 The r (right hand side or rhs) operations
 These operations are: radd, rsub, rmul, rtruediv, rfloordiv, rmod, rpow:  
 They allow to define the base operations for types that by default don't work with them.
 Think of the r as reversed, for example: in a + b, if a doesn't implement __add__, 
@@ -292,7 +293,7 @@ fn main():
 (First comment out __radd__ to see which error you get when this method is not defined. Explain the error/)
 
 
-### 4.3.2.4 Comparing a FloatLiteral and a Bool
+#### 4.3.2.4 Comparing a FloatLiteral and a Bool
 The Bool type also has rhs equivalents of __and__ and so on, like __rand__, __ror__, __rxor__. Here the Bool value is automatically used at the rhs of the operator.
 
 You normally cannot compare a Bool with a FloatLiteral (which is an instance of the MyNumber struct here). But we can if we implement the `__rand__` method on the struct.
@@ -325,8 +326,10 @@ fn main():
 ## 4.4 SIMD
 Mojo relies heavily on using [SIMD](https://en.wikipedia.org/wiki/Single_instruction,_multiple_data) in calculations to enhance performance. All math functions work on SIMD items. That's why the `SIMD` type is also defined as a struct in its own module `builtin.simd`. 
 
-## 4.4.1 Defining SIMD vectors
-Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you to do the same operation on all elements of a 'vector' in a single instruction, greatly improving performance. They are fast because the vector registers are the fastest kind of memory access at the hardware level. 
+### 4.4.1 Defining SIMD vectors
+Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you to do the same operation on all elements of a 'vector' in a single instruction, greatly improving performance. They are fast because the vector registers are the fastest kind of memory access at the hardware level.
+
+The type of a value that can be processed by a SIMD-register is called *register-passable* and is of type `AnyRegType`.
 
 >Note: a `vector` is like an array of numbers, for example [1, 15, 25, 43] is an integer vector with 4 elements. An example of SIMD would be to multiply all 4 items of the vector by 3 in a single CPU instruction.
 
@@ -414,7 +417,7 @@ Line 5 also performs a SIMD instruction: x*x for each number simultaneously.
 On SIMD vectors of the same size and type you can apply all operators like *, /, %, **. You can cast them to Bool type with cast[DType.bool]() and then apply &, |, ^ and so on.
 
 
-## 4.4.2 SIMD system properties
+### 4.4.2 SIMD system properties
 We can interrogate our machine as to what its SIMD capabilities are. See `simd_system.mojo`
 ```py
 from sys.info import simdbitwidth, simdbytewidth, simdwidthof
@@ -443,7 +446,7 @@ Mojo makes it easy for us, the above expression does the same as:
 `SIMD[DType.float32]`
 We use this in line 5 to declare a SIMD vector with as size the default type width, which is indeed 8 (line 6).
 
-## 4.4.3 Using element type and group size as compile-time constants
+### 4.4.3 Using element type and group size as compile-time constants
 Using the alias keyword, we can define the SIMD element type and group size as compile-time constants, as in the code below:
 
 See `simd_comptime.mojo`:
@@ -485,7 +488,7 @@ Hint: Use a loop: for i in range(4):
 (see `exerc4.2.🔥`)
 
 
-## 4.4.4  Splat, join and cast
+### 4.4.4  Splat, join and cast
 The `splat` method sets all elements of the SIMD vector to the given value (it 'broadcasts' the value), like in the following example in line 1:
 
 See `simd_methods.mojo`:
@@ -543,6 +546,14 @@ The `StringLiteral` type is built-in. In `strings.mojo` a value of the type `Str
 The value can be delimited by "" or ''. 
 
 String literals are all null-terminated for compatibility with C APIs (but this is subject to change). String literals store their length as an integer, and this does not include the null terminator.
+
+To define a multi-line string, enclose the literal in three single or double quotes (like docstrings, see § 3.2.2):
+```py
+var s = """
+Multi-line string literals let you 
+enter long blocks of text, including 
+newlines."""
+```
 
 They can be converted to a Bool value (see lines 1B-C): an empty StringLiteral is False, a non-empty is True. (Bool() doesn't work here).
 
@@ -602,7 +613,7 @@ This could be useful if you need to pass the string data to a function that requ
 
 >Note: this method has as return type DTypePointer[si8, 0]. This means that the method returns a pointer to the underlying data of the string literal. The `si8` indicates that the data is a sequence of 8-bit signed integers, which is a common way to represent characters in a string (signed ??).
 
-### 4.5.1.1   Converting a StringLiteral to an integer
+#### 4.5.1.1   Converting a StringLiteral to an integer
 Use the `int()` method, see line 2.
 
 ### 4.5.2 The String type
@@ -681,7 +692,7 @@ Summary:
 * StringRef does not own underlying buffer, is immutable(??), not 0-terminated. 
 
 
-### 4.3.4 Some String methods
+### 4.5.4 Some String methods
 See `string_methods.mojo`:
 ```py
 fn main() raises:    # raised needed because of atoi
@@ -775,54 +786,57 @@ The `isdigit` function checks if the character passed in is a valid decimal betw
 XYZ
 
 
-## 4.4 Defining alias types
-We know that it is best practice to give constant values that are repeatedly used in our program a name, like ACONSTANT. So when its value changes, we only have to do it in one place. In Mojo, such constants are defined with the alias keyword.  This is a compile-time constant: all instances of the alias are replaced by its value at compile-time.
+## 4.6 Defining constants and types with alias types
+A commonly known best practice is to give constant values, that are repeatedly used in our program, a name like ACONSTANT. So when its value changes, we only have to do it in one place. In Mojo, such constants are defined with the `alias` keyword.  This is a compile-time constant: all instances of the alias are replaced by its value at compile-time.
 
-You can easily define a synonym or shorthand for a type with alias:
+You can also define a synonym or shorthand for a type with alias:
 
-### 4.4.1 Usage of alias
-See `alias1.mojo`:
+### 4.6.1 Using alias
+See `alias.mojo`:
 ```py
-alias fl = Float32   # 1
-alias Float16 = SIMD[DType.float16, 1]
-
+alias fl = Float32              # 1A
 alias MAX_ITERS = 200
 alias DAYS_PER_YEAR = 365.24
 alias PI = 3.141592653589793    # 1B
 alias TAU = 2 * PI
+
     
 fn main():
-    alias MojoArr2 = DTypePointer[DType.float32] 
-
-    alias debug_mode = True  # 2
+    alias MojoArr = DTypePointer[DType.float32] 
+    alias debug_mode = True     # 2
     alias width = 960
     alias height = 960
     for i in range(MAX_ITERS):  # 3
-        print_no_newline(i, " ") # => 0  1  2  3  4  5  6  ... 198 199
+        print(i, " ", end="") # => 0  1  2  3  4  5  6  ... 198 199
 ```
 
-Line 1B shows that an alias constant is often capitalized.
-Line 2 and following work, because alias is also a way to define a compile-time temporary value,  just like var andvardefine resp. a runtime variable and constant. alias is kind of avarat comptime. You can also make a user-defined type with it (see § 1B). All occurences of the alias name get substituted with the value at comptime, so it has a bit of a performance benifit. This is ideal to set parameter values of the problem at hand.
-So line 3 is changed at compile time to `for i in range(MAX_ITERS):`.
+We see that alias constants are often capitalized.
 
-Both None and AnyType are defined as type aliases in the builtin module `type_aliases` as metatypes:
-* AnyType: Represents any Mojo data type, includes all Mojo types.
-* AnyRegType: a metatype representing any register-passable type.
-* NoneType = None: Represents the absence of a value.
-(See also § 11.3 @parameter)
+Types like Float16 (see § 4.4.1) are also defined with alias in the standard library:  
+`alias Float16 = SIMD[DType.float16, 1]`
+
+Line 2 and following work, because alias is also a way to define a compile-time static value,  just like var defines a runtime variable. alias is kind of var at compile-time. All occurences of the alias name get substituted with the value at compile-time, so it has some performance benefit. This is ideal to set parameter values of the problem at hand.
+So line 3 is changed at compile-time to `for i in range(200):`.
+The use of the alias debug_mode is illustrated in § 11.3 @parameter.
+
+Both None and AnyType are defined as *type aliases* (metatypes) in the builtin module `type_aliases`:
+* `AnyType`: Represents any Mojo data type.
+* `AnyRegType`: a metatype representing any register-passable type.
+* NoneType = `None`: Represents the absence of a value. NoneType is a type with one instance, the None object, which is used to signal "no value."
+
 
 A struct field can also be an alias.
 
->Note: use alias in order to use the ord function efficently, example:  
+>Note: use alias in order to use the ord function efficiently, example:  
 `alias QUOTE = ord('"')`
 
-### 4.4.2 Defining an enum type using alias
+### 4.6.2 Defining an enum type using alias
 (?? After ch 7 on structs)
 You can create an enum-like structure using the alias declaration, which defines the enum values at compile-time.
 
 See `enum_type.mojo`:
 ```py
-struct enum_type:
+struct EnumT:
     alias invalid = 0
     alias bool = 1
     alias int8 = 2
@@ -832,16 +846,14 @@ struct enum_type:
     alias float32 = 15
 
 fn main():
-   varen = enum_type.bool
-    print(en)  # => 1
+    var en = EnumT.float32
+    print(en)  # => 15
 ```
 
-In this example, enum_type is a struct that implements a simple enum using aliases for the enumerators. This allows clients to use enum_type.float32 as a parameter expression, which also works as a runtime value.
-
-See also § 6.8
+In this example, EnumT is a struct that implements a simple enum using aliases for the enum's values. Now we can use EnumT.float32 as a parameter expression, which also works as a runtime value.
 
 
-## 4.5 The object type
+## 4.7 The object type
 `object` is defined in module `object` in the `builtin` package, so it is not a Python object.  
 It is used to represent *untyped values*. 
 * This is the type of arguments in def functions that do not have a type annotation, such as the type of x in `def f(x): pass`. A value of any type can be passed in as the x argument in that case. 

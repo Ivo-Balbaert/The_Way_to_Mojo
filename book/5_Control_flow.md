@@ -28,6 +28,8 @@ fn main() raises:
     # => This is a long line of text that is a lot easier to read if it is broken up across two lines instead of one long line.
 ```
 
+This is because adjacent string literals are concatenated together.
+
 Function calls can also be chained across multiple lines:
 See `mult_func_calls.mojo`:
 ```py

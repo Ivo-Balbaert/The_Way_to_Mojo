@@ -6,8 +6,11 @@
 * Source files follow the Python syntax code conventions. For example:  
     no need for semi-colons to end lines, 
     no curly braces around functions or methods,
-    each new level of code (a so-called code block) is indented with 4 spaces, 
-         an indentation mistake will result in a compiler error.
+    each new level of code (a so-called *code block*) is indented with 4 spaces, 
+        an indentation mistake will result in a compiler error.
+        a code block can contain a number of consecutive code lines with the same indentation
+        code blocks can be nested: the nested block is indented as a whole (see also § 5.1). 
+
     use only spaces: convert all tabs to spaces if necessary 
     (?? other noteworthy conventions)
 
@@ -19,7 +22,6 @@ Never use space characters in a Mojo filename, several OS's don't like that!
   
 * For a list of keywords, see *keywords.txt*. Keywords normally cannot be used as identifiers. It is not recommended, but if it is really necessary, you can enclose a keyword in backticks `` to force its use as an identifier (see error.mojo in § 9.4 where keyword ref is used as a variable name).
 
-* A number of consecutive code lines with the same indentation form a *code block* (seel also § 5.1). Code blocks can be nested: the nested block is indented as a whole.
 
 
 ## 3.2 Comments and Doc comments
