@@ -10,9 +10,10 @@ To gain performance, structs are by default stored on the stack, and all fields 
 
 >Note: Python classes are dynamic: they allow for dynamic dispatch, monkey-patching (or "swizzling"), and dynamically binding instance properties at runtime. However, Mojo structs are completely static - they are bound at compile-time and you cannot add methods at runtime, so they do not allow dynamic dispatch or any runtime changes to the structure. Structs allow you to trade flexibility for performance while being safe and easy to use.
 
- By using a 'struct' (instead of 'class'), the attributes (fields) will be tightly packed into memory, such that they can even be used in data structures without chasing pointers around.
+By using a 'struct' (instead of 'class'), the attributes (fields) will be tightly packed into memory, such that they can even be used in data structures without chasing pointers around.
 
-XYZ
+Struct methods are functions, whose first argument is `self` by default.
+
 
 ## 7.1 First example
 The following example demonstrates a struct MyInteger with one field called value. In line 2 an instance of the struct called myInt is made. This calls the constructor __init__ from line 1.
@@ -32,8 +33,8 @@ fn main():
     print(myInt.value)              # => 42
 ```
 
-Self refers to the type of the struct that you're in, while self refers to the actual object
-The `self` argument denotes the current instance of the struct. 
+`Self` refers to the type of the struct that you're in, while `self` refers to the actual object
+The `self` argument denotes the current instance of the struct. It is similar to the `this` keyword used in some other languages.
 
 A method has a signature like this: `fn method1(self, other parameters)` and when object1 is an instance of its type, the method is called as: `object1.method1(params)`. So `object1` is automatically used as `self`, the first parameter of the method.
 Inside its own methods, the struct's type can also be called `Self`.
@@ -59,41 +60,33 @@ struct IntPair:
         print(self.first, self.second)
 
 fn pair_test() -> Bool:
-   varp = IntPair(1, 2)   # 4 
-   p.dump()                # => 1 2
-   varq = IntPair(2, 3)
+    var p = IntPair(1, 2)   # 4 
+    p.dump()                # => 1 2
+    var q = IntPair(2, 3)
     if p < q:           # 5 
         print("p < q")  # => p < q
-
     return True
 
 fn main():
    print(pair_test()) # => True
 ```
 
-The fields of a struct (here lines 1-2) need to be defined as var when they are not initialized (2023 Sep:varfields are not yet allowed), and a type is necessary. 
+The fields of a struct (here lines 1-2) need to be defined as var when they are not initialized, and a type is necessary. 
 To make a struct, you need an __init__ method (see however § 11.1). 
 The `fn __init__` function (line 3) is an "initializer" - it behaves like a constructor in other languages. It is called in line 4. 
-All methods like it that start and end with __ are called *dunder*  (double-underscore) methods. They are widely used in internal code in MojoStdLib. They can be used directly as a method call, but there are often shortcuts or operators to call them (see the StringLiteral examples in strings.mojo).  
 
 **Dunder methods**
 These structs have so-called *dunder* (short for double underscore) methods, like the
  `__add__` method. 
  Often an equivalent infix or prefix operator can act as 'syntax sugar' for calling such a method. For example: the `__add__` is called with the operator `+`, so you can use the operator in code,which is much more convenient.
  
- You can think of dunder methods as interface methods to change the runtime behaviour of types, e.g. by implementing `__add__`, we are telling the Mojo compiler, how to add (+) two `U24`s.
+You can think of dunder methods as interface methods to change the runtime behaviour of types, for example: by implementing `__add__` for `U24`, we are telling the Mojo compiler, how to add (+) two `U24`s.
 
 Common examples are:
 * the `__init__` method: this acts as a constructor, creating an instance of the struct.
 * the `__del__` method: this acts as a destructor, releasing the occupied memory.
 * the `__eq__` method: to test the equality of two values of the same type.  
 
-
-
-
-
-
-`self` refers to the current instance of the struct, it is similar to the `this` keyword used in some other languages.
 In line 5, the `<` operator is automatically translated to the __lt__ method.
 
 Try out:
@@ -103,6 +96,7 @@ What do you see?
 This returns a compile time error: invalid call to '__lt__': right side cannot be converted from 'Int' to 'IntPair'.
 
 See also `planets.mojo`.( crashes since 0.6.1, see removed_from_test)
+
 Here is another style of writing the __init__ method:
 From `nbody.mojo`:
 ```py
@@ -131,15 +125,10 @@ struct Planet:
 Declare a car with all attributes and print these out. Declare a Car with only a speed, and print out its model.
 (see *car.mojo*)
 
-## 7.4 Overloading
-Overloading a function (or method) name occurs when two or more functions or methods have the same name, but different parameter lists. The Mojo compiler selects the version that most closely matches the argument types.
+## 7.4 Overloading of methods
+We discussed overloading of functions in § 6.6. Because methods are just functions that live inside a struct, they can also be overloaded.
 
-
-### 7.4.1 Overloaded functions and methods
-Like in Python, you can define functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs andvar*dynamic dispatch* decide how to handle the data. However, when you want to ensure type safety, Mojo also offers full support for overloaded functions and methods, a feature that does not exist in Python.  
-This allows you to define multiple functions with the same name but with different arguments. This is a common feature called *overloading*, as seen in many languages, such as C++, Java, and Swift.  
-When resolving a function call, Mojo tries each candidate and uses the one that works (if only one works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous if it can't figure out which one to pick. In the latter case, you can resolve the ambiguity by adding an explicit cast on the call site.  
-
+### 7.4.1 Overloaded methods
 In the next example a struct Complex is defined representing complex numbers, but it has two __init__ methods, one to define only the real part, and another to define both parts of a complex number: the __init__ constructor is overloaded.
 
 See `overloading.mojo`:
@@ -159,7 +148,7 @@ struct Complex:
         self.im = i
 
 fn main():
-   varc1 = Complex(7)
+    var c1 = Complex(7)
     print (c1.re)  # => 7.0
     print (c1.im)  # => 0.0
     var c2 = Complex(42.0, 1.0)
@@ -167,17 +156,9 @@ fn main():
     print (c2.re)  # => 42.0
     print (c2.im)  # => 3.1400001049041748
 ```
+Although we haven't discussed parameters yet (they're different from function arguments), you can also overload functions and methods based on parameters.  
 
-You can overload methods in structs and classes and also overload module-level functions.
-
-Mojo doesn't support overloading solely on result type, and doesn't use result type or contextual type information for type inference, keeping things simple, fast, and predictable.  
-Again, if you leave your argument names without type definitions, then the function behaves just like Python with dynamic types. As soon as you define a single argument type, Mojo will look for overload candidates and resolve function calls as described above.
-
-Although we haven't discussed parameters yet (they're different from function arguments), you can also overload structs, functions and methods based on parameters.  
-
-For other examples, which shows method and function overloading in the same program, see `employee.mojo` and `overloading2.mojo`.
-(Use employee.mojo as an example of overloading normal methods or functions.)
-
+For other examples, which show method and function overloading in the same program, see `employee.mojo` and `overloading2.mojo`.
 
 ### 7.4.2 Overloaded operators
 (?? First make an exercise/example for Rectangle with the area and perimeter methods, then overloading_operators with only __add__).
@@ -193,20 +174,20 @@ struct Rectangle:
     fn __init__(inout self, length: Float32, width: Float32):
         self.length = length
         self.width = width
-        print("Rectangle created with length:", self.length, "and width:", self.width)
+        print("Rectangle created with length and width:", self.length, "and width:", self.width)
 
     fn area(self) -> Float32:
-       vararea: Float32 = self.length * self.width
+        var area: Float32 = self.length * self.width
         print("The area of the rectangle is:", area)
         return area
     
     fn area(self, side: Float32) -> Float32:
-       vararea: Float32 = side * side
+        var area: Float32 = side * side
         print("The area of the square is:", area)
         return area
 
     fn perimeter(self) -> Float32:
-       varperimeter: Float32 = 2 * (self.length + self.width)
+        var perimeter: Float32 = 2 * (self.length + self.width)
         print("The perimeter of the rectangle is:", perimeter)
         return perimeter
 
@@ -215,20 +196,22 @@ struct Rectangle:
                 self.width + other.width)
 
 fn main():
-   varsquare = Rectangle(10.0, 10.0)
+    var square = Rectangle(10.0, 10.0)
     # => Rectangle created with length: 10.0 and width: 10.0
-   varrect = Rectangle(5.0, 7.0)
+    var rect = Rectangle(5.0, 7.0)
     # => Rectangle created with length: 5.0 and width: 7.0
-   varsquareArea = square.area()
+    var squareArea = square.area()
     # => The area of the rectangle is: 100.0
-   varsquareArea2 = square.area(10.0)
+    var squareArea2 = square.area(10.0)
     # => The area of the square is: 100.0
-   varrect2 = square + rect                   # 2
+    var rect2 = square + rect                   # 2
     # => Rectangle created with length: 15.0 and width: 17.0
     # this is the same as calling:              
-   varrect2b = square.__add__(rect)           # 3
+    var rect2b = square.__add__(rect)           # 3
     # => Rectangle created with length: 15.0 and width: 17.0
 ```
+
+XYZ
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
 Developers in Mojo have precise control over the lifetime behavior of defined types by choosing to implement or omit "dunder" methods. Initialization is managed using __init__ , copying is controlled with __copyinit__ ("deep copy"), and "move" operations ("shallow copy") are handled through __movecopy__ .

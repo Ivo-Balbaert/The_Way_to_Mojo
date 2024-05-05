@@ -99,3 +99,31 @@
 ## 5.4 Catching exceptions with try-except-finally
 ## 5.5 The with statement
 ## 5.6 Exiting from a program
+
+# 6 Functions
+## 6.1 Difference between fn and def
+## 6.2 An fn that calls a def needs the raises keyword
+## 6.3 Function arguments and return type
+### 6.3.1 Function type
+### 6.3.2 Optional arguments
+### 6.3.3 Keyword arguments
+### 6.3.4 Positional-only arguments
+### 6.3.5 Keyword-only arguments
+## 6.4 Functions with a variable number of arguments.
+### 6.4.1 Using variadic arguments
+### 6.4.2 Homogeneous variadic arguments
+### 6.4.3 Heterogeneous variadic arguments
+### 6.4.4 Variadic keyword arguments
+### 6.4.5 Variadic argument followed by a keyword argument
+## 6.5 Argument passing: control and memory ownership
+### 6.5.1 General rules for def and fn arguments
+### 6.5.2 Making arguments changeable with inout 
+### 6.5.3 Making arguments owned
+### 6.5.4 Making arguments owned and transferred with ^
+## 6.6 Overloading functions
+## 6.7 Running a function at compile-time and run-time
+## 6.8 Closures
+### 6.8.1 Example of a closure
+### 6.8.2 Example of a capturing closure
+## 6.9 Callbacks through parameters
+

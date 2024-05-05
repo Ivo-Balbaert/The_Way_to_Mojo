@@ -4,28 +4,29 @@ struct Employee:
     var age: Int
     var department: String
     var salary: Float64
-    
-    fn print_details(employee: Employee):
-        print("Name:", employee.name)
-        print("Age:", employee.age)
-        print("Department:", employee.department)
-        print("Salary:", employee.salary)
 
-    fn print_details(self: Employee, include_salary: Bool):
-        print("Employee Name: ", self.name)
-        print("Employee Age: ", self.age)
-        print("Department: ", self.department)
+    fn print_details(self):
+        print("Name:", self.name)
+        print("Age:", self.age)
+        print("Department:", self.department)
+
+    fn print_details(self, include_salary: Bool):
+        print_details(self)
         if include_salary:
             print("Salary: ", self.salary)
 
-fn print_details(name: String, age: Int):
-    print("Name: ", name)
-    print("Age: ", age)
 
-fn print_details(name: String, age: Int, department: String):
-    print("Name: ", name)
-    print("Age: ", age)
-    print("Department: ", department)
+fn print_details(employee: Employee):
+    print("Name: ", employee.name)
+    print("Age: ", employee.age)
+    print("Department:", employee.department)
+
+
+fn print_details(employee: Employee, include_salary: Bool):
+    print_details(employee)
+    if include_salary:
+        print("Salary: ", employee.salary)
+
 
 fn main():
     # Create employee instances
@@ -36,28 +37,33 @@ fn main():
     # Print employee details
     # Method overloading:
     employee1.print_details()
-    employee2.print_details()
-# =>
-# Name: Alice Thompson
-# Age: 33
-# Department: Engineering
-# Salary: 5000.0
-# Name: Robert Davis
-# Age: 35
-# Department: Sales
-# Salary: 4500.0
-    employee2.print_details(False)
-# =>
-# Employee Name:  Robert Davis
-# Employee Age:  35
-# Department:  Sales
     print()
-# Function Overloading
-    print_details("Alice Thompson", 30)
-    print_details("Robert Davis", 35, "Sales")
-# =>
-# Name:  Alice Thompson
-# Age:  33
+    employee2.print_details()
+    # =>
+    # Name: Alice Thompson
+    # Age: 33
+    # Department: Engineering
+
+    # Name: Robert Davis
+    # Age: 35
+    # Department: Sales
+    print()
+    employee2.print_details(True)
+    # =>
 # Name:  Robert Davis
 # Age:  35
-# Department:  Sales
+# Department: Sales
+# Salary:  4500.0
+    print()
+    # Function Overloading
+    print_details(employee1, True)
+    print()
+    print_details(employee2)
+# Name:  Alice Thompson
+# Age:  33
+# Department: Engineering
+# Salary:  5000.0
+
+# Name:  Robert Davis
+# Age:  35
+# Department: Sales

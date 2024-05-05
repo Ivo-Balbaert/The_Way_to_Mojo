@@ -816,8 +816,6 @@ The `isdigit` function checks if the character passed in is a valid decimal betw
 
 ( See also `string_counting_bytes_and_characters.mojo`: advanced, but works)
 
-XYZ
-
 
 ## 4.6 Defining constants and types with alias types
 A commonly known best practice is to give constant values, that are repeatedly used in our program, a name like ACONSTANT. So when its value changes, we only have to do it in one place. In Mojo, such constants are defined with the `alias` keyword.  This is a compile-time constant: all instances of the alias are replaced by its value at compile-time.

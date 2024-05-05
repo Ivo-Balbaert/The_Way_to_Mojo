@@ -86,7 +86,7 @@ Write a complete program with a main() function, and call both the def and the f
 
 
 ## 6.3 Function arguments and return type
-## 6.3.1 Function type
+### 6.3.1 Function type
 Functions declared as `fn` must specify the types of their arguments. If a value is returned, its type must be specified after a `->` symbol and before the body of the function.
 
 Here is a function that returns a Float32 value:
@@ -208,16 +208,124 @@ fn main():
     print(kw_only_args(a1=2, a2=3, double = True)) # => 12
 ```
 
+## 6.4 Functions with a variable number of arguments.
+### 6.4.1 Using variadic arguments
+You can pass a variable number of values if you prefix an argument with a *, like in the following example (see line 1):
+
+See `variadic.mojo`:   
+```py
+fn sum(*values: Int) -> Int:   # 1
+  var sum: Int = 0
+  for value in values:
+    sum = sum + value
+  return sum
+
+fn main():
+    print(sum(1,2,3))  # => 6
+    print(sum(1,2,3,4,5,6,7))  # => 28
+    print(sum(1))  # => 1
+    print(sum())   # => 0
+```
+
+We can call sum with any number of integers.
+
+*args_w in the function my_func is also a variadic parameter:
+
+See `variadic1.mojo`:   print out doesn't work anymore (2023 Nov 5), removed from test_way
+```py
+fn my_func(*args_w: String):  # 1
+    var args = VariadicList(args_w)
+    for i in range(len(args)):
+        pass
+        # print(args[i])   # error: no matching value in call to print
+        # print(__get_address_as_lvalue(args[i]))
+
+fn main():
+    my_func("hello", "world", "from", "Mojo!")
+
+# =>
+# hello
+# world
+# from
+# Mojo!
+```
+
+You can define zero or more arguments before the variadic argument.  
+The variadic argument then takes in any remaining values in the function call.
+If you want to declare arguments after the variadic argument (probably not a good idea), they must be specified by keyword.
+
+### 6.4.2 Homogeneous variadic arguments
+*Homogeneous* means that all of the passed arguments are the same type, for example all Int, or all String.
+
+Register-passable types, such as Int, are available as a VariadicList. As shown in the previous example `variadic.mojo`, you can iterate over the values using a for..in loop.
+
+Memory-only types, such as String, are available as a VariadicListMem. Iterating over this list directly with a for..in loop currently produces a Reference for each value instead of the value itself. You must add an empty subscript operator [] to dereference the reference and retrieve the value (see line 1):
+
+See `variadic_string.mojo`:   
+```py
+def make_worldly(inout *strs: String):
+    for i in strs:
+        i[] += " world"   # 1 # Requires extra [] to dereference the reference for now.
+    
+fn make_worldly2(inout *strs: String):
+    # This "just works" as you'd expect!
+    for i in range(len(strs)):  # 2
+        strs[i] += " world"
+        print(i, strs[i])
+
+fn main() raises:
+    var s1: String = "Hello"
+    var s2: String = "beautiful"
+    # make_worldly(s1, s2)
+    make_worldly2(s1, s2)
+
+# =>
+# 0 Hello world
+# 1 beautiful world
+```
+
+Subscripting into a VariadicListMem, as in line 2, returns the argument value, and doesn't require any dereferencing:
+
+### 6.4.3 Heterogeneous variadic arguments
+*Heterogeneous* means that the passed arguments are of different types.
+`def count_many_things[*ArgTypes: Intable](*args: *ArgTypes):`
+
+See https://docs.modular.com/mojo/manual/functions#heterogeneous-variadic-arguments
+
+### 6.4.4 Variadic keyword arguments
+The syntax is `**kwargs`. This allows the user to pass an arbitrary number of keyword arguments.
+Tis variadic argument is a dictionary (see §§).
+
+See `variadic_kwargs.mojo`:   
+```py
+fn print_nicely(**kwargs: Int) raises:
+    for key in kwargs.keys():
+        print(key[], "=", kwargs[key[]])
+
+fn main() raises:
+    print_nicely(a=7, y=8)
+
+# =>
+# a = 7
+# y = 8
+```
+
+### 6.4.5 Variadic argument followed by a keyword argument
+Keyword-only arguments are necessary in the following case, where the first argument is variadic:
+`fn sort(*values: Float64, ascending: Bool = True): ...`
+the user can pass any number of Float64 values, optionally followed by the keyword argument ascending . For example: ``var a = sort(1.1, 6.5, 4.3, ascending=False)`.
+If a function accepts variadic arguments, any arguments defined after the variadic arguments are treated as keyword-only.
 
 
-## 6.4 Argument passing: control and memory ownership
+
+## 6.5 Argument passing: control and memory ownership
 There are three keywords to modify how arguments are passed to functions:
 
 borrowed : immutable reference, which is the default
 inout : mutable reference,
 owned : object given to the function, used with a deference operator ^ at the function call.
 
-### 6.4.1 General rules for def and fn arguments
+### 6.5.1 General rules for def and fn arguments
 * All values passed into a `Python def` function use *reference semantics*. This means the function can modify mutable objects passed into it and those changes are visible outside the function. 
 
 * All values passed into a `Mojo def` function use *value semantics* by default. Compared to Python, this is an important difference: a Mojo def function receives a copy of all arguments. So it can modify arguments inside the function, but the changes are not visible outside the function.
@@ -234,7 +342,7 @@ fn sum(borrowed x: Int, borrowed y: Int) -> Int:
 
 But what if we want a function to be able to change its arguments?
 
-### 6.4.2 Making arguments changeable with inout 
+### 6.5.2 Making arguments changeable with inout 
 For a function's arguments to be mutable, you need to declare them as *inout*. This means that changes made to the arguments inside the function are visible outside the function (**in**side - **out**side).  
 This is illustrated in the following example:  
 
@@ -258,7 +366,7 @@ See also § 7.8, where inout is used with struct arguments.
 
 This behavior is a potential source of bugs, that's why Mojo forces you to be explicit about it with the keyword *inout*.
 
-### 6.4.2 Making arguments owned
+### 6.5.3 Making arguments owned
 An even stronger option is to declare an argument as *owned*. Then the function gets full ownership of the value, so that it's mutable inside the function, but also guaranteed unique. This means the function can modify the value and not worry about affecting variables outside the function.  
 For example:  
 
@@ -284,7 +392,7 @@ From the output, we see that the return value b has the changed value, while the
 (Better example by giving the parameters the same name as the argument ??)
 
 
-### 6.4.3 Making arguments owned and transferred with ^
+### 6.5.4 Making arguments owned and transferred with ^
 If however you want to give the function ownership of the value and do NOT want to make a copy (which can be an expensive operation for some types), then you can add the *transfer* operator `^` when you pass variable a to the function.  
 The transfer operator effectively destroys the local variable name - any attempt to call it later causes a compiler error.  
 The ^ operator ends the lifetime of a value binding and transfers the value ownership to something else.
@@ -393,162 +501,21 @@ fn main():
     # print(a, b)  # => error: use of uninitialized value 'a', error: use of uninitialized value 'b'
 ```
 
-## 6.5 Closures
-*Capturing* means that if there were any variables in context, the closure would know their values. Closures capture by default, even if it's not capturing anything. 
-In the following example there are no variables to be captured.
+## 6.6 Overloading functions
+Like in Python, you can define def functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs and let *dynamic dispatch* decide how to handle the data.
 
-## 6.5.1 Example of a closure
-The following snippet shows an example of a nested (or inner) function in line 1. This is also called a *clojure*. The `outer` function that calls the closure in line 3 has as argument the function type of the closure:  
-`f: fn() -> None` 
-So the `inner` function must conform to this type. 
+However, when you want to ensure type safety, Mojo also offers full support for overloaded functions, a feature that does not exist in Python.  
+This allows you to define multiple functions with the same name but with different arguments. This is a common feature called *overloading*, as seen in many languages, such as C++, Java, and Swift. 
+fn functions must specify argument types, so if you want a function to work with different data types, you need to implement separate versions of the function that each specify different argument types. 
 
-See `closure1.mojo`:
-```py
-fn outer(f: fn() -> None):   # 2    # Here -> None is required.
-    f()                      # 3
+Overloading a function occurs when two or more functions have the same name, but different argument (or parameter) lists; the result type doesn't matter.  
 
-fn call_it():
-    fn inner():             # 1
-        print("inner")
+*How does the compiler choose which of the overloaded function versions will be chosen?* 
+The Mojo compiler selects the version that most closely matches the argument types:  
+When resolving a function call, Mojo tries each candidate and uses the one that works (if only one works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous if it can't figure out which one to pick. In the latter case, you can resolve the ambiguity by adding an explicit cast on the call site.  
 
-    outer(inner) 
-
-fn main():
-    call_it()  # => inner
-```
-
-## 6.5.2 Example of a capturing closure
-See `closure2.mojo`:
-```py
-fn outer(f: fn() escaping -> Int):   # 3
-    print(f())
-
-fn call_it():
-    var a = 5             # 1
-    fn inner() -> Int:    # 2  
-        return a          # inner captures the context variable a
-
-    outer(inner) 
-
-fn main():
-    call_it()  # => 5
-```
-You can see that we captured the a variable (line 1) in the inner closure (line 2) and returned it to the outer function. Note that the closure has the function type: `f: fn() escaping -> Int`.
-
-The keyword `escaping` is necessary in line 3.
-
-## 6.6 Functions with a variable number of arguments.
-### 6.6.1 Using variadic arguments
-You can pass a variable number of values if you prefix an argument with a *, like in the following example (see line 1):
-
-See `variadic.mojo`:   
-```py
-fn sum(*values: Int) -> Int:   # 1
-  var sum: Int = 0
-  for value in values:
-    sum = sum + value
-  return sum
-
-fn main():
-    print(sum(1,2,3))  # => 6
-    print(sum(1,2,3,4,5,6,7))  # => 28
-    print(sum(1))  # => 1
-    print(sum())   # => 0
-```
-
-We can call sum with any number of integers.
-
-*args_w in the function my_func is also a variadic parameter:
-
-See `variadic1.mojo`:   print out doesn't work anymore (2023 Nov 5), removed from test_way
-```py
-fn my_func(*args_w: String):  # 1
-    var args = VariadicList(args_w)
-    for i in range(len(args)):
-        pass
-        # print(args[i])   # error: no matching value in call to print
-        # print(__get_address_as_lvalue(args[i]))
-
-fn main():
-    my_func("hello", "world", "from", "Mojo!")
-
-# =>
-# hello
-# world
-# from
-# Mojo!
-```
-
-You can define zero or more arguments before the variadic argument.  
-The variadic argument then takes in any remaining values in the function call.
-If you want to declare arguments after the variadic argument (probably not a good idea), they must be specified by keyword.
-
-### 6.6.2 Homogeneous variadic arguments
-*Homogeneous* means that all of the passed arguments are the same type, for example all Int, or all String.
-
-Register-passable types, such as Int, are available as a VariadicList. As shown in the previous example `variadic.mojo`, you can iterate over the values using a for..in loop.
-
-Memory-only types, such as String, are available as a VariadicListMem. Iterating over this list directly with a for..in loop currently produces a Reference for each value instead of the value itself. You must add an empty subscript operator [] to dereference the reference and retrieve the value (see line 1):
-
-See `variadic_string.mojo`:   
-```py
-def make_worldly(inout *strs: String):
-    for i in strs:
-        i[] += " world"   # 1 # Requires extra [] to dereference the reference for now.
-    
-fn make_worldly2(inout *strs: String):
-    # This "just works" as you'd expect!
-    for i in range(len(strs)):  # 2
-        strs[i] += " world"
-        print(i, strs[i])
-
-fn main() raises:
-    var s1: String = "Hello"
-    var s2: String = "beautiful"
-    # make_worldly(s1, s2)
-    make_worldly2(s1, s2)
-
-# =>
-# 0 Hello world
-# 1 beautiful world
-```
-
-Subscripting into a VariadicListMem, as in line 2, returns the argument value, and doesn't require any dereferencing:
-
-### 6.6.3 Heterogeneous variadic arguments
-*Heterogeneous* means that the passed arguments are of different types.
-`def count_many_things[*ArgTypes: Intable](*args: *ArgTypes):`
-
-See https://docs.modular.com/mojo/manual/functions#heterogeneous-variadic-arguments
-
-### 6.6.4 Variadic keyword arguments
-The syntax is `**kwargs`. This allows the user to pass an arbitrary number of keyword arguments.
-Tis variadic argument is a dictionary (see §§).
-
-See `variadic_kwargs.mojo`:   
-```py
-fn print_nicely(**kwargs: Int) raises:
-    for key in kwargs.keys():
-        print(key[], "=", kwargs[key[]])
-
-fn main() raises:
-    print_nicely(a=7, y=8)
-
-# =>
-# a = 7
-# y = 8
-```
-
-### 6.6.5 Variadic argument followed by a keyword argument
-Keyword-only arguments are necessary in the following case, where the first argument is variadic:
-`fn sort(*values: Float64, ascending: Bool = True): ...`
-the user can pass any number of Float64 values, optionally followed by the keyword argument ascending . For example: ``var a = sort(1.1, 6.5, 4.3, ascending=False)`.
-If a function accepts variadic arguments, any arguments defined after the variadic arguments are treated as keyword-only.
-
-## 6.7 Overloading functions
-fn functions must specify argument types, so if you want a function to work with different data types, you need to implement separate versions of the function that each specify different argument types. This is called *overloading* a function.
-This is not a problem for def functions without argument types.
-In the following program the two versions of add are an example of overloading
+Overloading has no meaning for def functions without argument types.
+In the following program the two versions of add are an example of overloading:
 
 See `overloading_functions.mojo`:
 ```py
@@ -586,7 +553,7 @@ We can follow up on this error to corect it in lines 4 or 5.
 >Note: you can also overload functions based on parameter types.
 
 
-## 6.8 Running a function at compile-time and run-time
+## 6.7 Running a function at compile-time and run-time
 As we saw in § 3.7, there are two times of execution: compile-time and runtime.
 Mojo has two 'spaces', the 'parameter' space (which operates during compile time) and the 'value' space (which operates during run time). Mojo functions can do computations in both spaces, the `[]` accepts arguments for the 'parameter' space, and `()` accepts arguments for the 'value' space:
 
@@ -639,6 +606,52 @@ If we comment this line and uncomment line 2, precalculated is computed at runti
 A parameter enclosed in [] is a compile-time (or static) value (1).
 An argument enclosed in () is a run-time (or dynamic) value (2).
 If you get the error: `cannot use a dynamic value in a type parameter`, Mojo says that you used a runtime value as a compile-time parameter (case (1)).
+
+
+## 6.8 Closures
+*Capturing* means that if there were any variables in context, the closure would know their values. Closures capture by default, even if it's not capturing anything. 
+In the following example there are no variables to be captured.
+
+### 6.8.1 Example of a closure
+The following snippet shows an example of a nested (or inner) function in line 1. This is also called a *clojure*. The `outer` function that calls the closure in line 3 has as argument the function type of the closure:  
+`f: fn() -> None` 
+So the `inner` function must conform to this type. 
+
+See `closure1.mojo`:
+```py
+fn outer(f: fn() -> None):   # 2    # Here -> None is required.
+    f()                      # 3
+
+fn call_it():
+    fn inner():             # 1
+        print("inner")
+
+    outer(inner) 
+
+fn main():
+    call_it()  # => inner
+```
+
+### 6.8.2 Example of a capturing closure
+See `closure2.mojo`:
+```py
+fn outer(f: fn() escaping -> Int):   # 3
+    print(f())
+
+fn call_it():
+    var a = 5             # 1
+    fn inner() -> Int:    # 2  
+        return a          # inner captures the context variable a
+
+    outer(inner) 
+
+fn main():
+    call_it()  # => 5
+```
+You can see that we captured the a variable (line 1) in the inner closure (line 2) and returned it to the outer function. Note that the closure has the function type: `f: fn() escaping -> Int`.
+
+The keyword `escaping` is necessary in line 3.
+
 
 ## 6.9 Callbacks through parameters
 See `callbacks_params.mojo`:

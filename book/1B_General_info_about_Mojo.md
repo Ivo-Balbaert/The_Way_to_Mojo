@@ -78,8 +78,7 @@ Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native suppo
 * 2024 Mar 29 - open source standard library
     Modular version 24.2.0-c2427bc5-release
     mojo 24.2.0 (c2427bc5) / max 24.2.0 (c2427bc5)
-_ 2024 May 2 - mojo 24.3.0 (9882e19d)
-
+* 2024 May 2 - mojo 24.3.0 (9882e19d)
 
 Goals / Roadmap:
 * 2024 : Windows version
