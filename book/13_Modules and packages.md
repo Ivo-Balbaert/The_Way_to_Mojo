@@ -89,7 +89,7 @@ But often you want to assemble code (like a struct with its methods and helper f
 
 A Mojo *module* is a single Mojo source file that includes code like an API, suitable for use by other files that import it.  
 The module gets its name from the filename (without the extension), for example: a file `module1.mojo` contains the code for module `module1`.  
-The code in a module has no main() function, so you can’t execute a module like in module1.mojo. However, you can import this into another file with a main() function and use it there.  
+The code in a module has no main() function, so you can't execute a module like in module1.mojo. However, you can import this into another file with a main() function and use it there.  
 
 A Mojo *package* is just a collection of Mojo modules in a directory that includes an `__init__.mojo` file. The directory name works as the package name when importing the package.  
 
@@ -99,7 +99,7 @@ A Mojo *package* is just a collection of Mojo modules in a directory that includ
 You can import all the modules from a package together or individually.
 For example: the map() function resides in the `functional` module in the `algorithm` package, so you can import it as:
 `from algorithm.functional import map`.  
-Optionally, you can also compile the package into a `.mojopkg` or `.📦` file that’s easier to share (see § 13.3.2).
+Optionally, you can also compile the package into a `.mojopkg` or `.📦` file that's easier to share (see § 13.3.2).
 
 ## 13.2 Importing a local Mojo module
 Doing this is as easy as for Python modules.
@@ -141,7 +141,7 @@ fn main():
 
 The familiar syntax `from modname import type/method` us used. In line 2 we see that we can even rename the imported object with `as`, for shortness or to avoid name clashes. The code in main makes 2 MyPair instances, and prints them out.
 This works when the module is in the same folder as use_module.mojo. Example other location??
-(Currently Sep 2023, you can’t import .mojo files as modules if they reside in other directories.)
+(Currently Sep 2023, you can't import .mojo files as modules if they reside in other directories.)
 
 You can import the whole module and then access its members through the module name.   
 Then line 1 changes to:  `import mymodule`                
@@ -183,7 +183,7 @@ fn main():
     mine4.dump()    # => 2 4
 ```
 
->Note: The __init__.mojo is crucial here. If you delete it, then Mojo doesn’t recognize the directory as a package and it cannot import mymodule.  
+>Note: The __init__.mojo is crucial here. If you delete it, then Mojo doesn't recognize the directory as a package and it cannot import mymodule.  
 
 Executing `mojo use_package.mojo`  gives as output:
 ```

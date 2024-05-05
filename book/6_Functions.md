@@ -5,7 +5,7 @@ As we've seen, in Mojo you can both use `def` or `fn` functions, unlike in Pytho
 A key trick in Mojo is that you can opt in at any time to a faster and safer 'mode' as a developer, by using `fn` instead of `def` to create your function. In the `fn` mode Mojo can create optimized machine code to implement your function.
 
 ## 6.1 Difference between fn and def
-`def` is defined to be very dynamic, flexible and generally compatible with Python: arguments are copied and mutable, local variables are implicitly declared on first use, and scoping isn’t enforced. The default argument type is `object` (see § 4.5), representing a particular Mojo type designed for dynamic code.
+`def` is defined to be very dynamic, flexible and generally compatible with Python: arguments are copied and mutable, local variables are implicitly declared on first use, and scoping isn't enforced. The default argument type is `object` (see § 4.5), representing a particular Mojo type designed for dynamic code.
 
 Example:
 ```py
@@ -36,7 +36,6 @@ Similarly, a missing return type specifier is interpreted as returning `None` (i
 
 Both `def` and `fn` support raising exceptions, but this must be explicitly declared on an fn with the `raises` keyword, as shown in the following section.
 
-XYZ
 
 ## 6.2  An fn that calls a def needs the raises keyword
 Consider the following example: 
@@ -44,9 +43,9 @@ Consider the following example:
 See `try_except.mojo`:
 ```py
 def func1(a, b):
-   varc = a
+    var c = a
     if c != b:
-       vard = b
+        var d = b
         print(d)  # => 3
 
 fn main():
@@ -60,7 +59,7 @@ error: cannot call function that may raise in a context that cannot raise
     ~~~~~^~~~~~
 ```
 
-Apparently Mojo thinks that calling a def function can give an exception. Through some notes we get some suggestions to fix this:  
+Because def functions are more dynamic and not so strictly controlled, there is a greater chance that an exception will occur inside them. The notes suggest how to fix this:  
 ```
 note: try surrounding the call in a 'try' block
 note: or mark surrounding function as 'raises'
@@ -87,7 +86,8 @@ Write a complete program with a main() function, and call both the def and the f
 
 
 ## 6.3 Function arguments and return type
-Functions declared as `fn` in Mojo must specify the types of their arguments. If a value is returned, its type must be specified after a `->` symbol and before the body of the function.
+## 6.3.1 Function type
+Functions declared as `fn` must specify the types of their arguments. If a value is returned, its type must be specified after a `->` symbol and before the body of the function.
 
 Here is a function that returns a Float32 value:
 ```py
@@ -95,7 +95,7 @@ fn func() -> Float32:
     return 3.14
 ```
 
-This is illustrated in the `sum` function in the following example (see line 1), which returns an Int value:  
+This is illustrated in the `sum` function in the following example , which returns an Int value (see line 1):  
 See `sum.mojo`:
 ```py
 fn sum(x: Int, y: Int) -> Int:  # 1
@@ -103,15 +103,16 @@ fn sum(x: Int, y: Int) -> Int:  # 1
 
 fn main():
     _ = sum(1, 2).
-   varz = sum(1, 2)
+    var z = sum(1, 2)
     print(z)    # => 3
 ```
 
-Change `let z = sum(1, 2)` to just `sum(1, 2)`. Now you don't use the return value of a function, so you get a  `warning: 'Int' value is unused`.
+x and y are called *positional-only arguments*. This means that when calling the function, the order in which values are passed matters: x gets the value 1 and y the value 2. 
+Change `var z = sum(1, 2)` to just `sum(1, 2)`. Now you don't use the return value of a function, so you get a  `warning: 'Int' value is unused`.
 You can print out the return value, or just discard the value with _ = sum(1, 2). `_ =` is called the *discard pattern*, and can be used for just that, to indicate that you receive the returned value, but that you don't want to use it.
-Note: You can force Mojo to keep a value alive up to a certain point by assigning the value to the _ “discard” pattern at the point where it’s okay to destroy it (see https://docs.modular.com/mojo/manual/lifecycle/death.html)
+>Note: You can force Mojo to keep a value alive up to a certain point by assigning the value to the _ "discard" pattern at the point where it's okay to destroy it (see https://docs.modular.com/mojo/manual/lifecycle/death.html)
 
-If a function has no return value (example ??), you could write this as `-> None`. In normal cases you can leave this out, and the compiler will understand this. But if you need to write the function type (as in higher order functions), writing `-> None` is needed.
+If a function has no return value (example ??), you could write this as `-> None`. In normal cases you can leave this out. But if you need to write the function type (as in higher order functions), writing `-> None` is needed.
 
 By default, a function cannot modify its arguments values. They are immutable (read-only) references. 
 
@@ -120,12 +121,36 @@ You are stopped by the following compiler errors:
     x = 42        # => expression must be mutable in assignment
     var x = 42    # => invalid redefinition of 'x'
 
-A function can be recursive (see Fibonacci example § 10.3)
+The *function type* of a function is its *signature*, that is: the argument-list and the return type.
+Example: function sum from owned.mojo:
+`fn sum(owned a: Int8, owned b: Int8) -> Int8:`
+function type: `(owned a: Int8, owned b: Int8) -> Int8`
 
-## 6.3B Default and named arguments
-You can give arguments a default value, in case it doesn't get a value when the function is called (see line 1). You can also pass arguments explicitly with an assignment and their parameter name as in lines 2 and 3.
+### 6.3.2 Optional arguments
+(synonym: default arguments)
+You can give arguments a default value, in case it doesn't get a value when the function is called, in other words: when the argument is *optional* (see line 1). 
+In the following example, the argument `exp` has a default value 2 (line 1), so it is optional when the function `pow` is called. For example line 2, only a value for base is given.
 
-See `default_named_args.mojo`:
+See `optional_args.mojo`:
+```py
+fn pow(base: Int, exp: Int = 2) -> Int:    # 1
+    return base ** exp
+
+fn main():
+    var z = pow(3) # 2 # Uses the default value for `exp`, which is 2
+    print(z) # => 9
+```
+
+>Note: An inout argument cannot have a default value.
+>Note: Optional arguments must come after any required arguments.
+
+### 6.3.3 Keyword arguments
+(synonym: named arguments)
+You can also pass arguments explicitly with an assignment using their name as in lines 2 and 3:
+`message = "Mojo"`.
+These are called *keyword arguments*, and they are specified using the format *argument_name = argument_value*. 
+
+See `keyword_args.mojo`:
 ```py
 fn greet(times: Int = 1, message: String = "!!!"):  # 1
     for i in range(times):
@@ -138,6 +163,52 @@ fn main():
     greet(times = 2)           # 3 => Hello !!! 
                                # => Hello !!!
 ```
+You can pass keyword arguments in any order, as showin in line 2 of the following example:
+See `keyword_args2.mojo`:
+```py
+fn pow(base: Int, exp: Int = 2) -> Int:    # 1
+    return base ** exp
+
+fn main():
+    var z = pow(exp=3, base=2) # 2 # Uses keyword argument names (with order reversed)
+    print(z) # => 8
+```
+
+### 6.3.4 Positional-only arguments
+Sometimes you want to write a function with positional-only arguments, because:
+* The argument names aren't meaningful for the the caller.
+* You want the freedom to change the argument names later on without breaking backward compatibility.
+
+You can indicate that all arguments in the argument list are positional-only by separating them with a `/` from possible other arguments. For example:
+
+```py
+fn min(a: Int, b: Int, /) -> Int:
+    return a if a < b else b
+```    
+
+This min() function can be called with min(1, 2) but can't be called using keywords, like min(a=1, b=2).
+
+### 6.3.5 Keyword-only arguments
+Keyword-only arguments can only be specified by keyword. They often have default values, but if not, the argument is required.
+
+Separate the keyword-only arguments in an argument-list from other arguments with a `*`.
+In this example, only a1 and a2 are keyword arguments:
+!!! This doesn't seem to be true!!!
+```py
+fn kw_only_args(a1: Int, a2: Int, *, double: Bool) -> Int:
+    var product = a1 * a2
+    if double:
+        return product * 2
+    else:
+        return product
+
+fn main():
+    # error: positional argument follows keyword argumentmojo
+    # kw_only_args(a1=2, a2=3, True)
+    print(kw_only_args(a1=2, a2=3, double = True)) # => 12
+```
+
+
 
 ## 6.4 Argument passing: control and memory ownership
 There are three keywords to modify how arguments are passed to functions:
@@ -188,14 +259,14 @@ See also § 7.8, where inout is used with struct arguments.
 This behavior is a potential source of bugs, that's why Mojo forces you to be explicit about it with the keyword *inout*.
 
 ### 6.4.2 Making arguments owned
-An even stronger option is to declare an argument as *owned*. Then the function gets full ownership of the value, so that it’s mutable inside the function, but also guaranteed unique. This means the function can modify the value and not worry about affecting variables outside the function.  
+An even stronger option is to declare an argument as *owned*. Then the function gets full ownership of the value, so that it's mutable inside the function, but also guaranteed unique. This means the function can modify the value and not worry about affecting variables outside the function.  
 For example:  
 
 See `owned.mojo`:
 ```py
 fn mojo():
-   vara: String = "mojo"
-   varb = set_fire(a)
+    var a: String = "mojo"
+    var b = set_fire(a)
     print(a)        # => "mojo"
     print(b)        # => "mojo🔥"
 
@@ -207,7 +278,7 @@ fn main():
     mojo()
 ```
 
-Our variable to be owned is of type `String`. This type and its methods(??) are defined in module string, which is built-in.   
+Our variable to be owned is of type `String` (see § 4.5.2). 
 `set_fire` takes ownership of variable a in line 1 as argument `text`, which it changes and returns.  
 From the output, we see that the return value b has the changed value, while the original value of a still exists. Mojo made a copy of a to pass this as the text argument.
 (Better example by giving the parameters the same name as the argument ??)
@@ -227,7 +298,7 @@ print(a)               # => error: use of uninitialized value 'a'
 ```
 
 we get the error: use of uninitialized value 'a'
-because the transfer operator effectively destroys the variable a, so when the following print() function tries to use a, that variable isn’t initialized anymore.
+because the transfer operator effectively destroys the variable a, so when the following print() function tries to use a, that variable isn't initialized anymore.
 If you delete or comment out print(a), then it works fine.
 
 Simpler example:
@@ -246,13 +317,12 @@ fn main():
 ```
 See also § 7.8 for an example with a struct.
 
->Note: Currently (Aug 17 2023), Mojo always makes a copy when a function returns a value.
 
 **Summary of the different ways arguments can be passed:**
 See `inout.mojo`:
 ```py
 fn sum(inout a: Int8, inout b: Int8) -> Int8:
-    # with inout the values can be changed (they must be declared as var)
+    # with inout the values can be changed
     a = 3
     b = 2
     return a + b
@@ -303,6 +373,7 @@ fn main():
     print(a, b)          # => 4 5
 ```
 
+?? change example because of mojo warning:
 See `owned_transfer.mojo`:
 ```py
 fn sum(owned a: Int8, owned b: Int8) -> Int8:
@@ -317,23 +388,23 @@ fn main():
 
     # owned: the functions 'owns' these variables, so it can change them, but the original
     # values are no longer there, they are moved by the transfer operator
+    #  warning: transfer from a value of trivial register type 'SIMD[int8, 1]' has no effect and can be removed
     print(sum(a^, b^))  # => 5
     # print(a, b)  # => error: use of uninitialized value 'a', error: use of uninitialized value 'b'
 ```
 
 ## 6.5 Closures
-Mojo considers closures capturing by default, even if it's not capturing anything. Capturing means that if there were any variables in context, the closure would know their values, in the example in § 6.5.1 there are no variables to be captured.
-(See Changelog v 0.7)
+*Capturing* means that if there were any variables in context, the closure would know their values. Closures capture by default, even if it's not capturing anything. 
+In the following example there are no variables to be captured.
 
 ## 6.5.1 Example of a closure
-The following example shows an example of a nested (or inner) function in line 1. This is also called a *clojure*. The outer function that calls the closure in line 3 has as argument the function type of the closure:  
+The following snippet shows an example of a nested (or inner) function in line 1. This is also called a *clojure*. The `outer` function that calls the closure in line 3 has as argument the function type of the closure:  
 `f: fn() -> None` 
-So the inner function must conform to this type. 
-Here -> None is required.
+So the `inner` function must conform to this type. 
 
 See `closure1.mojo`:
 ```py
-fn outer(f: fn() -> None):   # 2
+fn outer(f: fn() -> None):   # 2    # Here -> None is required.
     f()                      # 3
 
 fn call_it():
@@ -349,13 +420,13 @@ fn main():
 ## 6.5.2 Example of a capturing closure
 See `closure2.mojo`:
 ```py
-fn outer(f: fn() escaping -> Int):
+fn outer(f: fn() escaping -> Int):   # 3
     print(f())
 
 fn call_it():
-   vara = 5               # 1
-    fn inner() -> Int:      # 2  
-        return a
+    var a = 5             # 1
+    fn inner() -> Int:    # 2  
+        return a          # inner captures the context variable a
 
     outer(inner) 
 
@@ -364,20 +435,39 @@ fn main():
 ```
 You can see that we captured the a variable (line 1) in the inner closure (line 2) and returned it to the outer function. Note that the closure has the function type: `f: fn() escaping -> Int`.
 
-The keyword escaping is necessary.
+The keyword `escaping` is necessary in line 3.
 
 ## 6.6 Functions with a variable number of arguments.
-This is indicated by prefixing the parameter name in the function header with *, for example args_w in the function my_func:
+### 6.6.1 Using variadic arguments
+You can pass a variable number of values if you prefix an argument with a *, like in the following example (see line 1):
+
+See `variadic.mojo`:   
+```py
+fn sum(*values: Int) -> Int:   # 1
+  var sum: Int = 0
+  for value in values:
+    sum = sum + value
+  return sum
+
+fn main():
+    print(sum(1,2,3))  # => 6
+    print(sum(1,2,3,4,5,6,7))  # => 28
+    print(sum(1))  # => 1
+    print(sum())   # => 0
+```
+
+We can call sum with any number of integers.
+
+*args_w in the function my_func is also a variadic parameter:
 
 See `variadic1.mojo`:   print out doesn't work anymore (2023 Nov 5), removed from test_way
 ```py
 fn my_func(*args_w: String):  # 1
-   varargs = VariadicList(args_w)
+    var args = VariadicList(args_w)
     for i in range(len(args)):
         pass
         # print(args[i])   # error: no matching value in call to print
         # print(__get_address_as_lvalue(args[i]))
-
 
 fn main():
     my_func("hello", "world", "from", "Mojo!")
@@ -389,14 +479,116 @@ fn main():
 # Mojo!
 ```
 
-## 6.7 Function types
+You can define zero or more arguments before the variadic argument.  
+The variadic argument then takes in any remaining values in the function call.
+If you want to declare arguments after the variadic argument (probably not a good idea), they must be specified by keyword.
 
-Example: parallelize[func: fn(Int) capturing -> None]()
-`fn(Int) capturing -> None` is the function type.
+### 6.6.2 Homogeneous variadic arguments
+*Homogeneous* means that all of the passed arguments are the same type, for example all Int, or all String.
+
+Register-passable types, such as Int, are available as a VariadicList. As shown in the previous example `variadic.mojo`, you can iterate over the values using a for..in loop.
+
+Memory-only types, such as String, are available as a VariadicListMem. Iterating over this list directly with a for..in loop currently produces a Reference for each value instead of the value itself. You must add an empty subscript operator [] to dereference the reference and retrieve the value (see line 1):
+
+See `variadic_string.mojo`:   
+```py
+def make_worldly(inout *strs: String):
+    for i in strs:
+        i[] += " world"   # 1 # Requires extra [] to dereference the reference for now.
+    
+fn make_worldly2(inout *strs: String):
+    # This "just works" as you'd expect!
+    for i in range(len(strs)):  # 2
+        strs[i] += " world"
+        print(i, strs[i])
+
+fn main() raises:
+    var s1: String = "Hello"
+    var s2: String = "beautiful"
+    # make_worldly(s1, s2)
+    make_worldly2(s1, s2)
+
+# =>
+# 0 Hello world
+# 1 beautiful world
+```
+
+Subscripting into a VariadicListMem, as in line 2, returns the argument value, and doesn't require any dereferencing:
+
+### 6.6.3 Heterogeneous variadic arguments
+*Heterogeneous* means that the passed arguments are of different types.
+`def count_many_things[*ArgTypes: Intable](*args: *ArgTypes):`
+
+See https://docs.modular.com/mojo/manual/functions#heterogeneous-variadic-arguments
+
+### 6.6.4 Variadic keyword arguments
+The syntax is `**kwargs`. This allows the user to pass an arbitrary number of keyword arguments.
+Tis variadic argument is a dictionary (see §§).
+
+See `variadic_kwargs.mojo`:   
+```py
+fn print_nicely(**kwargs: Int) raises:
+    for key in kwargs.keys():
+        print(key[], "=", kwargs[key[]])
+
+fn main() raises:
+    print_nicely(a=7, y=8)
+
+# =>
+# a = 7
+# y = 8
+```
+
+### 6.6.5 Variadic argument followed by a keyword argument
+Keyword-only arguments are necessary in the following case, where the first argument is variadic:
+`fn sort(*values: Float64, ascending: Bool = True): ...`
+the user can pass any number of Float64 values, optionally followed by the keyword argument ascending . For example: ``var a = sort(1.1, 6.5, 4.3, ascending=False)`.
+If a function accepts variadic arguments, any arguments defined after the variadic arguments are treated as keyword-only.
+
+## 6.7 Overloading functions
+fn functions must specify argument types, so if you want a function to work with different data types, you need to implement separate versions of the function that each specify different argument types. This is called *overloading* a function.
+This is not a problem for def functions without argument types.
+In the following program the two versions of add are an example of overloading
+
+See `overloading_functions.mojo`:
+```py
+fn add(x: Int, y: Int) -> Int:              # 1
+    return x + y
+
+fn add(x: String, y: String) -> String:    # 2
+    return x + y
+
+fn main():
+    print(add(1, 2)) # => 3
+    print(add("Hi ", "Suzy!")) # => Hi Suzy!
+    print(add(1, "Hi")) # 3 => 1Hi
+    print(add(False, "Hi")) # 4 => FalseHi
+```
+
+Why does version #2 work, because "Hi" and "Suzy!" are of type StringLiteral, not String?
+It works because StringLiteral can be implicitly casted to String. String includes an overloaded version of its constructor (__init__()) that accepts a StringLiteral value. Thus, you can also pass a StringLiteral to a function that expects a String. This works in general when the given type can be implicitly casted to the required type. That's why lines 3 and 4 also work.
+
+*How does resolving an overloaded function call works?*
+The Mojo compiler tries each candidate function and uses the one that works (if only one version works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous (if it can’t figure out which one to pick).
+For example:
+
+See `overloading_functions2.mojo`:
+```py
+```
+
+The call in line 3 is ambiguous because the two `foo` functions 1 and 2 match it. We get the error: ambiguous call to 'foo', each candidate requires 1 implicit conversion, disambiguate with an explicit cast.
+We can follow up on this error to corect it in lines 4 or 5.
+
+>Note: Overloading also works with combinations of both fn and def functions.
+
+>Remark: If a function needs to work with many types, defining all these versions can be a lot of work. A better solution is to work with a *generic* or *parametric* type, see § ??
+
+>Note: you can also overload functions based on parameter types.
+
 
 ## 6.8 Running a function at compile-time and run-time
 As we saw in § 3.7, there are two times of execution: compile-time and runtime.
-Mojo has two ‘spaces’, the ‘parameter’ space (which operates during compile time) and the ‘value’ space (which operates during run time). Mojo functions can do computations in both spaces, the `[]` accept arguments for the ‘parameter’ space, and `()` accept arguments for the ‘value’ space:
+Mojo has two 'spaces', the 'parameter' space (which operates during compile time) and the 'value' space (which operates during run time). Mojo functions can do computations in both spaces, the `[]` accepts arguments for the 'parameter' space, and `()` accepts arguments for the 'value' space:
 
 See `compile_time1.mojo`:
 ```py
@@ -411,14 +603,15 @@ fn main():
     # Hello
 ```
 
-count is a compile-time parameter which becomes a run-time constant. The compiler makes a specific version of repeat with a fixed count value, which is then executed.
+count is a compile-time parameter which becomes a run-time constant. The compiler makes a specific version of `repeat` with the count value set to 3, which is executed when running.
 
 By using alias for the return variable, you can run a function at compile-time:
+(?? simpler example)
 
 See `compile_time2.mojo`:
 ```py
 fn squared(n: Int) -> Pointer[Int]:
-   vartmp = Pointer[Int].alloc(n)
+    var tmp = Pointer[Int].alloc(n)
     for i in range(n):
         tmp.store(i, i * i)
     return tmp
@@ -427,6 +620,7 @@ alias n_numbers = 5
 alias precalculated = squared(n_numbers) # 1
 
 fn main():
+    # var precalculated = squared(n_numbers) # 2
     for i in range(n_numbers):
         print(precalculated.load(i))
 
@@ -439,7 +633,7 @@ fn main():
 
 ```
 
-The function squared can be used both during comptime and runtime. The alias in line 1 takes care of calculation precalculated at comptime. It returns a pointer with pre-calculated values during compilation and using it at runtime.
+The function squared can be used both during compile-time and runtime. The alias in line 1 takes care that the calculation is done at compile-time. It returns a pointer with pre-calculated values during compilation and using it at runtime.
 If we comment this line and uncomment line 2, precalculated is computed at runtime.
 
 A parameter enclosed in [] is a compile-time (or static) value (1).
@@ -447,8 +641,8 @@ An argument enclosed in () is a run-time (or dynamic) value (2).
 If you get the error: `cannot use a dynamic value in a type parameter`, Mojo says that you used a runtime value as a compile-time parameter (case (1)).
 
 ## 6.9 Callbacks through parameters
-
 See `callbacks_params.mojo`:
+(?? why is file used in the example)
 ```py
 @value
 struct Markdown:
@@ -497,13 +691,12 @@ def main():
 ```
 
 This program generates markdown as an instance of struct Markdown.
-In line 1, the Markdown method render_page is called with the comptime parameter readme, which is itself a function of type def. 
+In line 1, the Markdown method render_page is called with the compile-time parameter readme, which is itself a function of type def. 
 
 
-Also:
-- From v 0.4.0: Functions support keyword arguments, also with defaults (enclosed in ())
-- From v 0.4.0: Functions support default parameter values (enclosed in [])
-- From v 0.5.0: Functions support keyword parameters, also with defaults (enclosed in [])
+
+A function can also be *recursive* (see Fibonacci example § 10.3)
+
 
 
 **Exercises**

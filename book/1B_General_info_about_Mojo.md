@@ -22,8 +22,8 @@ The name of the language is **Mojo**, meaning "a magical charm" or "magical powe
 Its logo is the [fire emoticon](https://emojipedia.org/fire) (?, werkt niet), the U+1F525 Unicode character. You can find it in the repo as: fire.png, kan emoji niet in file zetten??.
 
 Mojo is also the first language to introduce emojis as file extensions:
-Mojo’s source files have the fire emoticon extension like hello.🔥, or alternatively *.mojo*, as in *hello.mojo*.  
-Mojo’s packages have an emoticon extension like greetings.📦, or alternatively *.mojopkg*, as in *greetings.mojopkg*.  
+Mojo's source files have the fire emoticon extension like hello.🔥, or alternatively *.mojo*, as in *hello.mojo*.  
+Mojo's packages have an emoticon extension like greetings.📦, or alternatively *.mojopkg*, as in *greetings.mojopkg*.  
 
 Mojo users are called *mojicians 🪄*.
 The universe of all things Mojo is called the *Modverse*.
@@ -126,13 +126,13 @@ The company *Modular* is funded by VC (Venture Capital).
 ## 1B.6 Some one-liners
 * Mojo🔥: The Language of AI
 * Python++
-* Mojo integrates Python’s usability with C’s performance
+* Mojo integrates Python's usability with C's performance
 * Mojo is as simple as Python and as fast as Rust.
 * Mojo: a super-charged Python for AI.
 * "It's time to get your Mojo 🔥 back!"
 * Mojo is to Python like TypeScript is to JavaScript.
 * If Mojo can defeat Go in terms of parallelism, Rust in terms of safety, Julia in terms of affinity, then it will reach unprecedented popularity among developers.
-* Faster than C++, more hackable than Nvidia’s CUDA, and as safe as Rust.
+* Faster than C++, more hackable than Nvidia's CUDA, and as safe as Rust.
 * The best of multiple worlds: the ease of use and clear syntax of Python, with the speed and memory safety of Rust.
 * Mojo may become the lingua franca of the programming world.
 * Mojo is SIMD first (see § 4.4)

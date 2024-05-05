@@ -360,6 +360,7 @@ In development, the simple `mojo` command is just fine. But when you want to dep
 Using `mojo build` splits compilation from execution. This means we can also make the difference between:  
 * *Compile-time*: here the compiler scans your program and generates errors or warnings. If no errors are found, an executable (native code) is generated. 
 Data that is known at compile-time is said to be *statically known*.
+For example: you can execute a function during compile-time, which performs a heavy calculation to end up with some value(s) or a data structure. This result can be bound to a variable with `alias` (see § 4.6.1), so that it is immediately available at run-time.
 
 * *Run-time*: when the executable runs on your machine.
 Often data is not known at compile-time, but only at run-time, for example because it is read in or calculated at run-time. Such data is said to be *dynamically known*.

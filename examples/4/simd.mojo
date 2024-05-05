@@ -14,6 +14,11 @@ fn main():
     var ones = SIMD[DType.uint8, 4](1)        # 3B
     print(ones)  # => [1, 1, 1, 1]
 
+    var vec1 = SIMD[DType.int8, 4](2, 3, 5, 7)
+    var vec2 = SIMD[DType.int8, 4](1, 2, 3, 4)
+    var product = vec1 * vec2                 # 3C
+    print(product) # => [2, 6, 15, 28]
+
     var numbers = SIMD[DType.uint8, 8]()
     print(numbers) # => [0, 0, 0, 0, 0, 0, 0, 0]
     # fill them with numbers from 0 to 7

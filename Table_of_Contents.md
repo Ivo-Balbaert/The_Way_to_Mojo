@@ -22,7 +22,7 @@
 
 # 2 - Setting up a development environment
 ## 2.1 Architectures and compilers
-**Target OS’s and platforms**  
+**Target OS's and platforms**  
 **Compiler**  
 **Standard library**   
 ## 2.2 Using a Mojo binary release

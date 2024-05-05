@@ -34,15 +34,13 @@ fn main() raises:
         var simd_mojo_array = SIMD[DType.float64, 256]()        # 4
         var pi = np["pi"].to_float64()                          # 5
     
-        var size: Int = python_result.size.to_float64().to_int()   # 6 
-        for x in range(size):                                      # 7
+        var size: Int = int(python_result.size.to_float64())    # 6 
+        for x in range(size):                                   # 7
             simd_mojo_array[x] = python_result[x].to_float64()    
 
         simd_mojo_array = math.cos(simd_mojo_array*(pi*2.0/256.0))  # 8   
         print(simd_mojo_array)   
 
-         # error:
-    
 # =>
 # [1.0, 0.99969881869620425, 0.99879545620517241, 0.99729045667869021, 
 # 0.99518472667219693, 0.99247953459870997, 0.98917650996478101, 

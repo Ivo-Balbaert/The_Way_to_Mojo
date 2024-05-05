@@ -1,4 +1,18 @@
 # 4 Basic types
+?? Interesting topics from: https://docs.modular.com/mojo/manual/types
+- nominal types (struct??), nominal and structural typing, other types 
+- types defined in the standard library, not in the language itself
+- Using Int as the default integer type
+- rounding errors etc with floats
+- literal types: arbitrary precision at compile-time
+- Stringable will implicitly convert String:
+var s = str("Items in list: ") + 5
+- convert StringLiteral values to String using the built-in str() method, example: concatenation
+var a = 5
+var b = "String literals may not concatenate"
+print(a + b)
+
+
 All data values have a corresponding data *type*.
 Mojo's basic types are defined as built-ins, defined in the package `builtin`. They are automatically imported in code. These include the Bool, Int, IntLiteral, FloatLiteral, String and StringLiteral types, which we'll discuss in this section. They are all defined as a struct (see § 7).
 
@@ -24,9 +38,15 @@ It has the following aliases:
 
 The bitwidth for the following aliases is determined as: 32-bit on 32-bit machines and 64-bit on 64-bit machines.
 * index = index: Represents an integral type whose bitwidth is the maximum integral value on the system.
-* address = address: Represents a pointer type whose bitwidth is the same as the bitwidth of the hardware’s pointer type.
+* address = address: Represents a pointer type whose bitwidth is the same as the bitwidth of the hardware's pointer type.
 
 For example: `DType.uint8` can be used in code whenever you need an unsigned integer type of bitwidth 8.
+
+>Note that DType.float64 isn't a type, it's a value that describes a data type. You can't create a variable with the type DType.float64. You can create a variable with the type SIMD[DType.float64, 1] (or Float64, which is the same thing).
+```
+var f : DType.float64    # error: expected a type, not a value
+var f : Float64          # ok
+```
 
 DType has a lot of methods to test types, for example `is_uint8` checks whether the type is uint8. (example ??)
 
@@ -44,6 +64,13 @@ def main():
     a = Int32(42)
     b = Scalar[DType.int32](42)
     assert_equal(a, b) #  # Int32 is Scalar[DType.int32]
+```
+
+Following are some type-aliases defined in stdlib:  
+```py
+alias Scalar = SIMD[size=1]
+alias Int8 = Scalar[DType.int8]
+alias Float32 = Scalar[DType.float32]
 ```
 
 ## 4.2  The Bool type
@@ -144,7 +171,8 @@ fn main():
 ```
 
 ### 4.3.1.2 Converting integers
-The type name can be used to convert a value to the type (if possible), see line 1  
+The type name can be used to convert a value to the type (if possible):
+`Type(value)`, see line 1.  
 For example: `UInt8(1)` makes sure the value 1 is stored as an unsigned 1 byte integer.
 
 There is also a `cast` method to convert to another type.  
@@ -159,7 +187,7 @@ fn main():
     var y : Int8 = x.cast[DType.int8]() # 3
     print(y) # => 42
          
-    var w : Int = x.to_int()  # 4: `SIMD` to `Int`
+    var w : Int = int(x)      # 4: `SIMD` to `Int`
     print(x) # => 42
     var z : UInt8 = w         # 5: `Int` to `SIMD`
 ```
@@ -393,6 +421,11 @@ fn main():
     var ones = SIMD[DType.uint8, 4](1)        # 3B
     print(ones)  # => [1, 1, 1, 1]
 
+    var vec1 = SIMD[DType.int8, 4](2, 3, 5, 7)
+    var vec2 = SIMD[DType.int8, 4](1, 2, 3, 4)
+    var product = vec1 * vec2                 # 3C
+    print(product) # => [2, 6, 15, 28]
+
     var numbers = SIMD[DType.uint8, 8]()
     print(numbers) # => [0, 0, 0, 0, 0, 0, 0, 0]
  
@@ -414,7 +447,7 @@ If all items have the same value, use the shorthand notation as in line 3B for v
 math.iota (line 4) fills an array with numbers incremented by 1.
 Line 5 also performs a SIMD instruction: x*x for each number simultaneously.
 
-On SIMD vectors of the same size and type you can apply all operators like *, /, %, **. You can cast them to Bool type with cast[DType.bool]() and then apply &, |, ^ and so on.
+On SIMD vectors of the same size and type you can apply all operators like *, /, %, **. We see examples in line 3C and 5. Math operations on SIMD values are applied *elementwise*, on each individual element in the vector. You can cast them to Bool type with cast[DType.bool]() and then apply &, |, ^ and so on.
 
 
 ### 4.4.2 SIMD system properties
@@ -449,7 +482,7 @@ We use this in line 5 to declare a SIMD vector with as size the default type wid
 ### 4.4.3 Using element type and group size as compile-time constants
 Using the alias keyword, we can define the SIMD element type and group size as compile-time constants, as in the code below:
 
-See `simd_comptime.mojo`:
+See `simd_compile-time.mojo`:
 ```py
 from sys.info import simdwidthof
 import math
@@ -788,8 +821,9 @@ XYZ
 
 ## 4.6 Defining constants and types with alias types
 A commonly known best practice is to give constant values, that are repeatedly used in our program, a name like ACONSTANT. So when its value changes, we only have to do it in one place. In Mojo, such constants are defined with the `alias` keyword.  This is a compile-time constant: all instances of the alias are replaced by its value at compile-time.
-
-You can also define a synonym or shorthand for a type with alias:
+You can also define a synonym or shorthand for a type with alias.
+It can also be used to do a calclation or build a data structure.
+All alias values are written in a section of the executable file.
 
 ### 4.6.1 Using alias
 See `alias.mojo`:

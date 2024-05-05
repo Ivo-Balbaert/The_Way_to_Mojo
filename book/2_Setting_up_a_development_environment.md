@@ -5,7 +5,7 @@ You can execute code in the [Online Playground](https://docs.modular.com/mojo/pl
 
 ## 2.1 Architectures and compilers
 
-### 2.1.1 Target OS’s and platforms
+### 2.1.1 Target OS's and platforms
 2023 Aug 26: Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher, other distro's)
 2023 Oct 19: Now support for Apple silicon is added (M1 and M2 processors)
 
@@ -176,7 +176,7 @@ Hello Mojo!
 ## 2.5 Some info on WSL
 You can view Linux folders in Explorer by giving the following command in WSL: `explorer.exe .`
 When having trouble starting a remote WSL window in VSCode, uninstall and reinstall the Remote WSL Window extension in VSCode; restart VSCode.
-When the WSL terminal doesn’t start up, disable Windows Hypervisor in Windows Features, reboot, enable Windows Hypervisor in Windows Features , reboot.
+When the WSL terminal doesn't start up, disable Windows Hypervisor in Windows Features, reboot, enable Windows Hypervisor in Windows Features , reboot.
 (Alternatively, you can do wsl --terminate and wsl --update)   
 See also: [Troubleshooting Windows Subsystem for Linux | Microsoft Docs](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting)
 
@@ -260,16 +260,24 @@ The `%%python` is used at the top of a notebook cell in Mojo to indicate that th
 See also: § 2.7.2 for how to work with a Jupyter notebook in VS Code.
 
 ### 2.10.3 Visual Studio Code (VS Code)
-This is one of the most popular programmer’s editors today (https://code.visualstudio.com/)
+This is one of the most popular programmer's editors today (https://code.visualstudio.com/)
 
 The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo). It features (v 24.2.1):
 * Syntax highlighting for .mojo and .🔥 files
-* Code completion
+
+?? Table with hotkeys
+
+* Outline of code, with struct fields and methods, global variables, functions, main() in particular.
+* Code completion: To trigger a completion press ctrl + space, pressing ctrl + space again will bring up doc hints
 * Code diagnostics and quick fixes
-* API docs on hover
+* API docs on hover: macOS is ⌘ + k, ⌘ + i or ctrl + k, ctrl + i in Linux and Windows
+* Signature help: 
+* Go to Symbol: ctrl + shift + o in Linux and Windows.
 * Code formatting
 * Run Mojo File
 * Showing docs
+
+A *fully featured LLDB debugger* is included. Press the down arrow next to the ▶️ button in the top right of a Mojo file, and select Debug Mojo File: ?? Image with breakpoint. The default key is F5, and you can rebind the related hotkeys in Preferences: Open Keyboard Shortcuts > Debug: Start Debugging
 
 ### 2.10.4 How to work with a Jupyter notebook in VS Code 
 Doesn't work ??

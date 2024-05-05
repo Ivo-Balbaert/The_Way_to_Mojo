@@ -322,10 +322,10 @@ fn main() raises:
         # [  0.   1.   2.   3.   4.   5.   6.   7.   8.   9.  10.  11.  12.  13.
         # 14.  15.  16.  17.  ...   253. 254. 255.]
         var simd_mojo_array = SIMD[DType.float64, 256]()        # 4
-       varpi = np["pi"].to_float64()                          # 5
+       varpi = np["pi"].to_float64()                            # 5
     
-       varsize: Int = python_result.size.to_float64().to_int()   # 6 
-        for x in range(size):                                      # 7
+       varsize: Int = int(python_result.size.to_float64())      # 6 
+        for x in range(size):                                   # 7
             simd_mojo_array[x] = python_result[x].to_float64()    
 
         simd_mojo_array = math.cos(simd_mojo_array*(pi*2.0/256.0))  # 8   

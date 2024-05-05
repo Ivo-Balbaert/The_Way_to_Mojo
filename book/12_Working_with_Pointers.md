@@ -1,5 +1,5 @@
 # 12 – Working with Pointers
-**Don’t be afraid of pointers.**
+**Don't be afraid of pointers.**
 
 Pointers are a fundamental concept in many low-level systems programming languages, and they exist also in Mojo. They offer the following advantages:  
 * Memory Efficiency: Pointers allow programs to use memory more efficiently. Instead of copying and storing entire data structures, a program can use pointers to reference these structures. This is particularly useful when dealing with large data structures.

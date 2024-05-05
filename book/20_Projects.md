@@ -266,7 +266,7 @@ fn main() raises:
 ```
 
 The Tensor parametric type declaration has this format:  `Tensor[DType.float64](n)` 
-In Mojo *parameters* represent a compile-time value. In this example we’re telling the compiler, Tensor is a container for 64-bit floating point values. And *arguments* in Mojo represent runtime values, in this case we’re passing n=10_000_000 to Tensor’s constructor to instantiate a 1-dimensional array of 10 million values.
+In Mojo *parameters* represent a compile-time value. In this example we're telling the compiler, Tensor is a container for 64-bit floating point values. And *arguments* in Mojo represent runtime values, in this case we're passing n=10_000_000 to Tensor's constructor to instantiate a 1-dimensional array of 10 million values.
 
 Calculation of Euclid distance:
 ```py
@@ -1077,7 +1077,7 @@ fn mandelbrot_kernel_1(c: ComplexFloat64) -> Int:
 ```
 
 The complete code to run it and display the resulting graph with matplotlib is stored in mojo `mandelbrot_1.mojo`. (Executed in 0.193 seconds)
-There is no difference in performance between mandelbrot_0 and  mandelbrot_1. The reason is that Mojo’s type inference and optimizations remove the dynamism from the types – allowing one to work with concrete types rather than variants.
+There is no difference in performance between mandelbrot_0 and  mandelbrot_1. The reason is that Mojo's type inference and optimizations remove the dynamism from the types – allowing one to work with concrete types rather than variants.
 
 
 ### 20.5.4 Simplifying the math to reduce computation

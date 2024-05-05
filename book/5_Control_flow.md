@@ -44,16 +44,15 @@ fn main() raises:
 ```
 
 ## 5.2 if else and Bool values
-
 The general format follows the Python syntax: `if cond:  ... else:  ... `
 Here is a first example of using the if-else flow in Mojo, using several numerical types and two functions:
 
 See `if_else1.mojo`:
 ```py
 fn func1():
-   varx: Int = 42
-   vary: Float64 = 17.0
-   varz: Float32   
+   var x: Int = 42
+   var y: Float64 = 17.0
+   var z: Float32   
 
     if x != 0:       # 1
         z = 1.0      
@@ -68,11 +67,9 @@ fn main():
     func1()
 ```
 
-The condition cond can be an expression using all the boolean operators (see § 4.1).
+The condition `cond` can be an expression using all the boolean operators (see § 4.2).
 
-The 2nd example `guess.mojo` shows function that returns a Bool value (line 1). We define a temporary variable of type `StringLiteral` in line 2. Lines 3 and 4 then contain the if-else condition:  
-`guess == luckyNumber` compares the values of guess and luckyNumber with `==`. It returns a Bool value: if the values guess and luckyNumber are equal, the expression is `True` and the first block is executed, else its value is `False`, and the else block runs.
-`!=` is the inverse of `==`.
+The 2nd example `guess.mojo` shows a function that returns a Bool value (line 1). We define a temporary variable of type `StringLiteral` in line 2. Lines 3 and 4 then contain the if-else condition:  
 
 See `guess.mojo`:
 ```py
@@ -80,7 +77,7 @@ fn main():
     print(guessLuckyNumber(37)) # => True
 
 fn guessLuckyNumber(guess: Int) -> Bool:    # 1
-   varluckyNumber: Int = 37
+    varluckyNumber: Int = 37
     var result: StringLiteral = ""      # 2
     if guess == luckyNumber:            # 3
         result = "You guessed right!"   # => You guessed right!
@@ -110,6 +107,7 @@ else:
 Also if statements can be nested inside each other.
 
 If an Int or a Float value does not equal 0 or 0.0, it returns True in an if statement:
+See `if_number.mojo`:
 ```py
 if 1.0:
     print("not 0.0")  # => not 0.0
@@ -131,7 +129,11 @@ warning: if statement with constant condition 'if True'
        ^
 ```
 
+### 5.2.1 The walrus operator :=
+The walrus operator now works in if/while statements without parentheses, e.g.:  
+`if x := function():`
 
+Example: ??
 
 
 ## 5.2 Using for loops
@@ -249,12 +251,12 @@ fn() raises is necessary in order to raise
 fn() cannot call functions that might raise, for example: a def function that raises by default
 **Try:**
 Inside the try block, we can call functions that could raise and error. It is also possible to Raise an error.
-If and error is thrown, the execution continue at the beginning of the Except: block just below
+If an error is thrown, the execution continue at the beginning of the except: block just below
 **Except e:**
 Here it is possible to inspect the error e, based on that, we can fix it.
-If fixed, the the execution continue on the first line after the except block.
+If fixed, the the execution continues on the first line after the except block.
 If it is not possible to fix it, it is possible to Raise an error: either the same or another.
-The error will be transfered to the next Except: block. 
+The error will be transferred to the next Except: block. 
 
 
 
@@ -263,6 +265,7 @@ In Python the with statement is used to create a context. Whatever statements we
 It is commonly used as `with open(file)` to read a file and close it automatically at the end of the context (see § 10.12).  
 
 For example:
+See `with.mojo`
 ```py
 with open("my_file.txt", "r") as file:
     print(file.read())
@@ -275,9 +278,9 @@ with open("my_file.txt", "r") as file:
 bar()
 ```
 
-For any value defined at the entrance to a with statement (like `file` here), Mojo will keep that value alive until the end of the with statement.
+For any value defined at the entrance of a with statement (like `file` here), Mojo will keep that value alive until the end of thestatement.
 
-In Mojo it is used to create a parallelization context (no longer the same code!), for example in mandelbrot_4.mojo:
+?? In Mojo it is used to create a parallelization context (no longer the same code!), for example in mandelbrot_4.mojo:
 ```py
 from runtime.llcl import num_cores, Runtime
 
@@ -290,13 +293,8 @@ with Runtime() as rt:
        varparallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
 ```
 
-## 5.6 The walrus operator :=
-The walrus operator now works in if/while statements without parentheses, e.g.:  
-`if x := function():`
 
-Example: ??
-
-## 5.7 Exiting from a program
+## 5.6 Exiting from a program
 This will eventually be implemented. For now you can use this function:
 
 See `exit.mojo`:
@@ -313,10 +311,10 @@ fn exit(status: Int32) -> UInt8:
 
 with output:  
 ```
-[Running] mojo tempCodeRunnerFile.mojo
+[Running] mojo exit.mojo
 before exit
 
-[Done] exited with code=254 in 0.113 seconds
+[Done] exited with code=254 in 0.391 seconds
 ```
 
-external_call is a function defined in module intrinsics.
+`external_call` is a function defined in module sys.ffi.

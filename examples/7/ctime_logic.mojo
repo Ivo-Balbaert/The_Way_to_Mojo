@@ -8,9 +8,9 @@ fn slice[ty: DType, new_size: Int, size: Int](
 fn reduce_add[ty: DType, size: Int](x: SIMD[ty, size]) -> Int:
     @parameter
     if size == 1:
-        return x[0].to_int()
+        return int(x[0])
     elif size == 2:
-        return x[0].to_int() + x[1].to_int()
+        return int(x[0]) + int(x[1])
 
     # Extract the top/bottom halves, add them, sum the elements.
     alias half_size = size // 2

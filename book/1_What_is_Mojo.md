@@ -111,7 +111,7 @@ Mojo prefers compile-time errors to runtime errors, because solving bugs at runt
 [Note on MLIR]
 MLIR stands for "Multi-Level Intermediate Representation".
 (https://llvm.org/devmtg/2020-09/slides/MLIR_Tutorial.pdf)
-MLIR is a replacement for LLVM’s IR for the modern age of many-core computing and AI workloads.It’s critical for fully leveraging the power of hardware like GPUs, TPUs, and the vector units increasingly being added to server-class CPUs.
+MLIR is a replacement for LLVM's IR for the modern age of many-core computing and AI workloads.It's critical for fully leveraging the power of hardware like GPUs, TPUs, and the vector units increasingly being added to server-class CPUs.
 
 ## 1.3 Use cases of the language
 Mojo is designed in the first place for AI development (?? elaborate). But it is also a general purpose language, suitable for building high-quality servers, CLI's (command-line applications), graphical native desktop UI's (user interfaces), database extensions, editor plugins, robotics, embedded applications, and so on.  
@@ -120,13 +120,13 @@ As a kind of *Python++*, Mojo could serve the whole software industry.
 
 "
 * Systems Programming: Mojo is well-suited for systems programming tasks, such as developing operating systems, device drivers, or firmware. Its low-level capabilities and efficient memory management make it ideal for these types of applications.
-* Performance-Critical Applications: Mojo’s ability to optimize code execution makes it a good choice for performance-critical applications. This includes tasks like scientific computing, data analysis, or simulations that require efficient processing of large amounts of data.
+* Performance-Critical Applications: Mojo's ability to optimize code execution makes it a good choice for performance-critical applications. This includes tasks like scientific computing, data analysis, or simulations that require efficient processing of large amounts of data.
 * Embedded Systems: Mojo can be used in developing software for embedded systems, which are specialized computer systems found in devices like smartphones, IoT devices, or automotive systems. Its lightweight nature and close integration with hardware make it a valuable tool for embedded programming.
-* Networking and Network Protocols: Mojo provides extensive support for network programming, making it useful for developing networking applications and protocols. Whether it’s creating web servers, implementing network protocols, or building communication systems, Mojo offers the necessary functionality.
+* Networking and Network Protocols: Mojo provides extensive support for network programming, making it useful for developing networking applications and protocols. Whether it's creating web servers, implementing network protocols, or building communication systems, Mojo offers the necessary functionality.
 * Game Development: The performance and low-level control offered by Mojo make it suitable for game development. It allows developers to create high-performance games with complex graphics and physics engines.
-* Cryptography and Security: Mojo’s ability to work with low-level operations and efficient algorithms makes it well-suited for cryptography and security-related applications. It enables the development of secure communication systems, encryption algorithms, and cryptographic protocols.
-* High-Performance Web Applications: Mojo’s performance optimizations and ability to handle high concurrency make it a good choice for building high-performance web applications. It can handle a large number of requests efficiently, making it ideal for handling heavy web traffic.
-* Machine Learning and AI: Mojo’s compatibility with existing Python packages and libraries makes it useful for machine learning and artificial intelligence tasks. It allows developers to leverage popular machine learning frameworks and libraries to build and deploy AI models.
+* Cryptography and Security: Mojo's ability to work with low-level operations and efficient algorithms makes it well-suited for cryptography and security-related applications. It enables the development of secure communication systems, encryption algorithms, and cryptographic protocols.
+* High-Performance Web Applications: Mojo's performance optimizations and ability to handle high concurrency make it a good choice for building high-performance web applications. It can handle a large number of requests efficiently, making it ideal for handling heavy web traffic.
+* Machine Learning and AI: Mojo's compatibility with existing Python packages and libraries makes it useful for machine learning and artificial intelligence tasks. It allows developers to leverage popular machine learning frameworks and libraries to build and deploy AI models.
 "
 
 ## 1.4 Languages that influenced Mojo

@@ -1,14 +1,19 @@
+# warning: transfer from a value of trivial register type 'SIMD[si8, 1]' has no effect and can be removed
+#     print(sum(a^, b^))  # => 5
+#                ^
 
-fn mojo():
-    var a: String = "mojo"
-    var b = set_fire(a^)
-    # print(a)        # error: use of uninitialized value 'a'
-    print(b)          # => "mojo🔥"
+fn sum(owned a: Int8, owned b: Int8) -> Int8:
+    a = 3
+    b = 2
+    return a + b
 
-fn set_fire(owned text: String) -> String:   
-    text += "🔥"
-    return text
 
 fn main():
-    mojo()
+    var a: Int8 = 4
+    var b: Int8 = 5
 
+    # owned: the functions 'owns' these variables, so it can change them, but the original
+    # values are no longer there, they are moved by the transfer operator
+    #  warning: transfer from a value of trivial register type 'SIMD[int8, 1]' has no effect and can be removed
+    print(sum(a^, b^))  # => 5
+    # print(a, b)  # => error: use of uninitialized value 'a', error: use of uninitialized value 'b'

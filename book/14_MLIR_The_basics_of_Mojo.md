@@ -23,7 +23,7 @@ Most Mojo programmers will not need to access MLIR directly, and for the few tha
 
 Mojo programs can take full advantage of *anything* that interfaces with MLIR. While this isn't something normal Mojo programmers may ever need to do, it's an extremely powerful capability when extending a system to interface with a new datatype, or an esoteric new accelerator feature.
 
-MLIR is further sub-categorized into many different ‘dialects’, e.g. `arith` dialect for compiler operations related to arithmetic. Mojo’s `Int` type is a wrapper around the `index` dialect.
+MLIR is further sub-categorized into many different 'dialects', e.g. `arith` dialect for compiler operations related to arithmetic. Mojo's `Int` type is a wrapper around the `index` dialect.
 
 Mojo only uses the LLVM and index dialect (video 2023 LLVM Mtg 34')
 

@@ -1,4 +1,4 @@
-fn outer(f: fn() -> None):   # 2B
+fn outer(f: fn() -> None):   # 2   # Here -> None is required.
     f()                      # 3
 
 fn call_it():

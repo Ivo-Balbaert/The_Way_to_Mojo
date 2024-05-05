@@ -18,7 +18,7 @@
 
 # 2 - Setting up a development environment
 ## 2.1 Architectures and compilers
-### 2.1.1 Target OS’s and platforms
+### 2.1.1 Target OS's and platforms
 ### 2.1.2 Compiler
 ### 2.1.3 Runtime
 ### 2.1.4 Standard library
@@ -62,7 +62,7 @@
 
 # 4 Basic types
 ## 4.1 The data type DType
-## 4.2  The Bool type
+## 4.2 The Bool type
 ## 4.3 Numerical types
 ### 4.3.1 The Integer types
 #### 4.3.1.1 Using Ints as indexes
@@ -81,11 +81,21 @@
 ### 4.4.4  Splat, join and cast
 ## 4.5 The String types
 ### 4.5.1 The StringLiteral type
-#### 4.5.1.1   Converting a StringLiteral to an integer
+#### 4.5.1.1 Converting a StringLiteral to an integer
 ### 4.5.2 The String type
 ### 4.5.3 The StringRef type
 ### 4.5.4 Some String methods
 ## 4.6 Defining constants and types with alias types
-### 4.6.1 Using of alias
+### 4.6.1 Using alias
 ### 4.6.2 Defining an enum type using alias
 ## 4.7 The object type
+
+# 5 Control flow
+## 5.1 Code blocks
+## 5.2 if else and Bool values
+### 5.2.1 The walrus operator :=
+## 5.2 Using for loops
+## 5.3 Using while loops
+## 5.4 Catching exceptions with try-except-finally
+## 5.5 The with statement
+## 5.6 Exiting from a program

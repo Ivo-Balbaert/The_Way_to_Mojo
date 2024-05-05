@@ -138,7 +138,7 @@ Overloading a function (or method) name occurs when two or more functions or met
 ### 7.4.1 Overloaded functions and methods
 Like in Python, you can define functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs andvar*dynamic dispatch* decide how to handle the data. However, when you want to ensure type safety, Mojo also offers full support for overloaded functions and methods, a feature that does not exist in Python.  
 This allows you to define multiple functions with the same name but with different arguments. This is a common feature called *overloading*, as seen in many languages, such as C++, Java, and Swift.  
-When resolving a function call, Mojo tries each candidate and uses the one that works (if only one works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous if it can’t figure out which one to pick. In the latter case, you can resolve the ambiguity by adding an explicit cast on the call site.  
+When resolving a function call, Mojo tries each candidate and uses the one that works (if only one works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous if it can't figure out which one to pick. In the latter case, you can resolve the ambiguity by adding an explicit cast on the call site.  
 
 In the next example a struct Complex is defined representing complex numbers, but it has two __init__ methods, one to define only the real part, and another to define both parts of a complex number: the __init__ constructor is overloaded.
 
@@ -170,10 +170,10 @@ fn main():
 
 You can overload methods in structs and classes and also overload module-level functions.
 
-Mojo doesn’t support overloading solely on result type, and doesn’t use result type or contextual type information for type inference, keeping things simple, fast, and predictable.  
+Mojo doesn't support overloading solely on result type, and doesn't use result type or contextual type information for type inference, keeping things simple, fast, and predictable.  
 Again, if you leave your argument names without type definitions, then the function behaves just like Python with dynamic types. As soon as you define a single argument type, Mojo will look for overload candidates and resolve function calls as described above.
 
-Although we haven’t discussed parameters yet (they’re different from function arguments), you can also overload structs, functions and methods based on parameters.  
+Although we haven't discussed parameters yet (they're different from function arguments), you can also overload structs, functions and methods based on parameters.  
 
 For other examples, which shows method and function overloading in the same program, see `employee.mojo` and `overloading2.mojo`.
 (Use employee.mojo as an example of overloading normal methods or functions.)
@@ -231,14 +231,14 @@ fn main():
 ```
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
-Developers in Mojo have precise control over the lifetime behavior of defined types by choosing to implement or omit “dunder” methods. Initialization is managed using __init__ , copying is controlled with __copyinit__ (“deep copy”), and “move” operations (“shallow copy”) are handled through __movecopy__ .
+Developers in Mojo have precise control over the lifetime behavior of defined types by choosing to implement or omit "dunder" methods. Initialization is managed using __init__ , copying is controlled with __copyinit__ ("deep copy"), and "move" operations ("shallow copy") are handled through __movecopy__ .
 
 Mojo uses *value semantics* by default, meaning that in a statement like `let b = a` we expect to create a copy of `a` when assigning to `b`. However, Mojo doesn't make any assumptions about *how* to copy the value of a. In the above program when typing `let b = square`, we get the `error: value of type 'Rectangle' cannot be copied into its destination`. 
 The error indicates that Mojo doesn't know how to copy a Rectangle struct, and that we must implement a `__copyinit__` method, which would implement the copying logic.
 
 Mojo does not allow mutable references to overlap with other mutable references or with immutable borrows.
 
-For advanced use cases, Mojo allows you to define custom constructors (using Python’s existing __init__ special method), custom destructors (using the existing __del__ special method) and custom copy and move constructors using the new __copyinit__ and __moveinit__ special methods.  
+For advanced use cases, Mojo allows you to define custom constructors (using Python's existing __init__ special method), custom destructors (using the existing __del__ special method) and custom copy and move constructors using the new __copyinit__ and __moveinit__ special methods.  
 
 When a struct has no __copyinit__ method, an instance of that struct cannot be copied.
 In the following example a struct HeapArray is defined in line 1. If we try to copy it to another variable b (line 2), we get an `error: value of type 'HeapArray' cannot be copied into its destination`.
@@ -283,7 +283,7 @@ fn main():
     a.dump()   
 ```
 
-HeapArray contains an instance of `Pointer` (which is equivalent to a low-level C pointer), and Mojo doesn’t know what kind of data it points to or how to copy it. More generally, some types (like atomic numbers) cannot be copied or moved around because their address provides an identity just like a class instance does.
+HeapArray contains an instance of `Pointer` (which is equivalent to a low-level C pointer), and Mojo doesn't know what kind of data it points to or how to copy it. More generally, some types (like atomic numbers) cannot be copied or moved around because their address provides an identity just like a class instance does.
 
 If we then provide that method (see line 2), all works fine:
 When executing `let b = a`, b gets substituted for self, and a for rhs. a is on the 'right hand side', that's why we call the 2nd arguments rhs.
@@ -478,7 +478,7 @@ __del__ has as signature:
 
 # 7.9 Compile-time metaprogramming in Mojo
 One of the great characteristics of Python is that you can change code at runtime, so-called *run-time metaprogramming*. This can do some amazing things, but it comes at a great performance cost.  
-The modern trend in programming languages is toward statically compiled languages, with *metaprogramming done at compile-time*! Think about Rust macros, Swift, Zig and Jai. Mojo as a compiled language fully embraces *compile-time metaprogramming*, built into the compiler as a separate stage of compilation - after parsing, semantic analysis, and IR generation, but before lowering to target-specific code. To do this, the same Mojo language is used for metaprograms as for runtime programs, and it also leverages MLIR. This is because Modular’s work in AI needs high-performance machine learning kernels, and accelerators, and high abstraction capabilities provided by advanced metaprogramming systems.  
+The modern trend in programming languages is toward statically compiled languages, with *metaprogramming done at compile-time*! Think about Rust macros, Swift, Zig and Jai. Mojo as a compiled language fully embraces *compile-time metaprogramming*, built into the compiler as a separate stage of compilation - after parsing, semantic analysis, and IR generation, but before lowering to target-specific code. To do this, the same Mojo language is used for metaprograms as for runtime programs, and it also leverages MLIR. This is because Modular's work in AI needs high-performance machine learning kernels, and accelerators, and high abstraction capabilities provided by advanced metaprogramming systems.  
 Currently the following techniques are used with metaprogramming:  
 1) Parametric types in structs and functions  with compile-time arguments (called parameters in Mojo)(see § 7.9.1)
 2) Running arbitrary Mojo code (at compile-time) to set parameter values  (alias)
@@ -620,9 +620,9 @@ fn slice[ty: DType, new_size: Int, size: Int](
 fn reduce_add[ty: DType, size: Int](x: SIMD[ty, size]) -> Int:
     @parameter
     if size == 1:
-        return x[0].to_int()
+       return int(x[0])
     elif size == 2:
-        return x[0].to_int() + x[1].to_int()
+        return int(x[0]) + int(x[1])
 
     # Extract the top/bottom halves, add them, sum the elements.
     alias half_size = size // 2
@@ -642,11 +642,11 @@ fn main():
 Mojo implements eager destruction of variables, that is: the memory is released ASAP, destroying values immediately after last-use. 
 
 Int is a trivial type and Mojo reclaims this memory as soon as possible,without need for a __del__() method.
-String is a destructible (it has its own __del__() method) and Mojo destroys it as soon as it’s no longer used.
+String is a destructible (it has its own __del__() method) and Mojo destroys it as soon as it's no longer used.
 This means that a struct which has only String and Int fields doesn't need a destructor.
 A struct that contains a pointer (like Array in § 7.9.4 or HeapArray) needs a __del__.
 
-Mojo also has field-sensitive lifetime management: it keeps track separately of whether a "whole object" is fully or only partially initialized or destroyed.  But the "whole object" must be constructed with the aggregate type’s initializer (__init__) (not by initializing all individual fields) and destroyed with the aggregate destructor (__del__).
+Mojo also has field-sensitive lifetime management: it keeps track separately of whether a "whole object" is fully or only partially initialized or destroyed.  But the "whole object" must be constructed with the aggregate type's initializer (__init__) (not by initializing all individual fields) and destroyed with the aggregate destructor (__del__).
 
 ## 7.10.1 Types that cannot be instantiated
 These are types from which you cannot create an instance because they have no initializer __init__. In order to get them, you need to define an __init__ method or use a decorator like @value that generates an initializer. 

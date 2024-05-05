@@ -736,53 +736,46 @@ List: dynamic resizing vector
 This Vector type dynamically allocates memory to store elements.
 It supports pushing and popping from the back, resizing the underlying storage to accommodate more elements as needed. 
 
-See `List1.mojo`:
+See `list.mojo`:
 ```py
-from collections.vector import List
-
 fn main():
     var vec = List[Int](8)  # 1
 
-    vec.push_back(10)
-    vec.push_back(20)
-    print(len(vec))     # 2 => 2
-    print(vec.size)     # => 2
+    vec.append(10)
+    vec.append(20)
+    print(len(vec))  # 2 => 3
+    print(vec.size)  # => 3
 
-    print(vec.capacity) # 3 => 8
-       # error: 'AnyPointer[Int]' ` methods
-    #print(vec.data[0])  # 4 => 10
-   print(vec.data[0])  # 4 => 10
-ptable, it does not implement the `__getitem__`/`__setitem__` methods
+    print(vec.capacity)  # 3 => 4
+    # error: 'AnyPointer[Int]' is not subscriptable, it does not implement the `__getitem__`/`__setitem__` methods
     # print(vec.data[0])  # 4 => 10
-   # print(vec.data[0])  # 4 => 10
-   
-    print(vec[0])       # 5 => 10
-    vec[1] = 42     
-    print(vec[1])       # => 42
-    print(len(vec))     # => 2
-    vec[6] = 10         # 6
-    print(len(vec))     # => 2
 
-   varvec2 = vec      # 7
+    print(vec[0])  # 5 => 8
+    vec[1] = 42
+    print(vec[1])  # => 42
+    vec[6] = 10  # 6
+    print(len(vec))  # => 3
+
+    var vec2 = vec  # 7
     vec[0] = 99
-    print(vec2[0])      # => 99
+    print(vec2[0])  # => 8
     vec[1] = 100
 
-    print(len(vec))     # => 2
-    print(vec.pop_back()) # 9 => 
-    print(len(vec))     # => 1
+    print(len(vec))  # => 3
+    print(vec.pop())  # 9 =>
+    print(len(vec))  # => 3
 
-    vec.reserve(16)     # 10
-    print(vec.capacity) # => 16
-    print("after reserving: ", vec.size)     # => 1
+    vec.reserve(16)  # 10
+    print(vec.capacity)  # => 20
+    print("after reserving: ", vec.size)  # => 2
 
-    vec.resize(10, 0)      # 11
-    print("after resizing: ", vec.size)     # => 10
+    vec.resize(10, 0)  # 11
+    print("after resizing: ", vec.size)  # => 16
 
-    vec.clear()         # 12
-    print(vec[1])       # => 0  
-    print(vec.size)     # => 0
-    print(len(vec))     # => 0
+    vec.clear()  # 12
+    print(vec.size)  # => 0
+    print(len(vec))  # => 0
+    print(vec[1])  # => 100  - former items are not cleared
 ```
 
 You can reserve memory to add elements without the cost of copying everything if it grows too large. For example, we reserve 8 bytes in line 1 to store Int values.  
