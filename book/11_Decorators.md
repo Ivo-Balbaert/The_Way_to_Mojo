@@ -28,10 +28,12 @@ deprecated: `@adaptive`     see matmul, changed to @parameter if (see changelog 
 
 
 ## 11.1 - @value
-The @value decorator makes defining simple aggregates of fields very easy; it synthesizes a lot of boilerplate code for you.
-@value generates a member-wise initializer, a copy constructor and a move constructor.
+The @value decorator makes defining simple aggregates of fields very easy. Using it synthesizes a lot of boilerplate code for you: @value generates a member-wise initializer (__init__), a copy constructor (__copyinit__) and a move constructor (__moveinit__). These allow you to construct, copy, and move your struct type in a manner that's value semantic and compatible with Mojo's ownership model.
 
-You cannot make a struct instance without having defined an __init_ method. If you try, you get the error: `'Coord' does not implement any '__init__' methods in 'let' initializer`
+>Note: @value only creates these methods if they are not yet present. You can still write your own versions of these methods, while leaving the generated ones in place.
+
+
+You cannot make a struct instance without having defined an __init_ method. If you try, you get the error: `'Coord' does not implement any '__init__' methods in 'var' initializer`
 
 See `value.mojo`:
 ```py
@@ -40,12 +42,12 @@ struct Coord:
     var y: Int
 
 fn main():
-   varp = Coord(0, 0)  # error!
+   var p = Coord(0, 0)  # error!
 ```
 
 (https://mojodojo.dev/guides/decorators/value.html elaborates this further:
-- implement __init__ -->varpair = Pair(5, 10) works
--varpair2 = pair doesn't work, error: not copyable
+- implement __init__ --> var pair = Pair(5, 10) works
+- var pair2 = pair doesn't work, error: not copyable
 - implement __moveinit__ and __copyinit__
 - now # Move objectvarpair2 = pair^ and # Copy objectvarpair3 = pair2 works
 - but you can achieve the same by just using @value)
@@ -59,7 +61,7 @@ struct Coord:
     var y: Int
 
 fn main():
-   varp = Coord(0, 0)
+    var p = Coord(0, 0)
     print(p.y) # => 0
 ```
 
@@ -101,14 +103,14 @@ struct Pet:
 
 fn main():
     # Creating a new pet
-   varmyCat = Pet("Wia", 6)
+    var myCat = Pet("Wia", 6)
     print("Original cat name: ", myCat.name)
     print("Original cat age: ", myCat.age)
     # Copying a pet
-   varcopiedCat = Pet(myCat.name, 7)
+    var copiedCat = Pet(myCat.name, 7)
     print("Copied cat name: ", copiedCat.name)
     print("Copied cat age: ", copiedCat.age)
-   varmovedCat = myCat
+    var movedCat = myCat
     print("Moved cat name: ", movedCat.name)
     print("Moved cat age: ", movedCat.age)
 # =>
@@ -120,7 +122,6 @@ fn main():
 # Moved cat age:  6
 ```
 
-You can still write your own versions of these, while leaving the generated ones in place.
 
 
 ## 11.2 - @register_passable

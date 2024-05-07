@@ -23,6 +23,6 @@ fn main():
     print(o.value)  # => 30
     
     var x: MyInt = 42
-    x += 1         # 1
+    x += 1         # 1  # works only because of __iadd__ method
     print(x.value) # => 43
     

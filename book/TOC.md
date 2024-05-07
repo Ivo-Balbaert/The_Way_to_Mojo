@@ -127,3 +127,26 @@
 ### 6.8.2 Example of a capturing closure
 ## 6.9 Callbacks through parameters
 
+# 7 Structs
+## 7.1 First example
+## 7.3 A second example <-- 7.2>
+## 7.4 Overloading of methods
+### 7.4.1 Overloaded methods
+### 7.4.2 Overloaded operators
+## 7.5 The __copyinit__ and __moveinit__ special methods
+## 7.6 Using a large struct instance as function argument
+## 7.7 Using inout with structs
+## 7.8 Transfer struct arguments with owned and ^
+## 7.9 Compile-time metaprogramming in Mojo
+### 7.9.1 Parametric types in structs and functions
+### 7.9.2 Parametric structs   
+### 7.9.3 How to create a custom parametric type: Array
+### 7.9.4 Parametric functions and methods
+### 7.9.5 Programming compile-time logic
+## 7.10 Static methods
+## 7.11 Lifetimes
+### 7.11.1 Types that cannot be instantiated
+### 7.11.2 Non-movable and non-copyable types
+
+
+

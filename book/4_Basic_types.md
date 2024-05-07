@@ -77,7 +77,7 @@ alias Float32 = Scalar[DType.float32]
 Defined in the module `bool` as a struct, `Bool` has only 2 values: `True` and `False`. 
 It is constructed from an i1 value (a ` __mlir_type.i1` value), which takes only one bit of memory.
 Among its methods are bool, invert, eq, ne, and, or, xor, rand, ror, rxor.  
->Note: Struct methods in Mojo often can be written with a prefix or infix `operator`, which translates to a so-called `dunder` method. This names comes from 'double underscore' or __ (sometimes also written with a small blanc space between the _, like _ _).
+>Note: Struct methods in Mojo often can be written with a prefix or infix `operator`, which translates to a so-called `dunder` method. This names comes from 'double underscore' or __ (sometimes also written with a small blanc space between the _, like _ _) (see § 7.3).
 
 Here are some examples of code with booleans and operators/dunder methods:
 See `bools.mojo`:

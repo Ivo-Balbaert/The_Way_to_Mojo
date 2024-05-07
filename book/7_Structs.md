@@ -2,9 +2,11 @@
 A struct is a custom data structure that groups related variables of different data types into a single unit that holds multiple values.
 
 Structs exist in all lower-level languages like C/C++ and Rust. You can build high-level abstractions for types (or "objects") in a *struct*. 
-A struct in Mojo is similar to a class in Python: they both support methods, fields, operator overloading, decorators for metaprogramming, and so on. 
 
+A struct in Mojo is similar to a class in Python: they both support methods, fields, operator overloading, decorators for metaprogramming, and so on. 
+Fields are variables that hold data relevant to the struct, and methods are functions inside a struct that generally act upon the field data.  
 To gain performance, structs are by default stored on the stack, and all fields are memory inlined.
+All the data types in Mojo's standard library (such as Int, Bool, String, and Tuple) are defined as structs.
 
 >Note: At this time (Aug 2023), Mojo doesn't have the concept of "class", equivalent to that in Python; but it is on the roadmap.
 
@@ -13,7 +15,6 @@ To gain performance, structs are by default stored on the stack, and all fields 
 By using a 'struct' (instead of 'class'), the attributes (fields) will be tightly packed into memory, such that they can even be used in data structures without chasing pointers around.
 
 Struct methods are functions, whose first argument is `self` by default.
-
 
 ## 7.1 First example
 The following example demonstrates a struct MyInteger with one field called value. In line 2 an instance of the struct called myInt is made. This calls the constructor __init__ from line 1.
@@ -35,8 +36,12 @@ fn main():
 
 `Self` refers to the type of the struct that you're in, while `self` refers to the actual object
 The `self` argument denotes the current instance of the struct. It is similar to the `this` keyword used in some other languages.
+It is always the first argument, in __init__ prefixed by inout (because the current instance is about to change). When you make an instance, __init__ is automatically called, but you don't provide a value for self, as in line 2.
+
 
 A method has a signature like this: `fn method1(self, other parameters)` and when object1 is an instance of its type, the method is called as: `object1.method1(params)`. So `object1` is automatically used as `self`, the first parameter of the method.
+
+Use inout in a method when self is going to change.
 Inside its own methods, the struct's type can also be called `Self`.
 
 
@@ -74,6 +79,7 @@ fn main():
 The fields of a struct (here lines 1-2) need to be defined as var when they are not initialized, and a type is necessary. 
 To make a struct, you need an __init__ method (see however § 11.1). 
 The `fn __init__` function (line 3) is an "initializer" - it behaves like a constructor in other languages. It is called in line 4. 
+Methods that take the implicit self argument are called *instance methods* because they act on an instance of the struct, like in `p.dump()`.
 
 **Dunder methods**
 These structs have so-called *dunder* (short for double underscore) methods, like the
@@ -211,21 +217,28 @@ fn main():
     # => Rectangle created with length: 15.0 and width: 17.0
 ```
 
-XYZ
+(?? Show error on + when __add__ is not defined)
+
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
-Developers in Mojo have precise control over the lifetime behavior of defined types by choosing to implement or omit "dunder" methods. Initialization is managed using __init__ , copying is controlled with __copyinit__ ("deep copy"), and "move" operations ("shallow copy") are handled through __movecopy__ .
+Developers in Mojo have precise control over the lifetime behavior of defined types by choosing to implement or omit certain methods. 
+* Initialization (custom construction) is managed using __init__ , 
+* Freeing of memory is managed through custom destructors (using the existing __del__ special method), 
+* Copying is controlled with __copyinit__ ("deep copy"), 
+* Move operations are handled through __moveinit__ .
 
-Mojo uses *value semantics* by default, meaning that in a statement like `let b = a` we expect to create a copy of `a` when assigning to `b`. However, Mojo doesn't make any assumptions about *how* to copy the value of a. In the above program when typing `let b = square`, we get the `error: value of type 'Rectangle' cannot be copied into its destination`. 
+Mojo uses *value semantics* by default, meaning that in a statement like `var b = a` we expect to create a copy of `a` when assigning to `b` (image ??). However, Mojo doesn't make any assumptions about *how* to copy the value of a. 
+
+Many basic types either don't need a  __copyinit__ method (like Int), or have it implemented in the standard library (like String).
+
+In the above program when typing `var b = square`, which is a *copy* operation from square to b, we get the `error: value of type 'Rectangle' cannot be copied into its destination`. 
 The error indicates that Mojo doesn't know how to copy a Rectangle struct, and that we must implement a `__copyinit__` method, which would implement the copying logic.
-
-Mojo does not allow mutable references to overlap with other mutable references or with immutable borrows.
-
-For advanced use cases, Mojo allows you to define custom constructors (using Python's existing __init__ special method), custom destructors (using the existing __del__ special method) and custom copy and move constructors using the new __copyinit__ and __moveinit__ special methods.  
 
 When a struct has no __copyinit__ method, an instance of that struct cannot be copied.
 In the following example a struct HeapArray is defined in line 1. If we try to copy it to another variable b (line 2), we get an `error: value of type 'HeapArray' cannot be copied into its destination`.
 
+?? Use Rectangle example here to copy Rectangle, same error as __add__, --> needs __copyinit__
+?? example uses Pointer and should come later ( as esxc?)
 See `copy_init.mojo`:
 ```py
 from memory.unsafe import Pointer
@@ -261,7 +274,7 @@ struct HeapArray:                   # 1
 fn main():
     var a = HeapArray(3, 1)
     a.dump()  
-   varb = a  # <-- copy error: value of type 'HeapArray' cannot be copied into its destination
+    var b = a  # <-- copy error: value of type 'HeapArray' cannot be copied into its destination
     b.dump()   
     a.dump()   
 ```
@@ -281,14 +294,20 @@ fn __copyinit__(inout self, rhs: Self):         # 2
             self.data.store(i, rhs.data.load(i))
 
 fn main():
-   vara = HeapArray(3, 1)
+    var a = HeapArray(3, 1)
     a.dump()   # => [1, 1, 1]
-   varb = a
+    var b = a
     b.dump()   # => [1, 1, 1]
     a.dump()   # => [1, 1, 1]
 ```
 
-Mojo also supports the `__moveinit__` method which allows both Rust-style moves (which take a value when a lifetime ends) and C++-style moves (where the contents of a value is removed but the destructor still runs), and allows defining custom move logic.
+When we comment out __copyinit__, we get the error:
+`'HeapArray' is not copyable because it has no '__copyinit__'`.
+
+?? Prove that it is a copy: change original var, copy is not changed, image
+
+Mojo also supports the `__moveinit__` method which allows both Rust-style moves (which frees a value when a lifetime ends) and C++-style moves (where the contents of a value is removed but the destructor still runs), and allows defining custom move logic.
+`var b = a^`, after the value is moved, a should no longer exist.
 
 Mojo provides *full control over the lifetime of a value*, including the ability to make types copyable, move-only, and not-movable. This is more control than languages like Swift and Rust offer, which require values to at least be movable.
 
@@ -355,14 +374,16 @@ fn use_something_big(borrowed a: SomethingBig, b: SomethingBig):
     b.print_id()  # => 20
 
 fn main():
-   vara = SomethingBig(10)
-   varb = SomethingBig(20)
+    var a = SomethingBig(10)
+    var b = SomethingBig(20)
     use_something_big(a, b)
 ```
 
 The Mojo compiler implements a *borrow checker* (similar to Rust) that prevents code from dynamically forming mutable references to a value when there are immutable references outstanding, and it prevents multiple mutable references to the same value (?? 2023 Sep 8: NOT yet implemented).
 
 ## 7.7 Using inout with structs
+See also `counter.mojo`
+
 In the following example, we are able to do `x += 1` where x has type MyInt, because the method `__iadd__` is defined (+= is syntax sugar for __iadd__). But this could only work because in that function the self parameter is declared as `inout` (remove inout to see the error that results).
 
 See `inout2.mojo`:
@@ -386,29 +407,25 @@ struct MyInt:
        self = self + rhs  
 
 fn main():
-   varm = MyInt(10)
-   varn = MyInt(20)
-   varo = n + m
+    var m = MyInt(10)
+    var n = MyInt(20)
+    var o = n + m
     print(o.value)  # => 30
     
     var x: MyInt = 42
-    x += 1         # 1
+    x += 1         # 1  # works only because of __iadd__ method
     print(x.value) # => 43
 ```
 
-inout is used when a method needs to mutate self.
-
-See also `counter.mojo`
 
 **Exercise**
 Write a swap function that switches the values of variables x and y (see `swap.mojo`).
+(show it in an image, with the addresses)
 
 ## 7.8 Transfer struct arguments with owned and ^
 (Better call this example:  UniqueNumber, it has nothing to do with pointers)
 In the following example, we mimic the behavior of unique pointers. It has a __moveinit__ function (see line 1), which moves the pointer (?? better wording).  
 In line 2 `take_ptr(p^)` the ownership of the `p` value is passed to another function take_ptr. Any subsequent use of p (as in line 3) gives the `error: use of uninitialized value 'p' - p is no longer valid here!`
-
->Note: to type a ^ on a NLD(Dutch) Belgian keyboard, tap 2x on the key next to the P-key.
 
 See `transfer_owner.mojo`:
 ```py
@@ -433,7 +450,7 @@ fn use_ptr(borrowed p: UniquePointer):
     print(p.ptr)      # => 100
     
 fn work_with_unique_ptrs():
-   varp = UniquePointer(100)
+    var p = UniquePointer(100)
     use_ptr(p)    # Pass to borrowing function.
     take_ptr(p^)  # 1 
 
@@ -444,55 +461,65 @@ fn main():
     work_with_unique_ptrs()  
 ```
 
-This is useful when working with unique instances of some type, or when you want to avoid copies.
+Transfer with ^ is useful when working with unique instances of some type, or when you want to avoid copies.
 
 Another example is a FileDescriptor type. These types are *unique* or *move-only* types. In Mojo, you define the __moveinit__ method to take ownership of a unique type. The consuming move constructor __moveinit__ takes ownership of an existing instance, and moves its internal implementation details over to a new instance.  
-You can also define custom __moveinit__ methods. If you want complete control, you should use define methods like copy() instead of using the dunder method. 
+You can also define custom __moveinit__ methods. If you want complete control, you should define methods like copy() instead of using the dunder method. 
 
 **Summary**  
 * Copyable type (type must have __copyinit__):    var s2 = s1    # s2.__copyinit__(s1) runs here, so s2 is self, s1 is existing (or other, rhs)
-* Moveable type (type must have __moveinit__):    var s3 = s1^   # s3.__moveinit__(s1) runs here, so s3 is self, s1 is existing (or other, rhs)
+* Moveable type (type must have __moveinit__):    var s3 = s1^   # s3.__moveinit__(s1) runs here, so s3 is self, s1 is existing (or other, rhs), s1 is moved
 __moveinit__ has as signature:  
 `fn __moveinit__(inout self, owned existing: Self):`
     # Initializes a new `self` by consuming the contents of `existing`
 __del__ has as signature:  
 `fn __del__(owned self):`
-    # Destroys all resources in `self`
+    # Destroys all resources in `self`, usually with a free() method.
 
-# 7.9 Compile-time metaprogramming in Mojo
+
+## 7.9 Compile-time metaprogramming in Mojo
+Metaprogramming is about transforming or generating code at compile-time, which is then used at run-time.
 One of the great characteristics of Python is that you can change code at runtime, so-called *run-time metaprogramming*. This can do some amazing things, but it comes at a great performance cost.  
 The modern trend in programming languages is toward statically compiled languages, with *metaprogramming done at compile-time*! Think about Rust macros, Swift, Zig and Jai. Mojo as a compiled language fully embraces *compile-time metaprogramming*, built into the compiler as a separate stage of compilation - after parsing, semantic analysis, and IR generation, but before lowering to target-specific code. To do this, the same Mojo language is used for metaprograms as for runtime programs, and it also leverages MLIR. This is because Modular's work in AI needs high-performance machine learning kernels, and accelerators, and high abstraction capabilities provided by advanced metaprogramming systems.  
+
 Currently the following techniques are used with metaprogramming:  
 1) Parametric types in structs and functions  with compile-time arguments (called parameters in Mojo)(see § 7.9.1)
-2) Running arbitrary Mojo code (at compile-time) to set parameter values  (alias)
+2) Running arbitrary Mojo code (at compile-time) to set parameter values (alias)
 3) Using conditions based on parameter values. (@parameter if)
 4) Overloading on parameters (see `overloading_params.mojo`)
 
-## 7.9.1 Parametric types in structs and functions
-A **parametric* (generic) struct or function where you can indicate your own type is a very useful concept. It allows you to write flexible code, that can be reused in many situations.
+### 7.9.1 Parametric types in structs and functions
+A **parametric* (generic) struct or function, where you can indicate your own type when you call it, is a very useful concept. It allows you to write flexible code, that can be reused in many situations.
 
-The general format is: `StructOrFunctionName[parameters](arguments)`.  
+The general format is: 
+`Struct[parameters](arguments)`.  
+`FunctionName[parameters](arguments)`.  
+
 The parameters serve to define which type(s) are used in a generic type ("parameter" and "parameter expression" represent a compile-time value in Mojo).
 The arguments are used as values within the function ("argument" and "expression" refer to runtime values).
 
 Parametric code gets compiled (at compile-time, not JIT-TED at runtime) into multiple specialized versions parameterized by the concrete types used during program execution. 
     
-## 7.9.2 Parametric structs
-We first encountered this concept in § 4.2.1, where we defined a List as follows:  
+### 7.9.2 Parametric structs
+We first encountered this concept in § 4.3.1.1, where we used a List struct as follows:  
 `var vec = List[Int]()` 
 But it could also have been: 
 `var vec = List[Float]()` 
 `var vec = List[String]()` 
 
 A List can be made for any type of items (type `AnyType`). The type is parametrized and indicated between the `[]`.
+(?? cannot find List in stdlib)
 
-Another example of a parametric struct is the SIMD struct (see § 7.9.3).  
+Another example of a parametric struct is the SIMD struct (see § 4.4).  
 See also § 12.2.
 
 
-## 7.9.4 How to create a custom parametric type: Array
-Currently (2023 Sep) there is no canonical array type in the stdlib. So let's make one ourselves.
-In the following example you see the start of code for a parametric type Array, with parameter `AnyType` (line 1). It has an __init__ constructor (line 2), which takes the size and a value as arguments.
+### 7.9.3 How to create a custom parametric type: Array
+Currently (2023 Sep) there is no canonical array type in the stdlib. 
+You can make an array instance with SIMD (see § 4.4) or with Tensor or ...
+
+So let's make one ourselves.
+In the following example you see the start of code for a parametric type Array, with parameter `AnyRegType` (line 1). It has an __init__ constructor (line 2), which takes the size and a value as arguments.
 Line 3 shows how to construct the array: 
 `let v = Array[Float32](4, 3.14)`  
 * parameter T = Float32
@@ -525,7 +552,7 @@ fn main():
 ```
    
 In line 4, memory space is allocated with: `self.data = Pointer[T].alloc(self.cap)`, and the value is stored in the for-loop in line 5.
-A destructor `__del__` is also provided, which executes  `self.data.free()` and is called automatically when the variable is no longer needed in code execution.
+A destructor `__del__` is also provided, which executes `self.data.free()` and is called automatically when the variable is no longer needed in code execution.
 A `__getitem__` method is also shown which takes an index i and returns the value on that position with `self.data.load(i)` (line 7).
 
 **Exercise**
@@ -534,7 +561,8 @@ Enhance the code for struct Array with other useful methods like __setitem__, __
 
 See also Vec3f in ray_tracing.mojo (§ 20).
 
-## 7.9.5 Parametric functions and methods
+
+### 7.9.4 Parametric functions and methods
 Better example: see parameter2.mojo in § 11.3
 Here are some examples of parametric functions:
 
@@ -550,7 +578,7 @@ fn main():
     # => [0.154296875, 0.154296875, 0.154296875, 0.154296875]
 ```
 
-The function `rsqrt[dt: DType, width: Int](x: SIMD[dt, width])` in line 1 is a parametric function. It performs elementwise reciprocal square root on the elements of a SIMD vector, like the definition in line 1. (It is now contained in math).
+The function `rsqrt[dt: DType, width: Int](x: SIMD[dt, width])` in line 1 is a parametric function. It performs elementwise reciprocal square root on the elements of a SIMD vector, like the definition in line 1. (which is now contained in math).
 In line 2, the dt type becomes Float16, the width takes the value 4. The argument x is the SIMD vector (42, 42, 42, 42).
 
 In the following example, we see how parameters (len1 and len2) can be used to form a *parameter expression* len1 + len2:  
@@ -581,14 +609,17 @@ Here the function `concat[ty: DType, len1: Int, len2: Int](lhs: SIMD[ty, len1], 
 * parameters: type ty is float32, len1 and len2 are both Int
 * arguments: lhs and rhs are resp. a and b, len1 and len2 are both 2
 
-For:  
-   vara = SIMD[DType.float32, 2](1, 2)
-   varb = SIMD[DType.float32, 4](3, 4, 5, 6)
+(For:  
+   var a = SIMD[DType.float32, 2](1, 2)
+   var b = SIMD[DType.float32, 4](3, 4, 5, 6)
 we get as result:  
-    [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
+NOT    [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
     result type: float32 length: 6
+but an error:
+ call expansion failed - no concrete specializations
+    var x = concat[DType.float32, 2, 4](a, b))
 
-## 7.9.6 Programming compile-time logic
+### 7.9.5 Programming compile-time logic
 You can also write imperative compile-time logic with control flow, even  compile-time recursion. The following example makes use the of the `@parameter if` feature, which is an if statement that runs at compile-time. It requires that its condition be a valid parameter expression, and ensures that only the live branch of the if statement is compiled into the program.
 
 See `ctime_logic.mojo`: ?? these functions already exist in Mojo!
@@ -609,32 +640,54 @@ fn reduce_add[ty: DType, size: Int](x: SIMD[ty, size]) -> Int:
 
     # Extract the top/bottom halves, add them, sum the elements.
     alias half_size = size // 2
-   varlhs = slice[ty, half_size, size](x, 0)
-   varrhs = slice[ty, half_size, size](x, half_size)
+    var lhs = slice[ty, half_size, size](x, 0)
+    var rhs = slice[ty, half_size, size](x, half_size)
     return reduce_add[ty, half_size](lhs + rhs)
     
 fn main():
-   varx = SIMD[DType.index, 4](1, 2, 3, 4)
+    var x = SIMD[DType.index, 4](1, 2, 3, 4)
     print(x) # => [1, 2, 3, 4]
     print("Elements sum:", reduce_add[DType.index, 4](x))
     # => Elements sum: 10
 ```
+## 7.10 Static methods
+A struct can also have so-called *static methods*, if they are prefixed by the decorator `@staticmethod`. These methods can be called on the struct type itself (line 1), but also on a struct instance, see line 2.
 
-# 7.10 Lifetimes
+See `static_methods.mojo`:
+```py
+struct Logger:
+    fn __init__(inout self):
+        pass
 
+    @staticmethod
+    fn log_info(message: String):
+        print("Info: ", message)
+
+
+fn main():
+    Logger.log_info("Static method called.")            # 1
+    # => Info:  Static method called.
+    var l = Logger()
+    l.log_info("Static method called from instance.")   # 2
+    # => Info:  Static method called from instance.
+```
+
+
+
+## 7.11 Lifetimes
 Mojo implements eager destruction of variables, that is: the memory is released ASAP, destroying values immediately after last-use. 
 
-Int is a trivial type and Mojo reclaims this memory as soon as possible,without need for a __del__() method.
+Int is a trivial type and Mojo reclaims this memory without need for a __del__() method.
 String is a destructible (it has its own __del__() method) and Mojo destroys it as soon as it's no longer used.
 This means that a struct which has only String and Int fields doesn't need a destructor.
 A struct that contains a pointer (like Array in § 7.9.4 or HeapArray) needs a __del__.
 
 Mojo also has field-sensitive lifetime management: it keeps track separately of whether a "whole object" is fully or only partially initialized or destroyed.  But the "whole object" must be constructed with the aggregate type's initializer (__init__) (not by initializing all individual fields) and destroyed with the aggregate destructor (__del__).
 
-## 7.10.1 Types that cannot be instantiated
-These are types from which you cannot create an instance because they have no initializer __init__. In order to get them, you need to define an __init__ method or use a decorator like @value that generates an initializer. 
+### 7.11.1 Types that cannot be instantiated
+These are types from which you cannot create an instance because they have no initializer __init__. To get an instance from them, you need to define an __init__ method or use a decorator like @value that generates an initializer. 
 
-Without initializer, these types can be useful as "namespaces" for helper functions, because you can refer to static members like `NoInstances.my_int` or `NoInstances.print_hello()`.
+But without initializer, these types can be useful as "namespaces" for helper functions, because you can refer to static members like `NoInstances.my_int` or `NoInstances.print_hello()`.
 
 See `no_instance.mojo`:
 ```py
@@ -650,12 +703,14 @@ fn main():
     NoInstances.print_hello() # => hello world 
 ```
 
-## 7.10.2 Non-movable and non-copyable types
-These can be instantiated, bot not copied or moved, because they have no no copy or move constructors. Useful to implement types like atomic operations. 
-
+### 7.11.2 Non-movable and non-copyable types
+These can be instantiated, bot not copied or moved, because they have no copy or move constructors. Useful to implement types like atomic operations. 
 
 See example `structs2.mojo` from mojo_gym: perhaps as exercise?
 
+A struct can implement *traits* (see § 8).
+
+
 - From v 0.4.0: Structs support default parameters
 - From v 0.5.0: Structs support keyword parameters, also with defaults (enclosed in [])
-See `keyword_params.mojo`
+

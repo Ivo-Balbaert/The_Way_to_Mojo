@@ -265,23 +265,22 @@ See `variadic_string.mojo`:
 ```py
 def make_worldly(inout *strs: String):
     for i in strs:
-        i[] += " world"   # 1 # Requires extra [] to dereference the reference for now.
-    
+        i[] += " world"  # 1 # Requires extra [] to dereference the reference for now.
+
 fn make_worldly2(inout *strs: String):
     # This "just works" as you'd expect!
     for i in range(len(strs)):  # 2
         strs[i] += " world"
-        print(i, strs[i])
-
+    
 fn main() raises:
-    var s1: String = "Hello"
-    var s2: String = "beautiful"
+    var s1: String = "hello"
+    var s2: String = "konnichiwa"
+    var s3: String = "bonjour"
     # make_worldly(s1, s2)
-    make_worldly2(s1, s2)
-
-# =>
-# 0 Hello world
-# 1 beautiful world
+    make_worldly2(s1, s2, s3)
+    print(s1)  # => hello world
+    print(s2)  # => konnichiwa world
+    print(s3)  # => bonjour world
 ```
 
 Subscripting into a VariadicListMem, as in line 2, returns the argument value, and doesn't require any dereferencing:
@@ -394,6 +393,9 @@ From the output, we see that the return value b has the changed value, while the
 
 ### 6.5.4 Making arguments owned and transferred with ^
 If however you want to give the function ownership of the value and do NOT want to make a copy (which can be an expensive operation for some types), then you can add the *transfer* operator `^` when you pass variable a to the function.  
+
+>Note: to type a ^ on a NLD(Dutch) Belgian keyboard, tap 2x on the key right to the P-key.
+
 The transfer operator effectively destroys the local variable name - any attempt to call it later causes a compiler error.  
 The ^ operator ends the lifetime of a value binding and transfers the value ownership to something else.
 
