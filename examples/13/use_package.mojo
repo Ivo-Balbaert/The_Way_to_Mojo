@@ -1,15 +1,6 @@
-# broken after v 0.4.0, worked in 0.3.0
-# from mypackage.mymodule import MyPair  #  error: unable to locate module 'mymodule'
-# from mypackage.mymodule import MyPair as mp1 #  error: unable to locate module 'mymodule'
-import mypackage.mymodule
-import mypackage.mymodule as mp              
+from mypackage.mymodule import MyPair   # 1
 
 fn main():
-    var mine = mymodule.MyPair(2, 4)    # 3
+    var mine = MyPair(2, 4)  # 1B
     mine.dump()     # => 2 4
-    var mine2 = mp.MyPair(2, 4)    # 3
-    mine2.dump()     # => 2 4
-    var mine3 = mymodule.MyPair(2, 4)    
-    mine3.dump()    # => 2 4
-    var mine4 = mp.MyPair(2, 4)    
-    mine4.dump()    # => 2 4
+    
