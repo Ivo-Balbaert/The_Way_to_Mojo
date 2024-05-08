@@ -213,24 +213,8 @@ fn main():
 We see that True converts to 1, and False to 0.
 
 #### 4.3.1.4 Handling big integers
-Here is a simple trick to work with Python int's, which can handle big integers, in a Mojo program.
-(see § ?? for how to work with Python)
-
-See `intInt.mojo`:
-```py
-from python import PythonObject
-
-alias int = PythonObject
-
-
-fn main() raises:
-    var x: int = 2
-    # Python `int` does not overflow:
-    print(x**100)  # => 1267650600228229401496703205376
-    # Mojo `Int` overflows:
-    print(2**100)  # => 0
-```
-
+The integer types in Mojo are all constrained, the largest type Int or Int64 is 64-bits wide.
+In § 8.4.5 we show you how to handle big integers within Mojo, by using Python int's.
 
 ### 4.3.2 The Float types
 The floating point types live in module `float_literal`.
