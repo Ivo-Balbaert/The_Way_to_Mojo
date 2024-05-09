@@ -835,12 +835,6 @@ Line 2 and following work, because alias is also a way to define a compile-time 
 So line 3 is changed at compile-time to `for i in range(200):`.
 The use of the alias debug_mode is illustrated in § 11.3 @parameter.
 
-Both None and AnyType are defined as *type aliases* (metatypes) in the builtin module `type_aliases`:
-* `AnyType`: Represents any Mojo data type.
-* `AnyRegType`: a metatype representing any register-passable type.
-* NoneType = `None`: Represents the absence of a value. NoneType is a type with one instance, the None object, which is used to signal "no value."
-
-
 A struct field can also be an alias.
 
 >Note: use alias in order to use the ord function efficiently, example:  
@@ -928,4 +922,43 @@ fn matrix_init(rows: Int, cols: Int) raises -> object:
 Objects do have types and can be type-checked.
 
 Usage: They fit into a tiny space (+- 38K), so could be used in WASM and microcontrollers.
+
+## 4.8 Special types
+### 4.8.1 Register-passable types
+Types of this kind are composed exclusively of *fixed-size data types*, which can (theoretically) be stored in a machine register. They are always passed *by value*, meaning, the values are copied.
+A register-passable type can include other types, as long as they are also register-passable.  
+Int, Bool, and SIMD, for example, are all register-passable types.  
+So a register-passable struct could include Int and Bool fields, but not a String field.  
+Register-passable types are declared with the *@register_passable* decorator (see 11B 11.2).
+
+Because they can easily be handled in machine registers, without needing extra indirections, so they hugely benefit performance.
+
+### 4.8.2 Trivial types
+These are types that don't require any custom logic in their lifecycle methods. 
+It indicates that the type is register passable, so the value is passed in CPU registers instead of through normal memory. But it also says that the value is "trivially" copyable and movable: the machine knows how to handle them. you don't need to define __init__, __copyinit__, __moveinit__ and __del__, and you even can't! 
+
+Trivial also means that these values are always passed by copy/value.
+Examples of trivial types:
+* Arithmetic types such as Int, Bool, Float64, SIMD etc.
+* Pointers (the address value is trivial, not the data being pointed to)
+* Arrays of other trivial types including SIMD
+* Struct types decorated with @register_passable("trivial") may only contain other trivial types.
+
+These are all also register-passable types, so we declare a trivial type with the *@register_passable(trivial)* decorator (see 11B 11.2).
+
+>Note: Trivial types shouldn't be limited to only register-passable types, so in the future trivial types will be separated from the @register_passable decorator (??).
+
+### 4.8.3 Memory-only types
+They are the opposite of the preceding register-passable type. These types usually use pointers or references to manage heap-allocated memory. String, List, and Dict are all examples of memory-only types.
+
+### 4.8.4 AnyType and AnyRegType
+These are in effect metatypes, that is, types of types.
+* `AnyType`: This represents any Mojo data type. This is also a trait, see § 11.
+* `AnyRegType`: a metatype representing any register-passable type.
+
+### 4.8.5 NoneType
+* `NoneType = None`: This represents the absence of a value. 
+`NoneType` is a type with one instance, the `None` object, which is used to signal "no value."
+
+Both None and AnyType are defined as *type aliases* (metatypes) in the builtin module `type_aliases`:
 

@@ -89,6 +89,12 @@
 ### 4.6.1 Using alias
 ### 4.6.2 Defining an enum type using alias
 ## 4.7 The object type
+## 4.8 Special types
+### 4.8.1 Register-passable types
+### 4.8.2 Trivial types
+### 4.8.3 Memory-only types
+### 4.8.4 AnyType and AnyRegType
+### 4.8.5 NoneType
 
 # 5 Control flow
 ## 5.1 Code blocks

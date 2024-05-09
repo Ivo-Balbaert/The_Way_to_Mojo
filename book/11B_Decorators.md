@@ -125,6 +125,7 @@ fn main():
 
 
 ## 11.2 - @register_passable
+(See § 4.8.1))
 A String contains a pointer that requires special constructor and destructor behavior to allocate and free memory, so it's memory only, it cannot be passed into registers.
 A UInt32 is just 32 bits for the actual value and can be directly copied into and out of machine registers.
 If you have a struct which contains only field values that can be passed into registers, mark the struct with @register_passable to enable this behavior for the whole struct, for example:
@@ -168,15 +169,7 @@ var x = (Coord(5, 10), 5.5)
 print(x.get[0, Coord]().x) # => 5
 ```
 
-The `@register_passable("trivial")` decorator is a variant of @register_passable for trivial types like Int, Float, and SIMD.
-Trivial means: it is always passed by copy/value.
-Examples of trivial types:
-* Arithmetic types such as Int, Bool, Float64 etc.
-* Pointers (the address value is trivial, not the data being pointed to)
-* Arrays of other trivial types including SIMD
-* Struct types decorated with @register_passable("trivial"), that can only contain other trivial types:
-
-It indicates that the type is register passable, so the value is passed in CPU registers instead of through normal memory, which needs an extra indirection. But it also says that the value is be copyable and movable, you can't define __init__, __copyinit__, __moveinit__ and __del__.  
+The `@register_passable("trivial")` decorator is a variant of @register_passable for trivial 
 
 >Note: mostly @value and @register_passable are used together.
 
