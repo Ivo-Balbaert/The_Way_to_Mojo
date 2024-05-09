@@ -148,6 +148,25 @@
 ### 7.11.1 Types that cannot be instantiated
 ### 7.11.2 Non-movable and non-copyable types
 
+# 8 Python integration
+## 8.1 Comparing the same program in Python and Mojo
+## 8.2 Running Python code in Mojo
+## 8.3 Running Python code in the interpreter mode or in the Mojo mode
+## 8.4 Working with Python 
+### 8.4.1 Importing Python modules
+#### 8.4.1.1 Testing that the Python module is available
+#### 8.4.1.2 Using numpy
+#### 8.4.1.3 Making plots with matplotlib
+#### 8.4.1.4 How to do an HTTP-request from Python
+### 8.4.2 Working with Python objects
+#### 8.4.2.1 How to work with big integers in Mojo
+#### 8.4.2.2 Using Pythonobjects for floats and strings
+#### 8.4.2.3 Using numpy and matplotlib together
+#### 8.4.2.4 Combining numpy and SIMD
+## 8.5 Importing local Python modules
+# 8.6 Installing Python for interaction with Mojo
+
+
 # 13 Modules and packages
 ## 13.1 Importing standard-library modules 
 ### 13.1.1 Mojo modules

@@ -1,5 +1,5 @@
 # 8 Python integration
-Mojo allows us to leverage the huge Python ecosystem of libraries and tools.
+Mojo's long-term goal is to become a superset of Python. It allows us already to leverage the huge Python ecosystem of libraries and tools.
 You can use Python for what it's good at, especially graph plotting and GUIs and for things that do not yet exist or are more difficult to rewrite in Mojo.
 That way, a Python project can be gradually migrated to Mojo.
 
@@ -134,8 +134,11 @@ In this trivial example, adding types,etc. doesn't add much extra performance, b
 First, Mojo always uses SIMD operations for math operations, like + here (see § 4.4)
 Python completely works with references: z and i are reference to objects on the heap. In Mojo, z and i are just values on the stack with 64 bits that can be passed through registers. We don't need to look up an object on the heap via an address. 
 
+>Note: The speedup in this example is extraordinarily huge (perhaps other factors play a role here??). The performance difference between Mojo and Python in more realistic programs usually lies between 1 and 3 orders of magnitude (10s - 1000s).
 
 ## 8.2 Running Python code in Mojo
+>Note: If you're having trouble executing the following programs, it probably means Mojo can't find Python on your machine. Refer to § 8.6
+
 To execute a Python expression, you can use the `evaluate` method:  
 
 See `python1.mojo`:
@@ -481,7 +484,7 @@ from python import Python
     
 def main():
     try:
-        Python.add_to_path(".")
+        Python.add_to_path(".")      # import from local directory
         var test_module = Python.import_module("simple_interop")  # 1
         test_module.test_interop_func()                           # 2
     except e:
@@ -515,11 +518,31 @@ if __name__ == "__main__":
     print(timeit(lambda: test_interop_func(), number=1))
 ```
 
-If the .py file is somewhere in a different folder, instead of: `Python.add_to_path(".")` do `Python.add_to_path("path/to/module")`
+If the .py file is somewhere in a different folder, instead of: `Python.add_to_path(".")` do `Python.add_to_path("path/to/module")`. Both absolute and relative paths work with add_to_path().
 
 A subfolder `__pycache__` is created which contains the byte-compiled versions (.pyc) of the Python code.  
 
 (For another example that uses the same techniques, see `matmul.mojo` and `pymatmul.py` in § 20.3) 
+
+# 8.6 Installing Python for interaction with Mojo
+Mojo not finding an appropriate Python installation should have been signaled when Mojo was installed. At that moment,Mojo tries to locate the CPython shared library using the find_libpython module. 
+Possible failure causes are:
+* Python is not installed
+* The installed Python version is not supported by the Mojo SDK
+* The installer can't find a shared library version of the CPython interpreter (for example, a .so or .dylib file). Some Python distributions don't include shared libraries, which prevents Mojo from embedding the interpreter.
+
+The solution is to install a compatible version of Python that includes shared libraries.
+The Mojo docs describe setting up [a Python environment with Conda](https://docs.modular.com/mojo/manual/python/#set-up-a-python-environment-with-conda). This [blog post](https://www.modular.com/blog/using-mojo-with-python) elaborates on that subject. 
+
+>Note: you can see which Python version is used in the modular.cfg file (see § 2.9), section [mojo] in `python-lib`.
+This value can be modified if necessary.
+
+
+
+
+
+
+
 
 
 **Exercises**
@@ -529,3 +552,4 @@ A subfolder `__pycache__` is created which contains the byte-compiled versions (
 (see `exerc8.2.mojo`)
 3- Use the input() function from the Python builtins module to get user input, and then display it.
 (see `get_input.mojo`)
+
