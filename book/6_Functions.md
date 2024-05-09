@@ -234,12 +234,14 @@ We can call sum with any number of integers.
 See `variadic1.mojo`:   print out doesn't work anymore (2023 Nov 5), removed from test_way
 ```py
 fn my_func(*args_w: String):  # 1
-    var args = VariadicList(args_w)
-    for i in range(len(args)):
-        pass
-        # print(args[i])   # error: no matching value in call to print
-        # print(__get_address_as_lvalue(args[i]))
-
+    for i in args_w:
+        print(i[]) 
+    # var args = VariadicList(args_w)
+    # for i in range(len(args)):
+    #     pass
+    #     # print(args[i])   # error: no matching value in call to print
+        # print(args.__getitem__(i))   # error: no matching value in call to print
+        
 fn main():
     my_func("hello", "world", "from", "Mojo!")
 

@@ -46,3 +46,6 @@ Nearly all of the standard library types are Stringable.
 A type implements Boolable if it has a boolean representation.  
 Strings evaluate as True if they have a non-zero length.
 Collections evaluate as True if they contain any elements.
+
+### 8.2.3 CollectionElement
+This means that such an item must be copyable and movable.

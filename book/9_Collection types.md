@@ -1,26 +1,38 @@
-# 9 - Collection types
-(see also §9 other builtin types and § 10)
+# 9 - Useful types from the standard library
 
-## 9.1 The ListLiteral type
-(See also DimList from buffer.list, VariadicList from builtin_list.)
+## 9.1 Collection types
+These include basic collection types like List, Dict, Set and Optional, with which you can build more complex data-structures.
 
-This is implemented in module `builtin_list` in package `builtin`.  
-A list consists of zero or more values that can be of the same or different type (a heterogeneous list), separated by commas and enclosed in []. Because list items can be of any type, their type is effectively `AnyType`. The types can be explicitly specified, also between [].
-The items are immutable, ListLiteral only includes getter methods for accessing them, nothing can be modified post-initialization.
+Summarized:
+* List: a dynamically-sized array of items.
+* Dict: an associative array of key-value pairs.
+* Set: an unordered collection of unique items.
+* Optional: represents a value that may or may not be present.
+* Variant: to hold different types of values
+
+The collection types are *generic types*: while a given collection can only hold a specific type of value (such as Int or Float64), you specify the type at compile time using a parameter. For example, you can create a List of Int values like this: `var l = List[Int](1, 2, 3, 4)`
+In this case, Mojo can infer the type, so you can write: `var l = List(1, 2, 3, 4)`
+
+Let's start with the List types.
+
+### 9.1.1 ListLiteral
+This is implemented in module `builtin_list` in package `builtin`. 
+It is literally a list of values (possibly of different type), separated by commas and enclosed in [].
+The items can be of any type and are immutable: ListLiteral only includes getter methods for accessing them, nothing can be modified post-initialization.
 
 When you initialize the list the types can be inferred (as shown in line 1) or explicitly specified (see line 2). However when retrieving an item with `get` you need to provide the item's index as well as the type as parameters (lines 2A,2B):
 
 See `listliteral.mojo`:
 ```py
 fn main():
-   varlist = [1,2,3]                   # 1
+    var list = [1,2,3]                   # 1
     print(list) # => [1, 2, 3]
-   varexplicit_list: ListLiteral[Int, Int, Int] = [1, 2, 3]   # 2
+    var explicit_list: ListLiteral[Int, Int, Int] = [1, 2, 3]   # 2
     print(explicit_list) # => [1, 2, 3]
 
-   varlist2 = [1, 5.0, "Mojo🔥"]
+    var list2 = [1, 5.0, "Mojo🔥"]
     print(list2.get[2, StringLiteral]())       # 2A => Mojo🔥
-   varmixed_list: ListLiteral[Int, FloatLiteral, StringLiteral] 
+    var mixed_list: ListLiteral[Int, FloatLiteral, StringLiteral] 
             = [1, 5.0, "Mojo🔥"] 
     print(mixed_list.get[2, StringLiteral]())  # 2B => Mojo🔥
 
@@ -28,8 +40,104 @@ fn main():
     print(mixed_list.get[0, Int]()) # => 1
 ```
 
-The `list` module, which is not built-in and is stored in package `utils`, provides methods for working with static and variadic (= a variable number of items) lists. 
-variadic is written as `*T`, which is a variable number of values of type T. 
+### 9.1.2 VariadicList
+In § 6.4.1 we encountered the VariadicList type, which is typically used to take in the variable number of arguments *args in a variadic function. In other words: it provides a "list" view of the function arguments. Each of the arguments and the number of arguments are accessable.
+
+### 9.1.3 DimList
+The DimList type represents a list of dimensions. For example, the Tensor type uses it in the second argument of its definition: `struct Tensor[rank: Int, shape: DimList, type: DType]` 
+Look at the complete programs with Tensors to see DimList used.
+
+### 9.1.4 List
+(see also § 4.3.1.1, 4.5.2, 7.9.2)
+It lives in the `collections.list` module.
+
+List is a dynamically-sized array of elements; it dynamically allocates memory in the heap to store elements, resizing when needed.  
+List elements need to conform to the *CollectionElement* trait, which just means that the items must be copyable and movable. Most of the common standard library primitives, like Int, String, and SIMD conform to this trait.  
+You can create a List *by passing the element type as a parameter*, like this:
+`var l = List[String]()`
+
+It supports appending and popping from the back, resizing the underlying storage to accommodate more elements as needed. 
+
+See `list1.mojo`:
+```py
+fn main():
+    var lst = List[Int](8)  # 1 - same as List(8)
+    lst.append(10)  # 1A
+    lst.append(20)
+    print(len(lst))  # 2 => 3
+    print(lst.size)  # => 3
+    print(lst.capacity)  # 3 => 4
+
+    for idx in range(len(lst)):  # 3B
+        print(lst[idx], end=", ")  # => 8, 10, 20,
+    print()
+    print(lst[0])  # => 8
+    lst[1] = 42  # 5
+    print(lst[1])  # => 42
+    lst[6] = 10  # 6 - no boundaries check!
+
+    var lst2 = lst  # 7 - deep copy
+    lst[0] = 99
+    print(lst2[0])  # => 8
+    for idx in range(len(lst)):
+        print(lst[idx], end=", ")  # => 99, 42, 20,
+    print()
+    for idx in range(len(lst2)):
+        print(lst2[idx], end=", ")  # => 8, 20, 20,
+    print()
+
+    print(lst.pop())  # 9 => 20
+    print(len(lst))   # => 2
+    for idx in range(len(lst)):
+        print(lst[idx], end=", ")  # => 99, 42,
+    print()
+
+    lst.reserve(16)      # 10
+    print(lst.capacity)  # => 16
+    print("after reserving: ", lst.size)  # => 2
+    lst.resize(10, 0)    # 11
+    print("after resizing: ", lst.size)  # => 10
+
+    lst.clear()      # 12
+    print(lst.size)  # => 0
+    print(len(lst))  # => 0
+    print(lst[1])    # => 42  - former items are not cleared
+
+    var list = List(1, 2, 4)
+    for item in list:   # 13
+        print(item[], end=", ")  # => 1, 2, 4, 
+```
+
+Adding elements to the back is done with the append method (line 1A), and `len` (line 2) gives the number of items, which is also given by the size field. 
+
+The `capacity` is the memory already reserved for the list (in our example, in line 3, this is 4).  
+Line 2B shows how to print out the items of a List in a for loop, the item at index idx is `lst[idx]`. Line 5 shows that we can also change an item through the index.  
+
+Copying a List (line 7) will result in a deep copy. If we modify lst, then lst2 doesn't change with it.  
+The inverse to append is the pop method, which will access the last element, deallocate it, and reduce the element size by 1 (see line 9).  
+
+You can reserve memory to add elements without the cost of copying everything if it grows too large. 
+The `reserve` method lets you change the capacity (line 10). If it's greater than the current capacity then data is reallocated and moved. If it's equal or smaller, nothing happens. 
+
+The `resize` method discards elements if smaller than current size, or fills in the second argument as values if larger (line 11).
+The `clear` method deallocates all items in the list and the size is set to 0 (the memory itself is not set to zeros).
+
+If we do a for-loop over a List, we get References (see §  ) to the items, not the items themselves. To get the items, we can use the dereference operator `[]`.
+
+*Try out* the insert and extend methods.
+What happens when you try to print out a List?
+*Try* to convert a ListLiteral to a List: `var list: List[Int] = [2, 3, 5]` ,what is the error?
+Can a List contain elements of different types? 
+*Try* to define a `var lst = List(1, 2, "a")` or List[AnyType]. Why do you get an error?
+
+
+
+=============================================================================================
+(see also §9 other builtin types and § 10)
+
+
+
+
 Examples:  
 `fn f1[a: Int](*b: Int):`: this parametric function f1 has a variable number of arguments of type Int  
 `fn f2[*a: Int](b: Int)`:  
@@ -47,6 +155,12 @@ fn main() raises:
    varf: Float64 = x[1].to_float64()
     print(x)  # => ['hello', 1.1]
 ```
+
+(See also DimList from buffer.list, VariadicList from builtin_list.)
+
+
+
+
 
 ## 9.2 The Tuple type
 This is implemented in the built-in module `tuple`. 
