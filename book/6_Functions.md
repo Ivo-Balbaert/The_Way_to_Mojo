@@ -4,6 +4,8 @@ As we've seen, in Mojo you can both use `def` or `fn` functions, unlike in Pytho
 
 A key trick in Mojo is that you can opt in at any time to a faster and safer 'mode' as a developer, by using `fn` instead of `def` to create your function. In the `fn` mode Mojo can create optimized machine code to implement your function.
 
+A handy way to build up your code is to first write only the function signatures. Write the keyword `pass` in the empty function bodies, and you already get a nice compileable overview of your program.
+
 ## 6.1 Difference between fn and def
 `def` is defined to be very dynamic, flexible and generally compatible with Python: arguments are copied and mutable, local variables are implicitly declared on first use, and scoping isn't enforced. The default argument type is `object` (see § 4.5), representing a particular Mojo type designed for dynamic code.
 

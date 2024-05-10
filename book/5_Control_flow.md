@@ -170,7 +170,7 @@ fn main():
 ?? better example
 ?? better move to § 9.4
 
-If your code is expected to possibly raise an exception, either the enveloping function must be postfixed with `raises`, or you can enclose the code like this:  
+If your code is expected to possibly raise an error (exception), either the enveloping function must be postfixed with `raises`, or you can enclose the code like this:  
 ```py
     try:
         # possible dangerous code

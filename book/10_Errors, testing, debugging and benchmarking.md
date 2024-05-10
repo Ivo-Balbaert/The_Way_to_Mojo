@@ -1,4 +1,78 @@
-# 14 Testing - Debugging - Benchmarking
+# 10 Errors - Testing - Debugging - Benchmarking
+In this section we discuss a variety of subjects, first how to work with errors in Mojo.
+
+## 10.1 The Error type
+At a certain moment, your program can come in an abnormal state that you must signal to the outside world. You do this by "raising an error".  
+The Error type (defined in built-in module `error`) is used to handle errors in Mojo.
+Code can raise an error with the `Error` type, which accepts a String message. When `raise` is executed, "Error: error_message" is displayed:
+
+See `error.mojo`:
+```py
+fn main() raises:
+    print(return_error())     # => Error: This signals an important error!
+
+def return_error():
+    raise Error("This signals an important error!")   # 1
+```
+
+After executing line 1, the execution stops (the program crashes!) because we didn't handle the exception with try-except. It gives the following output:
+```
+Unhandled exception caught during execution: This signals an important error!
+mojo: error: execution exited with a non-zero result: 1
+```
+
+If you want your program to handle the error gracefully, the calling function has to envelop the call to the function which raises inside a try-except block, see § 5.4 and 6.2.
+This is shown in `error_handled.mojo`:
+```py
+fn main() raises:
+    try:
+        print(return_error())
+    except exc:
+        print("The important error is handled")
+    
+    print("The program continues!")
+
+def return_error():
+    raise Error("This signals an important error!")  # 1
+
+# =>
+# The important error is handled
+# The program continues!
+```
+
+Errors can be initialized as empty, with custom messages, or even with string references:
+
+```py
+var err : Error = Error()
+raise err
+
+var custom_err : Error = Error("my custom error")
+raise custom_err
+
+var `ref` : StringRef = StringRef("hello")  
+var errref : Error = Error(`ref`)
+
+raise errref
+```
+
+The `value` field is the error message itself (see line 1).
+
+```py
+var err2 : Error = Error("something is wrong")
+print(err2.value) # 1 => something is wrong
+```
+
+An internal method __copyinit__ allows an error to be copied:
+
+```py
+var err3 : Error = Error("hey")
+var other : Error = err3
+raise other  # => Error: hey
+```
+
+
+
+================================================================================================
 
 
 ## 10.6 Querying the host target info with module sys.info

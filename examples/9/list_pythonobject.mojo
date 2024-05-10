@@ -1,7 +1,7 @@
 fn main() raises:
     var x = PythonObject([])
-    _ = x.append("hello")
-    _ = x.append(1.1)
-    var s: String = x[0]          # x[0].__str__()
-    var f: Float64 = x[1].to_float64()
+    x.append("hello")
+    x.append(1.1)
+    var s = x[0]          # same as x[0].__str__()
+    var f = x[1].to_float64()  # var f: Float64 = ...
     print(x)  # => ['hello', 1.1]

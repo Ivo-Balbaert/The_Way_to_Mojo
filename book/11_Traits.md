@@ -49,3 +49,8 @@ Collections evaluate as True if they contain any elements.
 
 ### 8.2.3 CollectionElement
 This means that such an item must be copyable and movable.
+
+### 8.2.4 KeyElement
+This trait inherits from the following traits:  
+`AnyType, CollectionElement, Copyable, EqualityComparable, Hashable, Movable`
+

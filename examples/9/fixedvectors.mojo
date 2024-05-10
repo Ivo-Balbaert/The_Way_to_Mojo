@@ -9,7 +9,7 @@ fn main():
 
     print(vec.capacity)             # => 8
     print(vec.current_size)         # => 2
-    print(vec.dynamic_data[0])      # => 1  (??)
+    print(vec.dynamic_data[0])      # => 7 (??)
     print(vec.static_data[0])       # => 10
 
     print(vec[0])       # => 10
@@ -18,9 +18,8 @@ fn main():
 
     print(len(vec))     # => 2
     vec[6] = 10
-    print(len(vec))     # => 2
-
-    
+    vec.clear()
+    print(len(vec))     # => 0
 
 
 

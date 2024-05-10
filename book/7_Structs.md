@@ -563,6 +563,7 @@ See also Vec3f in ray_tracing.mojo (§ 20).
 
 
 ### 7.9.4 Parametric functions and methods
+
 Better example: see parameter2.mojo in § 11.3
 Here are some examples of parametric functions:
 
@@ -618,6 +619,12 @@ NOT    [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
 but an error:
  call expansion failed - no concrete specializations
     var x = concat[DType.float32, 2, 4](a, b))
+
+
+**Parametric functions with a variable number of arguments or parameters**
+`fn f1[a: Int](*b: Int):`: this parametric function f1 has a variable number of arguments of type Int  
+`fn f2[*a: Int](b: Int)`: this parametric function f2 has a variable number of parameters of type Int
+
 
 ### 7.9.5 Programming compile-time logic
 You can also write imperative compile-time logic with control flow, even  compile-time recursion. The following example makes use the of the `@parameter if` feature, which is an if statement that runs at compile-time. It requires that its condition be a valid parameter expression, and ensures that only the live branch of the if statement is compiled into the program.

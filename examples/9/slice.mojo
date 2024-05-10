@@ -4,6 +4,9 @@ fn main():
     print(original[0:8])  # => MojoDojo
     print(original[1:8:2])  # => oooo
     print(original[0:4:2])  # => Mj
+    print(original[4:]) # => Dojo
+    # Same as:
+    print(original.__getitem__(Slice(4, len(original))))  # => Dojo
 
     print(original[slice(0, 4)])      # => Mojo
     var slice_expression = slice(0, 4)

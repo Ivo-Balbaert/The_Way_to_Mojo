@@ -16,6 +16,8 @@ print(a + b)
 All data values have a corresponding data *type*.
 Mojo's basic types are defined as built-ins, defined in the package `builtin`. They are automatically imported in code. These include the Bool, Int, IntLiteral, FloatLiteral, String and StringLiteral types, which we'll discuss in this section. They are all defined as a struct (see § 7).
 
+Composite types contain one or more values and will be discussed in § 9 and beyond. These values can be of the same type (homogeneous) or of different types (heterogeneous).
+
 ## 4.1 The data type DType
 The `builtin` package contains the `dtype` module, home of the `DType` type. `DType` is like an umbrella type for the bool and numeric types. 
 It has the following aliases:  
