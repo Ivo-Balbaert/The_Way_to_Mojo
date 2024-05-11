@@ -71,13 +71,12 @@ raise other  # => Error: hey
 ```
 
 
-
-================================================================================================
+XYZ
 
 
 ## 10.6 Querying the host target info with module sys.info
-Mojo can gather a lot of info on your host machine to finetune its behavior if need be.  
-Methods for querying the host target info are implemented in module `sys.info`.
+Info on your host machine can be very useful to finetune Mojo's behavior if need be.  
+Methods for querying the host target for that info are implemented in module `sys.info`.
 
 See `target_info.mojo`:
 ```py
