@@ -714,7 +714,7 @@ In line 1, the Markdown method render_page is called with the compile-time param
 
 
 
-A function can also be *recursive* (see Fibonacci example § 10.3)
+A function can also be *recursive* (see Fibonacci example § 10.5)
 
 
 

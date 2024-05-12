@@ -272,8 +272,6 @@ Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)
 `assert_almost_equal(val1, val2)` checks whether both values are approximately equal, within an absolute tolerance of atol.
 
 
-XYZ
-
 ## 10.4 Other assert statements
 Both constrained and debug_assert are built-in.
 
@@ -337,13 +335,72 @@ Assert Error: x is not equal to 42
 ```
 But this crashes on the second assertion.
 
-XYZ
 
-## 10.5 Module benchmark
+## 10.5 The time module
 
-From v5, benchmark no longer requires a capturing fn so you can benchmark functions outside the same scope. You can also print a report with: `report.print()`
+See `timing.mojo`:
+```py
+from time import now, sleep, time_function
 
-See `benchmark_newv5`:
+fn sleep1ms():
+    sleep(0.001)
+
+fn measure():
+    fn closure() capturing:
+        sleep1ms()
+
+    var nanos = time_function[closure]()   # 3
+    print("sleeper took", nanos, "nanoseconds to run")
+
+fn main():
+    print(now())        # 1 => 227897314188
+
+    var tic = now()     # 2
+    sleep(0.001)
+    var toc = now() - tic
+    print("slept for", toc, "nanoseconds")
+    # => slept for 1160397 nanoseconds
+
+    measure()  # => sleeper took 1066729 nanoseconds to run  
+```
+The now() function (line 1) gets the current number of nanoseconds using the systems monotonic clock, which is generally the time elapsed since the machine was booted. Behavior will vary by platform for states like sleep etc.  
+The sleep() function can be used to make a thread sleep for the duration in seconds, here 1 ms (see lines 2 and following).  
+
+time_function() (used in line 3) tells you how long it takes (in nanoseconds) for a function closure to execute: pass in a nested function as parameter (also known as a closure that takes no arguments and returns None as a parameter), to time a function for example sleep1ms.
+
+Here is example code where we time the execution of the Fibonacci function:
+See `time_fibonacci.mojo`:
+```py
+from time import now
+
+fn fib(n: Int) -> Int:
+    if n <= 1:
+        return n
+    else:
+        return fib(n - 1) + fib(n - 2)
+
+fn main():
+    var eval_begin = now()
+    var res = fib(50)
+    var eval_end = now()
+    var execution_time_sequential = Float64((eval_end - eval_begin))
+    print("execution_time sequential in ms:")
+    print(execution_time_sequential / 1000000)
+# =>
+# execution_time sequential in ms:
+# 24500 ms average
+```
+
+
+## 10.6 Module benchmark
+The class allows you to benchmark a given function (passed as a parameter) with:  
+`benchmark.run[function]()`
+and to print out a report with: `report.print()`.
+Import it through `from benchmark import Unit, benchmark` or just `import benchmark`.
+
+Here is a simple example to get started:
+
+See `benchmark1.mojo`:
 ```py
 from benchmark import Unit, benchmark
 from time import sleep
@@ -352,7 +409,7 @@ fn sleeper():
     sleep(.01)
 
 fn main():
-   varreport = benchmark.run[sleeper]()
+    var report = benchmark.run[sleeper]()
     print(report.mean())   # => 0.010147911948148149
     report.print()
     print("")
@@ -384,14 +441,10 @@ fn main():
 # Slowest Mean: 10.297477449999999
 ```
 
-
-See first § 10.7
-
-The class allows to benchmark a given function (passed as a parameter) and configure various benchmarking parameters, such as number of warmup iterations, maximum number of iterations, minimum and maximum elapsed time.
-Import it in your code through: `import benchmark`
+You can also configure various benchmarking parameters, such as number of warmup iterations, maximum number of iterations, minimum and maximum elapsed time.
 We'll benchmark the execution of the Fibonacci function, defined as follows:
-(code: see `running_benchmark.mojo`)`
 
+See `running_benchmark.mojo`:
 ```py
 import benchmark
 from time import sleep
@@ -403,32 +456,30 @@ fn fib(n: Int) -> Int:
     else:
         return fib(n - 1) + fib(n - 2)
 
-
 fn fib_iterative(n: Int) -> Int:
     var count = 0
     var n1 = 0
     var n2 = 1
 
     while count < n:
-       varnth = n1 + n2
+        var nth = n1 + n2
         n1 = n2
         n2 = nth
         count += 1
+    
     return n1
-
 
 fn sleeper():
     print("sleeping 300,000ns")
     sleep(3e-4)
 
-
 fn test_fib():
-   varn = 35
+    var n = 35
     for i in range(n):
         _ = fib(i)
 
 fn test_fib_iterative():
-   varn = 35
+    var n = 35
     for i in range(n):
         _ = fib_iterative(i)
 
@@ -436,7 +487,7 @@ fn test_fib_iterative():
 fn main():
     var report = benchmark.run[test_fib]()
     print(report.mean(), "seconds")
-    # => 0.028419847121951218 seconds
+    # => 0.03266296134722222 seconds
 
     report = benchmark.run[test_fib_iterative]()
     print(report.mean(), "seconds")
@@ -445,21 +496,18 @@ fn main():
     print("0 warmup iters, 5 max iters, 0ns min time, 1_000_000_000ns max time")
     report = benchmark.run[sleeper](0, 5, 0, 1_000_000_000)
     print(report.mean(), "seconds")
-    # 1.3327284737390688e-17 seconds
+    # 1.4999999999999997e-17 seconds
     # 0 warmup iters, 5 max iters, 0ns min time, 1_000_000_000ns max time
-    # sleeping 300,000ns
-    # sleeping 300,000ns
-    # sleeping 300,000ns
-    # sleeping 300,000ns
-    # sleeping 300,000ns
-    # sleeping 300,000ns
-    # 0.00040065083333333334 seconds```
+    # -nan seconds
+```
+?? -nan seconds
 
 Pass the test function in as a parameter:  `benchmark().run[test_fib]()`.
-This returns the execution time in seconds.
+This returns the execution time in seconds: 
+# => 0.033257654583333331 seconds
 
 Let us now compare this to the iterative version (fib_iterative):
-# =>  1.3176532113682314e-17 seconds
+# =>  1.6000000000000001e-17 seconds
 
 The compiler has nearly optimized away everything that took time in the previous version.
 
@@ -468,231 +516,4 @@ The 3rd example demonstrates the maximum number of iterations (max_iters) here 5
 As the 1st parameter, you can also set up the number of warmup iterations (num_warmup).  
 As the 3rd parameter, you can also set up the minimum running time (min_time_ns).
 
-Here is another example: stack dump!
-See `calc_mean_matrix.mojo`:
-```py
-from tensor import Tensor
-from random import rand
-import benchmark
-from time import sleep
-from algorithm import vectorize, parallelize
-
-alias dtype = DType.float32
-alias simd_width = simdwidthof[DType.float32]()
-
-
-fn row_mean_naive[dtype: DType](t: Tensor[dtype]) -> Tensor[dtype]:
-    var res = Tensor[dtype](t.dim(0), 1)
-    for i in range(t.dim(0)):
-        for j in range(t.dim(1)):
-            res[i] += t[i, j]
-        res[i] /= t.dim(1)
-    return res
-
-
-fn row_mean_fast[dtype: DType](t: Tensor[dtype]) -> Tensor[dtype]:
-    var res = Tensor[dtype](t.dim(0), 1)
-
-    @parameter
-    fn parallel_reduce_rows(idx1: Int) -> None:
-        @parameter
-        fn vectorize_reduce_row[simd_width: Int](idx2: Int) -> None:
-            res[idx1] += t.simd_load[simd_width](idx1 * t.dim(1) + idx2).reduce_add()
-
-        vectorize[2 * simd_width, vectorize_reduce_row](t.dim(1))
-        res[idx1] /= t.dim(1)
-
-    parallelize[parallel_reduce_rows](t.dim(0), t.dim(0))
-    return res
-
-
-fn main():
-   vart = rand[dtype](1000, 1000)
-    var result = Tensor[dtype](t.dim(0), 1)
-
-    @parameter
-    fn bench_mean():
-        _ = row_mean_naive(t)
-
-    @parameter
-    fn bench_mean_fast():
-        _ = row_mean_fast(t)
-
-   varreport = benchmark.run[bench_mean]()
-  # varreport = benchmark.run[row_mean_naive(t)]()
-   varreport_fast = benchmark.run[bench_mean_fast]()
-    report.print()
-    report_fast.print()
-    print("Speed up:", report.mean() / report_fast.mean())
-
-
-# => 202.3 Nov 11: for  main():
-#   vart = rand[dtype](1000,100000)
-# [29195:29195:20231111,103553.196898:ERROR file_io_posix.cc:144] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq: No such file or directory (2)
-# [29195:29195:20231111,103553.196940:ERROR file_io_posix.cc:144] open /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq: No such file or directory (2)
-# Please submit a bug report to https://github.com/modularml/mojo/issues and include the crash backtrace along with all the relevant source codes.
-# Stack dump:
-# 0.      Program arguments: mojo calc_mean_matrix.mojo
-# Stack dump without symbol names (ensure you have llvm-symbolizer in your PATH or set the environment var `LLVM_SYMBOLIZER_PATH` to point to it):
-# 0  mojo      0x0000558fd8c39b97
-# 1  mojo      0x0000558fd8c3776e
-# 2  mojo      0x0000558fd8c3a26f
-# 3  libc.so.6 0x00007f42366c9520
-# 4  libc.so.6 0x00007f41740017b3
-# Segmentation fault
-
-# =>
-# ---------------------
-# Benchmark Report (s)
-# ---------------------
-# Mean: 0.0020958697733598408
-# Total: 1.054222496
-# Iters: 503
-# Warmup Mean: 0.0019287810000000001
-# Warmup Total: 0.0038575620000000001
-# Warmup Iters: 2
-# Fastest Mean: 0.0020823652932862192
-# Slowest Mean: 0.0021170246499999999
-
-# for (1000, 1000)
-# ---------------------
-# Benchmark Report (s)
-# ---------------------
-# Mean: 0.00068503110180224058
-# Total: 1.4063688519999999
-# Iters: 2053
-# Warmup Mean: 0.00091436450000000004
-# Warmup Total: 0.0018287290000000001
-# Warmup Iters: 2
-# Fastest Mean: 0.00020097415
-# Slowest Mean: 0.00074287821512247071
-
-# Speed up: 3.0595249877645565
-```
-
-## 10.7 The time module
-
-See `timing.mojo`:
-```py
-from time import now, sleep, time_function
-
-fn sleep1ms():
-    sleep(0.001)
-
-fn measure():
-    fn closure():
-        sleep1ms()
-
-   varnanos = time_function[closure]()   # 3
-    print("sleeper took", nanos, "nanoseconds to run")
-    # => sleeper took 1066729 nanoseconds to run
-
-fn main():
-    print(now())    # 1 => 227897314188
-
-    # sleep()
-   vartic = now()     # 2
-    sleep(0.001)
-   vartoc = now() - tic
-    print("slept for", toc, "nanoseconds")
-    # => slept for 1160397 nanoseconds
-
-    measure()   
-```
-
-Here is example code where we time the execution of the Fibonacci function (see § 19.3):
-```py
-from time import now
-
-var eval_begin = now()
-var res = fib(50)
-var eval_end = now()
-let execution_time_sequential = Float64((eval_end - eval_begin))
-print("execution_time sequential in ms:")
-print(execution_time_sequential / 1000000)
-# =>
-# execution_time sequential in ms:
-# 14253.018341999999
-```
-(A comparison showed: Julia 21s, Rust 16s, Mojo 14s)
-
-The now() function (line 1) gets the current number of nanoseconds using the systems monotonic clock, which is generally the time elapsed since the machine was booted. Behavior will vary by platform for states like sleep etc.  
-The sleep() function can be used to make a thread sleep for the duration in seconds, here 1 ms (see lines 2 and following).  
-
-time_function() (used in line 3) tells you how long it takes (in nanoseconds) for a function closure to execute: pass in a nested function (also known as a closure that takes no arguments and returns None as a parameter), to time a function for example sleep1ms.
-
-## 10.10 Working with command-line arguments
-This is done with module arg from the sys package.
-
-See `cmdline_args.mojo`:
-```py
-from sys import argv
-
-fn main():
-    print("There are ")
-    print(len(argv()))  # => 3
-    print("command-line arguments, namely:")
-    print(argv()[0])    # => cmdline_args.mojo
-    print(argv()[1])    # => 42
-    print(argv()[2])    # => abc
-```
-
-If this program is executed with the command: `$ mojo cmdline_args.mojo 42 "abc"`;
-the output is:
-```
-There are
-3
-command-line arguments, namely:
-cmdline_args.mojo
-42
-abc
-```
-
-## 10.11 Working with memory
-
-See also:  Buffer § 10.4, 10.5
-           Pointer § 12
-See examples memset, memcpy, memset_zero
-
-The `stack_allocation` function lets you allocate data buffer space on the stack, given a data type and number of elements, for example:  
-`varrest_p: DTypePointer[DType.uint8] = stack_allocation[simd_width, UInt8, 1]()`
-
-
-## 10.12 Working with files
-This is done through the file module (v 0.4.0).
-
-Suppose we have a my_file.txt with contents: "I like Mojo!"
-
-See `read_file.mojo`
-```py
-fn main() raises:
-    var f = open("my_file.txt", "r")
-    print(f.read())     # => I like Mojo!
-    f.close()   
-
-    with open("my_file.txt", "r") as f:      # 1
-        print(f.read()) # => I like Mojo!
-```
-
-The with in line 1 closes the file automatically.
-
-## 10.13 The module sys.param_env
-Suppose we want to define a Tensor with an element type that we provide at the command-line, like this:  mojo -D FLOAT_32 param_env1.mojo
-The module sys.param_env provides a function is_defined, which returns true when the same string was passed at the command-line.
-
-See `param_env1.mojo`:
-```py
-from sys.param_env import is_defined
-from tensor import Tensor, TensorSpec
-
-alias float_type: DType = DType.float32 if is_defined["FLOAT32"]() else DType.float64
-
-fn main():
-    print("float_type is: ", float_type)  # => float_type is:  float32
-   varspec = TensorSpec(float_type, 256, 256)
-   varimage = Tensor[float_type](spec)
-```
-
-In the same way, you can also use name-value pairs, like -D customised=1234. In that case use the functions env_get_int or env_get_string.
-
-Another example simulating a testing environment with mojo -D testing comes https://github.com/rd4com/mojo-learning, see `param_env2.mojo`. It also shows how to print in color on the command-line.
+## 10.7 Debugging in VSCode

@@ -1,4 +1,6 @@
 # The Way to Mojo
+![Mojo](https://img.shields.io/badge/%F0%9F%94%A5%20Mojo-020B14?style=for-the-badge&link=https%3A%2F%2Fwww.modular.com%2Fmax%2Fmojo)
+
 
 A gradual guide to discover and learn the Mojo programming language.  
 At the moment, these are mostly notes from all Mojo material (website, GitHub, videos, articles, social media, examples) I am working through.

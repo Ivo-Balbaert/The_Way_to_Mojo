@@ -2,7 +2,9 @@
 
 See § 20.3.4.2
 
- 
+
+See `calc_mean_matrix.mojo`:  error!
+
 The following code is a nice example of demonstrating vectorizing:
 See `tensor2.mojo`:
 ```py
