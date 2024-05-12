@@ -71,10 +71,7 @@ raise other  # => Error: hey
 ```
 
 
-XYZ
-
-
-## 10.6 Querying the host target info with module sys.info
+## 10.2 Querying the host target
 Info on your host machine can be very useful to finetune Mojo's behavior if need be.  
 Methods for querying the host target for that info are implemented in module `sys.info`.
 
@@ -110,6 +107,7 @@ fn main():
     print(alignof[Foo]())     # 1 => 4
     print(bitwidthof[Foo]())  # 2 => 64
     print(sizeof[UInt8]())    # 6 => 1
+    print(sizeof[AnyType]())  # => 16
 
     @parameter                # 7
     if os_is_linux():
@@ -131,27 +129,25 @@ fn main():
 ```
 
 To check the alignment of any type, use the alignof function. In the struct Foo (line 1) it returns 4 bytes. This means each instance of Foo will start at a memory address that is a multiple of 4 bytes. There will also be 3 bytes of padding to accommodate the UInt8.  
-bitwidthof in line 2 uses bits instead of bytes to show the width of the type in bits. Type Foo will take 24 bits of padding, as each object can only be placed at multiples of 64 in memory.
-
-
+bitwidthof in line 2 uses bits instead of bytes to show the width of the type in bits. Type Foo will take 24 bits of padding (??), as each object can only be placed at multiples of 64 in memory.
 The total size in bytes of an AnyType is given by the `sizeof` function. (line 6).
 
 The same module also contains the values os_is_linux, os_is_macos, os_is_windows, which can be used to conditionally compile code based on the operating system (see line 7).
 
-A number of other functions starting with has_ or is_ give info about the processor type/capabilities of the host system. (see line 8 and following).
+A number of other functions starting with has_ or is_ give info about the processor type and capabilities of the host system. (see line 8 and following).
 * has_sse4(): SSE4 is the older SIMD instruction extension for x86 processors (introduced in 2006).
 * has_avx(): AVX (Advanced Vector Extensions) are instructions for x86 SIMD support. They are commonly used in Intel and AMD chips (from 2011 onwards).
 * has_avx2(): AVX2 (Advanced Vector Extensions 2) are instructions for x86 SIMD support, expanding integer commands to 256 bits (from 2013 onwards).
 * has_avx512f(): AVX512 (Advanced Vector Extensions 512) added 512 bit support for x86 SIMD instructions (from 2016 onwards).
 * has_intel_amx(): AMX is an extension to x86 with instructions for special units designed for ML workloads such as TMUL which is a matrix multiply on BF16 (from 2023 onwards).
 * has_neon(): Neon also known as Advanced SIMD is an ARM extension for specialized instructions.
-* is_apple_m1(): The Apple M1 chip contains an ARM CPU that supports Neon 128 bit instructions and GPU accessible through Metal API.
+* is_apple_m1(): The Apple M1 chip contains an ARM CPU that supports Neon 128 bit instructions and is GPU accessible through Metal API.
 
 The following example (taken from the standard Mojo distribution) prints the current host system information using APIs from the sys module.
 
 See `deviceinfo.mojo`:
 ```py
-ffrom sys.info import (
+from sys.info import (
     os_is_linux,
     os_is_windows,
     os_is_macos,
@@ -178,8 +174,8 @@ def main():
         os = "macOS"
     else:
         os = "windows"
-   varcpu = String(_current_cpu())
-   vararch = String(_triple_attr())
+    var cpu = String(_current_cpu())
+    var arch = String(_triple_attr())
     var cpu_features = String(" ")
     if has_sse4():
         cpu_features = cpu_features.join(" sse4")
@@ -215,42 +211,102 @@ System information:
     CPU Features:  avx2
 ```
 
-## 10.1 Assert statements
+## 10.3 Module testing 
+We already discussed assert_equal in § 3.5. But this module implements various other testing utilities.  
+
+See `testing1.mojo`:
+```py
+# All assertion errors are commented out!
+from testing import *
+
+
+fn main() raises:
+    var b1 = 3 < 5
+    assert_true(b1, "This is false!")  # this is True, no output
+    # assert_false(b1, "This is false!")
+    # => AssertionError: This is false!
+    var b2 = 3 > 5
+    # assert_true(b2, "This is false!")
+    # => AssertionError: This is false!
+    assert_false(b2, "This is false!") # this is True, no output
+
+    var n = 41
+    var m = 42
+    assert_not_equal(n, m)  # this is True, no output
+
+    var p = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
+    var q = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
+    assert_equal(p, q)   # this is True, no output
+
+    var q2 = SIMD[DType.float16, 4](1.1, 2.2, 3.3, 4.4)
+    # assert_almost_equal(p, q2, atol = 0.1)
+    # Unhandled exception caught during execution: 
+    # At /home/ivo/mojo/test/testing1.mojo:24:24: 
+    # AssertionError: [1.0, 2.099609375, 3.19921875, 4.30078125] is not close to 
+    # [1.099609375, 2.19921875, 3.30078125, 4.3984375] with a diff of 
+    # [0.099609375, 0.099609375, 0.1015625, 0.09765625]
+    assert_almost_equal(p, q2, atol = 0.2)  # this is True, no output
+
+# Good! Caught the raised error, test passes
+    with assert_raises():
+        raise "SomeError"
+
+# Also good!
+    with assert_raises(contains="Some"):
+        raise "SomeError"
+
+# This will assert, we didn't raise
+    # with assert_raises():  # => AssertionError: Didn't raise
+    #     pass
+
+# This will let the underlying error propagate, failing the test
+    # with assert_raises(contains="Some"):
+    #     raise "OtherError"  # =>  OtherError
+```
+
+`assert_true(Boolean, message)` tests the Boolean expression which is its first argument. If True, nothing happens. If False, AssertionError: is printed, followed by message.
+`assert_false(Boolean, message)` works the other way around.
+Both raise an Error when the assertion fails.
+
+Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)`, where val1 and val2 must be both of type Int, String or SIMD[type, size].
+`assert_almost_equal(val1, val2)` checks whether both values are approximately equal, within an absolute tolerance of atol.
+
+
+XYZ
+
+## 10.4 Other assert statements
 Both constrained and debug_assert are built-in.
 
-### 10.1.1 constrained
-`constrained[cond, error_msg]` asserts that the condition cond is true at compile-time. It is used to place constraints on functions.
+### 10.4.1 constrained
+`constrained[cond, error_msg]` asserts that the condition cond is true at *compile-time*. It is used to place constraints on functions.
 
-In the following example we ensure that the two parameters to `assert_positives` are both > 0:
+In the following example we ensure that the two parameters to `add_positives` are both > 0:
 
 See `constrained.mojo`:
 ```py
 fn add_positives[x: Int, y: Int]() -> UInt8:
-    constrained[x > 0, "use a positive number"]()     # 1A
-    constrained[y > 0]()     # 1B
+    constrained[x > 0, "use a positive number"]()  # 1A
+    constrained[y > 0]()  # 1B
     return x + y
 
+
 fn main():
-   varres = add_positives[2, 4]()
+    var res = add_positives[2, 4]()
     print(res)  # => 6
     # _ = add_positives[-2, 4]()  # 2
+    # => error: function instantiation failed
+    # => note:               constraint failed: use a positive number
 ```
 
 If the condition fails, you get a **compile-time error**, and optionally the error message is displayed.
-Line 2 gives the error:  
+Line 2 gives a whole error output containing:  
 ```
-constrained.mojo:2:23: note:               constraint failed: param assertion failed
-    constrained[x > 0]()     # 1A
-                      ^
-```
-
-Or if you supplied a custom error message:
-```
-constrained.mojo:2:23: note:               constraint failed: use a positive number
+error: function instantiation failed
+...
+note:  constraint failed: use a positive number
 ```
 
-### 10.1.2 debug_assert
-(See also changelog/blog v 0.7)
+### 10.4.2 debug_assert
 `debug_assert[cond, err_msg]` checks that the condition is true, but only in debug builds. It is removed from the compilation process in release builds. It works like assert in C++.
 
 See `debug_assert1.mojo`:
@@ -263,70 +319,27 @@ fn main():
     test_debug_assert[1](2)
 ```
 
-When you run this as `mojo -D ASSERT_WARNING debug_assert1.mojo`, you get the following output:
+`mojo debug_assert1.mojo` doesn't produce any output.
+But when you run this as `mojo -D ASSERT_WARNING debug_assert1.mojo`, you get the following output:
 ```
-Assert Warning: x is not equal to 42
-Assert Warning: y is not equal to 42
+At /home/ivo/mojo/test/debug_assert1.mojo:2:17: Assert Warning: x is not equal to 42
+At /home/ivo/mojo/test/debug_assert1.mojo:3:17: Assert Warning: y is not equal to 42
 ```
+
 >Note:  Users cannot use debug_assert with just specifying -debug-level full. 
 -debug-level full and "debug" build are different things; `mojo --debug-level full debug_assert1.mojo` doesn't give any output.
 
- The shipped mojo-sdk is always a "release" build in that sense with regard to debug_assert. An explicit option for users to specify -D MOJO_ENABLE_ASSERTIONS was added:
+The shipped mojo-sdk is always a "release" build in that sense with regard to debug_assert. By default, assertions are *not enabled* in the standard library right now for performance reasons. An explicit option for users to specify -D MOJO_ENABLE_ASSERTIONS was added:
 ```
 mojo -D MOJO_ENABLE_ASSERTIONS debug_assert1.mojo
 Assert Error: x is not equal to 42
 ...
 ```
+But this crashes on the second assertion.
 
-## 10.2 Module testing 
-This module implements various testing utilities.  
+XYZ
 
-(code changed, because from v 0.6, assert_ return Error when the assertion fails)
-See `testing1.mojo`:
-```py
-from testing import *
-
-
-fn main():
-   varb1 = 3 < 5
-    print(assert_true(b1, "This is false!"))  # => None
-    print(assert_false(b1, "This is false!"))
-    # => ASSERT ERROR: This is false!
-    # => False
-   varb2 = 3 > 5
-    print(assert_true(b2, "This is false!"))
-    # => ASSERT ERROR: This is false!
-    # => False
-    print(assert_false(b2, "This is false!"))
-    # => True
-
-   varn = 41
-   varm = 42
-    print(assert_equal(n, m))  # => False
-    print(assert_not_equal(n, m))  # => True
-
-   varp = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
-   varq = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
-    print(assert_equal(p, q))  # => True
-
-   varp2 = SIMD[DType.float16, 4](1.0, 2.1, 3.2, 4.3)
-   varq2 = SIMD[DType.float16, 4](1.1, 2.2, 3.3, 4.4)
-    print(assert_almost_equal(p2, q2))
-    # => ASSERT ERROR: The input value [1.0, 2.099609375, 3.19921875, 4.30078125] is not close to
-    # [1.099609375, 2.19921875, 3.30078125, 4.3984375] with a diff of
-    # [0.099609375, 0.099609375, 0.1015625, 0.09765625]
-    # False
-```
-
-`assert_true(Boolean, message)` tests the Boolean expression which is its first argument. If True, nothing happens. If False, ASSERT ERROR: is printed, followed by message.
-`assert_false(Boolean, message)` works the other way around.
-Both raise an Error when the assertion fails.
-
-Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)`, where val1 and val2 must be both of type Int, String or SIMD[type, size].
-`assert_almost_equal(val1, val2)` checks whether both values are approximately equal (tolerance ??)
-
-
-## 10.3 Module benchmark
+## 10.5 Module benchmark
 
 From v5, benchmark no longer requires a capturing fn so you can benchmark functions outside the same scope. You can also print a report with: `report.print()`
 
