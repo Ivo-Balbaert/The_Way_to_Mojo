@@ -8,7 +8,6 @@ fn fib(n: Int) -> Int:
     else:
         return fib(n - 1) + fib(n - 2)
 
-
 fn fib_iterative(n: Int) -> Int:
     var count = 0
     var n1 = 0
@@ -19,19 +18,17 @@ fn fib_iterative(n: Int) -> Int:
         n1 = n2
         n2 = nth
         count += 1
+    
     return n1
-
 
 fn sleeper():
     print("sleeping 300,000ns")
     sleep(3e-4)
 
-
 fn test_fib():
     var n = 35
     for i in range(n):
         _ = fib(i)
-
 
 fn test_fib_iterative():
     var n = 35
@@ -42,21 +39,15 @@ fn test_fib_iterative():
 fn main():
     var report = benchmark.run[test_fib]()
     print(report.mean(), "seconds")
-    # => 0.028419847121951218 seconds
+    # => 0.033257654583333331 seconds
 
     report = benchmark.run[test_fib_iterative]()
     print(report.mean(), "seconds")
-    # => 1.3176532113682314e-17 seconds
+    # => 1.6000000000000001e-17 seconds
 
     print("0 warmup iters, 5 max iters, 0ns min time, 1_000_000_000ns max time")
     report = benchmark.run[sleeper](0, 5, 0, 1_000_000_000)
     print(report.mean(), "seconds")
-    # 1.3327284737390688e-17 seconds
     # 0 warmup iters, 5 max iters, 0ns min time, 1_000_000_000ns max time
-    # sleeping 300,000ns
-    # sleeping 300,000ns
-    # sleeping 300,000ns
-    # sleeping 300,000ns
-    # sleeping 300,000ns
-    # sleeping 300,000ns
-    # 0.00040065083333333334 seconds
+    # -nan seconds (??)
+    

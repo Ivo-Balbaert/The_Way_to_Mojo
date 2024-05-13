@@ -44,3 +44,11 @@ fn main():
     var list = List(1, 2, 4)
     for item in list:  # 13
         print(item[], end=", ")  # => 1, 2, 4, 
+
+    var inputs = List(1.2, 5.1, 2.1)
+    var weights = List(3.1, 2.1, 8.7)
+    var bias = 3
+    var output = inputs[0]*weights[0] + inputs[1]*weights[1] + inputs[2]*weights[2] + bias
+    print(output) # => 35.699999999999996
+
+    

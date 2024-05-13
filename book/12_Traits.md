@@ -1,4 +1,4 @@
-# 8 Traits
+# 12 Traits
 
 ?? Better explanation why traits are useful
 
@@ -6,7 +6,7 @@ A lot of structs in a project and among projects share the same characteristics 
 
 Trait exist in many languages (Rust, ...) and are sometimes called interfaces (in Java and C# for instance).
 
-## 8.1 What are traits?
+## 12.1 What are traits?
 " A trait is like a template of characteristics for a struct. If you want to create a struct with the characteristics defined in a trait, you must implement each characteristic (for example: each method). Each characteristic in a trait is a "requirement" for the struct, and when your struct implements each requirement, it's said to "conform" to the trait. "
 
 This makes it possible to write generic functions, which can take traits as arguments, so accept all struct types that implement these traits! Traits also bring more structure to the type-hierarchy (??).
@@ -36,21 +36,21 @@ Notice that in line 1 we pass a struct instance to the function, but the functio
 
 " The function can accept any type for x as long as it conforms to SomeTrait. Thus, fun_with_traits() is known as a *generic function* because it accepts a generalized type instead of a specific type.
 
-## 8.2 Common traits
-### 8.2.1 Stringable
+## 12.2 Common traits
+### 12.2.1 Stringable
 This trait confirms that a type that can be converted to a string,  
 using String(value) or str(value).
 Nearly all of the standard library types are Stringable.
 
-### 8.2.2 Boolable
+### 12.2.2 Boolable
 A type implements Boolable if it has a boolean representation.  
 Strings evaluate as True if they have a non-zero length.
 Collections evaluate as True if they contain any elements.
 
-### 8.2.3 CollectionElement
+### 12.2.3 CollectionElement
 This means that such an item must be copyable and movable.
 
-### 8.2.4 KeyElement
+### 12.2.4 KeyElement
 This trait inherits from the following traits:  
 `AnyType, CollectionElement, Copyable, EqualityComparable, Hashable, Movable`
 

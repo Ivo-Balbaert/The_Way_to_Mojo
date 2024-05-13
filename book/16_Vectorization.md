@@ -1,7 +1,7 @@
 # 16 - Vectorization
 
 See § 20.3.4.2
-
+See keyword_params.mojo 
 
 See `calc_mean_matrix.mojo`:  error!
 

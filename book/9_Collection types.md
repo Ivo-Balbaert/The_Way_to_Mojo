@@ -6,7 +6,8 @@ In this case, Mojo can infer the type, so you can write: `var l = List(1, 2, 3, 
 
 Let's start with the List types.
 
-## 9.1 ListLiteral
+## 9.1 List
+### 9.1.1 ListLiteral
 This is implemented in module `builtin_list` in package `builtin`. 
 It is literally a list of values (possibly of different type), separated by commas and enclosed in [].
 The items can be of any type and are immutable: ListLiteral only includes getter methods for accessing them, nothing can be modified post-initialization.
@@ -31,16 +32,16 @@ fn main():
     print(mixed_list.get[0, Int]()) # => 1
 ```
 
-## 9.2 VariadicList
+### 9.1.2 VariadicList
 In § 6.4.1 we encountered the VariadicList type, which is typically used to take in the variable number of arguments *args in a variadic function. It is stored in the same module as ListLiteral. In other words: it provides a "list" view of the function arguments. Each of the arguments and the number of arguments are accessable.
 
-## 9.3 DimList
+### 9.1.3 DimList
 The DimList type represents a list of dimensions. It is imported with: 
 `from buffer.list import DimList`.  
 For example, the Tensor type uses it in the second argument of its definition: `struct Tensor[rank: Int, shape: DimList, type: DType]` 
 Look at the complete programs with Tensors to see DimList used.
 
-## 9.4 List
+### 9.1.4 List
 (see also § 4.3.1.1, 4.5.2, 7.9.2)
 This is really the most useful list-like type. It lives in the `collections.list` module.
 
@@ -99,6 +100,12 @@ fn main():
     var list = List(1, 2, 4)
     for item in list:   # 13
         print(item[], end=", ")  # => 1, 2, 4, 
+
+    var inputs = List(1.2, 5.1, 2.1)
+    var weights = List(3.1, 2.1, 8.7)
+    var bias = 3
+    var output = inputs[0]*weights[0] + inputs[1]*weights[1] + inputs[2]*weights[2] + bias
+    print(output) # => 35.699999999999996
 ```
 
 Adding elements to the back is done with the append method (line 1A), and `len` (line 2) gives the number of items, which is also given by the size field. 
@@ -123,7 +130,7 @@ What happens when you try to print out a List?
 Can a List contain elements of different types? 
 *Try* to define a `var lst = List(1, 2, "a")` or List[AnyType]. Why do you get an error?
 
-## 9.5 Implementing a list-like behavior with PythonObject
+### 9.1.5 Implementing a list-like behavior with PythonObject
 This snippet shows how we could use a PythonObject to create a list, just for fun (or mihjt there be some use-cases ??):
 
 See `list_pythonobject.mojo`:
@@ -138,7 +145,7 @@ fn main() raises:
 ```
 
 
-## 9.6  Sorting a List
+### 9.1.6  Sorting a List
 The sort module in package algorithms implements different sorting functions. Here is an example of usage:  
 
 See `sorting1.mojo`:
@@ -163,10 +170,10 @@ fn main():
 # 108
 ```
 
-This function sortsthe list in-place.
+This function sort the list in-place.
 
 
-## 9.7 Dict
+## 9.2 Dict
 The Dict type is an associative array that holds key-value pairs, also called dictionary or map in other languages. Create an empty Dict by specifying the key and value type in that order as parameters:
 `var dict = Dict[String, Float64]()`
 
@@ -200,7 +207,7 @@ fn main() raises:
 It also has a __contains__, find and update method.
 
 
-## 9.8 Set
+## 9.3 Set
 This type represent a set of *unique* values. You can add and remove elements from the set, test whether a value exists in the set, and perform set algebra operations, like unions and intersections between two sets.
 
 Sets are generic and the element type must conform to the KeyElement trait.
@@ -222,7 +229,7 @@ fn main():
     # - tacos
 ```
 
-## 9.9 Optional
+## 9.4 Optional
 This type represents a value that may or may not be present. In the last case, it has value `None`.
 Like the other collection types, it is generic, and can hold any type that conforms to the CollectionElement trait.
 
@@ -254,7 +261,7 @@ fn main():
 An Optional evaluates as True when it holds a value, False otherwise. If the Optional holds a value, you can retrieve a reference to the value using the `value()` method. But calling value() on an Optional with no value results in undefined behavior, so you should always guard a call to value() inside a conditional that checks whether a value exists, as done in line 2.  
 An alternative is the or_else() method, which returns the stored value if there is one, or a user-specified default value otherwise (see line 3).
 
-## 9.10 Tuple 
+## 9.5 Tuple 
 This is implemented in the built-in module `tuple`. 
 A tuple consists of zero or more, possibly heterogeneous values, separated by commas and enclosed in ().  
 
@@ -286,7 +293,7 @@ fn return_tuple() -> (Int, Int):    # 5
 
 A tuple can contain struct instances, as shown in line 4. In line 5, we see a function that returns a tuple.
 
-## 9.11 Variant 
+## 9.6 Variant 
 This type is used to implement a run-time sum (variant) types. It is imported with `from utils import Variant`.
 The following code shows some of its possibilities:
 
@@ -302,6 +309,12 @@ fn to_string(inout x: IntOrString) -> String:
     # x.isa[Int]()
     return x.get[Int]()[]
 
+fn print_value(value: Variant[Int, Float64], end: StringLiteral) -> None:
+    if value.isa[Int]():
+        print(value.get[Int]()[], end=end)
+    else:
+        print(value.get[Float64]()[], end=end)
+
 fn main():
     # They have to be mutable for now, and implement CollectionElement
     var an_int = IntOrString(4)
@@ -311,14 +324,24 @@ fn main():
     if random.random_ui64(0, 1):
         who_knows.set[String]("I'm actually a string too!")
 
-    print(to_string(an_int))    # =>  4
-    print(to_string(a_string))  # =>I'm a string!
-    print(to_string(who_knows)) # =>0
+    print(to_string(an_int))    # => 4
+    print(to_string(a_string))  # => I'm a string!
+    print(to_string(who_knows)) # => 0
+
+    var a = List[Variant[Int, Float64]](1, 2.5, 3, 4.5, 5) # 2A
+    var b = List[Variant[Int, StringLiteral]](1, "Hi", 3, "Hello", 5)   # 2B
+    print("List(", end="")
+    for i in range(len(a) - 1):
+        print_value(a[i], ", ")
+    print_value(a[-1], "")
+    print(")") # => List(1, 2.5, 3, 4.5, 5)
 ```
 
-A variant type is defined in line 1.
+A variant type is defined in line 1.  
+Lines 2A-B show a way to define a heterogeneous List with a Variant:  
+`List[Variant[Int, Float64]]`
 
-## 9.12 InlinedFixedVector 
+## 9.7 InlinedFixedVector 
 This defines the InlinedFixedVector type. You can import it with: `from collections.vector import InlinedFixedVector`.
 This type is a vector with small-vector optimization, which is dynamically allocated.
 It does not resize or implement bounds checks. It is initialized with both a small-vector size (statically known) number of slots, and when it is deallocated, it frees its memory.
@@ -356,7 +379,7 @@ Access and assign elements using indexes.
 
 To make a shallow or deep copy, or clear all elements, see § 10.8.1
 
-## 9.13 Slice
+## 9.8 Slice
 Slices are defined in the built-in module `builtin_slice`. They can be used to get substrings out of a string.
 A slice expression follows the Python convention of [start:end:step] or with a call to slice(start,end,step).
 If a start is not specified, it will default to 0. We can initialize slices by specifying where it should stop. The step is the number of elements to skip between each element. If we don't specify a step, it will default to 1. 
@@ -390,7 +413,7 @@ fn main():
 There is also a built-in [0; end) Range type, returned by a range function.
 
 
-## 9.14 Buffer 
+## 9.9 Buffer 
 A buffer (defined in module buffer.buffer) doesn't own the underlying memory, it's a view over data that is owned by another object. The most important operations are load and store, wherein the parametric int is a size, and the int argument is a (starting) index. All operations work with SIMD.
 
 See `buffer1.mojo`:
@@ -448,7 +471,7 @@ Utilize SIMD to manipulate 32 bytes of data at the same time (see lines 6-8).
 `aligned_stack_allocation`: Allocate to the stack with a given alignment for extra padding
 
 
-## 9.15 NDBuffer
+## 9.10 NDBuffer
 This is an N-dimensional Buffer, that can be used both statically, and dynamically at runtime (??).  
 NDBuffer can be parametrized on rank, static dimensions and Dtype. It does not own its underlying pointer.
 
@@ -464,7 +487,7 @@ rank is an Int, the number of dimensions, for example: 3
 shape is the size of each dimension, can be used as a variadic number or as a tuple.
 NDBuffer has the same operations as Buffer.
 
-## 9.16 The Tensor type from module tensor
+## 9.11 The Tensor type from module tensor
 A tensor is a higher-dimensional matrix, its type Tensor is defined in module tensor (see line 1).  
 The tensor type manages its own data (unlike NDBuffer and Buffer which are just views), that is:  the tensor type performs its own memory allocation and freeing. 
 Typically you'll need this import: `from tensor import Tensor, TensorSpec, TensorShape, rand`
@@ -519,9 +542,26 @@ fn main():
     print(gray_scale_image.shape().__str__())  # => 256x256
 ```
 
+In the previous code, the Index function was used to point to a certain item in the Tensor. Here is some other simple example that demonstrates this:
+
+See `index.mojo`:
+```py
+from utils.index import Index
+from tensor import Tensor
+
+
+def main():
+    var tens = Tensor[DType.float32](3, 10, 10)
+    tens[999] = 1
+    tens[Index(2, 9, 9)] = 1
+    print(tens[Index(2, 9, 9)])  # => 1.0
+```
+
 Tensor has fromfile() and tofile() methods to save and load as bytes from/to a file.
 The built-in print() function works on the Tensor type.
 TensorShape and TensorSpec now have constructors that take List[Int] and StaticIntTuple to initialize shapes.
+
+
 
 See video: [Introduction to Tensors](https://www.youtube.com/watch?v=3OWkXNdkx8E)
 Tensorutils: see blogs_videos

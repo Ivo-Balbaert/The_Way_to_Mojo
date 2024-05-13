@@ -172,6 +172,36 @@
 ## 8.5 Importing local Python modules
 # 8.6 Installing Python for interaction with Mojo
 
+# 9 - Collection types
+## 9.1 List
+### 9.1.1 ListLiteral
+### 9.1.2 VariadicList
+### 9.1.3 DimList
+### 9.1.4 List
+### 9.1.5 Implementing a list-like behavior with PythonObject
+### 9.1.6  Sorting a List
+## 9.2 Dict
+## 9.3 Set
+## 9.4 Optional
+## 9.5 Tuple 
+## 9.6 Variant 
+## 9.7 InlinedFixedVector 
+## 9.8 Slice
+## 9.9 Buffer 
+## 9.10 NDBuffer
+## 9.11 The Tensor type from module tensor
+
+# 10 Errors - Testing - Debugging - Benchmarking
+## 10.1 The Error type
+## 10.2 Querying the host target
+## 10.3 Module testing 
+## 10.4 Other assert statements
+### 10.4.1 constrained
+### 10.4.2 debug_assert
+## 10.5 The time module
+## 10.6 Module benchmark
+## 10.7 Debugging in VSCode
+
 
 # 13 Modules and packages
 ## 13.1 Importing standard-library modules 

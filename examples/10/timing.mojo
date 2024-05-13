@@ -9,17 +9,15 @@ fn measure():
 
     var nanos = time_function[closure]()   # 3
     print("sleeper took", nanos, "nanoseconds to run")
-    # => sleeper took 1066729 nanoseconds to run
 
 fn main():
-    print(now())    # 1 => 227897314188
+    print(now())        # 1 => 227897314188
 
-    # sleep()
     var tic = now()     # 2
     sleep(0.001)
     var toc = now() - tic
     print("slept for", toc, "nanoseconds")
     # => slept for 1160397 nanoseconds
 
-    measure()   
+    measure()  # => sleeper took 1066729 nanoseconds to run  
 
