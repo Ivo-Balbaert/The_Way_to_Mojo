@@ -35,11 +35,10 @@ See examples memset, memcpy, memset_zero ??
 The `stack_allocation` function lets you allocate data buffer space on the stack, given a data type and number of elements, for example:  
 `var rest_p: DTypePointer[DType.uint8] = stack_allocation[simd_width, UInt8, 1]()`
 
-XYZ
 
 ## 11.3 The module sys.param_env
-Suppose we want to define a Tensor with an element type that we provide at the command-line, like this:  mojo -D FLOAT_32 param_env1.mojo
-The module sys.param_env provides a function is_defined, which returns true when the same string was passed at the command-line.
+Suppose we want to define a Tensor with an element type that we provide at the command-line, like this:  `mojo -D FLOAT32 param_env1.mojo`
+The module sys.param_env provides a function `is_defined`, which returns true when the same string was passed at the command-line:
 
 See `param_env1.mojo`:
 ```py
@@ -50,20 +49,54 @@ alias float_type: DType = DType.float32 if is_defined["FLOAT32"]() else DType.fl
 
 fn main():
     print("float_type is: ", float_type)  # => float_type is:  float32
-   varspec = TensorSpec(float_type, 256, 256)
-   varimage = Tensor[float_type](spec)
+    var spec = TensorSpec(float_type, 256, 256)
+    var image = Tensor[float_type](spec)
 ```
 
-In the same way, you can also use name-value pairs, like -D customised=1234. In that case use the functions env_get_int or env_get_string.
+In the same way, you can also use name-value pairs, like -D customised=1234. In that case use the functions `env_get_int` or `env_get_string`.
 
-Another example simulating a testing environment with mojo -D testing comes https://github.com/rd4com/mojo-learning, see `param_env2.mojo`. It also shows how to print in color on the command-line.
+Another example simulating a testing environment with mojo -D testing comes from https://github.com/rd4com/mojo-learning, see `param_env2.mojo`. It also shows how to print in color on the command-line. Start it with: `mojo -D testing param_env2.mojo`:
 
+See `param_env2.mojo`:
+```py
+# start from cmd-line as: mojo -D testing param_env2.mojo
+from sys.param_env import is_defined
 
+alias testing = is_defined["testing"]()
 
-## 10.12 Working with files
-This is done through the file module (v 0.4.0).
+# let's do colors for fun!
+@always_inline
+fn expect[message: StringLiteral ](cond: Bool):
 
-Suppose we have a my_file.txt with contents: "I like Mojo!"
+    if cond: 
+        # print in green
+        print(chr(27), end="")
+        print("[42m", end="")
+    else: 
+        # print in red
+        print(chr(27), end="")
+        print("[41m", end="")
+
+    print(message)
+    
+    #reset to default colors
+    print(chr(27), end="")
+    print("[0m", end="")
+
+fn main():
+    @parameter
+    if testing:
+        print("this is a test build, don't use in production")
+        expect["math check"](3 == (1 + 2))
+        # prints "math check in green"
+# => this is a test build, don't use in production
+# math check
+```
+
+## 11.4 Working with files
+This is done through the file module, which is built-in.
+
+Suppose we have a `my_file.txt` with contents: "I like Mojo!"
 
 See `read_file.mojo`
 ```py
@@ -76,5 +109,5 @@ fn main() raises:
         print(f.read()) # => I like Mojo!
 ```
 
-The with in line 1 closes the file automatically.
+The with context in line 1 closes the file automatically.
 

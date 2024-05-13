@@ -1,3 +1,4 @@
+# start from cmd-line as: mojo -D FLOAT32 param_env1.mojo
 from sys.param_env import is_defined
 from tensor import Tensor, TensorSpec
 

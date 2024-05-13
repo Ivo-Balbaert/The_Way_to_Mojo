@@ -1,10 +1,11 @@
+# start from cmd-line as: mojo -D testing param_env2.mojo
 from sys.param_env import is_defined
 
 alias testing = is_defined["testing"]()
 
 # let's do colors for fun!
 @always_inline
-fn expect[message:StringLiteral ](cond:Bool):
+fn expect[message: StringLiteral ](cond: Bool):
 
     if cond: 
         # print in green
@@ -25,11 +26,7 @@ fn main():
     @parameter
     if testing:
         print("this is a test build, don't use in production")
-
-    @parameter
-    if testing:
-        expect["math check"](3==(1+2))
+        expect["math check"](3 == (1 + 2))
         # prints "math check in green"
-
 # => this is a test build, don't use in production
 # math check
