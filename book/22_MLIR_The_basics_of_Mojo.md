@@ -1,6 +1,6 @@
-# 14 MLIR - The basis of Mojo
-(ext verbatim from nnotebook BoolMLIR.ipynb)
+# 22 MLIR - The basis of Mojo
 
+## 22.1 Mojo is built on top of MLIR
 MLIR = Multi-Level (Machine Learning) Intermediate Representation
 Mojo lowers to MLIR and LLVM.
 
@@ -12,12 +12,10 @@ See:
 - https://www.modular.com/blog/mojo-llvm-2023
 
 *Direct access to MLIR*
-* Mojo is the programming language built on top of MLIR.
-* Mojo is syntax sugar for MLIR
-In this sense, MLIR is "Mojo Language Intermediate Representation".
-Mojo provides the programmer access to all of the low-level primitives that you need to write powerful -- yet zero-cost -- abstractions. These primitives are implemented in [MLIR](https://mlir.llvm.org), an extensible intermediate representation (IR) format for compiler design. Many different programming languages and compilers translate their source programs into MLIR, and because Mojo provides direct access to MLIR features, this means Mojo programs can enjoy the benefits of each of these tools.
+Mojo is syntax sugar for MLIR. In this sense, you could almost say that MLIR is "Mojo Language Intermediate Representation".
+Mojo provides the programmer access to all of the low-level primitives that you need to write powerful -- yet zero-cost -- abstractions. These primitives are implemented in [MLIR](https://mlir.llvm.org), an extensible intermediate representation (IR) format for compiler design. Already a lot of different programming languages and compilers translate their source programs into MLIR, and because Mojo provides direct access to MLIR features, this means Mojo programs can enjoy the benefits of each of these tools.
 
-Mojo provides full access to the MLIR dialects and ecosystem. Please take a look at the Low level IR in Mojo notebook how to use the __mlir_type, __mlir_op, and __mlir_type constructs. All of the built-in and standard library APIs are implemented by just calling the underlying MLIR constructs, and in doing so, Mojo effectively serves as syntax sugar on top of MLIR.
+Mojo provides full access to the MLIR dialects and ecosystem. Please take a look at the Low level IR in Mojo notebook how to use the __mlir_type and __mlir_op constructs. All of the built-in and standard library APIs are implemented by just calling the underlying MLIR constructs.
 
 Most Mojo programmers will not need to access MLIR directly, and for the few that do, this \"ugly\" syntax gives them superpowers: they can define high-level types that are easy to use, but that internally plug into MLIR and its powerful system of dialects.
 
@@ -27,16 +25,16 @@ MLIR is further sub-categorized into many different 'dialects', e.g. `arith` dia
 
 Mojo only uses the LLVM and index dialect (video 2023 LLVM Mtg 34')
 
-## 14.1 What is MLIR?
-
+## 22.2 What is MLIR?
 MLIR is an intermediate representation of a program, resembling an assembly language, in which a sequential set of instructions operate on in-memory values.
 
-More importantly, MLIR is modular and extensible. MLIR is composed of an ever-growing number of *dialects.* Each dialect defines operations and optimizations: for example, the ['math' dialect](https://mlir.llvm.org/docs/Dialects/MathOps/) provides mathematical operations such as sine and cosine, the ['amdgpu' dialect](https://mlir.llvm.org/docs/Dialects/AMDGPU/) provides operations specific to AMD processors, and so on.  
+More importantly, MLIR is modular and extensible. MLIR is composed of an ever-growing number of *dialects*. Each dialect defines operations and optimizations: for example, the ['math' dialect](https://mlir.llvm.org/docs/Dialects/MathOps/) provides mathematical operations such as sine and cosine, the ['amdgpu' dialect](https://mlir.llvm.org/docs/Dialects/AMDGPU/) provides operations specific to AMD processors, and so on.  
 Each of MLIR's dialects can interoperate with the others. This is why MLIR is said to unlock heterogeneous compute: as newer, faster processors and architectures are developed, new MLIR dialects are implemented to generate optimal code for those environments. Any new MLIR dialect can be translated seamlessly into other dialects, so as more get added, all existing MLIR becomes more powerful.  
 
 This means that our own custom types, such as the `OurBool` type we'll create below, can be used to provide programmers with a high-level, Python-like interface. But under the covers, Mojo and MLIR will optimize our convenient, high-level types for each new processor that appears in the future.
 
-## 14.2 Defining a bool type with MLIR
+## 22.3 Defining a bool type with MLIR
+(Bool example: extract verbatim from notebook BoolMLIR.ipynb)
 
 See `mlir_bool.mojo`:
 ```py
@@ -136,54 +134,7 @@ In our case, however, `OurBool` is a very simple type, with only one \"trivially
 Of course, the reason booleans are ubiquitous in programming is because they can be used for program control flow. However, if we attempt to use `OurBool` in this way, we get an error: error: 'OurBool' does not implement the '__bool__' method (see line 5).  
 
 
-## 14.3 Defining an integer with MLIR
-
-See `mlir_int.mojo`:
-```py
-@register_passable("trivial")
-struct UInt8:
-    alias Data = __mlir_type.ui8
-
-    var value: Self.Data
-
-    @always_inline
-    fn __init__(value: Int) -> Self:
-        return Self {
-            value= __mlir_op.`index.castu`[_type = Self.Data](value.__mlir_index__())
-        }
-
-    @always_inline
-    fn __add__(self, rhs: Self) -> Self:
-        return Self(
-            __mlir_op.`index.add`[_type : __mlir_type.index](
-                __mlir_op.`index.castu`[_type = __mlir_type.index](self.value),
-                __mlir_op.`index.castu`[_type = __mlir_type.index](rhs.value),
-            )
-        )
-
-    @always_inline
-    fn __sub__(self, rhs: Self) -> Self:
-        return Self(
-            __mlir_op.`index.sub`[_type : __mlir_type.index](
-                __mlir_op.`index.castu`[_type = __mlir_type.index](self.value),
-                __mlir_op.`index.castu`[_type = __mlir_type.index](rhs.value),
-            )
-        )
-
-    @always_inline
-    fn to_int(self) -> Int:
-        return Int(__mlir_op.`index.castu`[_type = __mlir_type.index](self.value))
-
-    fn print(self):
-        print(self.to_int())
-
-
-fn main():
-   vari: UInt8 = 42
-    i.print()   # => 42
-```
-
-## 14.4 Copying data with raw pointers
+## 22.4 Copying data with raw pointers
 Example usage 2:  (see ray_tracing.mojo)
 Raw pointers are used here to efficiently copy the pixels to the numpy array:
        
@@ -205,7 +156,7 @@ varin_pointer = Pointer(
         )
 ```
 
-## 14.5 Calling gmtime from C
+## 22.5 Calling gmtime from C
 This uses the MLIR operation `pop.external_call`.
 
 See `call_gmtime.mojo`:
@@ -242,13 +193,13 @@ struct C_tm:
 
 fn main():
     var rawTime: Int = 0
-   varrawTimePtr = Pointer[Int].address_of(rawTime)
+    var rawTimePtr = Pointer[Int].address_of(rawTime)
     __mlir_op.`pop.external_call`[
         func = "time".value,
         _type = None,
     ](rawTimePtr.address)
 
-   vartm = __mlir_op.`pop.external_call`[
+    var tm = __mlir_op.`pop.external_call`[
          func = "gmtime".value,
         _type = Pointer[C_tm],
     ](rawTimePtr).load()
@@ -256,7 +207,7 @@ fn main():
     print(tm.tm_hour, ":", tm.tm_min, ":", tm.tm_sec)  # => 17 : 41 : 6
 ```
 
-## 14.6 Custom bitwidth integers
+## 22.6 Custom bitwidth integers
 See `custom_bitwidth_integers.mojo`:
 ```py
 @register_passable("trivial")

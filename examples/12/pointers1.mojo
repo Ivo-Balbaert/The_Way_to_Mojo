@@ -1,4 +1,3 @@
-from memory.unsafe import Pointer
 from memory import memset_zero
 
 @register_passable

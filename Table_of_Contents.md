@@ -208,13 +208,50 @@
 ## 11.3 The module sys.param_env
 ## 11.4 Working with files
 
-# 13 Modules and packages
-## 13.1 Importing standard-library modules 
-### 13.1.1 Mojo modules
-### 13.1.2 Python modules
-## 13.2 What are modules and packages?
-## 13.3 Importing a local Mojo module
-## 13.4 Importing a local Mojo package
-### 13.4.1 Importing the package as source code
-### 13.4.2 Compiling the package to a package file
-### 13.4.3 Using the __init__ file to simplify import
+# 12 – Working with Pointers
+## 12.1 - What is a pointer?
+## 12.2 - Defining and using pointers
+## 12.3 - Writing safe pointer code
+## 12.4 - Working with DTypePointers
+## 12.5 Random numbers
+
+# 13 Traits
+## 13.1 What are traits?
+## 13.2 Common traits
+### 13.2.1 Stringable
+### 13.2.2 Boolable
+### 13.2.3 CollectionElement
+### 13.2.4 KeyElement
+
+# 14 Modules and packages
+## 14.1 Importing standard-library modules 
+### 14.1.1 Mojo modules
+### 14.1.2 Python modules
+## 14.2 What are modules and packages?
+## 14.3 Importing a local Mojo module
+## 14.4 Importing a local Mojo package
+### 14.4.1 Importing the package as source code
+### 14.4.2 Compiling the package to a package file
+### 14.4.3 Using the __init__ file to simplify import
+
+# 15 – Decorators
+## 15.1 - @value
+## 15.2 - @register_passable
+## 15.3 - @parameter if
+## 15.4 - @parameter runs a function at compile-time
+## 15.5 - @staticmethod
+## 15.6 - @always_inline
+## 15.7 - @unroll
+
+# 22 MLIR - The basis of Mojo
+## 22.1 Mojo is built on top of MLIR
+## 22.2 What is MLIR?
+## 22.3 Defining a bool type with MLIR
+## 22.4 Copying data with raw pointers
+## 22.5 Calling gmtime from C
+## 22.6 Custom bitwidth integers
+
+# 23 - Vectorization
+## 23.1 Vectorize SIMD cosine
+## 23.2 - Using vectorization with Tensor
+

@@ -1,17 +1,17 @@
-# 13 Modules and packages
-In this section we discuss how to import modules from the standard libraries of Mojo and Python in § 13.1, and how to import a local Python module in § 13.1.2. 
+# 14 Modules and packages
+In this section we discuss how to import modules from the standard libraries of Mojo and Python in § 14.1, and how to import a local Python module in § 14.1.2. 
 
-In § 13.2 we'll see how we import a local custom Mojo module.
+In § 14.2 we'll see how we import a local custom Mojo module.
 Mojo provides a packaging system that allows you to organize and compile code libraries into importable files.  
 Here we'll learn how to organize your code into modules and packages (which is a lot like Python), and shows you how to create a packaged binary with the `mojo package` command.
 
 If you want more examples on how to integrate Python modules, see § 8 ??.
 
 
-## 13.1 Importing standard-library modules 
+## 14.1 Importing standard-library modules 
 Mojo can import Python modules as well as modules written in Mojo itself. Here we show you the general syntax for doing so. 
 
-### 13.1.1 Mojo modules
+### 14.1.1 Mojo modules
 The code of the standard library is written in *modules*. Modules are sometimes bundled together in *packages*. Module- and package names are written in all lowercase, like in Python.  
 
 The most common code is stored in the package `builtin`, like modules bool, int and dtype. Their code is automatically imported, so the types and functions of these modules are always available in your Mojo programs. 
@@ -60,7 +60,7 @@ This general form has two drawbaks:
 * Importing everything needs more memory, perhaps for things you won't need.
 * Also you loose the info from which module the function/type is imported, which can be important while developing/debugging.
 
-### 13.1.2 Python modules
+### 14.1.2 Python modules
 Mojo can access the whole Python ecosystem by importing Python modules.
 Importing and using a Python package in Mojo is very easy.  
 Here's an example of how to import the NumPy package:
@@ -79,7 +79,7 @@ Note that the .py extension for the module is not needed.
 For some concrete examples see § 8.3
 
 
-## 13.2 What are modules and packages?
+## 14.2 What are modules and packages?
 We have seen that the Mojo standard library is organized in *packages*, each package grouping one or more related *modules*.   
 A Mojo *module* is a single Mojo source file that includes code (like an API), suitable for use by other files that import it. The source file name is also the module's name.  
 
@@ -97,9 +97,9 @@ A Mojo *package* is just a collection of Mojo modules in a directory that includ
 You can import all the modules from a package together or individually.
 For example: the map function resides in the `functional` module in the `algorithm` package, so you can import it as:
 `from algorithm.functional import map`.  
-Optionally, you can also compile the package into a `.mojopkg` or `.📦` file that's easier to share (see § 13.3.2).
+Optionally, you can also compile the package into a `.mojopkg` or `.📦` file that's easier to share (see § 14.3.2).
 
-## 13.3 Importing a local Mojo module
+## 14.3 Importing a local Mojo module
 Doing this is as easy as for Python modules.
 Suppose we have functionality of a pair of integers in `mymodule.mojo`. 
 
@@ -156,11 +156,11 @@ and line 3 to:           `let mine = mp.MyPair(2, 4)`
 >Note: This works when the module is in the same folder as use_module.mojo. Example other location??
 (Currently Sep 2023, you can't import .mojo files as modules if they reside in other directories.)
 
-## 13.4 Importing a local Mojo package
+## 14.4 Importing a local Mojo package
 You can import a package and its modules either directly from source files or from a compiled `.mojopkg` or `.📦` file. It makes no real difference to Mojo which way you import a package. When importing from source files, the directory name works as the package name, whereas when importing from a compiled package, the filename is the package name (which you specify with the mojo package command, so it can differ from the directory name).  
 
-### 13.4.1 Importing the package as source code
-For our example, let's continue to work on the code from § 13.2. Suppose our project structure is like this:   
+### 14.4.1 Importing the package as source code
+For our example, let's continue to work on the code from § 14.2. Suppose our project structure is like this:   
 
 The file structure for this example using packages is:
 ```
@@ -171,7 +171,7 @@ somefolder/
         mymodule.mojo
 ```
 
-mymodule.mojo is exactly the same as in § 13.1, __init__.mojo must be an empty file.
+mymodule.mojo is exactly the same as in § 14.1, __init__.mojo must be an empty file.
 use_package.mojo has the same code in main(), but the import statements now are prefixed wit the package name:
 
 See ``use_package.mojo`:
@@ -193,7 +193,7 @@ Executing `mojo use_package.mojo`  gives as output:
 >Note: sometimes stil crash when starting with code only (usie 1011), ben then when package file is made, it works as a package. When package is removed it still works with code only.
 
 
-### 13.4.2 Compiling the package to a package file
+### 14.4.2 Compiling the package to a package file
 You can compile the package's source code into a package file like this:
 `mojo package mypackage -o mypackage.mojopkg`
 
@@ -216,7 +216,7 @@ Then `./executable` gives the same output, even when the .mojopkg file is remove
 Now you app is distributable in only one file.
 
 
-### 13.4.3 Using the __init__ file to simplify import
+### 14.4.3 Using the __init__ file to simplify import
 This file must be in the package folder in order for Mojo to recognize the folder as a package.  
 It can be empty, or it can already import the module members, like this:
 `from .mymodule import MyPair`  

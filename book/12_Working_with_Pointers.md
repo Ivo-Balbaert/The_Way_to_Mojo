@@ -5,9 +5,9 @@ Pointers are a fundamental concept in many low-level systems programming languag
 * Memory Efficiency: Pointers allow programs to use memory more efficiently. Instead of copying and storing entire data structures, a program can use pointers to reference these structures. This is particularly useful when dealing with large data structures.
 * Dynamic Memory Allocation: Pointers enable dynamic memory allocation. This means that memory for variables can be allocated and deallocated during runtime, which provides flexibility and control over the memory usage of your program.
 * Data Structures and Algorithms: Pointers are essential for creating complex data structures like trees and linked lists. They also enable efficient implementation of various algorithms.
-* Function Arguments: Pointers can be used to pass arguments by reference to a function. This means that the function can modify the original data, not just a copy of it.
+* Function Arguments: Pointers can be used to pass arguments by reference to a function. This means that the function can modify the original data, not just a copy of it. In Mojo however (see 6.3.1) the default is that arguments are passed as borrowed, they are immutable references.
 
-In Mojo, pointers are used with care to avoid potential errors. For example, the language provides a `UniquePointer` type that cannot be copied, which helps prevent issues like dangling pointers or memory leaks. Mojo also allows you to define functions that take owned arguments, enabling you to transfer ownership of a pointer to another function.
+In Mojo, pointers are used with care to avoid potential errors. For example, the language provides an `UnsafePointer` type that cannot be copied, which helps prevent issues like dangling pointers or memory leaks. Mojo also allows you to define functions that take `owned` arguments, enabling you to transfer ownership of a pointer to another function.
 
 To do low-level things and get the best performance, we need direct access to memory locations, just like C and other low-level languages. Mojo gives you the power to do whatever you want with pointers.
 
@@ -19,20 +19,20 @@ We already encountered some examples of Pointer use, particularly in § 7 when d
 A pointer to a variable contains the memory address of that variable, it _points to_ the variable. So it is a  reference to a memory location, which can be on the stack or on the heap (For a good discussion about these two types of memory, see [Stack vs Heap](https://hackr.io/blog/stack-vs-heap)). 
 In other words: a pointer stores an address to any type, allowing you to allocate, load and modify single instances or arrays of the type on the heap.
 (?? schema)
-In Mojo, a Pointer is defined as a parametric struct that contains an address of any *mlirtype*. Pointer[element_type] type is defined in module memory.unsafe, and is implemented with an underlying 
+In Mojo, a Pointer is defined as a parametric struct that contains an address of any *mlirtype*. UnsafePointer[element_type] type is defined in module memory.unsafe_pointer, and is implemented with an underlying 
 !kgen.pointer<element_type> type in MLIR.
 
 ## 12.2 - Defining and using pointers
+Better use UnsafePointer from memory.unsafe_pointer ??
 Coding with pointers is inherently unsafe, so you have to import the Pointer type and its methods as follows:  
 
->> PROBLEM: pointers0.mojo
-Simpler example, see `pointers0.mojo`:  ?? near infinite output ??
-address_of / casting the type with bitcast / Null pointers
+Simpler example, see `pointers0.mojo`:  
+address_of / casting the type with bitcast 
 ```py
 fn main() raises:
     # Create a Pointer to an existing variable:
     var x: Int = 42  # x must be mutable to pass as a reference
-   varxPtr = Pointer[Int].address_of(x)
+    var xPtr = Pointer[Int].address_of(x)
      # print the address:
     print(xPtr.__as_index()) # => 140722471124352
     # print the value (dereference the pointer):
@@ -40,26 +40,25 @@ fn main() raises:
 
 
     # Casting type of Pointer with bitcast:
-   varyPtr: Pointer[UInt8] = xPtr.bitcast[UInt8]()
+    var yPtr: Pointer[UInt8] = xPtr.bitcast[UInt8]()
 
-   vararray = Pointer[Int].alloc(3)
+    var array = Pointer[Int].alloc(3)
     array.store(0, 1)
     array.store(1, 2)
     print(array.load(0))  # => 1
     # how to print out?
     for i in range(3):
         print_no_newline(array.load(i), " - ")
-    # => 1  - 2  - 114845100566118  -
 
-    # Create Null pointerq
-    var ptr01 = Pointer[Int]()
-    var ptr02 = Pointer[Int].get_null()
-    print(ptr02.load(0))  # prints blancs
+# =>
+# 140721558458944
+# 42
+# 1
+# 1  - 2  - 0  -
 ```
 
 See `pointers1.mojo`:  
 ```py
-from memory.unsafe import Pointer
 from memory import memset_zero
 ```
 
@@ -77,7 +76,7 @@ fn main():
     var p2 = Pointer[Coord].alloc(2)
 ```
 
-All the values will in the allocated memory will be garbage. We need to manually zero them if there is a chance we might read the value before writing it, otherwise it'll be undefined behavior (UB). This is done with the `memset_zero` function from module memory.
+All the values in the allocated memory will be garbage. We need to manually zero them if there is a chance we might read the value before writing it, otherwise it'll be undefined behavior (UB). This is done with the `memset_zero` function from module memory.
 
 
 ```py
@@ -112,7 +111,7 @@ Then we can write:
 ```py
 fn main():
     # ...
-   varcoord = p1[0]
+    var coord = p1[0]
     print(coord.x) # => 0
 ```
 
@@ -153,12 +152,12 @@ fn main():
 
 Here is an example to show how easy it is to get undefined behavior:  
 ```py
-   varthird_coord = p1.load(2)
+    var third_coord = p1.load(2)
     print(third_coord.x)  # => 7
     print(third_coord.y)  # => 7
 ```
 
-The values printed out are garbage values, we've done something very dangerous that will cause undefined behavior, and allow attackers to access data they shouldn't.
+The values printed out are garbage values, we've done something potentially very dangerous that will cause undefined behavior, and allow attackers to access data they shouldn't.
 
 Let's do arithmetic with the pointer p1:
 ```py
@@ -199,11 +198,10 @@ fn __del__(owned self):
             self.data.free()
 
 ## 12.3 - Writing safe pointer code
-As we saw in the previous §, it's easy to make mistakes when playing with pointers. So let's make the code of our struct more robust to reduce the surface area of potential errors. We enclose our struct Coord in another struct Coords which contains a data field that is a Pointer[Coord]. Then we can build in safeguards, for example in the __getitem__ method we make sure that the index stays within the bounds of the length of Coords.
+As we saw in the previous §, it's easy to make mistakes when working with pointers. So let's make the code of our struct more robust to reduce the surface area of potential errors. We enclose our struct Coord in another struct Coords which contains a data field that is a Pointer[Coord]. Then we can build in safeguards, for example in the __getitem__ method we make sure that the index stays within the bounds of the length of Coords.
 
 See `pointers2.mojo`:
 ```py
-from memory.unsafe import Pointer
 from memory import memset_zero
 
 @value
@@ -237,9 +235,9 @@ struct Coords:
 fn main() raises:
     var coords = Coords(5)
 
-   varcoord1 = Coord(1, 2)
-   varcoord2 = Coord(3, 4)
-   varcoord3 = Coord(5, 6)
+    var coord1 = Coord(1, 2)
+    var coord2 = Coord(3, 4)
+    var coord3 = Coord(5, 6)
     coords[0] = coord1
     coords[1] = coord2
     print(coords[0].x, coords[0].y, coords[1].x, coords[1].y,) # => 1 2 3 4
@@ -247,7 +245,7 @@ fn main() raises:
     coords[1] = coord3
     print(coords[0].x, coords[0].y, coords[1].x, coords[1].y,) # => 1 2 5 6
 
-   varcoords = Coords(5)
+    var coords = Coords(5)
     print(coords[5].x)
 
 # =>
@@ -257,8 +255,8 @@ fn main() raises:
 
 ## 12.4 - Working with DTypePointers
 Much faster than Pointer!
-    Pointer: data.load(i) data.store(i)
-	DTypePointer: data.simd_load, data.simd_store
+    Pointer: data.load(i) / data.store(i)
+	DTypePointer: data.load[width=], data.store
 A DTypePointer stores an address with a given DType, allowing you to allocate, load and modify data with convenient access to SIMD operations.
 
 See `dtypepointer1.mojo`:
@@ -269,7 +267,7 @@ from memory import memset_zero
 
 fn main():
     var p1 = DTypePointer[DType.uint8].alloc(8)    # 1
-   varp2 = DTypePointer[DType.uint8].alloc(8)
+    var p2 = DTypePointer[DType.uint8].alloc(8)
 
     # 2 - Operations:
     if p1:
@@ -283,30 +281,30 @@ fn main():
     #  p1 and p2 are not equal: True
 
     memset_zero(p1, 8)      # 3
-    var all_data = p1.simd_load[8](0)  # 4
+    var all_data = p1.load[width=8](0)  # 4
     print(all_data) # => [0, 0, 0, 0, 0, 0, 0, 0]
     rand(p1, 4)             # 5
     print(all_data) # => [0, 0, 0, 0, 0, 0, 0, 0]
-    all_data = p1.simd_load[8](0)  # 6
+    all_data = p1.load[width=8](0)  # 6
     print(all_data) # => [0, 33, 193, 117, 0, 0, 0, 0]
      
-    var half = p1.simd_load[4](0)  # 7
+    var half = p1.load[width=4](0)  # 7
     half = half + 1
-    p1.simd_store[4](4, half)
-    all_data = p1.simd_load[8](0)
+    p1.store[](4, half)
+    all_data = p1.load[width=8](0)
     print(all_data) # => [0, 33, 193, 117, 1, 34, 194, 118]
 
     # pointer arithmetic:
     p1 += 1         # 8
-    all_data = p1.simd_load[8](0)
+    all_data = p1.load[width=8](0)
     print(all_data) # => [33, 193, 117, 1, 34, 194, 118, 0]
 
     p1 -= 1         # 9
-    all_data = p1.simd_load[8](0)
+    all_data = p1.load[width=8](0)
     print(all_data) # => [0, 33, 193, 117, 1, 34, 194, 118]
     p1.free()       # 10
 
-    all_data = p1.simd_load[8](0)
+    all_data = p1.load[width=8](0)
     print(all_data) # 11 => [67, 32, 35, 40, 83, 85, 0, 0]
 ```
 
@@ -316,13 +314,13 @@ In line 5, we store some random data in only half of the 8 bytes.
 Notice that the all_data variable does not contain a reference to the heap, it's a sequential 8 bytes on the stack or in a register, so we don't see the changed data yet.  
 We need to load the data from the heap to see what's now at the address. (see line 6).  
 Now lets grab the first half, add 1 to the first 4 bytes with a single instruction SIMD, and store it in the second half (line 7).  Load the data and print it out again.  
-( You're now taking advantage of the hardware by using specialized instructions to perform an operation on 32/64 bytes of data at once, instead of 4 separate operations, and these operations can also run through special registers that can significantly boost performance. ?? --> SIMD )
+( You're now taking advantage of the hardware by using specialized instructions to perform a  SIMD operation on 32/64 bytes of data at once, instead of 4 separate operations, and these operations can also run through special registers that can significantly boost performance. )
 
 Let's now do some pointer arithmetic (line 8).  
 You can see we're now starting from the 2nd byte, and we have a garbage value at the end that we haven't allocated! Be careful as this is undefined behavior (UB) and a security vulnerability, attackers could take advantage of this. You need to be very careful not to introduce a problem like this when using pointers.
 Lets move back to where we were (line 9).
 In line 10 we free the memory.  
-In line 11, we introduce a security vulnerability by using the pointer after free and accessing the garbage data that's not allocated, don't do this in real code!
+In line 11, we introduce a security vulnerability by using the pointer after freeing it and accessing the garbage data that's not allocated, don't do this in real code!
 
 As in § 12.3, let's now write safe pointer code by building a safe struct abstraction around it that interacts with the pointer, so we have less surface area for potential mistakes:
 
@@ -343,13 +341,13 @@ struct Matrix:
     fn __del__(owned self):
         return self.data.free()
 
-    # This allows you to usevarx = obj[1]
+    # This allows you to use var x = obj[1]
     fn __getitem__(self, row: Int) -> SIMD[DType.uint8, 8]:
-        return self.data.simd_load[8](row * 8)
+        return self.data.load[width=8](row * 8)
 
     # This allows you to use obj[1] = SIMD[DType.uint8]()
     fn __setitem__(self, row: Int, data: SIMD[DType.uint8, 8]):
-        return self.data.simd_store[8](row * 8, data)
+        return self.data.store[](row * 8, data)
 
     fn print_all(self):
         print("--------matrix--------")
@@ -357,7 +355,7 @@ struct Matrix:
             print(self[i])
 
 fn main():
-   varmatrix = Matrix()       # 1
+    var matrix = Matrix()       # 1
     matrix.print_all()
 # =>
 # --------matrix--------
@@ -428,7 +426,9 @@ Because it's returning a SIMD[DType.u8, 8], we can also modify the column value 
 As another example, lets take the fourth row, doubling it, and then writing that to the first row (line 4).
 
 ## 12.5 Random numbers
+(Also examples in § 5.4 and § 9.6)
 This functionality is implemented in the `random` package.
+
 
 See `random1.mojo`:
 ```py
@@ -468,29 +468,3 @@ The function random_float64 returns a single random Float64 value within a speci
 The function random_si64 returns a single random Int64 value within a specified range e.g -10 to +10 (see line 5).
 The function random_ui64 returns a single random UInt64 value within a specified range e.g 0 to +10 (see line 6).
 
-## 12.6 Sorting with pointers
-### 12.6.1 Sorting with Bubblesort
-Here is a simple example of how to sort a ListLiteral by using a Pointer to it:
-
-See `bubble_sort.mojo`:
-```py
-from memory.unsafe import Pointer
-
-fn main():
-   varn = 10
-    var mylist = [9, 6, 0, 8, 2, 5, 1, 3, 7, 4]  # 1 - a ListLiteral
-   vararr = Pointer.address_of(mylist).bitcast[Int]()   # 2
-
-    # bubblesort
-    print(mylist)  # => [9, 6, 0, 8, 2, 5, 1, 3, 7, 4]
-    var temp = 0
-    for i in range(n):                          # 3
-        for j in range(n - i - 1):
-            if arr[j] > arr[j + 1]:
-                temp = arr[j]
-                arr.store(j, arr[j + 1])
-                arr.store(j + 1, temp)
-    print(mylist)  # => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-```
-
-In line 2, we create a Pointer that points to the ListLiteral defined in line 1. The bitcast makes new Pointer object with the specified type (here Int) and the same address as the `Pointer.address_of(mylist)` pointer. The bubblesort algorithm is implemented starting in line 3.

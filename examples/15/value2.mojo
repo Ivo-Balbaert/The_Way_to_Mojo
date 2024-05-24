@@ -12,7 +12,7 @@ fn main():
     var copiedCat = Pet(myCat.name, 7)
     print("Copied cat name: ", copiedCat.name)
     print("Copied cat age: ", copiedCat.age)
-    var movedCat = myCat
+    var movedCat = myCat^
     print("Moved cat name: ", movedCat.name)
     print("Moved cat age: ", movedCat.age)
 # =>

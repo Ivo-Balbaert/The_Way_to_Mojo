@@ -143,6 +143,7 @@ The Mojo runtime also has a built-in GC to clean up Python objects, based on ref
 It is on the roadmap.  Currently, you can use Python's C++ interop libraries like ctypes (https://docs.python.org/3/library/ctypes.html) or Cython (https://cython.org/) to call your C++ code from Python, and then use Mojo's Python integration to work with the results.
 
 ## 1.5 Summary 
+In the recent past, a programming language was considered either to be static (compiled, like C, C++, Rust, Java, C#, etc.), or dynamic (like Python, Ruby, PHP, etc.).  Mojo is not solely a static language, nor is it a dynamic language. Instead, it covers the whole range from dynamic to static, leaving the choice up to the developer(s) according to their project's needs.
 
 Here are the killer features of Mojo: 
 0- progressive/static typing: Leverage types for better performance and error checking.
@@ -160,6 +161,11 @@ Here are the killer features of Mojo:
 9- specifically designed for AI hardware
 10- autotuning
     The `autotune` module in Mojo offers interfaces for adaptive compilation. It helps you find the best parameters for your target hardware by automatically tuning your code.
+
+The full power of the silicon is available in Mojo:
+    - access to all hardware intrinsics in LLVM and MLIR
+    - ability to write inline assembly if needed
+    - target any LLVM/MLIR backend
 
 Mojo is also better to tackle climate-change: a Mojo program uses only 10% of the energy usage of an equivalent Python program.
 

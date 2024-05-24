@@ -422,6 +422,8 @@ fn main():
     print(numbers) # => [0, 1, 4, 9, 16, 25, 36, 49]
 ```
 
+SIMD is a core type, which is parametric on width and type.
+
 SIMD is a parametric (generic) type, indicated with the [ ] braces. We need to indicate the item type and the number of items, as is done in line 1 when declaring the SIMD-vector a.  
 DType.uint8 and 4 are called *parameters*. They must be known at compile-time.  
 (1, 2, 3, 4) are the *arguments*, which can be compile-time or runtime known.

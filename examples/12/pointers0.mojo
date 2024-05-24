@@ -17,7 +17,7 @@ fn main() raises:
     # how to print out?
     for i in range(3):
         print(array.load(i), " - ", end="")
-    # => 1  - 2  - 114845100566118  -
+    # => 1  - 2  - 0  -
 
 
 # 140727704550632

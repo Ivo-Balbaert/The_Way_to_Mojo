@@ -30,7 +30,11 @@ abc
 ## 11.2 Working with memory
 
 See also:  Pointer § 12
-See examples memset, memcpy, memset_zero ??
+See examples: 
+
+memset: 
+memcpy: 
+memset_zero: § 12 pointers1.mojo / pointers2.mojo / 
 
 The `stack_allocation` function lets you allocate data buffer space on the stack, given a data type and number of elements, for example:  
 `var rest_p: DTypePointer[DType.uint8] = stack_allocation[simd_width, UInt8, 1]()`

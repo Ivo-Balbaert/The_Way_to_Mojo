@@ -1,4 +1,6 @@
 # 7 Structs
+(See also § 15)
+
 A struct is a custom data structure that groups related variables of different data types into a single unit that holds multiple values.
 
 Structs exist in all lower-level languages like C/C++ and Rust. You can build high-level abstractions for types (or "objects") in a *struct*. 

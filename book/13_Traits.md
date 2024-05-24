@@ -1,15 +1,15 @@
-# 12 Traits
+# 13 Traits
 
 ?? Better explanation why traits are useful
 
-A lot of structs in a project and among projects share the same characteristics (fields or methods). Characteristics that are common could be collected in a so-called `trait`, even without code. Structs could then be said to conform to this trait when they provide code (implement) all of its characteristics.
+A lot of structs in a project and among projects share the same characteristics (fields or methods). Characteristics that are common could be collected in a so-called `trait`, even without code. Structs could then be said to conform to this trait when they provide code (implement) for all of its characteristics.
 
 Trait exist in many languages (Rust, ...) and are sometimes called interfaces (in Java and C# for instance).
 
-## 12.1 What are traits?
+## 13.1 What are traits?
 " A trait is like a template of characteristics for a struct. If you want to create a struct with the characteristics defined in a trait, you must implement each characteristic (for example: each method). Each characteristic in a trait is a "requirement" for the struct, and when your struct implements each requirement, it's said to "conform" to the trait. "
 
-This makes it possible to write generic functions, which can take traits as arguments, so accept all struct types that implement these traits! Traits also bring more structure to the type-hierarchy (??).
+This makes it possible to write generic functions, which can take traits as arguments, so these functions accept all struct types that implement these traits! Traits also bring more structure to the type-hierarchy (??). With traits you can also write generic types (example ??).
 
 >Note: Currently (May 2024) traits can contain only method signatures 
 
@@ -36,21 +36,21 @@ Notice that in line 1 we pass a struct instance to the function, but the functio
 
 " The function can accept any type for x as long as it conforms to SomeTrait. Thus, fun_with_traits() is known as a *generic function* because it accepts a generalized type instead of a specific type.
 
-## 12.2 Common traits
-### 12.2.1 Stringable
+## 13.2 Common traits
+### 13.2.1 Stringable
 This trait confirms that a type that can be converted to a string,  
 using String(value) or str(value).
 Nearly all of the standard library types are Stringable.
 
-### 12.2.2 Boolable
+### 13.2.2 Boolable
 A type implements Boolable if it has a boolean representation.  
 Strings evaluate as True if they have a non-zero length.
 Collections evaluate as True if they contain any elements.
 
-### 12.2.3 CollectionElement
+### 13.2.3 CollectionElement
 This means that such an item must be copyable and movable.
 
-### 12.2.4 KeyElement
+### 13.2.4 KeyElement
 This trait inherits from the following traits:  
 `AnyType, CollectionElement, Copyable, EqualityComparable, Hashable, Movable`
 
