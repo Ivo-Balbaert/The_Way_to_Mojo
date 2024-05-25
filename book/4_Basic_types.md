@@ -341,7 +341,8 @@ fn main():
 Mojo relies heavily on using [SIMD](https://en.wikipedia.org/wiki/Single_instruction,_multiple_data) in calculations to enhance performance. All math functions work on SIMD items. That's why the `SIMD` type is also defined as a struct in its own module `builtin.simd`. 
 
 ### 4.4.1 Defining SIMD vectors
-Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you to do the same operation on all elements of a 'vector' in a single instruction, greatly improving performance. They are fast because the vector registers are the fastest kind of memory access at the hardware level.
+Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you to do the same operation on all elements of a 'vector' in a single instruction, greatly improving performance. So SIMD works on a number of items *in parallel*. Moreover, it is fast because the vector registers are the fastest kind of memory access at the hardware level.
+
 
 The type of a value that can be processed by a SIMD-register is called *register-passable* and is of type `AnyRegType`.
 
@@ -489,7 +490,7 @@ fn main():
 This can make the code more readable (we define these values only once), and possibly give some performance benefits. It's a good practice to write code like that. 
 `numbers` is a static vector, with items of type element_type, and a size which is exactly the number of elements of that type fitting into your SIMD registers.
 
-For another example, see § 15.1.2 - Parallellize with SIMD.
+For another example, see § 15.1.2 - parallelize with SIMD.
 
 **Questions**
 Is this a correct declaration of a SIMD type? Test it.

@@ -17,8 +17,8 @@ fn tensor_mean[dtype: DType](t: Tensor[dtype]) -> Tensor[dtype]:
     var new_tensor = Tensor[dtype](t.dim(0), 1)
     for i in range(t.dim(0)):
         for j in range(t.dim(1)):
-            new_tensor[i] += t[i, j]
-        new_tensor[i] /= t.dim(1)
+            new_tensor[i] += t[i, j] # sum all items in a row
+        new_tensor[i] /= t.dim(1) # div by number of columns 
     return new_tensor
 
 
@@ -41,8 +41,8 @@ fn tensor_mean_vectorize_parallelized[dtype: DType](t: Tensor[dtype]) -> Tensor[
 
 
 fn main() raises:
-    print("SIMD bit width", simdbitwidth())  # => SIMD bit width 256
-    print("SIMD Width", simd_width)  # => SIMD Width 8
+    print("SIMD bit width:", simdbitwidth())  # => SIMD bit width: 256
+    print("SIMD Width:", simd_width)  # => SIMD Width: 8
 
     var tx = rand[dtype](5, 12)
     print(tx)
@@ -57,12 +57,8 @@ fn main() raises:
     var t = rand[dtype](1000, 100_000)
     var result = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
 
-    print(
-        "Input Matrix shape:", t.shape().__str__()
-    )  # => Input Matrix shape: 1000x100000
-    print(
-        "Reduced Matrix shape", result.shape().__str__()
-    )  # => Reduced Matrix shape 1000x1
+    print("Input Matrix shape:", t.shape())  # => Input Matrix shape: 1000x100000
+    print("Reduced Matrix shape:", result.shape())  # => Reduced Matrix shape: 1000x1
     # print(t)
 
     # Naive approach in Mojo

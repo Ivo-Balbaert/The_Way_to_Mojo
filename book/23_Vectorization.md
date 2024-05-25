@@ -69,7 +69,7 @@ fn main():
 @parameter in line 1 allows the closure `cosine` to capture the `array` pointer.
 vectorize is called in line 2: on a machine with a SIMD register size of 256, this will set 4x Float64 values on each iteration, as we can see in the display of tmp.
 
-## 23.2 - Using vectorization with Tensor
+## 23.2 Using vectorization with a Tensor
 See `tensor2.mojo`:
 ```py
 from tensor import Tensor, rand

@@ -557,11 +557,9 @@ def main():
     print(tens[Index(2, 9, 9)])  # => 1.0
 ```
 
-Tensor has fromfile() and tofile() methods to save and load as bytes from/to a file.
+Tensor has fromfile() and tofile() methods to save and load as bytes from/to a file (see § 23.2, tensor2.mojo for an example).
 The built-in print() function works on the Tensor type.
 TensorShape and TensorSpec now have constructors that take List[Int] and StaticIntTuple to initialize shapes.
-
-
 
 See video: [Introduction to Tensors](https://www.youtube.com/watch?v=3OWkXNdkx8E)
 Tensorutils: see blogs_videos

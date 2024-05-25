@@ -1,14 +1,14 @@
-# 17 - Foreign Function Interface (FFI)
+# 25 - Foreign Function Interface (FFI)
 
-# 17.1 - Mojo and C 
-See also §  14.5
+# 25.1 - Mojo and C 
+See also: https://github.com/ihnorton/mojo-ffi/
 
-See https://github.com/ihnorton/mojo-ffi/
-
-## 17.1.1 Linking to functions of the C standard library
+## 25.1.1 Calling functions from the C standard library
 The C standard library is implicitly available in the REPL, or explicitly(??) linked by mojo build.
+The sys package contains a module ffi, that implements a foreign functions interface (FFI), and which must be imported as:
+`from sys import ffi`.
 
-### 17.1.1.1 Mojo calls C via external_call
+### 25.1.1.1 Mojo calls C via external_call
 external_call has the following signature:  
 `external_call[c_function_name, return_type, arg0_type, arg1_type, ...](arg0, arg1, ...) -> return_type`
 It takes the function name, return type, and up to five argument types as parameters, and then the corresponding argument values as input. However, external_call does not currently support specifying the function library name, so by default it can *only call functions in libc.*
@@ -17,65 +17,47 @@ It is defined in module sys.intrinsics, but this doesn't need an import: `from s
 See `external_call.mojo`:
 ```py
 fn main() raises:
-   vareightball = external_call[
+    var eightball = external_call[    # 1
         "rand", Int32
-    ]()  # => 475566294 # random 4-byte integer
-    print(eightball)
+    ]()  
+    print(eightball) # => 475566294 # random 4-byte integer
 
     var ts : Int
     ts = external_call["time", Int, Pointer[Int]](Pointer[Int]())
     print(ts)  # => 1698747912
 
     # time(&ts);
-   vartsPtr = Pointer[Int].address_of(ts)
-   varts2 = external_call["time", Int, Pointer[Int]](tsPtr)
+    var tsPtr = Pointer[Int].address_of(ts)
+    var ts2 = external_call["time", Int, Pointer[Int]](tsPtr)
     print(ts2)  # => 1698747912
 ```
 
-This calls the rand function in the C stdlib, with return type Int32 (first parameter) and no function arguments.
+Line 1 calls the rand function in the C stdlib, with return type Int32 (first parameter) and no function arguments.
 
 See `mojo_calls_c_ec.mojo`:
 ```py
 # Declare the return type struct, a pair of int32_t values
 @register_passable('trivial')
-struct div_t:
-  var quot: Int32
-  var rem: Int32
+struct Div_t:
+    var quot: Int32
+    var rem: Int32
 
-fn clib_div(numer: Int32, denom: Int32) -> div_t:
-  return external_call["div", div_t, Int32, Int32](numer, denom)
-
-def main():
- varres = clib_div(17,4)
-  print("quotient, remainder: (", res.quot, ", ", res.rem, ")") # => quotient, remainder: ( 4 ,  1 )
-```
-
-### 17.1.1.2 Mojo calls C via a function pointer
-Declare a function pointer type, and just ... call it! Mojo appears to use the platform C calling convention for at least simple fn alias declarations. Such function pointers may be loaded using sys.ffi.DLHandle (undocumented) and then called.
-
-See `mojo_calls_c_fp.mojo`:
-```py
-from sys import ffi
-
-alias c_atof_type = fn(s: Pointer[Int8]) -> Float64
+fn clib_div(numer: Int32, denom: Int32) -> Div_t:
+    return external_call["div", Div_t, Int32, Int32](numer, denom)
 
 def main():
- varhandle = ffi.DLHandle("")
- varc_atof = handle.get_function[c_atof_type]("atof")
-
- varfloat_str = StringRef("1.234")
- varval = c_atof(float_str.data._as_scalar_pointer())
-  print("The parsed Float64 value is: ", val) # => The parsed Float64 value is:  1.234
+    var res = clib_div(17,4)
+    print("quotient, remainder: (", res.quot, ", ", res.rem, ")") 
+    # => quotient, remainder: ( 4 ,  1 )
 ```
-
-This example demonstrates calling atof to parse a C string and return a double value from the string.
 
 The following example calls the gmtime function:
 
 See `calling_gmtime.mojo`:
 ```py
-# definition of `struct tm`
 alias int = Int32
+
+# definition of `struct tm`
 @value
 @register_passable("trivial")
 struct C_tm:
@@ -106,10 +88,30 @@ fn main():
     # time_t ts
     var ts : Int = 0
     # time(&ts);
-   vartsPtr = Pointer[Int].address_of(ts)
+    var tsPtr = Pointer[Int].address_of(ts)
     _ = external_call["time", Int, Pointer[Int]](tsPtr)
     # struct tm *tm = gmtime(&ts)
-   vartmPtr = external_call["gmtime", Pointer[C_tm], Pointer[Int]](tsPtr)
-   vartm = tmPtr.load()
+    var tmPtr = external_call["gmtime", Pointer[C_tm], Pointer[Int]](tsPtr)
+    var tm = tmPtr.load()
     print(tm.tm_hour, ":", tm.tm_min, ":", tm.tm_sec) # => 10 : 35 : 46
 ```
+
+### 25.1.1.2 Mojo calls C via a function pointer
+Declare a function pointer type, and just call it! Mojo uses the platform C calling convention for at least simple fn alias declarations. Such function pointers may be loaded using sys.ffi.DLHandle (undocumented) and then called.
+
+See `mojo_calls_c_fp.mojo`:
+```py
+from sys import ffi
+
+alias c_atof_type = fn(s: Pointer[Int8]) -> Float64
+
+def main():
+    var handle = ffi.DLHandle("")
+    var c_atof = handle.get_function[c_atof_type]("atof")
+
+    var float_str = StringRef("1.234")
+    var val = c_atof(float_str.data._as_scalar_pointer())
+    print("The parsed Float64 value is: ", val) # => The parsed Float64 value is:  1.234
+```
+
+This example demonstrates calling atof to parse a C string and return a double value from the string.

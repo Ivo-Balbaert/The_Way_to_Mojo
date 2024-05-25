@@ -28,7 +28,7 @@ struct myTensor[dtype: DType]:
         var new_tensor = Tensor[dtype](self.t.dim(0),1)
 #        alias simd_width: Int = simdwidthof[dtype]()
         @parameter
-        fn parallel_reduce_rows(idx1: Int)->None:
+        fn parallel_reduce_rows(idx1: Int) -> None:
             @parameter
             fn vectorize_reduce_row[simd_width: Int](idx2: Int) -> None:
                 new_tensor[idx1] += self.t.load[width=simd_width](idx1*self.t.dim(1)+idx2).reduce_add()

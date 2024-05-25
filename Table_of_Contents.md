@@ -128,10 +128,12 @@
 ### 6.5.4 Making arguments owned and transferred with ^
 ## 6.6 Overloading functions
 ## 6.7 Running a function at compile-time and run-time
-## 6.8 Closures
-### 6.8.1 Example of a closure
-### 6.8.2 Example of a capturing closure
+## 6.8A Nested functions
+## 6.8B Closures
+### 6.8B.1 Example of a closure
+### 6.8B.2 Example of a capturing closure
 ## 6.9 Callbacks through parameters
+## 6.10 Using pass and ...
 
 # 7 Structs
 ## 7.1 First example
@@ -253,5 +255,19 @@
 
 # 23 - Vectorization
 ## 23.1 Vectorize SIMD cosine
-## 23.2 - Using vectorization with Tensor
+## 23.2 Using vectorization with Tensor
 
+# 24 - Parallellization
+## 24.1 - The parallelize function
+### 24.1.1 Without SIMD example
+### 24.1.2 With SIMD
+## 24.2 - Concurrency: async/await in Mojo
+## 24.3 - Parallelization applied to row-wise mean() of a vector
+### 24.3.1 Using a function
+### 24.3.2 Using a custom struct based on Tensor type
+
+# 25 - Foreign Function Interface (FFI)
+# 25.1 - Mojo and C 
+## 25.1.1 Calling functions from the C standard library
+### 25.1.1.1 Mojo calls C via external_call
+### 25.1.1.2 Mojo calls C via a function pointer

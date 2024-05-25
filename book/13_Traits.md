@@ -4,7 +4,7 @@
 
 A lot of structs in a project and among projects share the same characteristics (fields or methods). Characteristics that are common could be collected in a so-called `trait`, even without code. Structs could then be said to conform to this trait when they provide code (implement) for all of its characteristics.
 
-Trait exist in many languages (Rust, ...) and are sometimes called interfaces (in Java and C# for instance).
+Trait exist in many languages (Rust, and so on) and are sometimes called interfaces (in Java and C# for instance).
 
 ## 13.1 What are traits?
 " A trait is like a template of characteristics for a struct. If you want to create a struct with the characteristics defined in a trait, you must implement each characteristic (for example: each method). Each characteristic in a trait is a "requirement" for the struct, and when your struct implements each requirement, it's said to "conform" to the trait. "

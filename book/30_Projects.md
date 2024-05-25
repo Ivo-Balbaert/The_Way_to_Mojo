@@ -1,11 +1,11 @@
-# 20 – Projects
+# 30 – Projects
 
-## 20.1 - Calculating the sum of two vectors
+## 30.1 - Calculating the sum of two vectors
 See https://codeconfessions.substack.com/p/mojo-the-future-of-ai-programming
 
 A vector is an ordered collection of numbers, with the number of elements in a vector being its dimension. Adding two n-dimensional vectors involves adding each of their corresponding elements, resulting in another n-dimensional vector.
 
-### 20.1.1 - A naive Python implementation
+### 30.1.1 - A naive Python implementation
 This implementation is based on Python list iteration. 
 
 See `calc_vecsum.py`:
@@ -34,7 +34,7 @@ benchmark_add(1000)
 Execute it with: `python3 calc_vecsum.py`.
 For adding two 1000-dimensional vectors, it achieves a throughput of about 0.037 Gflops/s.  
 
-### 20.1.2 - Using Numpy
+### 30.1.2 - Using numpy
 Here arr1 and arr2 are real Numpy vectors.
 
 See `calc_vecsum_np.py`:
@@ -63,7 +63,7 @@ benchmark_add(1000)
 Execute it with: `python3 calc_vecsum_np.py`.
 For adding two 1000-dimensional vectors, it achieves a throughput of about 1.774083867190265  Gflops/s, some 48 x faster than the pure Python version.
 
-### 20.1.3 - A Mojo version of the naive Python implementation
+### 30.1.3 - A Mojo version of the naive Python implementation
 
 See `calc_vecsum.mojo`:
 ```py
@@ -115,7 +115,7 @@ inf  Gflops/s
 ```
 >Note: Calculations are executed too quick by Mojo, we can't compare anymore.
 
-### 20.1.4 - Using SIMD and vectorize
+### 30.1.4 - Using SIMD and vectorize
 
 See `calc_vecsum_vectorized.mojo`:
 ```py
@@ -179,13 +179,13 @@ inf  Gflops/s
 ```
 >Note: Calculations are executed too quick by Mojo, we can't compare anymore.
 
-## 20.2 - Calculating the Euclidean distance between two vectors
+## 30.2 - Calculating the Euclidean distance between two vectors
 (See [ref](https://www.modular.com/blog/an-easy-introduction-to-mojo-for-python-programmers))
 
 For the algorithm: see the article.
 We first write a pure Python implementation, a naive one, and then one using numpy. :
 
-### 20.2.1 - Python and Numpy version
+### 30.2.1 - Python and Numpy version
 See `euclid_distance.py`:
 ```py
 import time
@@ -233,12 +233,12 @@ print_formatter("python_numpy_dist time (ms):", 1000*secs)
 # === Python+NumPy Performance ===
 # python_numpy_dist value:: 1290.35102
 # python_numpy_dist time (ms):: 18.48048
-#        <--- 20.0 x faster than pure Python
+#        <--- 30.0 x faster than pure Python
 ```
 
 Run it as `python3 euclid_distance.py`.
 
-### 20.2.2 - Simple Mojo version
+### 30.2.2 - Simple Mojo version
 Go directly to euclid_distance2.mojo
 
 See `euclid_distance.mojo`:
@@ -339,7 +339,7 @@ mojo_fn_dist value: 1291.0881564332019
 mojo_fn_dist time (ms): 11.135488
         <-- 33.3 x faster than naive Python implementation
 
-### 20.2.3 - Accelerating Mojo code with vectorization
+### 30.2.3 - Accelerating Mojo code with vectorization
 Modern CPU cores have dedicated vector register that can perform calculations simultaneously on fixed length vector data. For example an Intel CPU with AVX 512 has 512-bit vector register, therefore we have `512/64=8` Float64 elements on which we can simultaneously perform calculations. This is referred to as `SIMD = Single Instruction Multiple Data`. The theoretical speed up is 8x but in practice it'll be lower due to memory reads/writes latency.
 
 Note: SIMD should not be confused with parallel processing with multiple cores/threads. Each core has dedicated SIMD vector units and we can take advantage of both SIMD and parallel processing to see massive speedup as you'll see in the next §.
@@ -406,7 +406,7 @@ This is 55x faster than the Python version.
 
 
 
-## 20.3 - Matrix multiplication (matmul)
+## 30.3 - Matrix multiplication (matmul)
 See:
 * https://docs.modular.com/mojo/notebooks/Matmul.html
 * https://www.modular.com/blog/ais-compute-fragmentation-what-matrix-multiplication-teaches-us
@@ -415,7 +415,7 @@ See matmul.mojo (+ chec_mod.pi / pymatmul.py) for the most recent version!
 
 matmul1-7.mojo were NOT adapted to >= v 0.5.0 
 
-### 20.3.1 - Naive Python implementation
+### 30.3.1 - Naive Python implementation
 
 See `matmul.py`:
 ```py
@@ -485,13 +485,13 @@ Throughput of a 128x128 matrix multiplication in Python:
 0.005356575518265889 GFLOP/s
 ```
 
-### 20.3.2 - Importing the Python implementation to Mojo
+### 30.3.2 - Importing the Python implementation to Mojo
 (3 x speedup)
 
 STEPS:  
 1- Define the equivalent imports from the Mojo standard library
 2- Define the Matrix type: here defined in terms of object
-3- The algorithm code (`def matmul_untyped`) is exactly the same as in the Python implementation from § 20.3.1
+3- The algorithm code (`def matmul_untyped`) is exactly the same as in the Python implementation from § 30.3.1
 
 See `matmul1.mojo`:
 ```py
@@ -569,7 +569,7 @@ Running the program with `mojo matmul1.mojo` gives the output:
 0.016238353827774884 GFLOP/s, a 3.0314804248352698 x speedup over Python
 ```
 
-### 20.3.3 - Adding types to the implementation
+### 30.3.3 - Adding types to the implementation
 ( 1330 x speedup)
 
 The Matrix typing in our previous version was very 'untyped', using the very general 'object' (see §§) type to define it. By adding more precise type definitions and info, Mojo let's you gain a lot of performance. 
@@ -679,10 +679,10 @@ Mojo version 2:
 7.2225232674307751 GFLOP/s, a 1330.0927512098629 x speedup over Python
 ```
 
-### 20.3.4 - Vectorizing the inner most loop
+### 30.3.4 - Vectorizing the inner most loop
 Mojo has SIMD vector types to vectorize the `Matmul` code. In `fn matmul_vectorized` we use the SIMD store and load instructions.
 
-#### 20.3.4.1 - Vectorizing the inner most loop
+#### 30.3.4.1 - Vectorizing the inner most loop
 ( 8894 x speedup)
 
 STEPS:  
@@ -706,7 +706,7 @@ Running the program with `mojo matmul3.mojo` gives the output:
 48.292430693593872 GFLOP/s, a 8893.4863378713981 x speedup over Python
 ```
 
-#### 20.3.4.2 - Using the Mojo vectorize function
+#### 30.3.4.2 - Using the Mojo vectorize function
 Vectorization is a common optimization, and Mojo provides a higher-order function `vectorize` that performs vectorization for you. The vectorize function takes a vector width and a function which is parametric on the vector width and is going to be evaluated in a vectorized manner.
 ( 6409 x speedup)
 
@@ -732,7 +732,7 @@ Running the program with `mojo matmul4.mojo` gives the output:
 34.802488386333351 GFLOP/s, a 6409.1918866457427 x speedup over Python
 ```
 
-### 20.3.5 - Parallelizing Matmul
+### 30.3.5 - Parallelizing Matmul
 ( 20206 x speedup)
 
 To get the best performance from modern processors, one has to utilize the multiple cores they have.
@@ -760,7 +760,7 @@ fn matmul_parallelized(C: Matrix, A: Matrix, B: Matrix):
 Running this version gives:
 `109.72416682574026 GFLOP/s, a 20206.694187552872 x speedup over Python`
 
-### 20.3.6 - Tiling Matmul
+### 30.3.6 - Tiling Matmul
 Tiling is an optimization performed for matmul to increase cache locality. The idea is to keep sub-matrices resident in the cache and increase the reuse
 ( 18346 x speedup)
 
@@ -805,7 +805,7 @@ fn matmul_tiled_parallelized(C: Matrix, A: Matrix, B: Matrix):
 Running this version gives:
 `99.61793034345834 GFLOP/s, a 18345.539658953123 x speedup over Python`
 
-### 20.3.7 - Unrolling the loops introduced by vectorize of the dot function
+### 30.3.7 - Unrolling the loops introduced by vectorize of the dot function
 ( 20364 x speedup)
 We can do this via the vectorize_unroll higher-order function.
 
@@ -817,7 +817,7 @@ See `matmul7.mojo`.
 Running this version gives:
 `110.57583948683771 GFLOP/s, a 20363.537383619485 x speedup over Python`
 
-### 20.3.8 - Searching for the tile_factor
+### 30.3.8 - Searching for the tile_factor
 ( 21755 x speedup)
 The choice of the tile factor can greatly impact the performace of the full matmul, but the optimal tile factor is highly hardware-dependent, and is influenced by the cache configuration and other hard-to-model effects. We want to write portable code without having to know everything about the hardware, so we can ask Mojo to automatically select the best tile factor using autotuning.
 This will generate multiple candidates for the matmul function. To teach Mojo how to find the best tile factor, we provide an evaluator function Mojo can use to assess each candidate.
@@ -854,7 +854,7 @@ All optimization methods (except autotune) are combined in matmul.mojo, with res
 # Unrolled:     117.974 GFLOPS  28947.86x Python  1.31x Numpy
 # Accumulated:  352.863 GFLOPS  86583.45x Python  3.92x Numpy
 
-## 20.4 - Sudoku solver  (changed / removed from tests)
+## 30.4 - Sudoku solver  (changed / removed from tests)
 For the Python version see `sudoku_solver.py`. This is the time it took:  
 `python seconds: 2.96649886877276e-06`.
 
@@ -1005,7 +1005,7 @@ fn main() raises:
 mojo seconds: 0.000260318
 speedup: 0.011395673248767892
 
-## 20.5 - Computing the Mandelbrot set
+## 30.5 - Computing the Mandelbrot set
 Video:  https://www.youtube.com/watch?v=wFMB0VSH51M
         
 https://docs.modular.com/mojo/notebooks/Mandelbrot.html
@@ -1020,7 +1020,7 @@ See mandelbrot.mojo (v 0.5.0)
 mandelbrot0-5.mojo were NOT adapted to >= v 0.5.0 
 
 
-### 20.5.1 The pure Python algorithm
+### 30.5.1 The pure Python algorithm
 ```py
 MAX_ITERS = 1000
 def mandelbrot_kernel(c): 
@@ -1038,7 +1038,7 @@ def mandelbrot_kernel(c):
 Although Python code, this works unaltered in Mojo! We will gradually port this code to Mojo.
 A NumPy implementation is only 5x faster than Python.
 
-### 20.5.2 Adding types in the funtion signature
+### 30.5.2 Adding types in the funtion signature
 The first thing we can do is to annotate the def mandelbrot_kernel with types:  
 `def mandelbrot_0(c: ComplexFloat64) -> Int:`
 The body of the def is unaltered.
@@ -1059,7 +1059,7 @@ def mandelbrot_kernel_0(c: ComplexFloat64) -> Int:
 
 The complete code to run it and display the resulting graph with matplotlib is stored in mojo `mandelbrot_0.mojo`. (in 0.191 seconds) Here is the graph image: ??
 
-### 20.5.3 Changing to an fn function
+### 30.5.3 Changing to an fn function
 We can opt into the Mojo "strict" mode, by using fn instead of def and declaring the local variables z and nv. This will enable Mojo to perform more aggressive optimizations since the compiler can discern certain properties about the program. 
 (24.2 x speedup)
 
@@ -1080,7 +1080,7 @@ The complete code to run it and display the resulting graph with matplotlib is s
 There is no difference in performance between mandelbrot_0 and  mandelbrot_1. The reason is that Mojo's type inference and optimizations remove the dynamism from the types – allowing one to work with concrete types rather than variants.
 
 
-### 20.5.4 Simplifying the math to reduce computation
+### 30.5.4 Simplifying the math to reduce computation
 Removing redundant computations:
 * avoid the square root in abs, by changing the check of abs(z) > 2 to be squared_norm(z) > 4
 (saves 6 flops)
@@ -1114,7 +1114,7 @@ fn mandelbrot_2(c: ComplexFloat64) -> Int:
 
 The complete code to run it and display the resulting graph with matplotlib is stored in mojo `mandelbrot_2.mojo`. (43 x speedup comparing to Python)
 
-### 20.5.5 Adding supporting code
+### 30.5.5 Adding supporting code
 We need some supporting declarations and code to iterate through the pixels in the image and compute the membership in the set:
 
 ```py
@@ -1144,7 +1144,7 @@ fn main() raises:
     _ = show_plot(compute_mandelbrot())
 ```
 
-### 20.5.6 - Vectorizing the code
+### 30.5.6 - Vectorizing the code
 Applying SIMD on calculations in a loop is called *vectorization*. By vectorizing the loop, we can compute multiple pixels simultaneously. `vectorize` is a higher order generator.
 
 See `mandelbrot_3.mojo`:
@@ -1262,7 +1262,7 @@ fn main() raises:
 The output is: `Vectorized : 56.717956000000001 ms`
 so a 4.7 x speedup regarding to mandelbrot2.
 
-### 20.5.7 - Parallelizing the code
+### 30.5.7 - Parallelizing the code
 See `mandelbrot_4.mojo`.
 
 The results are:  
@@ -1278,7 +1278,7 @@ Blog article 3 introduces a *partition factor* to alleviate load imbalance among
 which adds a 2.3x speedup (see `mandelbrot_5.mojo`).
 On my system, this achieves a small speedup, to 1.5 ms.
 
-## 20.6 - Raytracing in Mojo
+## 30.6 - Raytracing in Mojo
 (Based on the article: https://github.com/ssloy/tinyraytracer/wiki/Part-1:-understandable-raytracing).
 
 There is a notebook `RayTracing.ipynb` and a doc section: https://docs.modular.com/mojo/notebooks/RayTracing.html.
@@ -1288,10 +1288,10 @@ The code is assembled in `ray_tracing.mojo`. <-- code doesn't work anymore, see 
 background.png is ok 
 - v 0.4.0 - only black background?)
 
-## 20.7 - Working with files
+## 30.7 - Working with files
 https://github.com/ShuzhaoFeng/mojo-minwa
 
-## 20.8 - Calculating PI
+## 30.8 - Calculating PI
 Benchmark is not so good: see last remark.
 Let's compare Python vs Mojo calculating PI 100 million itterations each.
 First we time a Python version:
@@ -1345,7 +1345,7 @@ fn main():
 The only difference is that we used fn functions in the Mojo version, so all variables have to be declared withvaror var, and given a type. Mojo runs 17.7 x faster than Python.
 
 
-## 20.9 - Timing a for loop
+## 30.9 - Timing a for loop
 In Python:
 See `forloop.py`:
 ```py

@@ -201,10 +201,18 @@ fn main() raises:
 In line 2, only if true will the code will be "included" at compile time. The if statement will never run again during runtime.
 See also § 7.9.5 (ctime_logic.mojo), § 10.6 (os_is_linux)
 
-The decorator is also used on nested functions that capture runtime values, creating "parametric" capturing closures (example matmul1.mojo § 20.3).
 
 
-## 15.4 - @parameter runs a function at compile-time
+## 15.4 - @parameter
+### 15.4.1 Closure
+This decorator is also used on nested functions that capture runtime values, creating "parametric" capturing closures.
+Examples: 
+* § 23, where @parameter is used together with vectorize, see vectorize1.mojo
+* § 24, where @parameter is used together with parallelize
+* matmul.mojo § 30.3
+
+### 15.4.2 Running a function at compile-time
+@parameter can also run a function at compile-time, as shown here:
 See `parameter2.mojo`:
 ```py
 fn add_print[a: Int, b: Int](): 

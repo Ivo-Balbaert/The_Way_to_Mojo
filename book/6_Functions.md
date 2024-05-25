@@ -4,7 +4,9 @@ As we've seen, in Mojo you can both use `def` or `fn` functions, unlike in Pytho
 
 A key trick in Mojo is that you can opt in at any time to a faster and safer 'mode' as a developer, by using `fn` instead of `def` to create your function. In the `fn` mode Mojo can create optimized machine code to implement your function.
 
-A handy way to build up your code is to first write only the function signatures. Write the keyword `pass` in the empty function bodies, and you already get a nice compileable overview of your program.
+A handy way to build up your code is to first write only the function signatures. Write the ellipsis constant `...` in the empty function bodies, and you already get a nice compileable overview of your program.
+
+> Try it out: write a program with a function that has only `pass` in its body, and call that function.
 
 ## 6.1 Difference between fn and def
 `def` is defined to be very dynamic, flexible and generally compatible with Python: arguments are copied and mutable, local variables are implicitly declared on first use, and scoping isn't enforced. The default argument type is `object` (see § 4.5), representing a particular Mojo type designed for dynamic code.
@@ -29,14 +31,26 @@ fn calc(a: Int, b: Int) -> Int:
     return (a + b) * (a - b)
 ```
 
-We see here that the argument type of `name` and the return type are both restricted to `String`.
-If the value of `name` would not fit that type, `fn` would give an error at compile-time, `def` would crash the running program!
+We see here that the argument type of `a` and `b`, and the return type are both restricted to `Int`.
+If the value of `a` or `b` would not fit that type, `fn` would give an error at compile-time, `def` would crash the running program!
+
+
+" This is called a type annotation. This declaration says that the function argument text will contain only String literals. More importantly, it will never contain any other content than String literals. This gives the Mojo compiler a very important hint. Without such a hint, the Mojo compiler has to accommodate many different scenarios. For example, if we do not declare that the text is of type StringLiteral, it will have to assume that the text may contain numbers or other types of objects. Then it has to generate a very generic executable code that is able to handle many other types of values. However, when we tell Mojo compiler that the text will take only StringLiterals, it can generate a very specific and highly optimized code that handles only StringLiterals.
 
 Similarly, a missing return type specifier is interpreted as returning `None` (instead of an unknown return type). `None` means there the function has no return value.  
 
 >Note that both can be explicitly declared to return `object`, which allows one to opt-in to the behavior of a def if desired.
 
 Both `def` and `fn` support raising exceptions, but this must be explicitly declared on an fn with the `raises` keyword, as shown in the following section.
+
+Benefits of fn over def:
+    - produce highly performant code
+    - to enforce program correctness, to enhance program safety and robustness
+
+Benefits of def over fn:
+    - to prototype something and you are not sure what types to use, you can leave that decision for a later time and focus on the algorithm itself
+    - when you really need the flexibility and dynamism of Python
+
 
 
 ## 6.2  An fn that calls a def needs the raises keyword
@@ -147,10 +161,10 @@ fn main():
 >Note: Optional arguments must come after any required arguments.
 
 ### 6.3.3 Keyword arguments
-(synonym: named arguments)
-You can also pass arguments explicitly with an assignment using their name as in lines 2 and 3:
+When a function takes a lot of arguments, the code that calls the function is much more readable if the name of the argument is specified. 
+So you pass the argument explicitly with an assignment using its name as in lines 2 and 3:
 `message = "Mojo"`.
-These are called *keyword arguments*, and they are specified using the format *argument_name = argument_value*. 
+These are called *keyword arguments* (or named arguments), and they are specified using the format *argument_name = argument_value*. 
 
 See `keyword_args.mojo`:
 ```py
@@ -176,6 +190,8 @@ fn main():
     print(z) # => 8
 ```
 
+Keyword arguments make APIs ergonomic, as the programmer does not have to remember in which position what value need to be passed. It improves code readability and maintainability. It also reduces accidental mistakes when programmer wrongly assumes the order of the arguments.
+
 ### 6.3.4 Positional-only arguments
 Sometimes you want to write a function with positional-only arguments, because:
 * The argument names aren't meaningful for the the caller.
@@ -188,16 +204,32 @@ fn min(a: Int, b: Int, /) -> Int:
     return a if a < b else b
 ```    
 
-This min() function can be called with min(1, 2) but can't be called using keywords, like min(a=1, b=2).
+This min() function can be called with min(1, 2) but can't be called using keywords, like min(a=1, b=2). So the arguments that come before the / cannot be called as keyword arguments!
+
+**Before the / you can only use positional arguments.**
+
+After the /, you can use arguments like `third` as keyword arguments or as positional arguments:
+> Try out this code (see `position_keyword.mojo`):
+```py
+fn func1(first: Int, second: Int, /, third: Int) -> Int:
+    return first + second + third
+
+
+fn main():
+    print(func1(1, 2, third=3))  # => 6
+    print(func1(1, 2, 3))  # => 6
+    # print(func1(first=1, 2, 3))  # error: positional argument follows keyword argument
+```
+
 
 ### 6.3.5 Keyword-only arguments
 Keyword-only arguments can only be specified by keyword. They often have default values, but if not, the argument is required.
 
-Separate the keyword-only arguments in an argument-list from other arguments with a `*`.
-In this example, only a1 and a2 are keyword arguments:
-!!! This doesn't seem to be true!!!
+**After the `*` you can only use keyword-only arguments.**
+
+See `keyword_only.mojo`:
 ```py
-fn kw_only_args(a1: Int, a2: Int, *, double: Bool) -> Int:
+fn kw_only_args(a1: Int, a2: Int, *, double: Bool = True) -> Int:
     var product = a1 * a2
     if double:
         return product * 2
@@ -205,10 +237,13 @@ fn kw_only_args(a1: Int, a2: Int, *, double: Bool) -> Int:
         return product
 
 fn main():
-    # error: positional argument follows keyword argumentmojo
-    # kw_only_args(a1=2, a2=3, True)
-    print(kw_only_args(a1=2, a2=3, double = True)) # => 12
+    print(kw_only_args(2, 3))                       # => 12
+    # print(kw_only_args(2, 3, False))                # error: invalid call to 'kw_only_args': expected at most 2 positional arguments, got 3
+    print(kw_only_args(a1=2, a2=3))                 # => 12
+    print(kw_only_args(a1=2, a2=3, double = False)) # => 6
 ```
+
+What happens if double doesn't have a default value? 
 
 ## 6.4 Functions with a variable number of arguments.
 ### 6.4.1 Using variadic arguments
@@ -613,13 +648,29 @@ A parameter enclosed in [] is a compile-time (or static) value (1).
 An argument enclosed in () is a run-time (or dynamic) value (2).
 If you get the error: `cannot use a dynamic value in a type parameter`, Mojo says that you used a runtime value as a compile-time parameter (case (1)).
 
+## 6.8A Nested functions
+Functions in Mojo can be 'nested' inside another function, as shown shere:
+See `nested.mojo`:
+```py
+fn outer():
+    fn nested():
+        print("I am nested")
 
-## 6.8 Closures
+    nested()
+
+
+fn main():
+    outer()  # => I am nested
+```
+
+The inner function (called `nested` here) can only be called from the outer function in which it is nested. So it is like a helper function for the outer function only.
+
+## 6.8B Closures
 *Capturing* means that if there were any variables in context, the closure would know their values. Closures capture by default, even if it's not capturing anything. 
 In the following example there are no variables to be captured.
 
-### 6.8.1 Example of a closure
-The following snippet shows an example of a nested (or inner) function in line 1. This is also called a *clojure*. The `outer` function that calls the closure in line 3 has as argument the function type of the closure:  
+### 6.8B.1 Example of a closure
+The following snippet shows an example of a nested function in line 1. Here it is also called a *clojure*. The `outer` function that calls the closure in line 3 has as argument the function type of the closure:  
 `f: fn() -> None` 
 So the `inner` function must conform to this type. 
 
@@ -638,7 +689,7 @@ fn main():
     call_it()  # => inner
 ```
 
-### 6.8.2 Example of a capturing closure
+### 6.8B.2 Example of a capturing closure
 See `closure2.mojo`:
 ```py
 fn outer(f: fn() escaping -> Int):   # 3
@@ -715,6 +766,33 @@ In line 1, the Markdown method render_page is called with the compile-time param
 
 
 A function can also be *recursive* (see Fibonacci example § 10.5)
+
+
+## 6.10 Using pass and ...
+At the start of this chapter, we mentioned the ellipsis constant `...` to represent an empty function body. It is mostly for defining empty methods in traits (see § 13), but it can also be used in functions. `...` is a placeholder: within a function, it just means that the body is not yet implemented and the Mojo compiler will not complain about the missing body.
+Also, for the same purpose, the keyword `pass`is used, which represents a valid but empty function body. It tells the compiler that the implementation has been omitted.
+They are both demoed in the following snippet:
+
+See `pass_ellipsis.mojo`:
+```py
+fn test():
+    pass
+
+
+fn test1():
+    ...
+
+
+fn main():
+    test()
+    test1()
+    print("Nothing happened!")  # => Nothing happened!
+```
+
+> The pass or `...` can also be written immediately after the : of the dunction signature, saving you one line.
+
+When would you use pass and when `...`? A good thumb rule is to use pass where you know that there is no need for an implementation and use `...`​ when you are expecting some implementation in the future.
+
 
 
 

@@ -4,15 +4,16 @@ from sys.info import simdwidthof
 import math
 
 alias element_type = DType.int32
-alias group_size = simdwidthof[element_type]()
-alias groups = 16
+alias group_size = simdwidthof[element_type]() # 8
+alias num_work_items = 16
 
 
 fn main():
-    var computer_cores = 4
+    var num_workers = 4
 
     # initialized array of numbers with random values
-    var array = DTypePointer[element_type]().alloc(groups * group_size)
+    var array = DTypePointer[element_type]().alloc(num_work_items * group_size)
+    # (num_work_items * group_size) - 1 = 127, this is the index of the last calculation 
 
     @parameter
     fn compute_number(x: Int):
@@ -20,18 +21,14 @@ fn main():
 
         # 3 simd instructions:
         numbers = math.iota[element_type, group_size](x * group_size)
-        numbers *= numbers
+        numbers *= numbers  # squares are calculated on entire vector simultaneously
         array.store(x * group_size, numbers)
 
-    parallelize[compute_number](groups, computer_cores)
+    parallelize[compute_number](num_work_items, num_workers)
 
-    #   parallelize will call compute_number with argument
-    #       x= 0,1,2...groups (non-inclusive)
-
-    for i in range(groups * group_size):
+    for i in range(num_work_items * group_size):
         var result = array.load(i)
         print("Index:", i, " = ", result)
-
 
 # =>
 # Index: 0  =  0

@@ -265,19 +265,20 @@ This is one of the most popular programmer's editors today (https://code.visuals
 The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo). It features (v 24.2.1):
 * Syntax highlighting for .mojo and .🔥 files
 
-?? Table with hotkeys
+?? Table with hotkeys (⌘ for macOS, CTRL in Linux and Windows)
 
 * Outline of code, with struct fields and methods, global variables, functions, main() in particular.
-* Code completion: To trigger a completion press ctrl + space, pressing ctrl + space again will bring up doc hints
-* Code diagnostics and quick fixes
-* API docs on hover: macOS is ⌘ + k, ⌘ + i or ctrl + k, ctrl + i in Linux and Windows
-* Signature help: 
-* Go to Symbol: ctrl + shift + o in Linux and Windows.
-* Code formatting
-* Run Mojo File
-* Showing docs
-
+* Code completion: To trigger a completion press CTRL+SPACE, pressing CTRL+SPACE again will bring up doc hints
+* Hover (or CTRL+K, CTRL+I) over a symbol for API docs
+* Signature help with overloading functions: CTRL+SHIFT+SPACE
+* Code diagnostics and quick fixes (CTRL+.), use Problems tab, combine with Error Lens extension
+* Go to Symbol: CTRL+SHIFT+O in Linux and Windows.
+* Doc string code blocks, with code completions and diagnostics
+* Code formatting: command palette run Format Document or tick the setting Format on Save
+* Run Mojo File: push arrow top right, or right-click file
+* LLDB Debugger: F5
 A *fully featured LLDB debugger* is included. Press the down arrow next to the ▶️ button in the top right of a Mojo file, and select Debug Mojo File: ?? Image with breakpoint. The default key is F5, and you can rebind the related hotkeys in Preferences: Open Keyboard Shortcuts > Debug: Start Debugging
+* When there is a problem: use the command palette, search for Mojo: Restart the extension
 
 ### 2.10.4 How to work with a Jupyter notebook in VS Code 
 Doesn't work ??

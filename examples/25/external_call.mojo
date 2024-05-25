@@ -1,8 +1,8 @@
 fn main() raises:
-    var eightball = external_call[
+    var eightball = external_call[  # 1
         "rand", Int32
-    ]()  # => 475566294 # random 4-byte integer
-    print(eightball)
+    ]()  
+    print(eightball) # => 475566294 # random 4-byte integer
 
     var ts : Int
     ts = external_call["time", Int, Pointer[Int]](Pointer[Int]())

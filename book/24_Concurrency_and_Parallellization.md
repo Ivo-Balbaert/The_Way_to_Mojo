@@ -1,14 +1,17 @@
-# 15 - Parallellization
-Parallellization of code means: code executes in multiple threads inside one process (multithreading). This in contrast to how Python does parallelization, where multiple Python processes each execute one thread.
+# 24 - Parallellization
+Parallellization of code means: code executes in multiple threads inside one process (multithreading). This is in contrast to how Python does parallelization, where multiple Python processes each execute one thread.
 
-## 15.1 - The parallellize function
+## 24.1 - The parallelize function
 This function comes from the algorithm module, see [Docs](https://docs.modular.com/mojo/stdlib/algorithm/functional.html#parallelize)
 
-### 15.1.1 No SIMD example
-?? use num_tasks instead of num_workers
-
+### 24.1.1 Without SIMD example
 The autobus analogy:
 With only one instruction, we can calculate the entire autobus in the same amount of time it would have taken to calculate a single number in a non-simd way.
+
+The signature of parallelize is as follows:  
+`parallelize[func: fn(Int) capturing -> None](num_work_items: Int, num_workers: Int)`
+    * num_work_items: *number of tasks* to be executed (in parallel as much as possible), goes from 0 to (num_work_items - 1) included
+    * num_workers: is the number of threads (cores) that execute the tasks, so num_workers is the maximum number of tasks that can execute in parallel
 
 See `parallel1.mojo`:
 ```py
@@ -20,30 +23,23 @@ fn main():
     fn compute_number(x: Int):
         print_no_newline(x * x, " - ")
 
-    var stop_at = 16
-    var cores = 4
+    var num_work_items = 16
+    var num_workers = 4
 
-    # start at 0, end at stop_at (non inclusive)
-    parallelize[compute_number](stop_at, cores)
+    parallelize[compute_number](num_work_items, num_workers)
 
-# => 0  - 1  - 4  - 9  - 6416  -  81 -   - 25100   -  - 36121   - 144 - 49  -   
-# - 169  - 196  - 225  - 
+# => # => 0  - 1  - 4  - 9  - 64  - 81  - 100  - 121  - 144  - 169  - 196  - 22516  -   - 25  - 36  - 49  - 
 
 # => another run:
-# 0  - 16164   -   -  - 42581    -  - 144 - 910036    - 121 -   -  - 169   -  - 19649   -
-#  - 225  - 
+# 016  -  25 -  1 -  36 -  4 -  64 - 49  9 -  -  81 -   - 100  - 121  - 144  - 169  - 196  - 225  - 
 ```
 
-?? Why such random results? (er zijn altijd 16 - , maar soms geen kwadraat, het zijn ook niet altijd kwadraten?)
+Why such random results? because the threads calculating the square of x are randomly started.
+(er zijn altijd 16 - , maar soms geen kwadraat ??)
 
-This parallellize function implements:  
-`parallelize[func: fn(Int) capturing -> None](num_work_items: Int, num_workers: Int)`
-    * num_work_items: *number of tasks* to be executed in parallel as much as possible, goes from 0 to (stop_at - 1) included
-    * num_workers: is the number of threads (cores) that execute the tasks, so   num_workers is the maximum number of tasks that can execute in parallel
+--> calculating with SIMD yields much better results:
 
-
-### 15.1.2 With SIMD
-
+### 24.1.2 With SIMD
 The autobus analogy: see https://github.com/rd4com/mojo-learning/blob/main/tutorials/multi-core-parallelize-with-simd .md
 
 See `parallel2.mojo`:
@@ -54,33 +50,31 @@ from sys.info import simdwidthof
 import math
 
 alias element_type = DType.int32
-alias group_size = simdwidthof[element_type]()
-alias groups = 16
+alias group_size = simdwidthof[element_type]() # 8
+alias num_work_items = 16
 
 
 fn main():
-    var computer_cores = 4
-    var array = DTypePointer[element_type]().alloc(groups * group_size)
+    var num_workers = 4
+
+    # initialized array of numbers with random values
+    var array = DTypePointer[element_type]().alloc(num_work_items * group_size)
+    # (num_work_items * group_size) - 1 = 127, this is the index of the last calculation 
 
     @parameter
     fn compute_number(x: Int):
-        # the following array fits exactly in the SIMD width:
         var numbers: SIMD[element_type, group_size]
 
         # 3 simd instructions:
         numbers = math.iota[element_type, group_size](x * group_size)
-        numbers *= numbers
-        array.simd_store[group_size](x * group_size, numbers)
+        numbers *= numbers  # squares are calculated on entire vector simultaneously
+        array.store(x * group_size, numbers)
 
-    parallelize[compute_number](groups, computer_cores)
+    parallelize[compute_number](num_work_items, num_workers)
 
-    #   parallelize will call compute_number with argument
-    #       x= 0,1,2...groups (non-inclusive)
-
-    for i in range(groups * group_size):
+    for i in range(num_work_items * group_size):
         var result = array.load(i)
         print("Index:", i, " = ", result)
-
 
 # =>
 # Index: 0  =  0
@@ -94,22 +88,132 @@ fn main():
 # Index: 8  =  64
 # Index: 9  =  81
 # Index: 10  =  100
-# ...
+# Index: 11  =  121
+# Index: 12  =  144
+# Index: 13  =  169
+# Index: 14  =  196
+# Index: 15  =  225
+# Index: 16  =  256
+# Index: 17  =  289
+# Index: 18  =  324
+# Index: 19  =  361
+# Index: 20  =  400
+# Index: 21  =  441
+# Index: 22  =  484
+# Index: 23  =  529
+# Index: 24  =  576
+# Index: 25  =  625
+# Index: 26  =  676
+# Index: 27  =  729
+# Index: 28  =  784
+# Index: 29  =  841
+# Index: 30  =  900
+# Index: 31  =  961
+# Index: 32  =  1024
+# Index: 33  =  1089
+# Index: 34  =  1156
+# Index: 35  =  1225
+# Index: 36  =  1296
+# Index: 37  =  1369
+# Index: 38  =  1444
+# Index: 39  =  1521
+# Index: 40  =  1600
+# Index: 41  =  1681
+# Index: 42  =  1764
+# Index: 43  =  1849
+# Index: 44  =  1936
+# Index: 45  =  2025
+# Index: 46  =  2116
+# Index: 47  =  2209
+# Index: 48  =  2304
+# Index: 49  =  2401
+# Index: 50  =  2500
+# Index: 51  =  2601
+# Index: 52  =  2704
+# Index: 53  =  2809
+# Index: 54  =  2916
+# Index: 55  =  3025
+# Index: 56  =  3136
+# Index: 57  =  3249
+# Index: 58  =  3364
+# Index: 59  =  3481
+# Index: 60  =  3600
+# Index: 61  =  3721
+# Index: 62  =  3844
+# Index: 63  =  3969
+# Index: 64  =  4096
+# Index: 65  =  4225
+# Index: 66  =  4356
+# Index: 67  =  4489
+# Index: 68  =  4624
+# Index: 69  =  4761
+# Index: 70  =  4900
+# Index: 71  =  5041
+# Index: 72  =  5184
+# Index: 73  =  5329
+# Index: 74  =  5476
+# Index: 75  =  5625
+# Index: 76  =  5776
+# Index: 77  =  5929
+# Index: 78  =  6084
+# Index: 79  =  6241
+# Index: 80  =  6400
+# Index: 81  =  6561
+# Index: 82  =  6724
+# Index: 83  =  6889
+# Index: 84  =  7056
+# Index: 85  =  7225
+# Index: 86  =  7396
+# Index: 87  =  7569
+# Index: 88  =  7744
+# Index: 89  =  7921
+# Index: 90  =  8100
+# Index: 91  =  8281
+# Index: 92  =  8464
+# Index: 93  =  8649
+# Index: 94  =  8836
+# Index: 95  =  9025
+# Index: 96  =  9216
+# Index: 97  =  9409
+# Index: 98  =  9604
+# Index: 99  =  9801
+# Index: 100  =  10000
+# Index: 101  =  10201
+# Index: 102  =  10404
+# Index: 103  =  10609
+# Index: 104  =  10816
+# Index: 105  =  11025
+# Index: 106  =  11236
+# Index: 107  =  11449
+# Index: 108  =  11664
+# Index: 109  =  11881
+# Index: 110  =  12100
+# Index: 111  =  12321
+# Index: 112  =  12544
+# Index: 113  =  12769
+# Index: 114  =  12996
+# Index: 115  =  13225
+# Index: 116  =  13456
+# Index: 117  =  13689
+# Index: 118  =  13924
+# Index: 119  =  14161
+# Index: 120  =  14400
+# Index: 121  =  14641
+# Index: 122  =  14884
+# Index: 123  =  15129
 # Index: 124  =  15376
 # Index: 125  =  15625
 # Index: 126  =  15876
 # Index: 127  =  16129
 ```
 
-## 15.2 - Concurrency: async/await in Mojo
+## 24.2 - Concurrency: async/await in Mojo
 See module builtin.coroutine
 This is very similar to async/await in other languages: coroutines execute sequentially within one thread with async/await coordination. When execution is fast enough, this gives the impression of parallellization.
 
-?? good example
-
-## 15.3 - Parallelization applied to row-wise mean() of a vector
-### 15.3.1 Using a function
-In the following example,  we calculate the row-wise `mean()` of a matrix, by vectorizing across colums and parallelizing across rows.
+## 24.3 - Parallelization applied to row-wise mean() of a vector
+### 24.3.1 Using a function
+In the following example, we calculate the row-wise `mean()` of a matrix, by vectorizing across colums and parallelizing across rows.
 
 See `matrix_mean_row.mojo`:
 ```py
@@ -159,7 +263,7 @@ fn main() raises:
     print("SIMD bit width", simdbitwidth())  # => SIMD bit width 256
     print("SIMD Width", simd_width)  # => SIMD Width 8
 
-   vartx = rand[dtype](5, 12)
+    var tx = rand[dtype](5, 12)
     print(tx)
     # =>
     # Tensor([[0.1315377950668335, 0.458650141954422, 0.21895918250083923, ..., 0.066842235624790192, 0.68677270412445068, 0.93043649196624756],
@@ -169,8 +273,8 @@ fn main() raises:
     # [0.84151065349578857, 0.41539460420608521, 0.46791738271713257, ..., 0.84203958511352539, 0.21275150775909424, 0.13042725622653961]], dtype=float32, shape=5x12)
 
     seed(42)
-   vart = rand[dtype](1000, 100_000)
-   varresult = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
+    var t = rand[dtype](1000, 100_000)
+    var result = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
 
     print(
         "Input Matrix shape:", t.shape().__str__()
@@ -182,28 +286,28 @@ fn main() raises:
 
     # Naive approach in Mojo
     alias reps = 10
-   vartm1 = time.now()
+    var tm1 = time.now()
     for i in range(reps):
         _ = tensor_mean[dtype](t)
-   vardur1 = time.now() - tm1
+    var dur1 = time.now() - tm1
     print("Mojo naive mean:", dur1 / reps / 1000000, "ms")
 
     # NumPy approach
-   varnp = Python.import_module("numpy")
-   vardim0 = t.dim(0)
-   vardim1 = t.dim(1)
-   vart_np = np.random.rand(dim0, dim1).astype(np.float32)
-   vartm2 = time.now()
+    var np = Python.import_module("numpy")
+    var dim0 = t.dim(0)
+    var dim1 = t.dim(1)
+    var t_np = np.random.rand(dim0, dim1).astype(np.float32)
+    var tm2 = time.now()
     for i in range(reps):
         _ = np.mean(t_np, 1)
-   vardur2 = time.now() - tm2
+    var dur2 = time.now() - tm2
     print("Numpy mean:", dur2 / reps / 1000000, "ms")
 
     # Vectorized and parallelized approach in Mojo
-   vartm3 = time.now()
+    var tm3 = time.now()
     for i in range(reps):
         _ = tensor_mean_vectorize_parallelized[dtype](t)
-   vardur3 = time.now() - tm3
+    var dur3 = time.now() - tm3
     print("Mojo Vectorized and parallelized mean:", dur3 / reps / 1000000, "ms")
 
 
@@ -220,9 +324,9 @@ This small input matrix has shape `5x12` and the output matrix with `means()` sh
 Then create a `1000x100000` matrix t to make it more computationally intensive.  
 Write a function to calculate averages of each row the naive way.
 
-Vectorized and parallelized way: see fn
+Vectorized and parallelized way: see fn tensor_mean 
 
-### 15.3.2 Using a custom struct based on Tensor type
+### 24.3.2 Using a custom struct based on Tensor type
 Now we copy our vectorized and parallelized implementation of row-wise mean() and make it a function in a custom Struct based on Tensor type:
 
 See ``matrix_mean_row2.mojo`:
@@ -267,8 +371,8 @@ struct myTensor[dtype: DType]:
         return Self(new_tensor)
 
     fn print(self, prec: Int=4)->None:
-       vart = self.t
-       varrank = t.rank()
+        var t = self.t
+        var rank = t.rank()
         if rank == 0:
             print("Error: Nothing to print. Tensor rank = 0")
             return
@@ -334,15 +438,15 @@ struct myTensor[dtype: DType]:
 
 
 fn main():
-   vartx = myTensor[dtype](5, 10)
+    var tx = myTensor[dtype](5, 10)
     tx.print()
     tx.mean().print()
 
-   vartx2 = myTensor[dtype](1000, 100_000)
-   vartm = time.now()
+    var tx2 = myTensor[dtype](1000, 100_000)
+    var tm = time.now()
     for i in range(reps):
         _ = tx2.mean()
-   vardur = time.now() - tm
+    var dur = time.now() - tm
     print("Mojo Vectorized and parallelized mean in a struct:", dur / reps / 1000000, "ms")
 
 # [[0.1315   0.4586   0.2189   0.6788   0.9346   0.5194   0.0345   0.5297   0.0076   0.0668]

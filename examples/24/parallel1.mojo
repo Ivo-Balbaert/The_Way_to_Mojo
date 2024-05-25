@@ -6,16 +6,13 @@ fn main():
     fn compute_number(x: Int):
         print(x * x, " - ", end="")
 
-    var stop_at = 16
-    var cores = 4
+    var num_work_items = 16
+    var num_workers = 4
 
-    # start at 0, end at stop_at (non inclusive)
-    parallelize[compute_number](stop_at, cores)
+    parallelize[compute_number](num_work_items, num_workers)
 
-# => 0  - 1  - 4  - 9  - 6416  -  81 -   - 25100   -  - 36121   - 144 - 49  -   
-# - 169  - 196  - 225  - 
+# => # => 0  - 1  - 4  - 9  - 64  - 81  - 100  - 121  - 144  - 169  - 196  - 22516  -   - 25  - 36  - 49  - 
 
 # => another run:
-# 0  - 16164   -   -  - 42581    -  - 144 - 910036    - 121 -   -  - 169   -  - 19649   -
-#  - 225  - 
+# 016  -  25 -  1 -  36 -  4 -  64 - 49  9 -  -  81 -   - 100  - 121  - 144  - 169  - 196  - 225  - 
 
