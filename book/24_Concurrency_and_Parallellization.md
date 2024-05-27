@@ -35,7 +35,7 @@ fn main():
 ```
 
 Why such random results? because the threads calculating the square of x are randomly started.
-(er zijn altijd 16 - , maar soms geen kwadraat ??)
+(er zijn altijd 16 - , maar soms geen kwadraat !!)
 
 --> calculating with SIMD yields much better results:
 

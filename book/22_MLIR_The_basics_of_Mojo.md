@@ -23,7 +23,7 @@ Mojo programs can take full advantage of *anything* that interfaces with MLIR. W
 
 MLIR is further sub-categorized into many different 'dialects', e.g. `arith` dialect for compiler operations related to arithmetic. Mojo's `Int` type is a wrapper around the `index` dialect.
 
-?? Mojo only uses the LLVM and index dialect (video 2023 LLVM Mtg 34')
+!! Mojo only uses the LLVM and index dialect (video 2023 LLVM Mtg 34')
 
 Mojo exposes the ability to embed MLIR within its own programs, enabling much deeper optimizations. Design choices such as these allow Mojo to be used to build operating systems and device drivers where close interaction with hardware and high performance is necessary.
 

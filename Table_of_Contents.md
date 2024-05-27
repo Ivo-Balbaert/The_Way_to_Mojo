@@ -58,6 +58,7 @@
 ### 3.8.3 Name shadowing
 ### 3.8.4 Global variables
 ### 3.8.5 Variable addresses
+### 3.8.6 Constants
 ## 3.9  Typing in Mojo
 
 # 4 Basic types
@@ -85,7 +86,7 @@
 ### 4.5.2 The String type
 ### 4.5.3 The StringRef type
 ### 4.5.4 Some String methods
-## 4.6 Defining constants and types with alias types
+## 4.6 Defining types with alias
 ### 4.6.1 Using alias
 ### 4.6.2 Defining an enum type using alias
 ## 4.7 The object type
@@ -127,7 +128,8 @@
 ### 6.5.3 Making arguments owned
 ### 6.5.4 Making arguments owned and transferred with ^
 ## 6.6 Overloading functions
-## 6.7 Running a function at compile-time and run-time
+## 6.7 Running functions at compile-time and run-time
+## 6.7B Running a function at compile-time with alias
 ## 6.8A Nested functions
 ## 6.8B Closures
 ### 6.8B.1 Example of a closure

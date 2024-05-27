@@ -114,7 +114,7 @@ MLIR stands for "Multi-Level Intermediate Representation".
 MLIR is a replacement for LLVM's IR for the modern age of many-core computing and AI workloads.It's critical for fully leveraging the power of hardware like GPUs, TPUs, and the vector units increasingly being added to server-class CPUs.
 
 ## 1.3 Use cases of the language
-Mojo is designed in the first place for AI development (?? elaborate). But it is also a general purpose language, suitable for building high-quality servers, CLI's (command-line applications), graphical native desktop UI's (user interfaces), database extensions, editor plugins, robotics, embedded applications, and so on.  
+Mojo is designed in the first place for AI development (!! elaborate). But it is also a general purpose language, suitable for building high-quality servers, CLI's (command-line applications), graphical native desktop UI's (user interfaces), database extensions, editor plugins, robotics, embedded applications, and so on.  
 It is used to develop AI algorithms and can also be used for other tasks like high-performance computing (HPC), data transformations, writing pre/post-processing operations, and more.
 As a kind of *Python++*, Mojo could serve the whole software industry.
 

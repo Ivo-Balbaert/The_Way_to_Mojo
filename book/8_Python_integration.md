@@ -134,7 +134,7 @@ In this trivial example, adding types,etc. doesn't add much extra performance, b
 First, Mojo always uses SIMD operations for math operations, like + here (see § 4.4)
 Python completely works with references: z and i are reference to objects on the heap. In Mojo, z and i are just values on the stack with 64 bits that can be passed through registers. We don't need to look up an object on the heap via an address. 
 
->Note: The speedup in this example is extraordinarily huge (perhaps other factors play a role here??). The performance difference between Mojo and Python in more realistic programs usually lies between 1 and 3 orders of magnitude (10s - 1000s).
+>Note: The speedup in this example is extraordinarily huge (perhaps other factors play a role here!!). The performance difference between Mojo and Python in more realistic programs usually lies between 1 and 3 orders of magnitude (10s - 1000s).
 
 ## 8.2 Running Python code in Mojo
 >Note: If you're having trouble executing the following programs, it probably means Mojo can't find Python on your machine. Refer to § 8.6
@@ -196,7 +196,7 @@ Now we can use the `type` built-in from Python to see what the dynamic type of x
 pybt.print(pybt.type(x))  # => <class 'int'>
 ```
 
-The address where the value of x is stored on the heap is given by the Python built-in function `id`. This address itself is stored on the stack. (?? schema)
+The address where the value of x is stored on the heap is given by the Python built-in function `id`. This address itself is stored on the stack. (!! schema)
 
 ```py
 pybt.print(pybt.id(x))   # =>  139787831339296
@@ -406,7 +406,7 @@ In line 7, the `append` is a Python method of the list class, because x is a Pyt
 
 In line 8, a numpy array is created with the list x. This is converted to a suitable value, and the cos value is calculated. So the method returns a Python array of cosine values, which is assigned to results in line 1, and then passed as argument to plot_from_mojo in line 2.  
 As we see in line 9, plot_from_mojo is a Mojo function that takes a PythonObject. `results` "travels" trough Mojo functions, as a PythonObject, but can also be passed to Python-land functions, as a PythonObject.  
-In line 10 we import matplotlib. In line 11, the values (or results) come from numpy. The Python object class is ndarray: `print(values.__class__.__name__)` # => ndarray. The matplotlib Python functions plot (line 11) and show (line 12) are then used to display the [plot](see ??)
+In line 10 we import matplotlib. In line 11, the values (or results) come from numpy. The Python object class is ndarray: `print(values.__class__.__name__)` # => ndarray. The matplotlib Python functions plot (line 11) and show (line 12) are then used to display the [plot](see !!)
 
 
 #### 8.4.2.4 Combining numpy and SIMD

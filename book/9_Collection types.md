@@ -131,7 +131,7 @@ Can a List contain elements of different types?
 *Try* to define a `var lst = List(1, 2, "a")` or List[AnyType]. Why do you get an error?
 
 ### 9.1.5 Implementing a list-like behavior with PythonObject
-This snippet shows how we could use a PythonObject to create a list, just for fun (or mihjt there be some use-cases ??):
+This snippet shows how we could use a PythonObject to create a list, just for fun (or mihjt there be some use-cases !!):
 
 See `list_pythonobject.mojo`:
 ```py
@@ -360,7 +360,7 @@ fn main():
 
     print(vec.capacity)             # => 8
     print(vec.current_size)         # => 2
-    print(vec.dynamic_data[0])      # => 1  (??)
+    print(vec.dynamic_data[0])      # => 1  (!!)
     print(vec.static_data[0])       # => 10
 
     print(vec[0])       # => 10
@@ -472,7 +472,7 @@ Utilize SIMD to manipulate 32 bytes of data at the same time (see lines 6-8).
 
 
 ## 9.10 NDBuffer
-This is an N-dimensional Buffer, that can be used both statically, and dynamically at runtime (??).  
+This is an N-dimensional Buffer, that can be used both statically, and dynamically at runtime (!!).  
 NDBuffer can be parametrized on rank, static dimensions and Dtype. It does not own its underlying pointer.
 
 `var ndbuf = NDBuffer[type, rank, shape]`
@@ -496,6 +496,12 @@ A TensorShape contains the dimensions of a Tensor, like (2, 2) or (256, 256, 3)
 A TensorSpec contains the DType of the elements of a Tensor, and its TensorShape
 There are a lot of overloading constructors to create a Tensor. 
 The rand function from tensor.random also automatically creates a Tensor.
+
+A `var t = Tensor[DType.int32](10)` is a 1-dimensional Tensor or vector of 32 bits signed integers of length 10. print(t) shows us:
+```
+Tensor([[0, 0, 0, ..., 0, 0, 0]], dtype=int32, shape=10)
+```
+
 
 See `tensor0.mojo`:
 ```py

@@ -6,11 +6,11 @@ from time import now
 
 alias dtype = DType.float64
 
-def mojo_naive_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
+fn mojo_fn_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
     var s: Float64 = 0.0
-    n = a.num_elements()
+    var n: Int = a.num_elements()
     for i in range(n):
-        dist = a[i] - b[i]
+        var dist: Float64 = a[i] - b[i]
         s += dist*dist
     return sqrt(s)
 
@@ -32,11 +32,11 @@ fn main() raises:
         b[i] = bnp[i].to_float64()
 
     var eval_begin = now()
-    var naive_dist = mojo_naive_dist(a, b)
+    var fn_dist = mojo_fn_dist(a, b)
     var eval_end = now()
 
-    print_formatter("mojo_naive_dist value: ", naive_dist)
-    print_formatter("mojo_naive_dist time (ms): ",Float64((eval_end - eval_begin)) / 1e6)
+    print_formatter("mojo_fn_dist value: ", fn_dist)
+    print_formatter("mojo_fn_dist time (ms): ",Float64((eval_end - eval_begin)) / 1e6)
 
-# mojo_naive_dist value: 1291.3664121235004
-# mojo_naive_dist time (ms): 10.690652
+# mojo_fn_dist value: 1290.742319614782
+# mojo_fn_dist time (ms): 10.321598

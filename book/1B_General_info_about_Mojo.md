@@ -19,7 +19,7 @@ Mojo's community, supported by the Modular Mojo team, is also very helpful and w
 ## 1B.1 Some info about the name and logo.
 The name of the language is **Mojo**, meaning "a magical charm" or "magical powers", which are applied to Python. 
 
-Its logo is the [fire emoticon](https://emojipedia.org/fire) (?, werkt niet), the U+1F525 Unicode character. You can find it in the repo as: fire.png, kan emoji niet in file zetten??.
+Its logo is the [fire emoticon](https://emojipedia.org/fire) (?, werkt niet), the U+1F525 Unicode character. You can find it in the repo as: fire.png, kan emoji niet in file zetten!!.
 
 Mojo is also the first language to introduce emojis as file extensions:
 Mojo's source files have the fire emoticon extension like hello.🔥, or alternatively *.mojo*, as in *hello.mojo*.  
@@ -93,7 +93,7 @@ Goals / Roadmap:
 | 2023 Sep 15  | 224      | 13895 |  1408 |  199   |  5             |   8          |  20900  |   13100 | 
 | 2023 Oct 12  | 238      | 14977 |  2000 |  225   |  2             |   15         |  22100  |   14100 | 
 | 2023 Nov 13  | 241      | 15581 |  2000 |  294   |  0             |   15         |  21700  |   15000 | 
-| 2024 Apr 17  | 262      | 20887 |  2500 |  583   |  33            |   86         |  21500  |   15000?? | 
+| 2024 Apr 17  | 262      | 20887 |  2500 |  583   |  33            |   86         |  21500  |   15000!! | 
 
 GH = GitHub
 

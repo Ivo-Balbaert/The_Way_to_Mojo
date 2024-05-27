@@ -128,7 +128,7 @@ Change `var z = sum(1, 2)` to just `sum(1, 2)`. Now you don't use the return val
 You can print out the return value, or just discard the value with _ = sum(1, 2). `_ =` is called the *discard pattern*, and can be used for just that, to indicate that you receive the returned value, but that you don't want to use it.
 >Note: You can force Mojo to keep a value alive up to a certain point by assigning the value to the _ "discard" pattern at the point where it's okay to destroy it (see https://docs.modular.com/mojo/manual/lifecycle/death.html)
 
-If a function has no return value (example ??), you could write this as `-> None`. In normal cases you can leave this out. But if you need to write the function type (as in higher order functions), writing `-> None` is needed.
+If a function has no return value (example !!), you could write this as `-> None`. In normal cases you can leave this out. But if you need to write the function type (as in higher order functions), writing `-> None` is needed.
 
 By default, a function cannot modify its arguments values. They are immutable (read-only) references. 
 
@@ -427,7 +427,7 @@ fn main():
 Our variable to be owned is of type `String` (see § 4.5.2). 
 `set_fire` takes ownership of variable a in line 1 as argument `text`, which it changes and returns.  
 From the output, we see that the return value b has the changed value, while the original value of a still exists. Mojo made a copy of a to pass this as the text argument.
-(Better example by giving the parameters the same name as the argument ??)
+(Better example by giving the parameters the same name as the argument !!)
 
 
 ### 6.5.4 Making arguments owned and transferred with ^
@@ -522,7 +522,7 @@ fn main():
     print(a, b)          # => 4 5
 ```
 
-?? change example because of mojo warning:
+!! change example because of mojo warning:
 See `owned_transfer.mojo`:
 ```py
 fn sum(owned a: Int8, owned b: Int8) -> Int8:
@@ -589,12 +589,12 @@ We can follow up on this error to corect it in lines 4 or 5.
 
 >Note: Overloading also works with combinations of both fn and def functions.
 
->Remark: If a function needs to work with many types, defining all these versions can be a lot of work. A better solution is to work with a *generic* or *parametric* type, see § ??
+>Remark: If a function needs to work with many types, defining all these versions can be a lot of work. A better solution is to work with a *generic* or *parametric* type, see § !!
 
 >Note: you can also overload functions based on parameter types.
 
 
-## 6.7 Running a function at compile-time and run-time
+## 6.7 Running functions at compile-time and run-time
 As we saw in § 3.7, there are two times of execution: compile-time and runtime.
 Mojo has two 'spaces', the 'parameter' space (which operates during compile time) and the 'value' space (which operates during run time). Mojo functions can do computations in both spaces, the `[]` accepts arguments for the 'parameter' space, and `()` accepts arguments for the 'value' space:
 
@@ -613,24 +613,35 @@ fn main():
 
 count is a compile-time parameter which becomes a run-time constant. The compiler makes a specific version of `repeat` with the count value set to 3, which is executed when running.
 
-By using alias for the return variable, you can run a function at compile-time:
-(?? simpler example)
+The following section shows that `alias` can do much more than just defining a constant value or type at compile-time.
+
+## 6.7B Running a function at compile-time with alias
+By using alias for the return variable, you can run a function at compile-time, to do a calculation or build a data structure.
 
 See `compile_time2.mojo`:
 ```py
+alias n_numbers = 5
+alias precalculated = squared(n_numbers)     # 1
+alias MY_VALUE = add(2, 3)                   # 1B
+alias QUOTE = ord('"')                       # 1C
+
 fn squared(n: Int) -> Pointer[Int]:
     var tmp = Pointer[Int].alloc(n)
     for i in range(n):
         tmp.store(i, i * i)
     return tmp
 
-alias n_numbers = 5
-alias precalculated = squared(n_numbers) # 1
+fn add(a: Int, b: Int) -> Int:
+    return a + b
 
 fn main():
     # var precalculated = squared(n_numbers) # 2
     for i in range(n_numbers):
         print(precalculated.load(i))
+
+    print(MY_VALUE) # => 5
+    print(QUOTE) # => 34
+ 
 
 # =>
 # 0
@@ -638,11 +649,18 @@ fn main():
 # 4
 # 9
 # 16
-
+# 5
+# 34
 ```
 
-The function squared can be used both during compile-time and runtime. The alias in line 1 takes care that the calculation is done at compile-time. It returns a pointer with pre-calculated values during compilation and using it at runtime.
+The function squared can be used both during compile-time and runtime. The alias in line 1 takes care that the calculation is done at compile-time. It returns a pointer with pre-calculated values during compilation and makes it usable at runtime. 
 If we comment this line and uncomment line 2, precalculated is computed at runtime.
+The same reasoning applies for line 1B.
+In line 1C, we use an alias in order to use the ord function efficiently (it doesn't have to run at run-time anymore).  
+
+Not every function can be run at compile-time however. In order to be able to do that, the function must be:  
+* a fn type function
+* the function must be a *pure function*. Such functions have no side effects. That is, the functions must use only the arguments passed to it and must not change any variables or state outside of the function body. 
 
 A parameter enclosed in [] is a compile-time (or static) value (1).
 An argument enclosed in () is a run-time (or dynamic) value (2).
@@ -712,7 +730,7 @@ The keyword `escaping` is necessary in line 3.
 
 ## 6.9 Callbacks through parameters
 See `callbacks_params.mojo`:
-(?? why is file used in the example)
+(!! why is file used in the example)
 ```py
 @value
 struct Markdown:

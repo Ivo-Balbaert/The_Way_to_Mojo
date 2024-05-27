@@ -129,7 +129,7 @@ fn main():
 ```
 
 To check the alignment of any type, use the alignof function. In the struct Foo (line 1) it returns 4 bytes. This means each instance of Foo will start at a memory address that is a multiple of 4 bytes. There will also be 3 bytes of padding to accommodate the UInt8.  
-bitwidthof in line 2 uses bits instead of bytes to show the width of the type in bits. Type Foo will take 24 bits of padding (??), as each object can only be placed at multiples of 64 in memory.
+bitwidthof in line 2 uses bits instead of bytes to show the width of the type in bits. Type Foo will take 24 bits of padding (!!), as each object can only be placed at multiples of 64 in memory.
 The total size in bytes of an AnyType is given by the `sizeof` function. (line 6).
 
 The same module also contains the values os_is_linux, os_is_macos, os_is_windows, which can be used to conditionally compile code based on the operating system (see line 7).
@@ -405,7 +405,7 @@ See `benchmark1.mojo`:
 from benchmark import Unit, benchmark
 from time import sleep
 
-fn sleeper():
+fn sleeper():     # function to be benchmarked
     sleep(.01)
 
 fn main():
@@ -500,7 +500,7 @@ fn main():
     # 0 warmup iters, 5 max iters, 0ns min time, 1_000_000_000ns max time
     # -nan seconds
 ```
-?? -nan seconds
+!! -nan seconds
 
 Pass the test function in as a parameter:  `benchmark().run[test_fib]()`.
 This returns the execution time in seconds: 

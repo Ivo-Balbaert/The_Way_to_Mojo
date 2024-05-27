@@ -4,7 +4,7 @@
 See also: https://github.com/ihnorton/mojo-ffi/
 
 ## 25.1.1 Calling functions from the C standard library
-The C standard library is implicitly available in the REPL, or explicitly(??) linked by mojo build.
+The C standard library is implicitly available in the REPL, or explicitly(!!) linked by mojo build.
 The sys package contains a module ffi, that implements a foreign functions interface (FFI), and which must be imported as:
 `from sys import ffi`.
 

@@ -271,7 +271,7 @@ The zero method is called as:  Vec3f.zero()
 
 
 ## 15.6 - @always_inline
-(?? Explain what is "inlining")
+(!! Explain what is "inlining")
 Normally the compiler will do inlining automatically where it improves performance.
 But you can force this behavior with @always_inline:
 This decorator forces the compiler to always inline the decorated function, directly into the body of the calling function for the final binary, avoiding function call overhead.  

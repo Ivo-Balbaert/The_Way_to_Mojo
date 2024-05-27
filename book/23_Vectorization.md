@@ -2,6 +2,7 @@
 Vectorizating a program means rewriting a loop, so that instead of processing a single element of an array N times, it processes (say) 4 elements of the array simultaneously N/4 times.
 Use this algorithm by importing: `from algorithm import vectorize`
 
+(See also § 30.2.3 Euclid distance/ )
 
 The following examples demonstrate the use of vectorization.
 
@@ -169,7 +170,7 @@ fn main():
 # 0.087739311158657074
 ```
 
-Why intermediate 0's in tensor_math_vectorized ??
+Why intermediate 0's in tensor_math_vectorized !!
 
 Other examples:
 * keyword_params.mojo 

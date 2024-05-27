@@ -1,6 +1,6 @@
 # 4 Basic types
-?? Interesting topics from: https://docs.modular.com/mojo/manual/types
-- nominal types (struct??), nominal and structural typing, other types 
+!! Interesting topics from: https://docs.modular.com/mojo/manual/types
+- nominal types (struct!!), nominal and structural typing, other types 
 - types defined in the standard library, not in the language itself
 - Using Int as the default integer type
 - rounding errors etc with floats
@@ -50,7 +50,7 @@ var f : DType.float64    # error: expected a type, not a value
 var f : Float64          # ok
 ```
 
-DType has a lot of methods to test types, for example `is_uint8` checks whether the type is uint8. (example ??)
+DType has a lot of methods to test types, for example `is_uint8` checks whether the type is uint8. (example !!)
 
 A *scalar* just means a single value in Mojo. The scalar types include the Bool type (see § 4.2), as well as the numerical types, which are all based on SIMD (see § 4.4).
 The following code shows how to define a scalar with the `Scalar` type:
@@ -633,14 +633,14 @@ The length of a string is given by the len() function or __len__ method.
 `data` gets the raw pointer to the underlying data, see line 2.
 This could be useful if you need to pass the string data to a function that requires a pointer, or if you want to perform low-level operations on the string data.
 
->Note: this method has as return type DTypePointer[si8, 0]. This means that the method returns a pointer to the underlying data of the string literal. The `si8` indicates that the data is a sequence of 8-bit signed integers, which is a common way to represent characters in a string (signed ??).
+>Note: this method has as return type DTypePointer[si8, 0]. This means that the method returns a pointer to the underlying data of the string literal. The `si8` indicates that the data is a sequence of 8-bit signed integers, which is a common way to represent characters in a string (signed !!).
 
 #### 4.5.1.1   Converting a StringLiteral to an integer
 Use the `int()` method, see line 2.
 
 ### 4.5.2 The String type
 The `String` type represents a mutable string. The `string` module contains basic methods for working with strings. UTF-8 encoding is used to store strings. The length len corresponds to the number of bytes, not number of characters.
-The string value is heap-allocated, but the String itself is actually a pointer to the heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture ??)
+The string value is heap-allocated, but the String itself is actually a pointer to the heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture !!)
 
 ```py
     # String:
@@ -711,7 +711,7 @@ It has the methods `getitem`, equal, not equal and length:
 Summary:
 * StringLiteral is compile time known, static lifetime. 
 * String owns the underlying buffer, backed by List, hence it is mutable, 0-terminated.  
-* StringRef does not own underlying buffer, is immutable(??), not 0-terminated. 
+* StringRef does not own underlying buffer, is immutable(!!), not 0-terminated. 
 
 
 ### 4.5.4 Some String methods
@@ -806,47 +806,34 @@ The `isdigit` function checks if the character passed in is a valid decimal betw
 ( See also `string_counting_bytes_and_characters.mojo`: advanced, but works)
 
 
-## 4.6 Defining constants and types with alias types
-A commonly known best practice is to give constant values, that are repeatedly used in our program, a name like ACONSTANT. So when its value changes, we only have to do it in one place. In Mojo, such constants are defined with the `alias` keyword.  This is a compile-time constant: all instances of the alias are replaced by its value at compile-time.
-You can also define a synonym or shorthand for a type with alias.
-It can also be used to do a calclation or build a data structure.
-All alias values are written in a section of the executable file.
+## 4.6 Defining types with alias
+You can also define a synonym or shorthand for a type with alias, as in line 1 below.
 
-### 4.6.1 Using alias
-See `alias.mojo`:
+### 4.6.1 Using alias for types
+See `alias_types.mojo`:
 ```py
-alias fl = Float32              # 1A
-alias MAX_ITERS = 200
-alias DAYS_PER_YEAR = 365.24
-alias PI = 3.141592653589793    # 1B
-alias TAU = 2 * PI
+alias FType = Float32              # 1
+alias MyInt = Int
 
-    
+fn add(a: MyInt, b: MyInt) -> MyInt:
+    return a + b
+
 fn main():
     alias MojoArr = DTypePointer[DType.float32] 
-    alias debug_mode = True     # 2
-    alias width = 960
-    alias height = 960
-    for i in range(MAX_ITERS):  # 3
-        print(i, " ", end="") # => 0  1  2  3  4  5  6  ... 198 199
+    var f1: FType = 3.1415
+    var f2: MojoArr
+
+    print(add(1, 2)) # => 3
 ```
 
-We see that alias constants are often capitalized.
+This can come in handy when a big computation uses one particular type, but sometimes you want to be able to change that type to see for example the performance difference.
 
 Types like Float16 (see § 4.4.1) are also defined with alias in the standard library:  
 `alias Float16 = SIMD[DType.float16, 1]`
 
-Line 2 and following work, because alias is also a way to define a compile-time static value,  just like var defines a runtime variable. alias is kind of var at compile-time. All occurences of the alias name get substituted with the value at compile-time, so it has some performance benefit. This is ideal to set parameter values of the problem at hand.
-So line 3 is changed at compile-time to `for i in range(200):`.
-The use of the alias debug_mode is illustrated in § 11.3 @parameter.
-
-A struct field can also be an alias.
-
->Note: use alias in order to use the ord function efficiently, example:  
-`alias QUOTE = ord('"')`
 
 ### 4.6.2 Defining an enum type using alias
-(?? After ch 7 on structs)
+(!! After ch 7 on structs)
 You can create an enum-like structure using the alias declaration, which defines the enum values at compile-time.
 
 See `enum_type.mojo`:
@@ -951,7 +938,7 @@ Examples of trivial types:
 
 These are all also register-passable types, so we declare a trivial type with the *@register_passable(trivial)* decorator (see 11B 11.2).
 
->Note: Trivial types shouldn't be limited to only register-passable types, so in the future trivial types will be separated from the @register_passable decorator (??).
+>Note: Trivial types shouldn't be limited to only register-passable types, so in the future trivial types will be separated from the @register_passable decorator (!!).
 
 ### 4.8.3 Memory-only types
 They are the opposite of the preceding register-passable type. These types usually use pointers or references to manage heap-allocated memory. String, List, and Dict are all examples of memory-only types.

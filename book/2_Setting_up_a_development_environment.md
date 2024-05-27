@@ -32,7 +32,7 @@ Structure of compiler: video 2023 LLVM Dev Mtg:
 OrcJit is used for Just in Time compilation, but also for generating static archive .a file. The system linker then transforms this into an executable file.
 
 ### 2.1.3 Runtime
-- for Python code: calls the CPython interpreter, which talks toh the Mojo compiler ??
+- for Python code: calls the CPython interpreter, which talks toh the Mojo compiler !!
 - a built-in GC to clean up Python objects, based on reference counting
 
 
@@ -69,13 +69,13 @@ Version 24.2.0 (2024 Mar 29) ships with the following 20 packages, containing 83
 * time
 * utils
 
-?? adapt
+!! adapt
 
 
 
 ## 2.2 Installing the Modular and Mojo toolkit
 ### 2.2.1 On Windows
-This is currently (??) still in a testing phase.
+This is currently (!!) still in a testing phase.
 
 ### 2.2.2 On MacOS 
 See [Mojo website](https://docs.modular.com/mojo/manual/get-started/index.html)
@@ -122,7 +122,7 @@ An environment variable `MOJO_PATH` with value `$MODULAR_HOME/pkg/packages.modul
 `MOJO_PATH/bin` which contains the `mojo` tool, the lsp-server, an lldb tool, a crashpad handler,etc., is added to the PATH variable.
 `$HOME/.modular/pkg/packages.modular.com_mojo/lib/mojo` contains the pre-compiles Mojo packages.
 
-?? Alternatively you can enter the following code manually at the end of your .profile and/or .bashrc script:
+!! Alternatively you can enter the following code manually at the end of your .profile and/or .bashrc script:
 ```
 # Mojo
 export MODULAR_HOME="$HOME/.modular"
@@ -158,7 +158,7 @@ Type `:mojo help` for further assistance.
 ```
 Type TAB to get code completion.
 
-The Mojo REPL is based on LLDB, the complete set of LLDB debugging commands is also available as described below (?? examples).  
+The Mojo REPL is based on LLDB, the complete set of LLDB debugging commands is also available as described below (!! examples).  
 Type :quit or :q to leave the REPL.
 
 ## 2.4 Testing the mojo command
@@ -196,7 +196,7 @@ To install the Python virtual environment:
 ## 2.7 How to remove Mojo
 Issue the command: `modular uninstall mojo`
 
-The total size of the Mojo SDK is about 345 Mb. (??)
+The total size of the Mojo SDK is about 345 Mb. (!!)
 
 ## 2.8 Downloading the Mojo source code
 The [Mojo repo](https://github.com/modularml/mojo) currently (May 2024) only contains the source of the Mojo standard library.
@@ -210,12 +210,12 @@ If you don't already have git installed:
 
 On Windows:
     - Go to c:\ in a cmd-terminal with Administrator priviliges.
-    - Download the Mojo repo with the command: `git clone ??`
+    - Download the Mojo repo with the command: `git clone !!`
       the Mojo repository will now be in c:\Mojo.
 
 On Linux:
     - Make a new folder $HOME/Mojo_repo, `cd Mojo_repo`
-    - Download the Mojo repo with the command: `git clone ??`
+    - Download the Mojo repo with the command: `git clone !!`
 
 On both platforms, you'll see an output like:  
 ```
@@ -265,7 +265,7 @@ This is one of the most popular programmer's editors today (https://code.visuals
 The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo). It features (v 24.2.1):
 * Syntax highlighting for .mojo and .🔥 files
 
-?? Table with hotkeys (⌘ for macOS, CTRL in Linux and Windows)
+!! Table with hotkeys (⌘ for macOS, CTRL in Linux and Windows)
 
 * Outline of code, with struct fields and methods, global variables, functions, main() in particular.
 * Code completion: To trigger a completion press CTRL+SPACE, pressing CTRL+SPACE again will bring up doc hints
@@ -277,11 +277,11 @@ The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https:/
 * Code formatting: command palette run Format Document or tick the setting Format on Save
 * Run Mojo File: push arrow top right, or right-click file
 * LLDB Debugger: F5
-A *fully featured LLDB debugger* is included. Press the down arrow next to the ▶️ button in the top right of a Mojo file, and select Debug Mojo File: ?? Image with breakpoint. The default key is F5, and you can rebind the related hotkeys in Preferences: Open Keyboard Shortcuts > Debug: Start Debugging
+A *fully featured LLDB debugger* is included. Press the down arrow next to the ▶️ button in the top right of a Mojo file, and select Debug Mojo File: !! Image with breakpoint. The default key is F5, and you can rebind the related hotkeys in Preferences: Open Keyboard Shortcuts > Debug: Start Debugging
 * When there is a problem: use the command palette, search for Mojo: Restart the extension
 
 ### 2.10.4 How to work with a Jupyter notebook in VS Code 
-Doesn't work ??
+Doesn't work !!
 
 " The current Mojo SDK version is incompatible with this version of the Mojo extension. Please update your SDK to ensure the extension behaves correctly. "
 
@@ -302,14 +302,15 @@ See:
 * https://github.com/microsoft/vscode-jupyter/wiki/Connecting-to-a-remote-Jupyter-server-from-vscode.dev
 
 
-### 2.10.5 Using a Docker file (?? updating)
+### 2.10.5 Using a Docker file (!! updating)
 The repo website https://github.com/modularml/mojo/tree/main/examples/docker contains a Docker example file `Dockerfile.mojosdk`. The following [article](https://medium.com/@1ce.mironov/how-to-install-mojo-locally-using-docker-5346bc23a9fe) goes into detail of how to create and use a Docker image.
 See also the following [video](https://www.youtube.com/watch?v=cHyYmF-RhUk).
 
 
-### 2.10.6 PyCharm plugin
+### 2.10.6 Jetbrains plugin for Mojo
 [See here](https://plugins.jetbrains.com/plugin/23371-mojo)
 
+ 
 
 ## 2.11 Compiling and executing a simple program
 To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  
@@ -324,7 +325,7 @@ fn main():
 
 Apart from fn main(), this is exactly the same in Mojo as in Python, because Mojo aims to be a superset of Python:
 In a Mojo source file we have to use a starting point function called `main()` (see § 3.1).
-(?? Top-level statements as in Python are not yet implemented)
+(!! Top-level statements as in Python are not yet implemented)
 
 A version with `def` instead of `fn` is also a valid Mojo program:
 See `hello_world_def.mojo`:

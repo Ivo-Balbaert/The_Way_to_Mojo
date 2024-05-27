@@ -1,42 +1,51 @@
 # Create numpy arrays anp and bnp:
-from python import Python      
+from python import Python
 from tensor import Tensor
 from math import sqrt
 from time import now
+from sys.info import simdwidthof
+from algorithm import vectorize
 
 alias dtype = DType.float64
-
-fn mojo_fn_dist(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
-    var s: Float64 = 0.0
-    var n = a.num_elements()
-    for i in range(n):
-        var dist = a[i] - b[i]
-        s += dist*dist
-    return sqrt(s)
+alias simd_width = simdwidthof[dtype]()
 
 fn print_formatter(string: String, value: Float64):
     print(string, end="")
     print(value)
 
+fn mojo_dist_vectorized(a: Tensor[dtype], b: Tensor[dtype]) -> Float64:
+    var sq_dist: Float64 = 0.0
+
+    @parameter
+    fn simd_norm[simd_width: Int](idx: Int):
+        var diff = a.load[width=simd_width](idx) - b.load[width=simd_width](idx)
+        sq_dist += (diff * diff).reduce_add()
+
+    vectorize[simd_norm, simd_width](a.num_elements())
+    return sqrt(sq_dist)
+
+
 fn main() raises:
+    print("simdwidth:", simd_width)
     var np = Python.import_module("numpy")
     var n = 10_000_000
     var anp = np.random.rand(n)
     var bnp = np.random.rand(n)
 
-    var a = Tensor[dtype](n)
-    var b = Tensor[dtype](n)
+    var arr1_tensor = Tensor[dtype](n)
+    var arr2_tensor = Tensor[dtype](n)
 
     for i in range(n):
-        a[i] = anp[i].to_float64()
-        b[i] = bnp[i].to_float64()
+        arr1_tensor[i] = anp[i].to_float64()
+        arr2_tensor[i] = bnp[i].to_float64()
 
     var eval_begin = now()
-    var fn_dist = mojo_fn_dist(a, b)
+    var mojo_dist_vec = mojo_dist_vectorized(arr1_tensor, arr2_tensor)
     var eval_end = now()
 
-    print_formatter("mojo_fn_dist value: ", fn_dist)
-    print_formatter("mojo_fn_dist time (ms): ",Float64((eval_end - eval_begin)) / 1e6)
+    print_formatter("mojo_vectorized_dist value: ", mojo_dist_vec)
+    print_formatter("mojo_fn_vectorized time (ms): ",Float64((eval_end - eval_begin)) / 1e6)
 
-# mojo_fn_dist value: 1290.742319614782
-# mojo_fn_dist time (ms): 10.321598
+# simdwidth: 4
+# mojo_vectorized_dist value: 1291.0948987587576
+# mojo_fn_vectorized time (ms): 6.7728580000000003

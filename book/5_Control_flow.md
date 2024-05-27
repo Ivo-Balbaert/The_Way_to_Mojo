@@ -133,7 +133,7 @@ warning: if statement with constant condition 'if True'
 The walrus operator now works in if/while statements without parentheses, e.g.:  
 `if x := function():`
 
-Example: ??
+Example: !!
 
 
 ## 5.2 Using for loops
@@ -167,8 +167,8 @@ fn main():
 ```
 
 ## 5.4 Catching exceptions with try-except-finally
-?? better example
-?? better move to § 9.4
+!! better example
+!! better move to § 9.4
 
 If your code is expected to possibly raise an error (exception), either the enveloping function must be postfixed with `raises`, or you can enclose the code like this:  
 ```py
@@ -280,7 +280,7 @@ bar()
 
 For any value defined at the entrance of a with statement (like `file` here), Mojo will keep that value alive until the end of thestatement.
 
-?? In Mojo it is used to create a parallelization context (no longer the same code!), for example in mandelbrot_4.mojo:
+!! In Mojo it is used to create a parallelization context (no longer the same code!), for example in mandelbrot_4.mojo:
 ```py
 from runtime.llcl import num_cores, Runtime
 

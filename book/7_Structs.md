@@ -17,6 +17,7 @@ All the data types in Mojo's standard library (such as Int, Bool, String, and Tu
 By using a 'struct' (instead of 'class'), the attributes (fields) will be tightly packed into memory, such that they can even be used in data structures without chasing pointers around.
 
 Struct methods are functions, whose first argument is `self` by default.
+A struct field can also be an alias (!! example).
 
 ## 7.1 First example
 The following example demonstrates a struct MyInteger with one field called value. In line 2 an instance of the struct called myInt is made. This calls the constructor __init__ from line 1.
@@ -169,7 +170,7 @@ Although we haven't discussed parameters yet (they're different from function ar
 For other examples, which show method and function overloading in the same program, see `employee.mojo` and `overloading2.mojo`.
 
 ### 7.4.2 Overloaded operators
-(?? First make an exercise/example for Rectangle with the area and perimeter methods, then overloading_operators with only __add__).
+(!! First make an exercise/example for Rectangle with the area and perimeter methods, then overloading_operators with only __add__).
 
 In the following code snippet, we define a method __add__ in our struct Rectangle (line 1). Then we can use + as in line 2, adding two rectangles, and this will automatically call the __add__ method. Line 3 shows that both calls have the same result.
 
@@ -219,7 +220,7 @@ fn main():
     # => Rectangle created with length: 15.0 and width: 17.0
 ```
 
-(?? Show error on + when __add__ is not defined)
+(!! Show error on + when __add__ is not defined)
 
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
@@ -229,7 +230,7 @@ Developers in Mojo have precise control over the lifetime behavior of defined ty
 * Copying is controlled with __copyinit__ ("deep copy"), 
 * Move operations are handled through __moveinit__ .
 
-Mojo uses *value semantics* by default, meaning that in a statement like `var b = a` we expect to create a copy of `a` when assigning to `b` (image ??). However, Mojo doesn't make any assumptions about *how* to copy the value of a. 
+Mojo uses *value semantics* by default, meaning that in a statement like `var b = a` we expect to create a copy of `a` when assigning to `b` (image !!). However, Mojo doesn't make any assumptions about *how* to copy the value of a. 
 
 Many basic types either don't need a  __copyinit__ method (like Int), or have it implemented in the standard library (like String).
 
@@ -239,8 +240,8 @@ The error indicates that Mojo doesn't know how to copy a Rectangle struct, and t
 When a struct has no __copyinit__ method, an instance of that struct cannot be copied.
 In the following example a struct HeapArray is defined in line 1. If we try to copy it to another variable b (line 2), we get an `error: value of type 'HeapArray' cannot be copied into its destination`.
 
-?? Use Rectangle example here to copy Rectangle, same error as __add__, --> needs __copyinit__
-?? example uses Pointer and should come later ( as esxc?)
+!! Use Rectangle example here to copy Rectangle, same error as __add__, --> needs __copyinit__
+!! example uses Pointer and should come later ( as esxc?)
 See `copy_init.mojo`:
 ```py
 from memory.unsafe import Pointer
@@ -306,7 +307,7 @@ fn main():
 When we comment out __copyinit__, we get the error:
 `'HeapArray' is not copyable because it has no '__copyinit__'`.
 
-?? Prove that it is a copy: change original var, copy is not changed, image
+!! Prove that it is a copy: change original var, copy is not changed, image
 
 Mojo also supports the `__moveinit__` method which allows both Rust-style moves (which frees a value when a lifetime ends) and C++-style moves (where the contents of a value is removed but the destructor still runs), and allows defining custom move logic.
 `var b = a^`, after the value is moved, a should no longer exist.
@@ -381,7 +382,7 @@ fn main():
     use_something_big(a, b)
 ```
 
-The Mojo compiler implements a *borrow checker* (similar to Rust) that prevents code from dynamically forming mutable references to a value when there are immutable references outstanding, and it prevents multiple mutable references to the same value (?? 2023 Sep 8: NOT yet implemented).
+The Mojo compiler implements a *borrow checker* (similar to Rust) that prevents code from dynamically forming mutable references to a value when there are immutable references outstanding, and it prevents multiple mutable references to the same value (!! 2023 Sep 8: NOT yet implemented).
 
 ## 7.7 Using inout with structs
 See also `counter.mojo`
@@ -426,7 +427,7 @@ Write a swap function that switches the values of variables x and y (see `swap.m
 
 ## 7.8 Transfer struct arguments with owned and ^
 (Better call this example:  UniqueNumber, it has nothing to do with pointers)
-In the following example, we mimic the behavior of unique pointers. It has a __moveinit__ function (see line 1), which moves the pointer (?? better wording).  
+In the following example, we mimic the behavior of unique pointers. It has a __moveinit__ function (see line 1), which moves the pointer (!! better wording).  
 In line 2 `take_ptr(p^)` the ownership of the `p` value is passed to another function take_ptr. Any subsequent use of p (as in line 3) gives the `error: use of uninitialized value 'p' - p is no longer valid here!`
 
 See `transfer_owner.mojo`:
@@ -510,7 +511,7 @@ But it could also have been:
 `var vec = List[String]()` 
 
 A List can be made for any type of items (type `AnyType`). The type is parametrized and indicated between the `[]`.
-(?? cannot find List in stdlib)
+(!! cannot find List in stdlib)
 
 Another example of a parametric struct is the SIMD struct (see § 4.4).  
 See also § 12.2.
@@ -631,7 +632,7 @@ but an error:
 ### 7.9.5 Programming compile-time logic
 You can also write imperative compile-time logic with control flow, even  compile-time recursion. The following example makes use the of the `@parameter if` feature, which is an if statement that runs at compile-time. It requires that its condition be a valid parameter expression, and ensures that only the live branch of the if statement is compiled into the program.
 
-See `ctime_logic.mojo`: ?? these functions already exist in Mojo!
+See `ctime_logic.mojo`: !! these functions already exist in Mojo!
 ```py
 fn slice[ty: DType, new_size: Int, size: Int](
         x: SIMD[ty, size], offset: Int) -> SIMD[ty, new_size]:

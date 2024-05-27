@@ -12,7 +12,7 @@
         code blocks can be nested: the nested block is indented as a whole (see also § 5.1). 
 
     use only spaces: convert all tabs to spaces if necessary 
-    (?? other noteworthy conventions)
+    (!! other noteworthy conventions)
 
 * Code file names are written usually in lowercase, separated by _ if needed, like *deviceinfo.mojo* or *simple_interop.mojo*. 
 Never use Python or Mojo or their keywords as a filename, this will confuse the Mojo compiler and result in an error. 
@@ -23,7 +23,20 @@ Never use space characters in a Mojo filename, several OS's don't like that!
 * For a list of keywords, see *keywords.txt*. Keywords normally cannot be used as identifiers. It is not recommended, but if it is really necessary, you can enclose a keyword in backticks `` to force its use as an identifier:
 See error.mojo in § 9.4 where keyword ref is used as a variable name:
 `var `ref` : StringRef = StringRef("hello")`
+This is useful in Python code that we want to migrate or use in Mojo. This code could contain Mojo keywords which may be valid Python identifiers, like `var`. Also a variable name containing a space or a special symbol can be enclosed in ``:
+see `backticks.mojo`:
+```py
+fn main():
+    var `var` : Int = 1
+    var `with space`: Int = 2
 
+    fn `with#symbol`() -> Int:
+        return 3
+
+    print(`var`)            # => 1
+    print(`with space`)     # => 2
+    print(`with#symbol`())  # => 3  
+```
 
 
 ## 3.2 Comments and Doc comments
@@ -349,9 +362,9 @@ For example: `mojo build hello_world.mojo`
 >Note: When developing, you probably don't want to bother with building an executable. You will only start to need this when you're going to deploy into a test or production environment. But also for benchmarking it is important to do this: an executable runs at higher performance than mojo (run) itself.
 
 Now an executable `hello_world` is build. This can be run with: `./hello_world` (on Linux/MacOS) or hello_world, producing the same output as above.
-?? Output is relatively big some 44Mb ?? issue 
+!! Output is relatively big some 44Mb !! issue 
 [BUG]: Mojo hello world binary size unreasonably large #599 
-(closed - open a new issue ??)
+(closed - open a new issue !!)
 
 >Note: A Mojo app can be compiled into a small, standalone, fast-launching binary, making it easy to deploy while taking advantage of available cores and acceleration. 
 
@@ -367,7 +380,7 @@ For example: you can execute a function during compile-time, which performs a he
 * *Run-time*: when the executable runs on your machine.
 Often data is not known at compile-time, but only at run-time, for example because it is read in or calculated at run-time. Such data is said to be *dynamically known*.
 
-Later (see ??) we'll see that code can also be run at compile-time, to do what is called *meta-programming*. This enables Mojo to do simulate some types of dynamic programming.
+Later (see !!) we'll see that code can also be run at compile-time, to do what is called *meta-programming*. This enables Mojo to do simulate some types of dynamic programming.
 
 ## 3.8 Variables, types and addresses
 ### 3.8.1 Using def and fn
@@ -422,8 +435,7 @@ Also in line 1, we see that the type of n is declared as `Int`, an integer. *Dec
 
 >Note: In a def function as well as in the REPL, you can declare untyped variables just by assigning them a value, and without using `var` (but you can also use var inside defs).
 
-All variables in Mojo are *mutable*: their value can be changed. If you want to define constant values, use *alias* (see § 4.4).
-
+All variables in Mojo are *mutable*: their value can be changed. 
 
 ### 3.8.2 Late initialization
 Variables can also get a value some time after they have been declared (so-called late initialization):
@@ -431,11 +443,12 @@ Variables can also get a value some time after they have been declared (so-calle
 See `late_initialization.mojo`:
 ```py
 fn main():
-    var discount_rate: Float64  # no initialization yet! 
-    var book_id: Int = 123      # typing and initialization
-    # Late initialization and pattern matching with if/else
+    var discount_rate: Float64  # 1 - no initialization yet! 
+    # print(discount_rate)      # 2 - error: use of uninitialized value 'discount_rate'
+    var book_id: Int = 123      # 3 - typing and initialization
+    # 4 - Late initialization and pattern matching with if/else
     if book_id == 123:
-        discount_rate = 0.2   # 20% discount for mystery books
+        discount_rate = 0.2  # 20% discount for mystery books
     else:
         discount_rate = 0.05  # 5% discount for other book categories
     print("Discount rate for Book with ID ", book_id, "is:", discount_rate)
@@ -445,6 +458,7 @@ fn main():
 If line 1 is commented out like this:  #  1 - var discount_rate: Float64  # no initialization yet! 
 you get the error: `error: use of unknown declaration 'discount_rate'`
 So every variable must be declared before it is used.
+Trying to use a variable before it is initialized gives an error, see line 2.
 
 See also as a more elaborate example: bookstore.mojo
 
@@ -464,7 +478,7 @@ fn main():
 ```
 
 Here we see how `main` calls another fn function `do_math`.
-A constant x of type Int (integer) is declared and initialized in line 1.  
+A variable x of type Int (integer) is declared and initialized in line 1.  
 Note the general format: `var varname: Type = value`
 In line 2, the type of variable `y` is not declared, but inferred by the compiler to be Int (we could do this also in line 1). Note that you cannot write: `var w` in line 4: the statement must contain either a type or an initializing value.
 Lines 5 shows late initialization, a feature that does not exist in Python.
@@ -515,7 +529,7 @@ These variables will be totally independent of each other. Shadowing prevents un
 In `def function_scopes()` the variables are NOT declared with var. The inner num variable in line 2 updates the value of the outer num variable, as you see in the last printed output. In this case, variables follow *function scoping* as in Python. 
 
 ### 3.8.4 Global variables
-?? doesn't work as of 2024-04-20:
+!! doesn't work as of 2024-04-20:
 https://github.com/modularml/mojo/issues/1573
 Mojo also supports *global variables*:  
 See `global_vars.mojo`:
@@ -528,7 +542,7 @@ fn main():
     print(str)  # => Hello from Mojo!
 ```
 
-?? 2024-04-20: Output is 
+!! 2024-04-20: Output is 
 0
 
 
@@ -537,7 +551,7 @@ The current design of Mojo does not support the use of global variables inside f
 Also alias is heavily used at the global level (see § 4.4).
 
 ### 3.8.5 Variable addresses
-(?? Include images for the pointers)
+(!! Include images for the pointers)
 Mojo variables are much more like C variables than like Python variables: a name in Mojo is attached to an object.
 
 See `variable_addresses.mojo`:
@@ -578,6 +592,47 @@ In Python, references are everywhere (the names are references, elements in a li
     p = Pointer.address_of(b) # => 140722059283024
     print_pointer(p)
 ```
+
+### 3.8.6 Constants
+All variables in Mojo are variable as the name tells us. Another way to say this is: variables are *mutable*, their value can change.
+> Note: In this sense, Mojo is not confusing meaning, as do many other programming languages, where variables can be immutable!
+
+If you want to define *constant* or *immutable* values in Mojo, use the *alias* keyword, as in the following example: 
+
+See `alias_constants.mojo`:
+```py
+alias MAX_ITERS = 200           # 1
+alias DAYS_PER_YEAR = 365.24
+alias PI = 3.141592653589793    
+alias TAU = 2 * PI
+
+    
+fn main():
+    alias debug_mode = True     # 2
+    alias width = 960
+    alias height = 960
+    # MAX_ITERS = 500            # 2B error: expression must be mutable in assignment
+    print(MAX_ITERS)            # 3A
+    for i in range(MAX_ITERS):  # 3B
+        print(i, " ", end="") # => 0  1  2  3  4  5  6  ... 198 199
+```
+
+Here we have for example a value MAX_ITERS, which perhaps originally was 100. If we had to change 100 to 200 (and perhaps later on again), we have to do it on two (or more) places. A better idea is to define that value as a constant MAX_ITERS in only one place with `alias MAX_ITERS` as in line 1, and use that name everywhere in place of the value. Then when the value changes, we only have to change the code in one line, avoiding perhaps forgetting to change the value in some place.
+
+All occurrences of the alias name get substituted with the value at compile-time, so it has some performance benefit. So line 3B is changed at compile-time to `for i in range(200):`. This is ideal to set parameter values of the problem at hand.
+
+Line 2B shows the error you get when trying to change the values of an alias.
+
+>Note: The use of the alias debug_mode is illustrated in § 11.3 @parameter.
+
+A value defined with `alias` is a compile-time constant: all instances of the alias in the code are replaced by its value at compile-time.
+
+A commonly known best practice is to give constant values a name in capital letters, like ACONSTANT. But this is not obligatory, as line 2 and following shows.
+All alias values are written in a section of the executable file.
+
+Summary:
+* alias defines a compile-time static value (a constant)
+* var defines a runtime variable
 
 ## 3.9  Typing in Mojo
 Mojo has so-called *progressive typing*: adding more types leads to better performance and error checking, the code becomes safer and more reliable.

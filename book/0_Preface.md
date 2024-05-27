@@ -15,9 +15,9 @@ We carefully want to avoid introducing a subject before all concepts needed to u
 
 To find a specific subject, you could start at the front page of the GitHub repo, which lists all Section links. But there is also a [Table of Contents](https://github.com/Ivo-Balbaert/The_Book_Of_Mojo/blob/master/book/Table_of_Contents.md) document, which lists all subsections, making it easier to find something in particular.  
 To find the most detail, use a "Find in Files" tool to search in the .md documents, like the find tool in Visual Studio Code. We also paid a lot of attention to cross-referencing (both forward an backward) in the text.  
-(??) Use the appendices to search for a specific keyword, syntax, error message or convention.
+(!!) Use the appendices to search for a specific keyword, syntax, error message or convention.
 
-(??) The material is divided into numbered sections **1_**, **2_**, and so on; **2B_** , **2C_** is the numbering for the more detailed info belonging to section 2. Each section has an accompanying folder _examples/N_  (where N was the section's number) with working code examples, and subfolders _exercises/N_, containing solutions to questions / exercises in the text. Code examples each contains a complete working program, showing only one discussed item each.
+(!!) The material is divided into numbered sections **1_**, **2_**, and so on; **2B_** , **2C_** is the numbering for the more detailed info belonging to section 2. Each section has an accompanying folder _examples/N_  (where N was the section's number) with working code examples, and subfolders _exercises/N_, containing solutions to questions / exercises in the text. Code examples each contains a complete working program, showing only one discussed item each.
 This results in a great number of smaller examples, but simplifies and enhances the learning experience.
 
 Within code listings, important code lines will be indicated with **# 1**, **# 2** and so on, after the code. These numbers are referred to in the text. Any output of a program will be shown in the text as well as in the snippet itself, after a **# =>** in the code line itself or on the following line if needed.

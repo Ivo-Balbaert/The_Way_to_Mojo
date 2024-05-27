@@ -18,12 +18,12 @@ We already encountered some examples of Pointer use, particularly in § 7 when d
 ## 12.1 - What is a pointer?
 A pointer to a variable contains the memory address of that variable, it _points to_ the variable. So it is a  reference to a memory location, which can be on the stack or on the heap (For a good discussion about these two types of memory, see [Stack vs Heap](https://hackr.io/blog/stack-vs-heap)). 
 In other words: a pointer stores an address to any type, allowing you to allocate, load and modify single instances or arrays of the type on the heap.
-(?? schema)
+(!! schema)
 In Mojo, a Pointer is defined as a parametric struct that contains an address of any *mlirtype*. UnsafePointer[element_type] type is defined in module memory.unsafe_pointer, and is implemented with an underlying 
 !kgen.pointer<element_type> type in MLIR.
 
 ## 12.2 - Defining and using pointers
-Better use UnsafePointer from memory.unsafe_pointer ??
+Better use UnsafePointer from memory.unsafe_pointer !!
 Coding with pointers is inherently unsafe, so you have to import the Pointer type and its methods as follows:  
 
 Simpler example, see `pointers0.mojo`:  
@@ -468,3 +468,8 @@ The function random_float64 returns a single random Float64 value within a speci
 The function random_si64 returns a single random Int64 value within a specified range e.g -10 to +10 (see line 5).
 The function random_ui64 returns a single random UInt64 value within a specified range e.g 0 to +10 (see line 6).
 
+Other variant:
+```py
+var data = DTypePointer[type].alloc(rows * cols)
+rand(data, rows * cols)
+```

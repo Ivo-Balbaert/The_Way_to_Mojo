@@ -1,6 +1,6 @@
 # 13 Traits
 
-?? Better explanation why traits are useful
+!! Better explanation why traits are useful
 
 A lot of structs in a project and among projects share the same characteristics (fields or methods). Characteristics that are common could be collected in a so-called `trait`, even without code. Structs could then be said to conform to this trait when they provide code (implement) for all of its characteristics.
 
@@ -9,11 +9,11 @@ Trait exist in many languages (Rust, and so on) and are sometimes called interfa
 ## 13.1 What are traits?
 " A trait is like a template of characteristics for a struct. If you want to create a struct with the characteristics defined in a trait, you must implement each characteristic (for example: each method). Each characteristic in a trait is a "requirement" for the struct, and when your struct implements each requirement, it's said to "conform" to the trait. "
 
-This makes it possible to write generic functions, which can take traits as arguments, so these functions accept all struct types that implement these traits! Traits also bring more structure to the type-hierarchy (??). With traits you can also write generic types (example ??).
+This makes it possible to write generic functions, which can take traits as arguments, so these functions accept all struct types that implement these traits! Traits also bring more structure to the type-hierarchy (!!). With traits you can also write generic types (example !!).
 
 >Note: Currently (May 2024) traits can contain only method signatures 
 
-See for example: (?? other example)
+See for example: (!! other example)
 `traits1.mojo`:
 ```py
 trait SomeTrait:

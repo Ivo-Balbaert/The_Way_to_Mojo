@@ -5,7 +5,7 @@ In § 14.2 we'll see how we import a local custom Mojo module.
 Mojo provides a packaging system that allows you to organize and compile code libraries into importable files.  
 Here we'll learn how to organize your code into modules and packages (which is a lot like Python), and shows you how to create a packaged binary with the `mojo package` command.
 
-If you want more examples on how to integrate Python modules, see § 8 ??.
+If you want more examples on how to integrate Python modules, see § 8 !!.
 
 
 ## 14.1 Importing standard-library modules 
@@ -153,7 +153,7 @@ Here also you can give the module another name, so you could write:
 Line 1                :  `import mymodule as mp`                
 and line 3 to:           `let mine = mp.MyPair(2, 4)`
 
->Note: This works when the module is in the same folder as use_module.mojo. Example other location??
+>Note: This works when the module is in the same folder as use_module.mojo. Example other location!!
 (Currently Sep 2023, you can't import .mojo files as modules if they reside in other directories.)
 
 ## 14.4 Importing a local Mojo package
