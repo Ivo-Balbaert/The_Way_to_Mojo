@@ -645,6 +645,8 @@ See `change_type.mojo`:
 fn main():
     var x = UInt8(1)          
     x = "will cause an error" # error
+
+    var int_value: Int = "42" # try it!
 ```
 
 Trying to change a variable's type as in the code above leads to a compiler error.:  

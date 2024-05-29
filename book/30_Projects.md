@@ -1,5 +1,57 @@
 # 30 – Projects
-## 30.1 - Implementing the prefix-sum algorithm   <--
+## 30.1 - Calculating PI
+Let's compare Python vs Mojo calculating PI 100 million iterations each.
+First we time a Python version:
+
+See `pi.py`:
+```py
+import timeit
+
+def calculate_pi(terms):
+    pi = 0
+    for i in range(terms):
+        term = ((-1) ** i) / (2 * i + 1)
+        pi += term
+    pi *= 4
+    return pi
+
+def main():
+    secs = timeit.timeit(lambda: calculate_pi(100000000), number = 1)
+    print("Python seconds: ", secs)
+
+if __name__ == "__main__":
+    main()
+
+# => Python seconds:  21.432497895002598
+```
+
+The Mojo version:
+
+See pi.mojo
+```py
+from time import now
+
+fn calculate_pi(terms: Int) -> Float64:
+    var pi: Float64 = 0
+    var temp: Float64 = 0
+    for i in range(terms):
+        temp = ((-1) ** i) / (2 * i + 1)
+        pi += temp
+    pi *= 4
+    return pi
+
+fn main():
+    var start = now()     # 2
+    print(calculate_pi(100000000))
+    var calc_time = now() - start
+    print("Mojo pi2 Calculates PI in ", calc_time/1e9, " seconds")
+
+# => 3.141592643589326
+# => Mojo pi2 Calculates PI in  1.1377551939999999  seconds
+```
+The only difference is that we used fn functions in the Mojo version, so all variables have to be declared with var, and given a type. Mojo runs 19.5 x faster than Python.
+
+## 30.3 - Implementing the prefix-sum algorithm   <--
 See https://mzaks.medium.com/faster-prefix-sum-computation-with-simd-and-mojo-39bdc25e49b3
 
 This algoritm is also known as `cumulative sum over a list` (cumsum in numpy): 
@@ -12,7 +64,7 @@ for i in range(1, len(lst)):
     lst[i] += lst[i-1]
 ``` 
 
-### 30.1.1 - Python version
+### 30.3.1 - Python version
 See `prefix_sum.py`:
 ```py
 from time import time_ns
@@ -30,7 +82,7 @@ print(f"Time spent per element: {(tok - tik) / len(list)} ns")
 
 In pure Python, averaged over 100 rounds (see prefix_sum_avg.py), the time spent per element is: *67.59 ns*
 
-### 30.1.2 - Using numpy cumsum over a Python list
+### 30.3.2 - Using numpy cumsum over a Python list
 See `prefix_sum2.py`:
 ```py
 from time import time_ns
@@ -46,7 +98,7 @@ print(f"Time spent per element: {(tok - tik) / len(list)} ns")
 
 In numpy and averaged over 100 rounds (see prefix_sum2_avg.py), the time spent per element is:  *1.68 ns*, which is 40.2 times faster than pure Python.
 
-### 30.1.3 - Mojo version
+### 30.3.3 - Mojo version
 Here is the code in Mojo, see `prefix_sum.mojo`:
 ```py
 from time import now
@@ -69,13 +121,13 @@ The time spent per element (averaged over 100 rounds) is :
 > Note: A simple comparison with Rust (prefix_sum.rs) suggests Mojo is about **12x** faster than Rust, when running: rustc -O prefix_sum.rs
 
 
-## 30.2 - Calculating the Euclidean distance between two vectors
+## 30.4 - Calculating the Euclidean distance between two vectors
 (See [ref](https://www.modular.com/blog/an-easy-introduction-to-mojo-for-python-programmers))
 
 For the algorithm: see the article.
 We first write a pure Python implementation, a naive one, and then one using numpy. :
 
-### 30.2.1 - Python and Numpy version
+### 30.3.1 - Python and Numpy version
 See `euclid_distance.py`:
 ```py
 import time
@@ -128,7 +180,7 @@ print_formatter("python_numpy_dist time (ms):", 1000*secs)
 
 Run it as `python3 euclid_distance.py` to compare the performance between pure Python and numpy.
 
-### 30.2.2 - Simple Mojo version
+### 30.3.2 - Simple Mojo version
 The Tensor parametric type declaration has this format:  `Tensor[DType.float64](n)` 
 In Mojo *parameters* represent a compile-time value. In this example we're telling the compiler, Tensor is a container for 64-bit floating point values. And *arguments* in Mojo represent runtime values, in this case we're passing n=10_000_000 to Tensor's constructor to instantiate a 1-dimensional array of 10 million values.
 
@@ -198,7 +250,7 @@ mojo_fn_dist value: 1290.8755321242613
 mojo_fn_dist time (ms): 10.629162000000001
         <-- 33.3 x faster than naive Python implementation and 1.74 x faster than numpy
 
-### 30.2.3 - Accelerating Mojo code with vectorization
+### 30.3.3 - Accelerating Mojo code with vectorization
 Modern CPU cores have dedicated vector register that can perform calculations simultaneously on fixed length vector data. For example an Intel CPU with AVX 512 has 512-bit vector register, therefore we have `512/64=8` Float64 elements on which we can simultaneously perform calculations. This is referred to as `SIMD = Single Instruction Multiple Data`. The theoretical speed up is 8x but in practice it'll be lower due to memory reads/writes latency.
 
 Note: SIMD should not be confused with parallel processing with multiple cores/threads. Each core has dedicated SIMD vector units and we can take advantage of both SIMD and parallel processing to see massive speedup as you'll see in the next §.
@@ -263,9 +315,8 @@ fn main() raises:
 
 This is 55x faster than the Python version and 2.87 x faster than numpy
 
-XYZ
 
-## 30.3 - Matrix multiplication (matmul)
+## 30.4 - Matrix multiplication (matmul)
 See:
 * https://docs.modular.com/mojo/notebooks/Matmul.html
 * https://www.modular.com/blog/ais-compute-fragmentation-what-matrix-multiplication-teaches-us
@@ -274,7 +325,7 @@ See matmul.mojo (+ chec_mod.pi / pymatmul.py) for the most recent version!
 
 !! matmul1-7.mojo were NOT adapted to >= v 0.5.0 
 
-### 30.3.1 - Naive Python implementation
+### 30.4.1 - Naive Python implementation
 
 See `matmul.py`:
 ```py
@@ -344,13 +395,13 @@ Throughput of a 128x128 matrix multiplication in Python:
 0.005356575518265889 GFLOP/s
 ```
 
-### 30.3.2 - Importing the Python implementation to Mojo
+### 30.4.2 - Importing the Python implementation to Mojo
 (3 x speedup)
 
 STEPS:  
 1- Define the equivalent imports from the Mojo standard library
 2- Define the Matrix type: here defined in terms of object
-3- The algorithm code (`def matmul_untyped`) is exactly the same as in the Python implementation from § 30.3.1
+3- The algorithm code (`def matmul_untyped`) is exactly the same as in the Python implementation from § 30.4.1
 
 See `matmul1.mojo`:
 ```py
@@ -428,7 +479,7 @@ Running the program with `mojo matmul1.mojo` gives the output:
 0.016238353827774884 GFLOP/s, a 3.0314804248352698 x speedup over Python
 ```
 
-### 30.3.3 - Adding types to the implementation
+### 30.4.3 - Adding types to the implementation
 ( 1330 x speedup)
 
 The Matrix typing in our previous version was very 'untyped', using the very general 'object' (see §§) type to define it. By adding more precise type definitions and info, Mojo let's you gain a lot of performance. 
@@ -538,10 +589,10 @@ Mojo version 2:
 7.2225232674307751 GFLOP/s, a 1330.0927512098629 x speedup over Python
 ```
 
-### 30.3.4 - Vectorizing the inner most loop
+### 30.4.4 - Vectorizing the inner most loop
 Mojo has SIMD vector types to vectorize the `Matmul` code. In `fn matmul_vectorized` we use the SIMD store and load instructions.
 
-#### 30.3.4.1 - Vectorizing the inner most loop
+#### 30.4.4.1 - Vectorizing the inner most loop
 ( 8894 x speedup)
 
 STEPS:  
@@ -565,7 +616,7 @@ Running the program with `mojo matmul3.mojo` gives the output:
 48.292430693593872 GFLOP/s, a 8893.4863378713981 x speedup over Python
 ```
 
-#### 30.3.4.2 - Using the Mojo vectorize function
+#### 30.4.4.2 - Using the Mojo vectorize function
 Vectorization is a common optimization, and Mojo provides a higher-order function `vectorize` that performs vectorization for you. The vectorize function takes a function and a vector width,  which is parametric on the vector width and is going to be evaluated in a vectorized manner.
 ( 6409 x speedup)
 
@@ -591,7 +642,7 @@ Running the program with `mojo matmul4.mojo` gives the output:
 34.802488386333351 GFLOP/s, a 6409.1918866457427 x speedup over Python
 ```
 
-### 30.3.5 - Parallelizing Matmul
+### 30.4.5 - Parallelizing Matmul
 ( 20206 x speedup)
 
 To get the best performance from modern processors, one has to utilize the multiple cores they have.
@@ -619,7 +670,7 @@ fn matmul_parallelized(C: Matrix, A: Matrix, B: Matrix):
 Running this version gives:
 `109.72416682574026 GFLOP/s, a 20206.694187552872 x speedup over Python`
 
-### 30.3.6 - Tiling Matmul
+### 30.4.6 - Tiling Matmul
 Tiling is an optimization performed for matmul to increase cache locality. The idea is to keep sub-matrices resident in the cache and increase the reuse
 ( 18346 x speedup)
 
@@ -664,7 +715,7 @@ fn matmul_tiled_parallelized(C: Matrix, A: Matrix, B: Matrix):
 Running this version gives:
 `99.61793034345834 GFLOP/s, a 18345.539658953123 x speedup over Python`
 
-### 30.3.7 - Unrolling the loops introduced by vectorize of the dot function
+### 30.4.7 - Unrolling the loops introduced by vectorize of the dot function
 ( 20364 x speedup)
 We can do this via the vectorize_unroll higher-order function.
 
@@ -676,7 +727,7 @@ See `matmul7.mojo`.
 Running this version gives:
 `110.57583948683771 GFLOP/s, a 20363.537383619485 x speedup over Python`
 
-### 30.3.8 - Searching for the tile_factor
+### 30.4.8 - Searching for the tile_factor
 ( 21755 x speedup)
 The choice of the tile factor can greatly impact the performace of the full matmul, but the optimal tile factor is highly hardware-dependent, and is influenced by the cache configuration and other hard-to-model effects. We want to write portable code without having to know everything about the hardware, so we can ask Mojo to automatically select the best tile factor using autotuning.
 This will generate multiple candidates for the matmul function. To teach Mojo how to find the best tile factor, we provide an evaluator function Mojo can use to assess each candidate.
@@ -714,159 +765,6 @@ Unrolled:     119.602 GFLOPS  30371.08x Python  0.39x Numpy
 Accumulated:  258.524 GFLOPS  65648.32x Python  0.85x Numpy
 
 
-XYZ
-
-## 30.4 - Sudoku solver  (changed / removed from tests)
-For the Python version see `sudoku_solver.py`. This is the time it took:  
-`python seconds: 2.96649886877276e-06`.
-
-Here is the Mojo version:
-See `sudoku_solver.mojo`:
-```py
-from memory.unsafe import Pointer
-from memory.buffer import NDBuffer
-from utils.list import DimList
-from random import randint
-from utils.list import VariadicList
-from math import sqrt
-from math import FPUtils
-import benchmark
-
-alias board_size = 9 
-alias python_secs = 2.96649886877276e-06
-
-struct Board[grid_size: Int]:
-    var data: DTypePointer[DType.uint8]
-    var sub_size: Int
-    alias elements = grid_size**2
-
-    fn __init__(inout self, *values: Int) raises:
-       varargs_list = VariadicList(values)
-        if len(args_list) != self.elements:
-            raise Error(
-                "The amount of elements must be equal to the grid_size parameter"
-                " squared"
-            )
-
-       varsub_size = sqrt(Float64(grid_size))
-        if sub_size - sub_size.cast[DType.int64]().cast[DType.float64]() > 0:
-            raise Error(
-                "The square root of the grid grid_size must be a whole number 9 = 3,"
-                " 16 = 4"
-            )
-        self.sub_size = sub_size.cast[DType.int64]().to_int()
-
-        self.data = DTypePointer[DType.uint8].alloc(grid_size**2)
-        for i in range(len(args_list)):
-            self.data.simd_store[1](i, args_list[i])
-
-    fn __getitem__(self, row: Int, col: Int) -> UInt8:
-        return self.data.simd_load[1](row * grid_size + col)
-
-    fn __setitem__(self, row: Int, col: Int, data: UInt8):
-        self.data.simd_store[1](row * grid_size + col, data)
-
-    fn print_board(inout self):
-        for i in range(grid_size):
-            print(self.data.simd_load[grid_size](i * grid_size))
-
-    fn is_valid(self, row: Int, col: Int, num: Int) -> Bool:
-        # Check the given number in the row
-        for x in range(grid_size):
-            if self[row, x] == num:
-                return False
-
-        # Check the given number in the col
-        for x in range(grid_size):
-            if self[x, col] == num:
-                return False
-
-        # Check the given number in the box
-       varstart_row = row - row % self.sub_size
-       varstart_col = col - col % self.sub_size
-        for i in range(self.sub_size):
-            for j in range(self.sub_size):
-                if self[i + start_row, j + start_col] == num:
-                    return False
-        return True
-
-    fn solve(self) -> Bool:
-        for i in range(grid_size):
-            for j in range(grid_size):
-                if self[i, j] == 0:
-                    for num in range(1, 10):
-                        if self.is_valid(i, j, num):
-                            self[i, j] = num
-                            if self.solve():
-                                return True
-                            # If this number leads to no solution, then undo it
-                            self[i, j] = 0
-                    return False
-        return True
-
-fn bench(python_secs: Float64):
-    @parameter
-    fn init_board() raises -> Board[board_size]:
-        return Board[board_size](
-            5, 3, 0, 0, 7, 0, 0, 0, 0,
-            6, 0, 0, 1, 9, 5, 0, 0, 0,
-            0, 9, 8, 0, 0, 0, 0, 6, 0,
-            8, 0, 0, 0, 6, 0, 0, 0, 3,
-            4, 0, 0, 8, 0, 3, 0, 0, 1,
-            7, 0, 0, 0, 2, 0, 0, 0, 6,
-            0, 6, 0, 0, 0, 0, 2, 8, 0,
-            0, 0, 0, 4, 1, 9, 0, 0, 5,
-            0, 0, 0, 0, 8, 0, 0, 7, 9
-        )
-
-    fn solve():
-        try:
-           varboard = init_board()
-            _ = board.solve()
-        except:
-            pass
-
-   varmojo_secs = Benchmark().run[solve]() / 1e9
-    print("mojo seconds:", mojo_secs)
-    print("speedup:", python_secs / mojo_secs)
-
-fn main() raises:
-    # var board = Board[9](
-    # 5, 3, 0, 0, 7, 0, 0, 0, 0,
-    # 6, 0, 0, 1, 9, 5, 0, 0, 0,
-    # 0, 9, 8, 0, 0, 0, 0, 6, 0,
-    # 8, 0, 0, 0, 6, 0, 0, 0, 3,
-    # 4, 0, 0, 8, 0, 3, 0, 0, 1,
-    # 7, 0, 0, 0, 2, 0, 0, 0, 6,
-    # 0, 6, 0, 0, 0, 0, 2, 8, 0,
-    # 0, 0, 0, 4, 1, 9, 0, 0, 5,
-    # 0, 0, 0, 0, 8, 0, 0, 7, 9
-    # )
-
-    # print("Solved:", board.solve())
-    # board.print_board()
-
-# Solved: True
-# [5, 3, 4, 6, 7, 8, 9, 1, 2]
-# [6, 7, 2, 1, 9, 5, 3, 4, 8]
-# [1, 9, 8, 3, 4, 2, 5, 6, 7]
-# [8, 5, 9, 7, 6, 1, 4, 2, 3]
-# [4, 2, 6, 8, 5, 3, 7, 9, 1]
-# [7, 1, 3, 9, 2, 4, 8, 5, 6]
-# [9, 6, 1, 5, 3, 7, 2, 8, 4]
-# [2, 8, 7, 4, 1, 9, 6, 3, 5]
-# [3, 4, 5, 2, 8, 6, 1, 7, 9]
-
-    # Benchmarking:
-    bench(Float64(python_secs))
-
-# mojo seconds: 0.00026104600000000002
-# speedup: 0.011363893217183025
-```
-!! Mojo version is slower than Python, reasons ?
-mojo seconds: 0.000260318
-speedup: 0.011395673248767892
-
 ## 30.5 - Computing the Mandelbrot set
 Video:  https://www.youtube.com/watch?v=wFMB0VSH51M
         
@@ -897,7 +795,7 @@ def mandelbrot_kernel(c):
 ```
 (for the complete program: see `mandelbrot.py`)
 
-Although Python code, this works unaltered in Mojo! We will gradually port this code to Mojo.
+Although Python code, (!!) this works unaltered in Mojo! We will gradually port this code to Mojo.
 A NumPy implementation is only 5x faster than Python.
 
 ### 30.5.2 Adding types in the funtion signature
@@ -1007,8 +905,6 @@ fn main() raises:
 ```
 
 ### 30.5.6 - Vectorizing the code
-Applying SIMD on calculations in a loop is called *vectorization*. By vectorizing the loop, we can compute multiple pixels simultaneously. `vectorize` is a higher order generator.
-
 See `mandelbrot_3.mojo`:
 ```py
 from python import Python
@@ -1057,19 +953,19 @@ fn mandelbrot_kernel_SIMD[
 
 
 fn vectorized():
-   vart = Tensor[float_type](height, width)
+    var t = Tensor[float_type](height, width)
 
     @parameter
     fn worker(row: Int):
-       varscale_x = (max_x - min_x) / width
-       varscale_y = (max_y - min_y) / height
+        var scale_x = (max_x - min_x) / width
+        var scale_y = (max_y - min_y) / height
 
         @parameter
         fn compute_vector[simd_width: Int](col: Int):
             """Each time we oeprate on a `simd_width` vector of pixels."""
-           varcx = min_x + (col + iota[float_type, simd_width]()) * scale_x
-           varcy = min_y + row * scale_y
-           varc = ComplexSIMD[float_type, simd_width](cx, cy)
+            var cx = min_x + (col + iota[float_type, simd_width]()) * scale_x
+            var cy = min_y + row * scale_y
+            var c = ComplexSIMD[float_type, simd_width](cx, cy)
             t.data().simd_store[simd_width](
                 row * width + col, mandelbrot_kernel_SIMD[simd_width](c)
             )
@@ -1082,7 +978,7 @@ fn vectorized():
         for row in range(height):
             worker(row)
 
-   varvectorized = Benchmark().run[bench[simd_width]]() / 1e6
+    var vectorized = Benchmark().run[bench[simd_width]]() / 1e6
     print("Vectorized", ":", vectorized, "ms")
 
     try:
@@ -1140,117 +1036,14 @@ Blog article 3 introduces a *partition factor* to alleviate load imbalance among
 which adds a 2.3x speedup (see `mandelbrot_5.mojo`).
 On my system, this achieves a small speedup, to 1.5 ms.
 
-## 30.6 - Raytracing in Mojo
-(Based on the article: https://github.com/ssloy/tinyraytracer/wiki/Part-1:-understandable-raytracing).
-
-There is a notebook `RayTracing.ipynb` and a doc section: https://docs.modular.com/mojo/notebooks/RayTracing.html.
-
-The code is assembled in `ray_tracing.mojo`. <-- code doesn't work anymore, see removed from test>
-(Problem step 6/ background.png is een geldig bestandsformat - Paint
-background.png is ok 
-- v 0.4.0 - only black background?)
-
-## 30.8 - Calculating PI
-Benchmark is not so good: see last remark.
-Let's compare Python vs Mojo calculating PI 100 million itterations each.
-First we time a Python version:
-
-See `pi.py`:
-```py
-import timeit
-
-def calculate_pi(terms):
-    pi = 0
-    for i in range(terms):
-        term = ((-1) ** i) / (2 * i + 1)
-        pi += term
-    pi *= 4
-    return pi
-
-def main():
-    secs = timeit.timeit(lambda: calculate_pi(100000000), number = 1)
-    print("Python seconds: ", secs)
-
-if __name__ == "__main__":
-    main()
-
-# => Python seconds:  21.144927762001316
-```
-
-The Mojo version:
-
-See pi.mojo
-```py
-from time import now
-
-fn calculate_pi(terms: Int) -> Float64:
-    var pi: Float64 = 0
-    var temp: Float64 = 0
-    for i in range(terms):
-        temp = ((-1) ** i) / (2 * i + 1)
-        pi += temp
-    pi *= 4
-    return pi
-
-fn main():
-   varstart = now()     # 2
-    print(calculate_pi(100000000))
-   varcalc_time = now() - start
-    print("Mojo pi2 Calculates PI in ", calc_time/1e9, " seconds")
-
-# => 3.141592643589326
-# => Mojo pi2 Calculates PI in  1.160146935  seconds
-```
-The only difference is that we used fn functions in the Mojo version, so all variables have to be declared withvaror var, and given a type. Mojo runs 17.7 x faster than Python.
-
-
-## 30.9 - Timing a for loop
-In Python:
-See `forloop.py`:
-```py
-import time
-
-def call1():
-    x = 0
-    for i in range(100_000_000):
-        x += i
-    return x
-
-start_time1 = time.time()
-res1 = call1()
-end_time1 = time.time()
-print('duration in seconds:',end_time1 - start_time1)
-print(res1)
-
-# => duration in seconds: 1.8694157600402832
-# => 4999999950000000
-```
-
-Here is a Mojo version:
-See `forloop.mojo`:
-```py
-from time import now
-
-def call():
-   x = 0
-   for i in range(100_000_000):
-       x += i
-   return x
-
-def main():
-   varstart_time = now()
-   varres = call()
-   varend_time = now()
-    print('duration in seconds:',(end_time - start_time)/1e9)
-    print(res)
-
-# => duration in seconds: 2.4e-08
-# => 4999999950000000
-```
-
-The Mojo version is 100_000_000 x faster!
-
-In this code, we increment the same integer variable a hundred million times.  
-In Python, the interpreter handles the execution of the code. When the interpreter encounters the increment operation, it needs to load the value of x from memory into the stack by dereferencing a pointer, and then increment it. This process of indirection and stack manipulation can be slower compared to the efficient register operations in compiled code.
-In Mojo the CPU loads the variable from memory into a register and performs an addl instruction. Once the data is in the register, the cost of adding to it becomes negligible. 
-Probably the compiler can completely get rid of the loop and compute (n+1)*n/2 instead. In fact since you're using a constant number of iterations it can just compute the final value at compile time instead. You're really just measuring the overhead of printing and timing in Mojo.
+# => 2024 May 29
+ivo@megaverse:~/mojo/test$ python3 mandelbrot.py
+Throughput of mandelbrot in Python:
+11.483757219495601  secs
+1.14837572194956e-08 GFLOP/s
+1.14837572194956e-08
+ivo@megaverse:~/mojo/test$ mojo mandelbrot.mojo
+Number of threads: 12
+Vectorized: 0.013087794315217392 s
+Parallelized: 0.0027542937819025524 s
+Parallel speedup: 4.7517786233307637

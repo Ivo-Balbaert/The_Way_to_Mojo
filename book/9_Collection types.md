@@ -17,7 +17,7 @@ When you initialize the list the types can be inferred (as shown in line 1) or e
 See `listliteral.mojo`:
 ```py
 fn main():
-    var list = [1,2,3]                   # 1
+    var list = [1, 2, 3]                   # 1
     print(list) # => [1, 2, 3]
     var explicit_list: ListLiteral[Int, Int, Int] = [1, 2, 3]   # 2
     print(explicit_list) # => [1, 2, 3]
@@ -262,8 +262,8 @@ An Optional evaluates as True when it holds a value, False otherwise. If the Opt
 An alternative is the or_else() method, which returns the stored value if there is one, or a user-specified default value otherwise (see line 3).
 
 ## 9.5 Tuple 
-This is implemented in the built-in module `tuple`. 
-A tuple consists of zero or more, possibly heterogeneous values, separated by commas and enclosed in ().  
+A tuple is an unordered sequence of values, and the type exists in many programming languages, and also in Mojo! It is implemented in the built-in module `tuple`. 
+More specifically, a tuple consists of zero or more, possibly heterogeneous values, separated by commas and enclosed in ().  
 
 >Note: There is also a static_tuple module in package utils, which defines the tpe `StaticTuple`, which is a statically sized tuple type containing elements of the **same types**. It is imported with: `from utils import StaticTuple`.
 
@@ -290,6 +290,8 @@ fn main():
 fn return_tuple() -> (Int, Int):    # 5
     return (1, 2)
 ```
+
+> Try out: Can you guess what an empty tuple would look like? Print out its length.
 
 A tuple can contain struct instances, as shown in line 4. In line 5, we see a function that returns a tuple.
 

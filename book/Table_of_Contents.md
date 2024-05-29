@@ -273,3 +273,33 @@
 ## 25.1.1 Calling functions from the C standard library
 ### 25.1.1.1 Mojo calls C via external_call
 ### 25.1.1.2 Mojo calls C via a function pointer
+
+# 30 – Projects
+## 30.1 - Calculating PI
+## 30.2 - Implementing the prefix-sum algorithm   <--
+### 30.2.1 - Python version
+### 30.2.2 - Using numpy cumsum over a Python list
+### 30.2.3 - Mojo version
+## 30.3 - Calculating the Euclidean distance between two vectors
+### 30.3.1 - Python and Numpy version
+### 30.3.2 - Simple Mojo version
+### 30.3.3 - Accelerating Mojo code with vectorization
+## 30.4 - Matrix multiplication (matmul)
+### 30.4.1 - Naive Python implementation
+### 30.4.2 - Importing the Python implementation to Mojo
+### 30.4.3 - Adding types to the implementation
+### 30.4.4 - Vectorizing the inner most loop
+#### 30.4.4.1 - Vectorizing the inner most loop
+#### 30.4.4.2 - Using the Mojo vectorize function
+### 30.4.5 - Parallelizing Matmul
+### 30.4.6 - Tiling Matmul
+### 30.4.7 - Unrolling the loops introduced by vectorize of the dot function
+### 30.4.8 - Searching for the tile_factor
+## 30.5 - Computing the Mandelbrot set
+### 30.5.1 The pure Python algorithm
+### 30.5.2 Adding types in the function signature
+### 30.5.3 Changing to an fn function
+### 30.5.4 Simplifying the math to reduce computation
+### 30.5.5 Adding supporting code
+### 30.5.6 - Vectorizing the code
+### 30.5.7 - Parallelizing the code

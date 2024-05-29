@@ -1,8 +1,10 @@
 # 23 - Vectorization
-Vectorizating a program means rewriting a loop, so that instead of processing a single element of an array N times, it processes (say) 4 elements of the array simultaneously N/4 times.
+Applying SIMD on calculations in a loop is called *vectorization*. Vectorizating a program means rewriting a loop, so that instead of processing a single element of an array N times, it processes (say) 4 elements of the array simultaneously N/4 times.
+For example, when calculating an image: by vectorizing the loop, we can compute multiple pixels simultaneously. 
+`vectorize` is a higher order generator.
 Use this algorithm by importing: `from algorithm import vectorize`
 
-(See also § 30.2.3 Euclid distance/ )
+(See also § 30.2.3 Euclid distance, Mandelbrot, ...)
 
 The following examples demonstrate the use of vectorization.
 

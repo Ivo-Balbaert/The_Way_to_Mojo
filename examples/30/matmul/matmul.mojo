@@ -117,7 +117,7 @@ fn matmul_vectorized(inout C: Matrix, A: Matrix, B: Matrix):
             vectorize[dot, nelts](C.cols)
 
 
-# Parallelize the code by using the builtin parallelize function
+# Parallelize the code over the resulting rows by using the builtin parallelize function
 fn matmul_parallelized(inout C: Matrix, A: Matrix, B: Matrix):
     @parameter
     fn calc_row(m: Int):
@@ -324,20 +324,21 @@ fn main() raises:
     var numpy_gflops = run_matmul_numpy()
 
     bench[matmul_naive, "Naive:"](python_gflops, numpy_gflops)
+
     bench[matmul_vectorized, "Vectorized: "](python_gflops, numpy_gflops)
     bench[matmul_parallelized, "Parallelized:"](python_gflops, numpy_gflops)
     bench[matmul_tiled, "Tiled:"](python_gflops, numpy_gflops)
     bench[matmul_unroll, "Unrolled:"](python_gflops, numpy_gflops)
     bench[accumulate_registers, "Accumulated:"](python_gflops, numpy_gflops)
 
-# => 2023 Nov 7
+# => 2024 May 27
 # CPU Results
 
 # Python:         0.004 GFLOPS
-# Numpy:         89.977 GFLOPS
-# Naive:          7.056 GFLOPS   1731.29x Python  0.08x Numpy
-# Vectorized:    32.214 GFLOPS   7904.49x Python  0.36x Numpy
-# Parallelized: 114.647 GFLOPS  28131.32x Python  1.27x Numpy
-# Tiled:        132.892 GFLOPS  32608.30x Python  1.48x Numpy
-# Unrolled:     117.974 GFLOPS  28947.86x Python  1.31x Numpy
-# Accumulated:  352.863 GFLOPS  86583.45x Python  3.92x Numpy
+# Numpy:        303.271 GFLOPS
+# Naive:          6.957 GFLOPS   1766.74x Python  0.02x Numpy
+# Vectorized:    36.163 GFLOPS   9183.00x Python  0.12x Numpy
+# Parallelized: 131.059 GFLOPS  33280.52x Python  0.43x Numpy
+# Tiled:        115.317 GFLOPS  29283.09x Python  0.38x Numpy
+# Unrolled:     119.602 GFLOPS  30371.08x Python  0.39x Numpy
+# Accumulated:  258.524 GFLOPS  65648.32x Python  0.85x Numpy

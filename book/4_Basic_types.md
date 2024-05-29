@@ -50,7 +50,19 @@ var f : DType.float64    # error: expected a type, not a value
 var f : Float64          # ok
 ```
 
-DType has a lot of methods to test types, for example `is_uint8` checks whether the type is uint8. (example !!)
+DType has a lot of methods to test types, for example `is_uint8` checks whether the type is uint8. 
+In the following snippet, inspect is a generic function that inspects the type
+```py
+fn inspect(type: DType):
+        print("Is unit8::", type.is_uint8())
+        print("Is signed:", type.is_signed())
+    
+inspect(DType.float16) 
+```
+
+DType is specifically used in providing compile time optimization by creating specialized code for a particular type.
+
+
 
 A *scalar* just means a single value in Mojo. The scalar types include the Bool type (see § 4.2), as well as the numerical types, which are all based on SIMD (see § 4.4).
 The following code shows how to define a scalar with the `Scalar` type:
@@ -130,7 +142,7 @@ Now we discuss the different number types of numbers. Then in the next section (
 These are the numerical types:
 >Note: a 'literal' is a constant value.
 
-* IntLiteral: this is a static literal value with infinite precision.
+* IntLiteral: this is a static literal value with infinite precision; compile time calculations can be done with very high precision.
 * FloatLiteral: this is a floating point literal
 * Int  
 * Int8, Int16, Int32, Int64
@@ -146,7 +158,7 @@ The integer types are defined in modules `int` and `int_literal`.
 
 `Int` is the same size as the architecture of the computer, so on a 64 bit machine it's 64 bits wide. Internally it is defined as a struct.
 
-A small handy detail: _ can be used to separate thousands:  `10_000_000`
+A small handy detail: _ can be used to separate thousands in IntLiteral values:  `10_000_000`
 
 Equality is checked with ==, the inverse is !=
 The following normal operators exist: -, <, >, <=, >=, + (add), - (sub), *, / (returns a Float).
@@ -650,16 +662,20 @@ The string value is heap-allocated, but the String itself is actually a pointer 
     print(s[0])  # 4 => M
     print(ord(s[0]))  # => 77
     print(String("hello world")[0])  # => h
-    var s8 : String = 1 # implicit type conversion, uses constructor __init__(inout self, num: Int)
+    var s8 : String = 1 # 5 - implicit type conversion
 ```
 
 One way to make a String is to convert a StringLiteral value with `String(value)`, as in line 3. This works exactly the same as the `var s9: String = "Mojo🔥"` in the previous line.
-  
+
+Implicit conversion of an integer to a string works in Mojo (see line 5), because String has a constructor __init__(inout self, num: Int).
+
 Strings are 0-index based, and the i-th ASCII character can be read with `s[i]` (see line 4). The `ord` function gives the corresponding ASCII value of the character. You can work with Unicode characters by working with slices (see line 11).
 
 This works because a String is backed by a data structure known as `List[SIMD[si8, 1]]` or `List[Int8]`. This is similar to a Python list, here it's storing multiple int8's that represent the characters.  
 
 You can build a string starting from a List (see line 5 in the code below), and add some ASCII characters to it. In line 6, we convert the List to a String.
+
+
 
 ```py
     # building a string with a List:
@@ -856,6 +872,10 @@ In this example, EnumT is a struct that implements a simple enum using aliases f
 
 
 ## 4.7 The object type
+You can use variables without type-annotation in def functions, just like in Python. In that case, you're already using the `object` type under the hood!
+
+!! Give an example, and show the type is object
+
 `object` is defined in module `object` in the `builtin` package, so it is not a Python object.  
 It is used to represent *untyped values*. 
 * This is the type of arguments in def functions that do not have a type annotation, such as the type of x in `def f(x): pass`. A value of any type can be passed in as the x argument in that case. 
@@ -863,21 +883,31 @@ It is used to represent *untyped values*.
 
 The object type allows for dynamic typing because it can actually represent any type in the Mojo standard library, and the actual type is inferred at runtime. This makes it compatible with Python.  However the lack of type enforcement can lead to *runtime errors* when a function receives or returns an unexpected type.
 
-
-Here is an example of creating an object:
+Suppose you want to start coding with fn functions (gaining some of their benefits), but you do not yet know or do not care about the types of variables. In that case, use the object type explicitly
+Here is an example of creating and using objects:
 
 See `object1.mojo`:
 ```py
 fn print_object(o: object):
     print(o)
 
+fn add(a: object, b: object) raises -> object:  # 1
+        return a + b
+    
 fn main() raises:
     var obj = object("hello world")     # a string
     obj = object([])                    # change to a list
     obj.append(object(123))             # a list of objects
     obj.append(object("hello world"))
     print_object(obj)   # => [123, 'hello world']
+    print(obj) # => [123, 'hello world']
+
+    print(add(1, 2.5))  # 2 => 3.5
 ```
+
+Mojo did not complain about the type incompatibility of arguments because the object type has initializers for many builtin data types. What happens is that Mojo calls the appropriate initializer in object corresponding to the type of the given value. In the above case, object has initializers for both Int and FloatLiteral. In line 2, an object with Int and another object with FloatLiteral are instantiated, so that the add function can work. But be careful: runtime-errors can occur here, because there are no compile-time checks!
+
+> Try changing one of the number arguments to a string. Now change both arguments to strings. Can you explain the result?
 
 An object acts like a Python reference:
 
@@ -898,6 +928,9 @@ def main():
 ```
 
 This is pure Mojo code that does not use the Python interpreter. 
+
+
+
 
 `matmul1.mojo` in § 20. shows an example of the use of object.
 The following function shows how an object can be initialized and its attributes defined:

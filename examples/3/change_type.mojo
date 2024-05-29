@@ -6,3 +6,5 @@ fn main():
 #     x = "will cause an error" # error:
 #         ^~~~~~~~~~~~~~~~~~~~~
 # mojo: error: failed to parse the provided Mojo
+
+     var int_value: Int = "42" # try it!

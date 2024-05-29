@@ -47,6 +47,10 @@ If we absolutely need to mention something which has not been explained yet, we'
 Also for those of you who are beginning their programming journey, do speak out code internally when reading a program, explain to yourself all that happens in the code. 
 Later on this becomes more automatic, but in the beginning stages it is very helpful to not be overwhelmed by code.
 
+We want to engage the reader in coding, so the text is littered with 
+> Try out: 
+tasks and exercises so you get first-hand experience and get more confidence!
+
 The examples/ folders only contain the Mojo source files. In order to be able to run these examples together with their platforms, they must be run from within the correct folders, as described in the section's text. When the platform is specified as a downloadable package, this will be installed locally the first time the program is compiled, and it will be available globally on the machine.
 
 I want to express my sincere admiration to **Chris Lattner and his team** for creating this superb language. Welcome to the wonderful world of developing in Mojo!
