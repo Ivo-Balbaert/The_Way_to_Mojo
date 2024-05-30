@@ -1,3 +1,6 @@
+"""
+This module defines a complex number struct
+"""
 struct Complex:
     var re: Float32
     var im: Float32

@@ -211,8 +211,9 @@ System information:
     CPU Features:  avx2
 ```
 
-## 10.3 Module testing 
-We already discussed assert_equal in § 3.5. But this module implements various other testing utilities.  
+## 10.3 Testing 
+### 10.3.1 Module testing 
+We already discussed assert_equal in § 3.5. But this module implements various a whole set of testing utilities.
 
 See `testing1.mojo`:
 ```py
@@ -271,6 +272,36 @@ Both raise an Error when the assertion fails.
 Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)`, where val1 and val2 must be both of type Int, String or SIMD[type, size].
 `assert_almost_equal(val1, val2)` checks whether both values are approximately equal, within an absolute tolerance of atol.
 
+### 10.3.2 Test functions
+The test-utilities defined in the previous section are meant to be used in *test functions*. 
+* These must be of the def type, because they can raise an error. 
+* They take no arguments
+* Their name must be like `test_*`, where * is a description of the purpose of the test.
+
+Here is an example test function:  
+```py
+from testing import assert_equal
+
+
+def test_equality():
+    assert_equal(42, 42)
+```
+
+### 10.3.3 Test runner
+The Mojo CLI has a built-in *test runner* `mojo test` that can be used to test Mojo programs.
+*Test files* are any mojo files with `test` in the filename, such as test_users_controller.mojo or user_model_tests.mojo.
+The test runner recursively searches the `test` directory for any files . For example, given the following directory structure:
+```
+test/
+  test_users_controller.mojo
+  factories.mojo
+  models/
+    user_model_tests.mojo
+```
+
+Mojo will search for test_users_controller.mojo and user_model_tests.mojo for tests, but not factories.mojo. It then executes the test functions in these test files.
+
+!! Test out, concrete example
 
 ## 10.4 Other assert statements
 Both constrained and debug_assert are built-in.
@@ -516,4 +547,34 @@ The 3rd example demonstrates the maximum number of iterations (max_iters) here 5
 As the 1st parameter, you can also set up the number of warmup iterations (num_warmup).  
 As the 3rd parameter, you can also set up the minimum running time (min_time_ns).
 
+
 ## 10.7 Debugging in VSCode
+For more info see [Debugger](https://docs.modular.com/mojo/tools/debugging).
+
+A *fully featured LLDB debugger* and a *Mojo LLDB plugin* are included, which also supports debugging C, C++, and Objective-C. Press the down arrow next to the ▶️ button in the top right of a Mojo file, and select Debug Mojo File: !! Image with breakpoint. The default key is F5, and you can rebind the related hotkeys in Preferences: Open Keyboard Shortcuts > Debug: Start Debugging
+
+Use `mojo debug` to start a debugging session on the command-line using LLDB:
+
+```py
+ivo@megaverse:~/mojo/test$ mojo debug test.mojo
+Current executable set to '/home/ivo/.modular/pkg/packages.modular.com_mojo/bin/mojo' (x86_64).
+(lldb)
+```
+
+The `h` command displays all options.
+
+When debugging in VSCode itself, the *Debug Console* offers you an in-built LLDB command-line session. Anything prefixed with a colon (:) is treated as an LLDB command. Any other input is treated as an expression.
+
+!! 2024-05-30: in WSL (Ubuntu 22) on Windows 11
+Trying to get the value of a variable only gives:  
+`expression failed to parse (no further compiler diagnostics)`
+Reason: variables are optimized out.
+See: [Feature Request] Debugging Support for Mojo in VS Code and PyCharm #1829
+
+*Workaround:*  set a `breakpoint()` instruction in the code, variable values are displayed!
+
+*Workaround 2:* start debugging on the command-line like this:
+mojo build -O0 -debug-level=full test.mojo -o /tmp/bin
+mojo debug --rpc /tmp/bin
+Then a debugging session is started within VSCode.
+

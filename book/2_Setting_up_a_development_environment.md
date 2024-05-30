@@ -276,9 +276,10 @@ The *official plugin* for Mojo is called [modular-mojotools.vscode-mojo](https:/
 * Doc string code blocks, with code completions and diagnostics
 * Code formatting: command palette run Format Document or tick the setting Format on Save
 * Run Mojo File: push arrow top right, or right-click file
-* LLDB Debugger: F5
-A *fully featured LLDB debugger* is included. Press the down arrow next to the ▶️ button in the top right of a Mojo file, and select Debug Mojo File: !! Image with breakpoint. The default key is F5, and you can rebind the related hotkeys in Preferences: Open Keyboard Shortcuts > Debug: Start Debugging
 * When there is a problem: use the command palette, search for Mojo: Restart the extension
+* A *fully featured LLDB debugger* and a *Mojo LLDB plugin* are included (see § 10.7).
+
+> Note: If you prefer working with the command-palette, use CTRL+SHIFT+P to open it up. Type in Mojo and you'll see all available commands, then select the one you want to work with.
 
 ### 2.10.4 How to work with a Jupyter notebook in VS Code 
 Doesn't work !!

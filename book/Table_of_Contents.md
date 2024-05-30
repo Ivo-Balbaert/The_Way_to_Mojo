@@ -47,6 +47,7 @@
 ## 3.2 Comments and Doc comments
 ## 3.2.1 Normal comments with #
 ## 3.2.2 Doc comments with """
+## 3.2.3 The mojo doc tool
 ## 3.3 The main function
 ## 3.4 The print function
 ## 3.5 Using assert_equal
@@ -198,7 +199,10 @@
 # 10 Errors - Testing - Debugging - Benchmarking
 ## 10.1 The Error type
 ## 10.2 Querying the host target
-## 10.3 Module testing 
+## 10.3 Module testing
+### 10.3.1 Module testing 
+### 10.3.2 Test functions
+### 10.3.3 Test runner 
 ## 10.4 Other assert statements
 ### 10.4.1 constrained
 ### 10.4.2 debug_assert

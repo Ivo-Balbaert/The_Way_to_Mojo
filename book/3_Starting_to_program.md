@@ -40,17 +40,23 @@ fn main():
 
 
 ## 3.2 Comments and Doc comments
-Documenting your code is crucial for maintenance. This can be done in Mojo with *comments* or *docstrings*.
+Documenting your code is crucial for maintenance, especially for larger projects maintained by teams of developers.  
+At the current time, you can use *comments* and *docstrings*.
 
 ## 3.2.1 Normal comments with #
 As in Python, code comments start with the `#` symbol. This can be used for a single-line comment, at the start of the line or in the middle of a line. Subsequent uses of # at the start of lines form a multi-line comment.   
 
 ## 3.2.2 Doc comments with """
 Use `docstrings` if you need more structured comments (for example: API documentation) that can be gathered by the `mojo doc` tool.
-These are defined with the symbol `""" ... """`, and can be multi-line comments. They are mostly written after the header of a function, like here for the __init__ function:
+These are defined with the multi-line string literals (see § 4.5), and can be multi-line comments. For *function documentation* They are written after the header of a function before the function body, like here for the __init__ function:
+Docstrings can also be written as the first statement of the file, meant for *module documentation*.
+
 
 Here is a program with docstrings: (see § 7.4.1  overloading.mojo)
 ```py
+"""
+This module defines a complex number struct
+"""
 struct Complex:
     var re: Float32
     var im: Float32
@@ -75,7 +81,10 @@ fn main():
     print (c2.im)  # => 3.1400001049041748
 ```
 
-The command `mojo doc overloading.mojo` currently shows the following JSON output (it is planned to also generate HTML in the future):
+## 3.2.3 The mojo doc tool
+The command `mojo doc overloading.mojo` currently shows the following JSON output 
+The `mojo doc program.mojo` will be the basis for a full documentation (HTML) about a program/project, using the JSON file it generates now. The docstring appears in the summary field.
+
 
 ```
 {
@@ -222,7 +231,8 @@ The command `mojo doc overloading.mojo` currently shows the following JSON outpu
         "parentTraits": [
           "AnyType"
         ],
-        "summary": ""
+        "summary": "This module defines a complex number struct",
+        "traits": []
       }
     ],
     "summary": "",

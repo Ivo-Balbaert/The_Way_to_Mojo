@@ -581,7 +581,7 @@ The value can be delimited by "" or ''.
 
 String literals are all null-terminated for compatibility with C APIs (but this is subject to change). String literals store their length as an integer, and this does not include the null terminator.
 
-To define a multi-line string, enclose the literal in three single or double quotes (like docstrings, see § 3.2.2):
+To define a *multi-line string*, enclose the literal in three single or double quotes (like docstrings, see § 3.2.2):
 ```py
 var s = """
 Multi-line string literals let you 
