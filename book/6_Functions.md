@@ -126,6 +126,8 @@ fn main():
 x and y are called *positional-only arguments*. This means that when calling the function, the order in which values are passed matters: x gets the value 1 and y the value 2. 
 Change `var z = sum(1, 2)` to just `sum(1, 2)`. Now you don't use the return value of a function, so you get a  `warning: 'Int' value is unused`.
 You can print out the return value, or just discard the value with _ = sum(1, 2). `_ =` is called the *discard pattern*, and can be used for just that, to indicate that you receive the returned value, but that you don't want to use it.
+> Note: Assigning a value to the _ discard variable tells the compiler that this is the last use of that value, so it can be destroyed immediately.
+
 >Note: You can force Mojo to keep a value alive up to a certain point by assigning the value to the _ "discard" pattern at the point where it's okay to destroy it (see https://docs.modular.com/mojo/manual/lifecycle/death.html)
 
 If a function has no return value (example !!), you could write this as `-> None`. In normal cases you can leave this out. But if you need to write the function type (as in higher order functions), writing `-> None` is needed.
@@ -360,7 +362,7 @@ If a function accepts variadic arguments, any arguments defined after the variad
 There are three keywords to modify how arguments are passed to functions:
 
 borrowed : immutable reference, which is the default
-inout : mutable reference,
+inout : mutable reference, it means any changes to the value *in*side the function are also visible *out*side the function.
 owned : object given to the function, used with a deference operator ^ at the function call.
 
 ### 6.5.1 General rules for def and fn arguments
@@ -436,7 +438,7 @@ If however you want to give the function ownership of the value and do NOT want 
 >Note: to type a ^ on a NLD(Dutch) Belgian keyboard, tap 2x on the key right to the P-key.
 
 The transfer operator effectively destroys the local variable name - any attempt to call it later causes a compiler error.  
-The ^ operator ends the lifetime of a value binding and transfers the value ownership to something else.
+The ^ operator *ends the lifetime of a value binding* and transfers the value ownership to something else.
 
 If you change in the example above the call to set_fire() to look like this:
 
@@ -549,7 +551,9 @@ However, when you want to ensure type safety, Mojo also offers full support for 
 This allows you to define multiple functions with the same name but with different arguments. This is a common feature called *overloading*, as seen in many languages, such as C++, Java, and Swift. 
 fn functions must specify argument types, so if you want a function to work with different data types, you need to implement separate versions of the function that each specify different argument types. 
 
-Overloading a function occurs when two or more functions have the same name, but different argument (or parameter) lists; the result type doesn't matter.  
+Overloading a function occurs when two or more functions have the same name, but different argument (or parameter) lists, so a different signature. The result type doesn't matter.  
+
+!! example when two overloading functions have same signature
 
 *How does the compiler choose which of the overloaded function versions will be chosen?* 
 The Mojo compiler selects the version that most closely matches the argument types:  
@@ -575,6 +579,9 @@ fn main():
 
 Why does version #2 work, because "Hi" and "Suzy!" are of type StringLiteral, not String?
 It works because StringLiteral can be implicitly casted to String. String includes an overloaded version of its constructor (__init__()) that accepts a StringLiteral value. Thus, you can also pass a StringLiteral to a function that expects a String. This works in general when the given type can be implicitly casted to the required type. That's why lines 3 and 4 also work.
+
+!! What happens when two
+
 
 *How does resolving an overloaded function call works?*
 The Mojo compiler tries each candidate function and uses the one that works (if only one version works), or it picks the closest match (if it can determine a close match), or it reports that the call is ambiguous (if it can’t figure out which one to pick).

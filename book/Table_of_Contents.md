@@ -140,9 +140,11 @@
 
 # 7 Structs
 ## 7.1 First example
-## 7.3 A second example <-- 7.2>
+## 7.2 A second example
+## 7.3 Allowing implicit conversion with a constructor
 ## 7.4 Overloading of methods
 ### 7.4.1 Overloaded methods
+### 7.4.1.1 Overloading constructors
 ### 7.4.2 Overloaded operators
 ## 7.5 The __copyinit__ and __moveinit__ special methods
 ## 7.6 Using a large struct instance as function argument

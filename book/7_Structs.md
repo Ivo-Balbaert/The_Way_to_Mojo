@@ -8,7 +8,8 @@ Structs exist in all lower-level languages like C/C++ and Rust. You can build hi
 A struct in Mojo is similar to a class in Python: they both support methods, fields, operator overloading, decorators for metaprogramming, and so on. 
 Fields are variables that hold data relevant to the struct, and methods are functions inside a struct that generally act upon the field data.  
 To gain performance, structs are by default stored on the stack, and all fields are memory inlined.
-All the data types in Mojo's standard library (such as Int, Bool, String, and Tuple) are defined as structs.
+
+All data types in Mojo—including basic types in the standard library such as Bool, Int, and String, up to complex types such as SIMD, List, Tuple and object, are defined as a struct.
 
 >Note: At this time (Aug 2023), Mojo doesn't have the concept of "class", equivalent to that in Python; but it is on the roadmap.
 
@@ -37,7 +38,7 @@ fn main():
     print(myInt.value)              # => 42
 ```
 
-`Self` refers to the type of the struct that you're in, while `self` refers to the actual object
+`Self` refers to the type of the struct that you're in (the current type name), while `self` refers to the actual object
 The `self` argument denotes the current instance of the struct. It is similar to the `this` keyword used in some other languages.
 It is always the first argument, in __init__ prefixed by inout (because the current instance is about to change). When you make an instance, __init__ is automatically called, but you don't provide a value for self, as in line 2.
 
@@ -48,7 +49,7 @@ Use inout in a method when self is going to change.
 Inside its own methods, the struct's type can also be called `Self`.
 
 
-## 7.3 A second example
+## 7.2 A second example
 See `struct2.mojo`:  
 ```py
 struct IntPair:   
@@ -134,11 +135,53 @@ struct Planet:
 Declare a car with all attributes and print these out. Declare a Car with only a speed, and print out its model.
 (see *car.mojo*)
 
+## 7.3 Allowing implicit conversion with a constructor
+In § 4.5.2, we saw that a StringLiteral and an Int can be converted to String, because String has a constructor that takes a StringLiteral or an Int.  
+
+In general, the following holds:  
+See `implicit_conv.mojo`:
+```py
+struct Target:
+  fn __init__(inout self, s: Source): ...
+
+@value
+struct Source: pass
+
+fn main():
+    var a = Source()
+    var b: Target = a   # 1
+    var c = Target(a)   # 2
+```
+where lines 1 and 2 are equivalent.
+
+Here is a concrete example:
+See `implicit_constructor.mojo`:
+```py
+struct Person:
+    var name: String
+
+    fn __init__(inout self, name: StringLiteral):
+        self.name = name
+
+    fn get_name(self) -> String:
+        return self.name
+
+
+fn main():
+    var v: Person = "Sue Jenkins"   # 1
+    print(v.get_name())  # => Sue Jenkins
+```
+
+The implicit conversion takes place in line 1.
+
+
 ## 7.4 Overloading of methods
 We discussed overloading of functions in § 6.6. Because methods are just functions that live inside a struct, they can also be overloaded.
 
 ### 7.4.1 Overloaded methods
-In the next example a struct Complex is defined representing complex numbers, but it has two __init__ methods, one to define only the real part, and another to define both parts of a complex number: the __init__ constructor is overloaded.
+
+### 7.4.1.1 Overloading constructors
+There is a library type to work with complex numbers (see § 4.4B), but suppose we needed to define our own version of a struct Complex. The one shown below has three __init__ methods, a default constructor, one to define only the real part, and another to define both parts of a complex number: the __init__ constructor is said to be overloaded.
 
 See `overloading.mojo`:
 ```py
@@ -146,11 +189,19 @@ struct Complex:
     var re: Float32
     var im: Float32
 
-    fn __init__(inout self, x: Float32):
+    fn __init__(inout self):        # 1
+        self.re = 0.0
+        self.im = 0.0
+
+    fn __init__(inout self, x: Float32):   # 2
         """Construct a complex number given a real number."""
         self.re = x
         self.im = 0.0
 
+    # fn __init__(inout self, x: Float32):   # 3
+    #     self = Complex()            # 4
+    #     self.re = x
+    
     fn __init__(inout self, r: Float32, i: Float32):
         """Construct a complex number given its real and imaginary components."""
         self.re = r
@@ -165,6 +216,14 @@ fn main():
     print (c2.re)  # => 42.0
     print (c2.im)  # => 3.1400001049041748
 ```
+
+Line 1 defines a so-called *default-constructor*, setting all field values to defaults.
+An equivalent of the constructor in line 2 is the one in line 3, which calls the default constructor in line 4 to initialize fields.
+
+> Try out: The line 3 constructor is commented out. Remove the comments. Explain what you see.
+
+By the end of each constructor, all fields must be initialized.
+
 Although we haven't discussed parameters yet (they're different from function arguments), you can also overload functions and methods based on parameters.  
 
 For other examples, which show method and function overloading in the same program, see `employee.mojo` and `overloading2.mojo`.
@@ -227,7 +286,10 @@ fn main():
 Developers in Mojo have precise control over the lifetime behavior of defined types by choosing to implement or omit certain methods. 
 * Initialization (custom construction) is managed using __init__ , 
 * Freeing of memory is managed through custom destructors (using the existing __del__ special method), 
-* Copying is controlled with __copyinit__ ("deep copy"), 
+* Copying is controlled with __copyinit__ (which must perform a "deep copy", not a shallow copy)
+    *shallow copy*: copy a Pointer value, which makes the copied value refer to the same data memory address as the original value
+    *deep copy*: initialize a new Pointer to allocate a new block of memory, and then copy over all the heap-allocated values
+
 * Move operations are handled through __moveinit__ .
 
 Mojo uses *value semantics* by default, meaning that in a statement like `var b = a` we expect to create a copy of `a` when assigning to `b` (image !!). However, Mojo doesn't make any assumptions about *how* to copy the value of a. 
@@ -426,6 +488,10 @@ Write a swap function that switches the values of variables x and y (see `swap.m
 (show it in an image, with the addresses)
 
 ## 7.8 Transfer struct arguments with owned and ^
+Applied to the example of HeapArray:
+
+
+
 (Better call this example:  UniqueNumber, it has nothing to do with pointers)
 In the following example, we mimic the behavior of unique pointers. It has a __moveinit__ function (see line 1), which moves the pointer (!! better wording).  
 In line 2 `take_ptr(p^)` the ownership of the `p` value is passed to another function take_ptr. Any subsequent use of p (as in line 3) gives the `error: use of uninitialized value 'p' - p is no longer valid here!`

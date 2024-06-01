@@ -164,9 +164,9 @@ var x = (Coord(5, 10), 5.5)
 print(x.get[0, Coord]().x) # => 5
 ```
 
-The `@register_passable("trivial")` decorator is a variant of @register_passable for trivial types
+The `@register_passable("trivial")` decorator is a variant of @register_passable for trivial types: it means that the type should be copyable and movable but that it has no user-defined logic (no lifecycle methods) for doing this. It also tells Mojo to pass the value in CPU registers whenever possible, which has clear performance benefits.
 
->Note: mostly @register_passable are @value are used together.
+>Note: mostly @register_passable and @value are used together.
 
 For another example: see § 14.2
 

@@ -572,6 +572,13 @@ For a SIMD vector `a = SIMD[DType.float32, 2](1, 2)` and another vector with ele
 (See also Vectorization: § 20.5.6)
 
 
+## 4.4B Complex numbers
+The built-in defined module complex defines a type `ComplexSIMD` and methods to work with complex numbers.
+It has fields re and im and aliases:
+* ComplexFloat32 = ComplexSIMD[float32, 1]
+* ​ComplexFloat64 = ComplexSIMD[float64, 1]
+!! example
+
 ## 4.5 The String types
 Mojo has no equivalent of a char type for individual characters.
 
@@ -651,8 +658,8 @@ This could be useful if you need to pass the string data to a function that requ
 Use the `int()` method, see line 2.
 
 ### 4.5.2 The String type
-The `String` type represents a mutable string. The `string` module contains basic methods for working with strings. UTF-8 encoding is used to store strings. The length len corresponds to the number of bytes, not number of characters.
-The string value is heap-allocated, but the String itself is actually a pointer to the heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture !!)
+The `String` type represents a *mutable* string. The `string` module contains basic methods for working with strings. UTF-8 encoding is used to store strings. The length len corresponds to the number of bytes, not number of characters.
+The string value is heap-allocated, but the String contains a List field, which is actually a pointer to the heap allocated data. This means we can load a huge amount of data into it, and change the size of the data dynamically during runtime. (Picture !!)
 
 ```py
     # String:
@@ -665,7 +672,7 @@ The string value is heap-allocated, but the String itself is actually a pointer 
     var s8 : String = 1 # 5 - implicit type conversion
 ```
 
-One way to make a String is to convert a StringLiteral value with `String(value)`, as in line 3. This works exactly the same as the `var s9: String = "Mojo🔥"` in the previous line.
+One way to make a String is to convert a StringLiteral value with `String(value)`, as in line 3. This works exactly the same as the `var s9: String = "Mojo🔥"` in the previous line. Both work because String has a constructor __init__(inout self, strlit: StringLiteral).
 
 Implicit conversion of an integer to a string works in Mojo (see line 5), because String has a constructor __init__(inout self, num: Int).
 

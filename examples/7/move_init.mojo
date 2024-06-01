@@ -23,6 +23,15 @@ struct HeapArray:                   # 1
         self.data = Pointer[Int].alloc(self.cap)
         for i in range(self.size):
             self.data.store(i, rhs.data.load(i))
+
+    fn __moveinit__(inout self, owned existing: Self):
+        print("move")
+        # Shallow copy the existing value
+        self.cap = existing.cap
+        self.size = existing.size
+        self.data = existing.data
+        # Then the lifetime of `existing` ends here, but
+        # Mojo does NOT call its destructor
             
     fn __del__(owned self):
         self.data.free()
@@ -46,6 +55,8 @@ struct HeapArray:                   # 1
 fn main():
     var a = HeapArray(3, 1)
     a.dump()   # => [1, 1, 1]
+
+    # Copy:
     var b = a
     b.dump()   # => [1, 1, 1]
     a.dump()   # => [1, 1, 1]
@@ -53,4 +64,9 @@ fn main():
     b.append(2)  # Changes the copied data
     b.dump()     # => [1, 1, 1, 2]
     a.dump()     # => [1, 1, 1] (the original did not change)
+
+    # Move:
+    var c = a^  # => "move"; the lifetime of `a` ends here
+    c.dump()    # => [1, 1, 1]
+    # a.dump()  # error: use of uninitialized value 'a'
 

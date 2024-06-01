@@ -6,5 +6,7 @@ A gradual guide to discover and learn the Mojo programming language.
 At the moment, these are mostly notes from all Mojo material (website, GitHub, videos, articles, social media, examples) I am working through.
 They will gradually be transformed into a real book, following the progress of Mojo.
 
+All examples are complete and tested: they compile and work in Mojo version *mojo 24.3.0* (9882e19d).
+
 **Table of Contents**  
 [Detailed TOC](https://github.com/Ivo-Balbaert/The_Book_Of_Mojo/blob/master/Table_of_Contents.md)

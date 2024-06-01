@@ -131,8 +131,9 @@ As a kind of *Python++*, Mojo could serve the whole software industry.
 
 ## 1.4 Languages that influenced Mojo
 Mojo belongs to the Python dynamic languages family (Python, CPython, Numpy, PyPy, and so on).  
-It is a direct descendant of Python, but extends its use greatly. Mojo picks up where Python stops, helping in use cases that are out of Python's scope, mostly high-performance applications.  
-It also builds on Rust, Swift and Julia, for which it certainly is seen as a competitor.    
+It is a direct descendant of Python, but extends its use greatly. Mojo picks up where Python stops, helping in use cases that are out of Python's scope, mostly high-performance applications.
+Moji is also meant for low-level systemsprogramming, and as such is influed by C, C++, Rust, Swift and Zig.
+It also builds on Julia, for which it certainly is seen as a competitor.    
 
 **Interop with other languages and migration strategy**  
 Mojo code can be mixed with Python. It can also call all Python libraries from its vast ecosystem, which are executed through the CPython interpreter, which talks to Mojo. This gives you a way to incrementally transition a legacy code base from Python to Mojo, making migration of Python easy. When Mojo becomes a superset of Python, all you have to do is to change the file extension from .py to .🔥(or .mojo), and you are running your code in Mojo!
@@ -149,8 +150,13 @@ Here are the killer features of Mojo:
 0- progressive/static typing: Leverage types for better performance and error checking.
 1- fast compilation  
 2- fast execution (runtime performance): ZERO COST ABSTRACTIONS: Take control of storage by inline-allocating values into structures. Mojo includes a *high-performance concurrent runtime*. 
-3- automatic memory management:  OWNERSHIP + BORROW CHECKER: Take advantage of memory safety without the rough edges.
->Note: if really needed, you could do manual memory management in Mojo. It provides a manual management system using pointers similar to C++ and Rust.
+3- automatic memory management:  OWNERSHIP model + BORROW CHECKER: Take advantage of memory safety without the rough edges.
+Mojo has no reference counter and no garbage collector.
+
+>Note: Mojo is also designed for systems programming, so you can do manual memory management in Mojo:
+* It provides a manual management system using pointers similar to C++ and Rust.
+* For custom data types, you can define specific methods such as the constructor, copy constructor, move constructor, and destructor (names!!). These methods integrate into the value's lifecycle, so that automatic memory management is guaranteed. 
+
 4- seamless use of Python code (a superset of Python)  
 5- adaptability to custom hardware through MLIR: 
     PORTABLE PARAMETRIC ALGORITHMS: Leverage compile-time meta-programming to write hardware-agnostic algorithms and reduce boilerplate. 

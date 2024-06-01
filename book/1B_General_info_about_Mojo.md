@@ -135,3 +135,4 @@ The company *Modular* is funded by VC (Venture Capital).
 * The best of multiple worlds: the ease of use and clear syntax of Python, with the speed and memory safety of Rust.
 * Mojo may become the lingua franca of the programming world.
 * Mojo is SIMD first (see § 4.4)
+* A Python you can trust
