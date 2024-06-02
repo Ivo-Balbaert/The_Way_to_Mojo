@@ -1,6 +1,6 @@
 50 - Afterword
 
-Contribution instructions:
+Contributing instructions:
 [Contribution](https://www.modular.com/blog/how-to-contribute-to-mojo-standard-library-a-step-by-step-guide)
 
 Markdown for a Mojo badge::

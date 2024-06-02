@@ -227,11 +227,20 @@
 
 # 13 Traits
 ## 13.1 What are traits?
-## 13.2 Common traits
-### 13.2.1 Stringable
-### 13.2.2 Boolable
-### 13.2.3 CollectionElement
-### 13.2.4 KeyElement
+## 13.2 Trait inheritance
+## 13.3 Built-in traits
+### 13.3.1 AnyType
+### 13.3.2 Boolable
+### 13.3.3 CollectionElement
+### 13.3.4 Copyable
+### 13.3.5 EqualityComparable
+### 13.3.6 Hashable
+### 13.3.7 Intable
+### 13.3.8 KeyElement
+### 13.3.9 Movable
+### 13.3.10 PathLike
+### 13.3.11 Sized
+### 13.3.12 Stringable
 
 # 14 Modules and packages
 ## 14.1 Importing standard-library modules 
