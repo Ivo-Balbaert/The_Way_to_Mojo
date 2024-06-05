@@ -661,7 +661,8 @@ fn main():
 ```
 
 The function squared can be used both during compile-time and runtime. The alias in line 1 takes care that the calculation is done at compile-time. It returns a pointer with pre-calculated values during compilation and makes it usable at runtime. 
-If we comment this line and uncomment line 2, precalculated is computed at runtime.
+If we comment this line and uncomment line 2, precalculated is computed at runtime. The result is stored as an alias constant (here MY_VALUE) in the executable file. This means that when the program is run, it just takes the alias constant, saving valuable CPU-time during the execution.
+
 The same reasoning applies for line 1B.
 In line 1C, we use an alias in order to use the ord function efficiently (it doesn't have to run at run-time anymore).  
 

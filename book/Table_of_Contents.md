@@ -105,7 +105,7 @@
 ## 5.2 Using for loops
 ## 5.3 Using while loops
 ## 5.4 Catching exceptions with try-except-finally
-## 5.5 The with statement
+## 5.5 with for context management
 ## 5.6 Exiting from a program
 
 # 6 Functions
@@ -187,6 +187,7 @@
 ### 9.1.4 List
 ### 9.1.5 Implementing a list-like behavior with PythonObject
 ### 9.1.6  Sorting a List
+### 9.1.7  Implementing __contains__ in a list-type struct field
 ## 9.2 Dict
 ## 9.3 Set
 ## 9.4 Optional
@@ -199,7 +200,9 @@
 ## 9.11 The Tensor type from module tensor
 
 # 10 Errors - Testing - Debugging - Benchmarking
-## 10.1 The Error type
+## 10.1 Raising and handling errors
+### 10.1.1 The Error type
+### 10.1.2 Raising and handling an error - Error propagation
 ## 10.2 Querying the host target
 ## 10.3 Module testing
 ### 10.3.1 Module testing 

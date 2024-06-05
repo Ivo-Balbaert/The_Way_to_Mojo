@@ -15,12 +15,13 @@ Mojo uses a third approach called *ownership* (as in Rust) that relies on a coll
 
 # 26.2 Value semantics and reference semantics.
 
-In *value semantics* the value of a variable is *copied* when the variable is assigned to another variable or passed as an argument to a function. That's why it's also called "pass by value". 
+In *value semantics* the value of a variable is *copied* when the variable is assigned to another variable or passed as an argument to a function. That's why it's also called "pass by value". The function that receives the copy cannot change the original value.
 Each variable maintains unique ownership of its value.
 
 !! examples like in https://docs.modular.com/mojo/manual/values/value-semantics
 
-In *reference semantics* a reference (or pointer) is *copied* when the variable is passed as an argument to a function. That's why it's called "pass by reference". 
+In *reference semantics* a reference (or pointer), which is the location where the value is stored, is *copied* when the variable is passed as an argument to a function. That's why it's called "pass by reference". 
+The function that receives the reference has access to and can change the original value. These changes when unexpected can lead to bugs in the program. In many programming languages that support pass by reference, it is a common source of bugs. So how can we indicate to the caller of a function that the function intends to only read the value or that it intends to change it? Mojo provides a solution by annotating the function arguments with a set of keywords that shows the intent, see § 26.3
 
 !! examples 
 
@@ -34,8 +35,8 @@ In Mojo, the default rules for passing arguments to a function follow *value sem
 * `fn` functions instead receive *arguments as immutable references*, by default (borrowed). This is a memory optimization to avoid making unnecessary copies.
 This behavior is predictable and safe: called functions cannot change anything in the calling functions.
 
-But *reference semantics*, which also means mutable references must be allowed, for performance memory-efficiency reasons. 
-The rules to ensure that are: 
+*reference semantics*, which also means mutable references must be allowed, is mainly used for performance (memory-efficiency) reasons. 
+The rules to ensure safe behavior are: 
 1- every value has only one (exclusive) owner at any time - this is ensured by the "borrow checker", which is a process in the Mojo compiler;
     also it checks that the following conditions are satisfied:
     - multiple mutable references (inout) for the same value are forbidden
@@ -48,7 +49,7 @@ The rules to ensure that are:
 In Mojo, three conventions are used when passing arguments to an fn function:
 * `borrowed`: The function receives an *immutable reference*. This means the function can read the original value (it is not a copy), but it cannot mutate (modify) it.
 * `inout`: The function receives a *mutable reference*. This means the function can read and mutate the original value (it is not a copy).
-* `owned`: The function takes ownership. This means the *function has exclusive mutable access* to the argument. The function caller does not have access to this value anymore. Often, this also implies that the caller should transfer ownership to this function.
+* `owned`: The function takes ownership. This means the *function has exclusive mutable access* to the argument. The function caller does not have access to this value anymore. Often, this also implies that the caller should transfer ownership (^) to this function.
 
 # 26.4 Lifecycle of a value
 The "lifetime" of a value is defined by the span of time during program execution in which each value is considered valid. The life of a value begins when it is initialized and ends when it is destroyed (immediately after last-use), which generally spans from __init__() to __del__().
@@ -80,4 +81,6 @@ A struct without a constructor cannot have instances, so it doesn't have a life-
 # 4:
     A destructor to destroy an object is not required. As long as all fields in the struct are destructible (every type in the standard library is destructible, except for pointers), then Mojo knows how to destroy the type when its lifetime ends. For a struct with pointers, don't forget a __del__ method to free their memory!
     __del__() can't be called explicitly.
+    An effective way to immediately destruct a value is:  `_ = val^` 
+    where _ is the discard pattern. After this, val is uninitialized.
 

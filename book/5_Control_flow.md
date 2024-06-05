@@ -190,20 +190,22 @@ break can be used to jump out of a loop.
 continue can be used to stop the current loop iteration and continue with the next iteration.
 
 ## 5.4 Catching exceptions with try-except-finally
-!! better example
-!! better move to § 9.4
+!! better move to § 9.4 or § 10.1
 
-If your code is expected to possibly raise an error (exception), either the enveloping function must be postfixed with `raises`, or you can enclose the code like this:  
+If your code is expected to possibly raise an error (exception), either the enveloping function must be postfixed with `raises` (like fn main() raises:), or you can enclose the code like this:  
 ```py
     try:
         # possible dangerous code
     except:
         # what to do when an exception occurs
+    else:
+        # optional: executes when no errors were raised
     finally:
-        # optional: what to do in ant case, such as clean up resources.
+        # optional: what to do in any case (error or not), such as clean up resources.
 ```
 
 For a concrete example, see `try_except.mojo` in § 6.2 
+For further discussion: see § 10.1
 
 Enhanced example: see `try_except2.mojo`:
 ```py
@@ -272,19 +274,20 @@ fn main() raises:
 def() functions can call raising functions and can raise by default
 fn() raises is necessary in order to raise
 fn() cannot call functions that might raise, for example: a def function that raises by default
+
 **Try:**
 Inside the try block, we can call functions that could raise and error. It is also possible to Raise an error.
-If an error is thrown, the execution continue at the beginning of the except: block just below
+If an error is thrown, the execution continues at the beginning of the except: block just below
 **Except e:**
+
 Here it is possible to inspect the error e, based on that, we can fix it.
 If fixed, the the execution continues on the first line after the except block.
 If it is not possible to fix it, it is possible to Raise an error: either the same or another.
 The error will be transferred to the next Except: block. 
 
+## 5.5 with for context management
+Like in Python, the with statement is used to create a context. Whatever statements we execute inside that context does not affect the outer environment. The with statement simplifies exception handling by encapsulating common preparation and cleanup tasks, such as closing a file or database connection. 
 
-
-## 5.5 The with statement
-In Python the with statement is used to create a context. Whatever statements we execute inside that context does not affect the outer environment. The with statement simplifies exception handling by encapsulating common preparation and cleanup tasks. 
 It is commonly used as `with open(file)` to read a file and close it automatically at the end of the context (see § 10.12).  
 
 For example:
@@ -301,19 +304,68 @@ with open("my_file.txt", "r") as file:
 bar()
 ```
 
-For any value defined at the entrance of a with statement (like `file` here), Mojo will keep that value alive until the end of thestatement.
+For any value defined at the entrance of a with statement (like `file` here), Mojo will keep that value alive until the end of the with block.
 
-!! In Mojo it is used to create a parallelization context (no longer the same code!), for example in mandelbrot_4.mojo:
+The with-context comes with an __enter__ and __exit__ method, which can be used if necessary, see `with_context.mojo`:
 ```py
-from runtime.llcl import num_cores, Runtime
+struct Resource:
+    var name: String
 
-with Runtime() as rt:
+    fn __init__(inout self, name: String):
+        self.name = name
 
-        @parameter
-        fn bench_parallel[simd_width: Int]():
-            parallelize[worker](rt, height, height)
+    fn open(self):
+        print("Opened")
 
-       varparallelized_ms = Benchmark().run[bench_parallel[simd_width]]() / 1e6
+    fn close(self):
+        print("Close")
+
+    fn __copyinit__(inout self, other: Resource):
+        self.name = other.name
+
+
+struct MyResourceManager:
+    var resource: Resource
+
+    fn __init__(inout self):
+        self.resource = Resource("a_resource")
+
+    fn __enter__(self) -> Resource:
+        print("Entered context")
+        self.resource.open()
+        return self.resource
+
+    fn __exit__(self):
+        self.resource.close()
+        print("Exited context")
+
+    fn __exit__(self, err: Error) -> Bool:
+        self.resource.close()
+        print("Exited context")
+        return False
+
+
+fn main() raises:
+    with MyResourceManager() as res:
+        print("Inside context, resource is:", res.name)
+        # raise Error("An error while processing")
+
+
+# => when # raise Error:
+# Entered context
+# Opened
+# Inside context, resource is: a_resource
+# Close
+# Exited context
+
+# => when raise Error:
+# Entered context
+# Opened
+# Inside context, resource is: a_resource
+# Close
+# Exited context
+# Unhandled exception caught during execution: An error while processing
+# mojo: error: execution exited with a non-zero result: 1
 ```
 
 

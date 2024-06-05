@@ -87,8 +87,9 @@ Methods that take the implicit self argument are called *instance methods* becau
 
 **Dunder methods**
 These structs have so-called *dunder* (short for double underscore) methods, like the
- `__add__` method. 
+ `__add__` method. These methods are treated specially by Mojo compiler.
  Often an equivalent infix or prefix operator can act as 'syntax sugar' for calling such a method. For example: the `__add__` is called with the operator `+`, so you can use the operator in code,which is much more convenient.
+  Implementing an operator is as simple as implementing as the corresponding dunder function.
  
 You can think of dunder methods as interface methods to change the runtime behaviour of types, for example: by implementing `__add__` for `U24`, we are telling the Mojo compiler, how to add (+) two `U24`s.
 
@@ -283,6 +284,8 @@ fn main():
 
 
 ## 7.5 The __copyinit__ and __moveinit__ special methods
+!! Make an image like the one in the online tutorial !!
+
 Developers in Mojo have precise control over the lifetime behavior of defined types by choosing to implement or omit certain methods. 
 * Initialization (custom construction) is managed using __init__ , 
 * Freeing of memory is managed through custom destructors (using the existing __del__ special method), 
@@ -533,6 +536,9 @@ fn main():
 Transfer with ^ is useful when working with unique instances of some type, or when you want to avoid copies.
 
 Another example is a FileDescriptor type. These types are *unique* or *move-only* types. In Mojo, you define the __moveinit__ method to take ownership of a unique type. The consuming move constructor __moveinit__ takes ownership of an existing instance, and moves its internal implementation details over to a new instance.  
+The second argument is annotated with owned. The owned is required because the second argument’s value will be destroyed once the move operation completes. 
+
+moveinit is particularly useful where copy operations are expensive
 You can also define custom __moveinit__ methods. If you want complete control, you should define methods like copy() instead of using the dunder method. 
 
 **Summary**  
@@ -551,11 +557,15 @@ Metaprogramming is about transforming or generating code at compile-time, which 
 One of the great characteristics of Python is that you can change code at runtime, so-called *run-time metaprogramming*. This can do some amazing things, but it comes at a great performance cost.  
 The modern trend in programming languages is toward statically compiled languages, with *metaprogramming done at compile-time*! Think about Rust macros, Swift, Zig and Jai. Mojo as a compiled language fully embraces *compile-time metaprogramming*, built into the compiler as a separate stage of compilation - after parsing, semantic analysis, and IR generation, but before lowering to target-specific code. To do this, the same Mojo language is used for metaprograms as for runtime programs, and it also leverages MLIR. This is because Modular's work in AI needs high-performance machine learning kernels, and accelerators, and high abstraction capabilities provided by advanced metaprogramming systems.  
 
+A parameter is like a compile-time variable that becomes a runtime constant. 
+
 Currently the following techniques are used with metaprogramming:  
 1) Parametric types in structs and functions  with compile-time arguments (called parameters in Mojo)(see § 7.9.1)
 2) Running arbitrary Mojo code (at compile-time) to set parameter values (alias)
 3) Using conditions based on parameter values. (@parameter if)
 4) Overloading on parameters (see `overloading_params.mojo`)
+5) defining aliases
+6) @unroll
 
 ### 7.9.1 Parametric types in structs and functions
 A **parametric* (generic) struct or function, where you can indicate your own type when you call it, is a very useful concept. It allows you to write flexible code, that can be reused in many situations.
@@ -582,6 +592,7 @@ A List can be made for any type of items (type `AnyType`). The type is parametri
 Another example of a parametric struct is the SIMD struct (see § 4.4).  
 See also § 12.2.
 
+You can use defaults and keyword parameters.
 
 ### 7.9.3 How to create a custom parametric type: Array
 Currently (2023 Sep) there is no canonical array type in the stdlib. 
@@ -632,9 +643,69 @@ See also Vec3f in ray_tracing.mojo (§ 20).
 
 
 ### 7.9.4 Parametric functions and methods
-
-Better example: see parameter2.mojo in § 11.3
+Parameters in functions must always have a type.
 Here are some examples of parametric functions:
+
+1) passing values as parameters:
+See `param_val_function.mojo`:
+```py
+fn div_compile_time[a: Int, b: Int]() -> Float64:
+    return a / b
+
+
+fn main():
+    print(div_compile_time[3, 4]())      # 1 => 0.75
+    print(div_compile_time[b = 4, a = 3]())  # 2 => 0.75
+```
+
+The function div_compile_time has no arguments (), but it has two parameter values 3 and 4, enclosed in []. At compile-time, the code for the function is generated with 3 and 4 substituted into a and b. At runtime (line 1), the function is executed.  
+In line 2, we see that we can pass parameter values using the name of the parameter, so-called keyword parameters.
+
+2) passing types as parameters
+!! An example with a real type ? (traits) come only in § 13.
+
+See `param_type_function.mojo`:
+```py
+fn add_ints[T: Intable](a: T, b: T) -> Int: 
+    return int(a) + int(b)
+
+
+fn main():
+    print(add_ints[Int](3, 4))          # 1 => 7
+    print(add_ints[Float16](3.0, 4.0))  # 2 => 7
+    # print(add_ints[String](3.0, 4.0))   # error: cannot bind type 'String' to trait 'Intable'
+```
+Here we have a generic function add_ints that takes a type T. In line 1, T becomes Int, so a function version is compiled where T is Int. In line 2, T becomes Float16, so another function version is compiled where T is Float16. At runtime these functions get the arguments (3, 4) and (3.0, 4.0) respectively and the result is computed.
+
+Of course, values and types can be used together as parameters.
+
+Just like variadic arguments, you can pas a variable number of parameters:
+See `param_variadic.mojo`:
+```py
+fn add_all[*a: Int]() -> Int:
+    var result: Int = 0
+    for i in VariadicList(a):
+        result += i
+    return result
+
+
+fn main():
+    print(add_all[1, 2, 3]())  # => 6
+```
+
+Parameters can also have default values, see `param_default.mojo`    :
+```py
+fn add[cond: Bool = False](a: Int, b: Int) -> Int:
+    return a + b if cond else 0
+
+
+fn main():
+    print(add(3, 4))  # => 0 # Default value is taken
+    print(add[True](3, 4))  # => 7 # Override the default value
+```
+
+
+see parameter2.mojo in § 11.3 (too complicated with @parameter and closure)
 
 See `simd3.mojo`:
 ```py
@@ -751,7 +822,10 @@ fn main():
 
 
 ## 7.11 Lifetimes
-Mojo implements eager destruction of variables, that is: the memory is released ASAP, destroying values immediately after last-use. 
+The init method allocates memory from the heap, the delete method is used to free that memory. If delete is not executed, we end up with memory leaks: the program occupies more memory than it needs, and can eventually run out of memory, crashing the application.
+
+Mojo implements eager destruction of variables, that is: the memory is released ASAP, destroying values immediately after last-use: an eager destruction approach.
+" This means that a value or object is destroyed as soon as its last use, unless its lifetime is explicitly extended. This is in contrast with many system languages where the values or objects are destroyed at the end of the scope of a given block. This approach allowed Mojo to have a much simpler lifecycle management, improving overall ergonomics of the language. "
 
 Int is a trivial type and Mojo reclaims this memory without need for a __del__() method.
 String is a destructible (it has its own __del__() method) and Mojo destroys it as soon as it's no longer used.
@@ -787,6 +861,5 @@ See example `structs2.mojo` from mojo_gym: perhaps as exercise?
 A struct can implement *traits* (see § 8).
 
 
-- From v 0.4.0: Structs support default parameters
 - From v 0.5.0: Structs support keyword parameters, also with defaults (enclosed in [])
 

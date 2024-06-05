@@ -11,7 +11,8 @@ Traits exist in many languages (Rust, and so on), but are sometimes called inter
 
 This makes it possible to write generic functions, which can take traits as arguments, so these functions accept all struct types that implement these traits! That way we can write one generic function that depends on the trait, rather than a lot of overloads for individual types.
 
-A trait is an abstract type that cannot be instantiated. A concrete type (a struct or class) must implement the method(s) of the trait.
+A trait is an abstract type that cannot be instantiated. A concrete type (a struct or class) must implement the method(s) of the trait. 
+> Traits are also types!
 
 Traits also bring more structure to the type-hierarchy (!!). With traits you can also write generic types (example !!).
 
@@ -190,7 +191,7 @@ The type which can be compared for equality with other instances of itself, so i
 The type must specify a function __hash__() to hash their data.
 
 ### 13.3.7 Intable
-A type implements Intable if it can be converted to an int, so it must have a int__() function. 
+A type implements Intable if it can be converted to an int, so it must have an int() or __int__() function.
 
 ### 13.3.8 KeyElement
 This trait implements all requirements of dictionary keys. It inherits from the following traits:  

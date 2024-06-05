@@ -41,7 +41,7 @@ This will lead to accelerated development and production-use of AI technologies.
 
 ## 1.2 The super powers of Mojo
 At the bottom: MLIR
-At the top: Compile time metaprogramming: somewhat like Python does, except that Python has to do it at runtime.
+At the top: Compile time metaprogramming (so zero-runtime cost): somewhat like Python does, except that Python has to do it at runtime.
 
 *Design of the language*
 Push language design into libraries.

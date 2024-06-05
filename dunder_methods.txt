@@ -4,9 +4,10 @@ __init__	constructor
 __del__		destructor
 __copyinit__	b = a, to copy a value, a still exists after copy
 __moveinit__	b = a, to move a value, a doesn't exist anymore after copy
+
 __eq__		==, test if values are equal
 __ne__		!=, test if values are not equal 
-__invert__	~
+__invert__	unary ~ (bitwise compliment of the value, switching 1 for 0 and vice versa)
 __and__		&
 __or__		|
 __xor__		^
@@ -14,32 +15,46 @@ __lt__		<
 __gt__		>
 __le__		<=
 __ge__		>=
-__bool__
+__is__		is, compare the identity (memory location) of two values, True or False
+__isnot__	is not, opposite of is
 
+__bool__	convert to Bool, bool()  (trait Boolable)
+__str__		convert to String, str() (trait Stringable) 
+__int__		convert to Int, int()    (trait Intable)
 
 __add__		+
 __sub__		-
 __mul__		*
-__floordiv__	/
-__truediv__	//
+__truediv__	/
+__floordiv__	//
 __mod__		%
 __pow__		**
+__neg__		unary -
+__pos__		unary +
 
-i - methods:
-__iadd__	+=
+
+i - methods: (in-place operations)
+__iadd__	+=	
 __isub__	-=
 __imul__	*=
 __ifloordiv__   /=
-__imod__	%=
 __itruediv__	//=
+__imod__	%=
 __ipow__	**=
 __iand__	&=
 __ior__		|=
 __ixor__	^=
 
 
-r - methods: (the variable appears at rhs):
-__rand__	&  
+r - methods: (reverse operations):
+__radd__	+	
+__rsub__	-
+__rtruediv__	/
+__rfloordiv__	//
+__rmul__	*
+__rmod__	%
+__rpow__	**
+__rand__	&  	
 __ror__		|  
 __rxor__	^  
 
@@ -48,9 +63,18 @@ __getitem__	enables indexing on an object: a[i]
 __setitem__	a[i] = val
 
 __call__	()
-__len__		len, size
+__len__		len, size (Sized trait)
 __iter__  	to implement a for loop
+__enter__	enter a with-context
+__exit__	exit a with-context
 
+__getattr__	dynamic definition of attributes, get value of attribute
+__setattr__	dynamic definition of attributes, set value of attribute
+__contains__	in, check if a value is contained within a struct field
 
-__lshift__
-__rshift__
+__lshift__	<<
+__rshift__	>>
+__ilshift__	<<=
+__irshift__	>>=
+__rlshift__	<<
+__rrshift__	>>

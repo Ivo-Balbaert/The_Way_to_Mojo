@@ -172,6 +172,29 @@ fn main():
 
 This function sort the list in-place.
 
+### 9.1.7  Implementing __contains__ in a list-type struct field
+See `in_list.mojo`:
+```py
+struct MyStruct:
+    var ints: List[Int]
+
+    fn __init__(inout self, ints: List[Int]):
+        self.ints = ints
+
+    fn __contains__(self, value: Int) -> Bool:
+        for i in self.ints:
+            if i[] == value:
+                return True
+        return False
+
+
+fn main():
+    var my_struct = MyStruct(List(1, 2, 3))
+    print(1 in my_struct)  # 1 => True
+    print(5 in my_struct)  # 2 => False
+```
+
+Lines 1 and 2 invoke the __contains__ method.
 
 ## 9.2 Dict
 The Dict type is an associative array that holds key-value pairs, also called dictionary or map in other languages. Create an empty Dict by specifying the key and value type in that order as parameters:
@@ -206,6 +229,31 @@ fn main() raises:
 
 It also has a __contains__, find and update method.
 
+**Working with attributes**
+Mojo provides the __getattr__ and __setattr__ methods, which can be used to make a dynamic definition of attributes. Here is an example where these are used:
+See `attributes.mojo`:
+```py
+struct MyStruct:
+    var fields: Dict[String, String]
+
+    fn __init__(inout self, fields: Dict[String, String]):
+        self.fields = fields
+
+    fn __getattr__(self, attr: String) raises -> String:
+        return self.fields[attr]
+
+    fn __setattr__(inout self, attr: String, value: String) raises:
+        self.fields[attr] = value
+
+
+fn main() raises:
+    var d: Dict[String, String] = Dict[String, String]()
+    d["name"] = "IK"
+    var st = MyStruct(d)
+    print(st.name)  # => IK #  __getattr__ is called here
+    st.name = "PK"  # __setattr__ is called here
+    print(st.name)  # => PK
+```
 
 ## 9.3 Set
 This type represent a set of *unique* values. You can add and remove elements from the set, test whether a value exists in the set, and perform set algebra operations, like unions and intersections between two sets.

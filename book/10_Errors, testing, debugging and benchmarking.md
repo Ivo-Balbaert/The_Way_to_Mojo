@@ -1,7 +1,10 @@
 # 10 Errors - Testing - Debugging - Benchmarking
 In this section we discuss a variety of subjects, first how to work with errors in Mojo.
 
-## 10.1 The Error type
+## 10.1 Raising and handling errors
+### 10.1.1 The Error type
+!! § 5.4 and 6.2 should be integrated here
+
 At a certain moment, your program can come in an abnormal state that you must signal to the outside world. You do this by "raising an error".  
 The Error type (defined in built-in module `error`) is used to handle errors in Mojo.
 Code can raise an error with the `Error` type, which accepts a String message. When `raise` is executed, "Error: error_message" is displayed:
@@ -69,6 +72,62 @@ var err3 : Error = Error("hey")
 var other : Error = err3
 raise other  # => Error: hey
 ```
+
+### 10.1.2 Raising and handling an error - Error propagation
+See `raising_an_error.mojo`:
+```py
+fn raise_error(cond: Bool) raises:
+    if cond:
+        print("No error, everything ok")
+    else:
+        raise Error("Provided condition is False")
+
+
+fn call_possible_error():
+    try:
+        raise_error(False)
+    except e:
+        print("Error raised:", e)  # => Error raised: Provided condition is False
+    else:
+        print("No exception raised.")
+    finally:
+        print("Always executed")   # => Always executed
+
+
+fn main():
+    call_possible_error()
+```
+
+" In the example, an error is raised inside the function raise_error based on a given condition. Since an error is raised, the function must declare that in its signature with `raises`. This means that any one calling the function must either handle the error raised by the function, or must re-raise it further down. In the usage example, we see that the error raised by the function is handled in call_possible_error().
+
+Let's now assume that call_possible_error() doesn't handle the errors, but wants to raise the error further down the chain. Then it must take the keyword `raises` in its signature, and in our example, the last function in the chain is main(), so this has to handle the error:
+
+See `raising_an_error2.mojo`:
+```py
+fn raise_error(cond: Bool) raises:
+    if cond:
+        print("No error, everything ok")
+    else:
+        raise Error("Provided condition is False")
+
+
+fn call_possible_error() raises:
+    raise_error(False)
+
+
+fn main():
+    try:
+        call_possible_error()
+    except e:
+        print("Error raised:", e)  # => Error raised: Provided condition is False
+    else:
+        print("No exception raised.")   
+    finally:
+        print("Always executed")   # => Always executed
+```
+
+The finally  branch is always executed. It is typically used for clean-up activities, for example, if a file is opened within a try block, then we must close the file within a finally block to ensure that even if an error is raised within the try block the file is always closed before the function returns.
+
 
 
 ## 10.2 Querying the host target

@@ -27,6 +27,8 @@ cmdline_args.mojo
 abc
 ```
 
+See also § 11.3
+
 ## 11.2 Working with memory
 
 See also:  Pointer § 12
@@ -41,8 +43,28 @@ The `stack_allocation` function lets you allocate data buffer space on the stack
 
 
 ## 11.3 The module sys.param_env
-Suppose we want to define a Tensor with an element type that we provide at the command-line, like this:  `mojo -D FLOAT32 param_env1.mojo`
+To pass an environment variable to the compiler, you can use the option `-D <var>=<val>`
+or just `-D <var>`. 
+
 The module sys.param_env provides a function `is_defined`, which returns true when the same string was passed at the command-line:
+
+See `param_env0.mojo`:
+```py
+fn add(a: Int, b: Int) -> Int:
+    return a + b
+
+
+# Execute with "mojo -D add_it <filename>" for a non-zero value
+alias added_conditionally = add(1, 2) if is_defined["add_it"]() else 0   # 1
+
+
+fn main():
+    print(added_conditionally)  # => 3
+```
+
+This is also an example of metaprogramming, because in line 1 add(1, 2) is only run at compile time when the condition is met. 
+
+Suppose we want to define a Tensor with an element type that we provide at the command-line, like this:  `mojo -D FLOAT32 param_env1.mojo`
 
 See `param_env1.mojo`:
 ```py

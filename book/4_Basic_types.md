@@ -296,28 +296,65 @@ These operations are: radd, rsub, rmul, rtruediv, rfloordiv, rmod, rpow:
 They allow to define the base operations for types that by default don't work with them.
 Think of the r as reversed, for example: in a + b, if a doesn't implement __add__, 
 then b.__radd__(a) will run instead if __radd__ is defined for b.
+(reverse addition is used when we try to add two values, where the first value does not have __add__ implemented. In this case, the Mojo compiler checks if the second value has __radd__ implemented, and it calls that one.)
 
 In the following example, we define _radd_ for the struct MyNumber, so that we can add its value to a FloatLiteral (note that the struct instance is the rhs in the expression `2.0 + num`):
-
-Example: see `radd.mojo`:
+Here is an example  demonstrating both iadd and radd methods:
+Example: see `riadd.mojo`:
 ```py
-struct MyNumber:
-    var value: FloatLiteral
+struct MyFloat:
+    var val: FloatLiteral
 
     fn __init__(inout self, num: FloatLiteral):
-        self.value = num
+        self.val = num
 
-    fn __radd__(self, lhs: FloatLiteral) -> FloatLiteral:
-        print("running MyNumber 'radd' implementation") # => running MyNumber 'radd' implementation
-        return self.value + lhs
+    fn __radd__(self, other: FloatLiteral) -> FloatLiteral:
+        print(
+            "radd MyFloat invoked", end=" - "
+        )  # => running MyNumber 'radd' implementation
+        return self.val + other
+
+
+struct MyInt:
+    var val: Int
+
+    fn __init__(inout self, value: Int):
+        self.val = value
+
+    fn __add__(self, other: Self) -> Self:
+        print("add MyInt invoked")
+        return Self(self.val + other.val)
+
+    fn __radd__(self, other: MyFloat) -> Self:
+        print("radd MyInt invoked")
+        return Self(self.val + int(other.val))
+
+    fn __iadd__(inout self, other: Self):
+        print("iadd MyInt invoked")
+        self.val = self.val + other.val
+
 
 fn main():
-    var num = MyNumber(40.0)
-    print(2.0 + num) # => 42.0
+    var num = MyFloat(40.0)
+    print(2.0 + num)  # => radd MyFloat invoked - 42.0
+
+    var num2: MyInt = MyInt(42)
+
+    var add_res = MyInt(1) + MyInt(2)  # => add MyInt invoked
+    print(add_res.val)  # => - 3
+
+    # Even though MyFloat does not implement __add__ method, MyInt's __radd__ is invoked
+    var radd_res = MyFloat(3.5) + MyInt(2)  # => radd MyInt invoked  
+    print(radd_res.val) # => 5
+
+    var iadd_res = MyInt(10)
+    iadd_res += MyInt(20) # iadd MyInt invoked 
+    print(iadd_res.val)   # => 30
 ```
 
 (First comment out __radd__ to see which error you get when this method is not defined. Explain the error/)
 
+See also:  `risub.mojo`,  `rimul.mojo`
 
 #### 4.3.2.4 Comparing a FloatLiteral and a Bool
 The Bool type also has rhs equivalents of __and__ and so on, like __rand__, __ror__, __rxor__. Here the Bool value is automatically used at the rhs of the operator.
@@ -475,7 +512,9 @@ The function `simdbytewidth` is the total amount of bytes that can be processed 
 Lastly the function `simdwidthof` is used to show how many of values of a certain type can fit into the target's SIMD register, e.g. to see how many uint64's can be processed with a single instruction. For our system, the SIMD register can process 4 UInt64 values at once (see line 3). 
 So if you have some values of a certain type (e.g. float32) to process with SIMD, you can use the following expression:  
 `SIMD[DType.float32, simdwidthof[DType.float32]()]`  
-to process the maximum amount of values simultaneously. Line 4 tells us that this amount is 8.
+to process the maximum amount of values simultaneously.
+(the SIMD type defaults to the architectural SIMD width of the type, so the above is equivalent to just `SIMD[DType.float32]`)
+Line 4 tells us that this amount is 8.
 Mojo makes it easy for us, the above expression does the same as:  
 `SIMD[DType.float32]`
 We use this in line 5 to declare a SIMD vector with as size the default type width, which is indeed 8 (line 6).
