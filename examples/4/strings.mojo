@@ -32,7 +32,7 @@ fn main() raises:
     x = "string"
     print(len(x))  # => 6   # equivalent to x.__len__()  
 
-    var y2 = x.data()
+    var y2 = x.unsafe_ptr()
     x = "alo"
     print(y2)  # => 0x7f72bc000170
     print(x)   # => alo
@@ -54,7 +54,7 @@ fn main() raises:
     var s3 : String = 1 # implicit type conversion, uses constructor __init__(inout self, num: Int)
 
     # building a string with a List:
-    var buf = List[Int8](2)  # 5
+    var buf = List[UInt8](2)  # 5
     buf.append(65)
     buf.append(79)
     buf[0] = 78
@@ -70,7 +70,7 @@ fn main() raises:
 
     ## by using the pointer:
     var x3 = "Mojo"
-    var ptr = x3.data()
+    var ptr = x3.unsafe_ptr()
     var str_ref = StringRef(ptr)
     print(str_ref)  # => Mojo
 

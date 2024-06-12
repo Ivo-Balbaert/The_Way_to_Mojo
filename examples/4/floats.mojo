@@ -21,5 +21,5 @@ fn main():
     # var i2 = Int(float) # convert error
     # var i2 = Int(f32) # convert error
 
-    var j = FloatLiteral(3.14).__int__()
+    var j = (3.14).__int__()
     print(j)  # => 3 

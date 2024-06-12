@@ -573,12 +573,15 @@ fn add(x: String, y: String) -> String:    # 2
 fn main():
     print(add(1, 2)) # => 3
     print(add("Hi ", "Suzy!")) # => Hi Suzy!
-    print(add(1, "Hi")) # 3 => 1Hi
-    print(add(False, "Hi")) # 4 => FalseHi
+    # print(add(1, "Hi")) # 3 => error: 1 cannot be implicitly converted to String
+    # print(add(False, "Hi")) # 4 => error: False cannot be implicitly converted to String
+    print(add(str(1), "Hi")) # 3 => 1Hi
+    print(add(str(False), "Hi")) # 4 => FalseHi
+ 
 ```
 
 Why does version #2 work, because "Hi" and "Suzy!" are of type StringLiteral, not String?
-It works because StringLiteral can be implicitly casted to String. String includes an overloaded version of its constructor (__init__()) that accepts a StringLiteral value. Thus, you can also pass a StringLiteral to a function that expects a String. This works in general when the given type can be implicitly casted to the required type. That's why lines 3 and 4 also work.
+It works because StringLiteral can be implicitly casted to String. String includes an overloaded version of its constructor (__init__()) that accepts a StringLiteral value. Thus, you can also pass a StringLiteral to a function that expects a String. In the last two lines, you have to do an explicit conversion to String.
 
 !! What happens when two
 

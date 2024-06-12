@@ -1,5 +1,5 @@
-from tensor import Tensor, TensorShape, TensorSpec, rand
-from math import trunc, mod
+from tensor import Tensor, TensorShape, TensorSpec
+from math import trunc
 from memory import memset_zero
 from sys.info import simdwidthof, simdbitwidth
 from algorithm import vectorize, parallelize
@@ -44,7 +44,8 @@ fn main() raises:
     print("SIMD bit width:", simdbitwidth())  # => SIMD bit width: 256
     print("SIMD Width:", simd_width)  # => SIMD Width: 8
 
-    var tx = rand[dtype](5, 12)
+    var tshape = TensorShape(5, 12)
+    var tx = Tensor[dtype].rand(tshape)
     print(tx)
     # =>
     # Tensor([[0.1315377950668335, 0.458650141954422, 0.21895918250083923, ..., 0.066842235624790192, 0.68677270412445068, 0.93043649196624756],
@@ -54,7 +55,8 @@ fn main() raises:
     # [0.84151065349578857, 0.41539460420608521, 0.46791738271713257, ..., 0.84203958511352539, 0.21275150775909424, 0.13042725622653961]], dtype=float32, shape=5x12)
 
     seed(42)
-    var t = rand[dtype](1000, 100_000)
+    var tshape2 = TensorShape(1000, 100_000)
+    var t =  Tensor[dtype].rand(tshape2)
     var result = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
 
     print("Input Matrix shape:", t.shape())  # => Input Matrix shape: 1000x100000

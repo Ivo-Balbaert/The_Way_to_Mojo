@@ -1,15 +1,15 @@
-from tensor import Tensor, TensorSpec, TensorShape, rand
+from tensor import Tensor, TensorSpec, TensorShape
 from utils.index import Index
 
 var height = 256
 var width = 256
 var channels = 3
 
-
 fn main():
     # Create the tensor of dimensions height, width, channels
     # and fill with random values - rand creates a Tensor
-    var image = rand[DType.int64](height, width, channels)
+    var tshape = TensorShape(height, width, channels)
+    var image = Tensor[DType.int64].rand(tshape)
     # Declare the grayscale image.
     var spec = TensorSpec(DType.int64, height, width)
     var gray_scale_image = Tensor[DType.int64](spec)

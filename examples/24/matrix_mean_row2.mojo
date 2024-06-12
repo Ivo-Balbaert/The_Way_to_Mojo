@@ -1,5 +1,5 @@
-from tensor import Tensor, TensorShape, TensorSpec, rand
-from math import trunc, mod
+from tensor import Tensor, TensorShape, TensorSpec
+from math import trunc
 from memory import memset_zero
 from sys.info import simdwidthof, simdbitwidth
 from algorithm import vectorize, parallelize
@@ -18,7 +18,7 @@ struct myTensor[dtype: DType]:
 
     @always_inline
     fn __init__(inout self, *dims: Int):
-        self.t = rand[dtype](TensorSpec(dtype, dims))
+        self.t = Tensor[dtype].rand(TensorShape(dims))
 
     @always_inline
     fn __init__(inout self,  owned t: Tensor[dtype]):
@@ -89,7 +89,7 @@ struct myTensor[dtype: DType]:
                         int_str = "-"+String(trunc(val).cast[DType.int32]())
                         val = -val
                     var float_str: String
-                    float_str = String(mod(val,1))
+                    float_str = String(val % 1)
                     var s = int_str+"."+float_str[2:prec+2]
                     if k==0:
                         print(s, end="")

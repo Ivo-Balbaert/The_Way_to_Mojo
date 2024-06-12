@@ -172,7 +172,7 @@ somefolder/
 ```
 
 mymodule.mojo is exactly the same as in § 14.1, __init__.mojo must be an empty file.
-use_package.mojo has the same code in main(), but the import statements now are prefixed wit the package name:
+use_package.mojo has the same code in main(), but the import statements are now prefixed wit the package name:
 
 See ``use_package.mojo`:
 ```py

@@ -4,15 +4,15 @@ alias IntOrString = Variant[Int, String]   # 1
 
 fn to_string(inout x: IntOrString) -> String:
     if x.isa[String]():                    # 2
-        return x.get[String]()[]
+        return x.unsafe_get[String]()[]
     # x.isa[Int]()
-    return x.get[Int]()[]
+    return x.unsafe_get[Int]()[]
 
 fn print_value(value: Variant[Int, Float64], end: StringLiteral) -> None:
     if value.isa[Int]():
-        print(value.get[Int]()[], end=end)
+        print(value.unsafe_get[Int]()[], end=end)
     else:
-        print(value.get[Float64]()[], end=end)
+        print(value.unsafe_get[Float64]()[], end=end)
 
 fn main():
     # They have to be mutable for now, and implement CollectionElement

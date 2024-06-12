@@ -164,7 +164,7 @@ struct Foo:
 fn main():
     print(alignof[UInt64]())  # => 8
     print(alignof[Foo]())     # 1 => 4
-    print(bitwidthof[Foo]())  # 2 => 64
+    print(bitwidthof[UInt64]())  # 2 => 64
     print(sizeof[UInt8]())    # 6 => 1
     print(sizeof[AnyType]())  # => 16
 

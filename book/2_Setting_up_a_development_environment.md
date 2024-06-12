@@ -312,6 +312,9 @@ See also the following [video](https://www.youtube.com/watch?v=cHyYmF-RhUk).
 [See here](https://plugins.jetbrains.com/plugin/23371-mojo)
 
  
+### 2.10.7 Cloud setup in one click
+https://www.youtube.com/watch?v=547UggxG_M8 
+
 
 ## 2.11 Compiling and executing a simple program
 To get started with Mojo code, [here](https://github.com/Ivo-Balbaert/The_Way_to_Mojo/blob/main/images/first_program.png) are two simple snippets:  

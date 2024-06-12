@@ -598,42 +598,50 @@ You can use defaults and keyword parameters.
 Currently (2023 Sep) there is no canonical array type in the stdlib. 
 You can make an array instance with SIMD (see § 4.4) or with Tensor or ...
 
-So let's make one ourselves.
-In the following example you see the start of code for a parametric type Array, with parameter `AnyRegType` (line 1). It has an __init__ constructor (line 2), which takes the size and a value as arguments.
+So let's make a generic array type ourselves.
+In the following example you see the start of code for a parametric type Array, with parameter `AnyRegType` (line 1). This means our Array can hold fixed-size data types like integers and floating-point numbers that can be passed in a machine register, but not dynamically allocated data like strings or vectors.
+
+It has an __init__ constructor (line 2), which takes a variable number of arguments.
 Line 3 shows how to construct the array: 
-`let v = Array[Float32](4, 3.14)`  
-* parameter T = Float32
-* arguments size is 4 and value is 3.14
+`let v =GenericArray[Int](1,2,3,4)`  
+* parameter T = Int
+* arguments are 1,2,3,4
 
 See `parametric_array.mojo`:
 ```py
-struct Array[T: AnyRegType]:                           # 1
-    var data: Pointer[T]
-    var size: Int
-    var cap: Int
+from memory.unsafe_pointer import UnsafePointer, initialize_pointee_copy, destroy_pointee
 
-    fn __init__(inout self, size: Int, value: T):   # 2
-        self.cap = size * 2
-        self.size = size
-        self.data = Pointer[T].alloc(self.cap)      # 4
-        for i in range(self.size):
-            self.data.store(i, value)               # 5
-              
-    fn __getitem__(self, i: Int) -> T:
-        return self.data.load(i)            # 7
+struct GenericArray[ElementType: CollectionElement]:
+    var data: UnsafePointer[ElementType]
+    var size: Int
+
+    fn __init__(inout self, *elements: ElementType):                    # 2
+        self.size = len(elements)
+        self.data = UnsafePointer[ElementType].alloc(self.size)         # 4
+        for i in range(self.size):                                      # 5
+            initialize_pointee_move(self.data.offset(i), elements[i])
 
     fn __del__(owned self):
-        self.data.free()                    # 6
+        for i in range(self.size):
+            destroy_pointee(self.data.offset(i))
+        self.data.free()
 
-fn main():
-   varv = Array[Float32](4, 3.14)         # 3
-    print(v[0], v[1], v[2], v[3])
-    # => 3.1400001049041748 3.1400001049041748 3.1400001049041748 3.1400001049041748
+    fn __getitem__(self, i: Int) raises -> ref [__lifetime_of(self)] ElementType:
+        if (i < self.size):
+            return self.data[i]                             # 7
+        else:
+            raise Error("Out of bounds")
+
+fn main() raises:
+    var array = GenericArray[Int](1, 2, 3, 4)               # 3
+    for i in range(array.size):
+        print(array[i], end=" ")  # => 1 2 3 4
 ```
    
-In line 4, memory space is allocated with: `self.data = Pointer[T].alloc(self.cap)`, and the value is stored in the for-loop in line 5.
-A destructor `__del__` is also provided, which executes `self.data.free()` and is called automatically when the variable is no longer needed in code execution.
-A `__getitem__` method is also shown which takes an index i and returns the value on that position with `self.data.load(i)` (line 7).
+In line 4, memory space is allocated with: `self.data = UnsafePointer[ElementType].alloc(self.size)`, and the value is stored in the for-loop in line 5.
+A destructor `__del__` is also provided (line 8), which executes first a destruction of each CollectionElement in a for loop, and then frees the pointer with: `self.data.free()`. It is called automatically when the variable is no longer needed in code execution.
+A `__getitem__` method is also shown which takes an index i; which first checks whether i is in within the bounds of the array, and then returns the value on that position with `self.data[i]` (line 7).
+
 
 **Exercise**
 Enhance the code for struct Array with other useful methods like __setitem__, __copyinit__, __moveinit__, __dump__ and so on.

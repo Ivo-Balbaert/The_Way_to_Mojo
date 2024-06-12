@@ -201,17 +201,65 @@ fn main() raises:
 In line 2, only if true will the code will be "included" at compile time. The if statement will never run again during runtime.
 See also § 7.9.5 (ctime_logic.mojo), § 10.6 (os_is_linux)
 
+## 15.4 - @parameter for
+See `parameter_for.mojo`:
+```py
+@always_inline
+fn print_and_increment(inout x: Int):
+    print(x)
+    x += 1
 
+fn main():
+    var i = 0
+    @parameter 
+    for j in range(0, 3):
+        print_and_increment(i)
 
-## 15.4 - @parameter
-### 15.4.1 Closure
+# =>
+# 0
+# 1
+# 2
+```
+
+After working out the decorator, this becomes:
+```py
+fn main():
+    var i = 0
+    print(i)
+    i+=1
+    print(i)
+    i+=1
+    print(i)
+    i+=1
+```
+
+The program is faster by not doing `if i < 3` on each iteration and by not having to jump into print_and_increment. It also becomes bigger, but the point is that this is a choice.
+
+Examples: see `nbody.mojo`:
+
+```py
+    @parameter
+    for i in range(NUM_BODIES):
+        p += bodies[i].velocity * bodies[i].mass
+        ...
+
+    @parameter
+    for i in range(NUM_BODIES):
+        for j in range(NUM_BODIES - i - 1):
+            var body_i = bodies[i]
+            var body_j = bodies[j + i + 1]
+            ...
+```
+
+## 15.5 - @parameter
+### 15.5.1 Closure
 This decorator is also used on nested functions that capture runtime values, creating "parametric" capturing closures.
 Examples: 
 * § 23, where @parameter is used together with vectorize, see vectorize1.mojo
 * § 24, where @parameter is used together with parallelize
 * matmul.mojo § 30.3
 
-### 15.4.2 Running a function at compile-time
+### 15.5.2 Running a function at compile-time
 @parameter can also run a function at compile-time, as shown here:
 See `parameter2.mojo`:
 ```py
@@ -238,7 +286,7 @@ fn main():
     add_print()
 ```
 
-## 15.5 - @staticmethod
+## 15.6 - @staticmethod
 `@staticmethod` can be used:
 * in a struct that cannot be instantiated, for an example see § 7.10.1
 * to indicate that the following is a static method, to be called on the struct itself, not on an instance, keeping the scope clean. The struct acts as a namespace.
@@ -270,7 +318,7 @@ struct Vec3f:
 The zero method is called as:  Vec3f.zero()
 
 
-## 15.6 - @always_inline
+## 15.7 - @always_inline
 (!! Explain what is "inlining")
 Normally the compiler will do inlining automatically where it improves performance.
 But you can force this behavior with @always_inline:
@@ -283,52 +331,3 @@ The version `@always_inline("nodebug")` works the same, but doesn't include debu
 Example: see § 11.3 / § 15.7
 See matmul
 
-## 15.7 - @unroll
-See `unroll1.mojo`:
-```py
-@always_inline
-fn print_and_increment(inout x: Int):
-    print(x)
-    x += 1
-
-fn main():
-    var i = 0
-    @unroll
-    while i < 3:
-        print_and_increment(i)
-
-# =>
-# 0
-# 1
-# 2
-```
-
-After working out the decorators, this becomes:
-```py
-fn main():
-    var i = 0
-    print(i)
-    i+=1
-    print(i)
-    i+=1
-    print(i)
-    i+=1
-```
-
-The program is faster by not doing `if i < 3` on each iteration and by not having to jump into print_and_increment. It also becomes bigger, but the point is that this is a choice.
-
-Examples: see `nbody.mojo`:
-
-```py
-    @unroll
-    for i in range(NUM_BODIES):
-        p += bodies[i].velocity * bodies[i].mass
-        ...
-
-    @unroll
-    for i in range(NUM_BODIES):
-        for j in range(NUM_BODIES - i - 1):
-            var body_i = bodies[i]
-            var body_j = bodies[j + i + 1]
-            ...
-```

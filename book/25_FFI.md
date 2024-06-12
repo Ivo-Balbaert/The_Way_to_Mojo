@@ -96,22 +96,3 @@ fn main():
     print(tm.tm_hour, ":", tm.tm_min, ":", tm.tm_sec) # => 10 : 35 : 46
 ```
 
-### 25.1.1.2 Mojo calls C via a function pointer
-Declare a function pointer type, and just call it! Mojo uses the platform C calling convention for at least simple fn alias declarations. Such function pointers may be loaded using sys.ffi.DLHandle (undocumented) and then called.
-
-See `mojo_calls_c_fp.mojo`:
-```py
-from sys import ffi
-
-alias c_atof_type = fn(s: Pointer[Int8]) -> Float64
-
-def main():
-    var handle = ffi.DLHandle("")
-    var c_atof = handle.get_function[c_atof_type]("atof")
-
-    var float_str = StringRef("1.234")
-    var val = c_atof(float_str.data._as_scalar_pointer())
-    print("The parsed Float64 value is: ", val) # => The parsed Float64 value is:  1.234
-```
-
-This example demonstrates calling atof to parse a C string and return a double value from the string.

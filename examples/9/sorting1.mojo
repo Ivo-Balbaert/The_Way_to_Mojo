@@ -1,5 +1,3 @@
-from algorithm.sort import sort
-
 fn main():
     var v = List[Int](108)
 

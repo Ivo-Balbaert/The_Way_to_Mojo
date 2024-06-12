@@ -865,8 +865,6 @@ The `isdigit` function checks if the character passed in is a valid decimal betw
 * startswith - endswith
 * isdigit, isupper, islower, isspace
 
-( See also `string_counting_bytes_and_characters.mojo`: advanced, but works)
-
 
 ## 4.6 Defining types with alias
 You can also define a synonym or shorthand for a type with alias, as in line 1 below.

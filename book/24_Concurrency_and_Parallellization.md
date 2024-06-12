@@ -218,12 +218,12 @@ In the following example, we calculate the row-wise `mean()` of a matrix, by vec
 See `matrix_mean_row.mojo`:
 ```py
 from tensor import Tensor, TensorShape, TensorSpec
-from math import trunc, mod
+from math import trunc
 from memory import memset_zero
 from sys.info import simdwidthof, simdbitwidth
-from algorithm import vectorize, parallelize, vectorize_unroll
+from algorithm import vectorize, parallelize
 from utils.index import Index
-from random import rand, seed
+from random import seed
 from python import Python
 import time
 
@@ -236,8 +236,8 @@ fn tensor_mean[dtype: DType](t: Tensor[dtype]) -> Tensor[dtype]:
     var new_tensor = Tensor[dtype](t.dim(0), 1)
     for i in range(t.dim(0)):
         for j in range(t.dim(1)):
-            new_tensor[i] += t[i, j]
-        new_tensor[i] /= t.dim(1)
+            new_tensor[i] += t[i, j] # sum all items in a row
+        new_tensor[i] /= t.dim(1) # div by number of columns 
     return new_tensor
 
 
@@ -248,11 +248,11 @@ fn tensor_mean_vectorize_parallelized[dtype: DType](t: Tensor[dtype]) -> Tensor[
     fn parallel_reduce_rows(idx1: Int) -> None:
         @parameter
         fn vectorize_reduce_row[simd_width: Int](idx2: Int) -> None:
-            new_tensor[idx1] += t.simd_load[simd_width](
+            new_tensor[idx1] += t.load[width=simd_width](
                 idx1 * t.dim(1) + idx2
             ).reduce_add()
 
-        vectorize[2 * simd_width, vectorize_reduce_row](t.dim(1))
+        vectorize[vectorize_reduce_row, 2 * simd_width](t.dim(1))
         new_tensor[idx1] /= t.dim(1)
 
     parallelize[parallel_reduce_rows](t.dim(0), 8)
@@ -260,10 +260,11 @@ fn tensor_mean_vectorize_parallelized[dtype: DType](t: Tensor[dtype]) -> Tensor[
 
 
 fn main() raises:
-    print("SIMD bit width", simdbitwidth())  # => SIMD bit width 256
-    print("SIMD Width", simd_width)  # => SIMD Width 8
+    print("SIMD bit width:", simdbitwidth())  # => SIMD bit width: 256
+    print("SIMD Width:", simd_width)  # => SIMD Width: 8
 
-    var tx = rand[dtype](5, 12)
+    var tshape = TensorShape(5, 12)
+    var tx = Tensor[dtype].rand(tshape)
     print(tx)
     # =>
     # Tensor([[0.1315377950668335, 0.458650141954422, 0.21895918250083923, ..., 0.066842235624790192, 0.68677270412445068, 0.93043649196624756],
@@ -273,15 +274,12 @@ fn main() raises:
     # [0.84151065349578857, 0.41539460420608521, 0.46791738271713257, ..., 0.84203958511352539, 0.21275150775909424, 0.13042725622653961]], dtype=float32, shape=5x12)
 
     seed(42)
-    var t = rand[dtype](1000, 100_000)
+    var tshape2 = TensorShape(1000, 100_000)
+    var t =  Tensor[dtype].rand(tshape2)
     var result = Tensor[dtype](t.dim(0), 1)  # reduces 2nd dimension to 1
 
-    print(
-        "Input Matrix shape:", t.shape().__str__()
-    )  # => Input Matrix shape: 1000x100000
-    print(
-        "Reduced Matrix shape", result.shape().__str__()
-    )  # => Reduced Matrix shape 1000x1
+    print("Input Matrix shape:", t.shape())  # => Input Matrix shape: 1000x100000
+    print("Reduced Matrix shape:", result.shape())  # => Reduced Matrix shape: 1000x1
     # print(t)
 
     # Naive approach in Mojo
@@ -332,12 +330,12 @@ Now we copy our vectorized and parallelized implementation of row-wise mean() an
 See ``matrix_mean_row2.mojo`:
 ```py
 from tensor import Tensor, TensorShape, TensorSpec
-from math import trunc, mod
+from math import trunc
 from memory import memset_zero
 from sys.info import simdwidthof, simdbitwidth
-from algorithm import vectorize, parallelize, vectorize_unroll
+from algorithm import vectorize, parallelize
 from utils.index import Index
-from random import rand, seed
+from random import seed
 from python import Python
 import time
 
@@ -351,7 +349,7 @@ struct myTensor[dtype: DType]:
 
     @always_inline
     fn __init__(inout self, *dims: Int):
-        self.t = rand[dtype](TensorSpec(dtype, dims))
+        self.t = Tensor[dtype].rand(TensorShape(dims))
 
     @always_inline
     fn __init__(inout self,  owned t: Tensor[dtype]):
@@ -361,11 +359,11 @@ struct myTensor[dtype: DType]:
         var new_tensor = Tensor[dtype](self.t.dim(0),1)
 #        alias simd_width: Int = simdwidthof[dtype]()
         @parameter
-        fn parallel_reduce_rows(idx1: Int)->None:
+        fn parallel_reduce_rows(idx1: Int) -> None:
             @parameter
             fn vectorize_reduce_row[simd_width: Int](idx2: Int) -> None:
-                new_tensor[idx1] += self.t.simd_load[simd_width](idx1*self.t.dim(1)+idx2).reduce_add()
-            vectorize[2*simd_width,vectorize_reduce_row](self.t.dim(1))
+                new_tensor[idx1] += self.t.load[width=simd_width](idx1*self.t.dim(1)+idx2).reduce_add()
+            vectorize[vectorize_reduce_row, 2*simd_width](self.t.dim(1))
             new_tensor[idx1] /= self.t.dim(1)
         parallelize[parallel_reduce_rows](self.t.dim(0),8)
         return Self(new_tensor)
@@ -404,10 +402,10 @@ struct myTensor[dtype: DType]:
             for j in range(dim1):
                 if rank!=1:
                     if j==0:
-                        print_no_newline("  [")
+                        print("  [", end="")
                     else:
-                        print_no_newline("\n   ")
-                print_no_newline("[")
+                        print("\n   ", end="")
+                print("[", end="")
                 for k in range(dim2):
                     if rank==1:
                         val = t[k]
@@ -415,22 +413,22 @@ struct myTensor[dtype: DType]:
                         val = t[j,k]
                     if rank==3:
                         val = t[i,j,k]
-                   varint_str: String
+                    var int_str: String
                     if val > 0:
                         int_str = String(trunc(val).cast[DType.int32]())
                     else:
                         int_str = "-"+String(trunc(val).cast[DType.int32]())
                         val = -val
-                   varfloat_str: String
-                    float_str = String(mod(val,1))
-                   vars = int_str+"."+float_str[2:prec+2]
+                    var float_str: String
+                    float_str = String(val % 1)
+                    var s = int_str+"."+float_str[2:prec+2]
                     if k==0:
-                        print_no_newline(s)
+                        print(s, end="")
                     else:
-                        print_no_newline("  ",s)
-                print_no_newline("]")
+                        print("  ",s, end="")
+                print("]", end="")
             if rank>1:
-                print_no_newline("]")
+                print("]", end="")
             print()
         if rank>2:
             print("]")

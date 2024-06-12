@@ -1,5 +1,5 @@
-from tensor import Tensor, rand
-from math import sqrt, round
+from tensor import Tensor, TensorShape
+from math import sqrt
 from algorithm import vectorize
 from sys.info import simdwidthof
 
@@ -31,8 +31,8 @@ fn tensor_math_vectorized(t: Tensor[type]) -> Tensor[type]:
 
 fn main():
     print(simd_width)  # => 8
-
-    var t = rand[type](3, 3)
+    var tshape = TensorShape(3, 3)
+    var t = Tensor[type].rand(tshape)
     print(t.shape())  # 3x3
     print(t.spec())  # 3x3xfloat32
     print(t[0])  # => 0.1315377950668335
@@ -83,7 +83,7 @@ fn main():
 # 0.72780507802963257
 # 0.087739311158657074
 
-#  - tensor_math_vectorized
+#  - tensor_math_vectorized, why intermediate 0.0 ?
 # 0.36268138885498047
 # 0.0
 # 0.0

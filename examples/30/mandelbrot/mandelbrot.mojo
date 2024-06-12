@@ -1,4 +1,3 @@
-# This works 2024-04-25
 # ===----------------------------------------------------------------------=== #
 # Copyright (c) 2023, Modular Inc. All rights reserved.
 #
@@ -72,7 +71,7 @@ fn main() raises:
             var cx = min_x + (col + iota[float_type, simd_width]()) * scale_x
             var cy = min_y + row * scale_y
             var c = ComplexSIMD[float_type, simd_width](cx, cy)
-            t.data().store(row * width + col, mandelbrot_kernel_SIMD[simd_width](c))
+            t.unsafe_ptr().store(row * width + col, mandelbrot_kernel_SIMD[simd_width](c))
 
         # Vectorize the call to compute_vector where call gets a chunk of pixels.
         vectorize[compute_vector, simd_width](width)

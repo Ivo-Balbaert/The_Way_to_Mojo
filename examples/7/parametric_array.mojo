@@ -1,22 +1,28 @@
-struct Array[T: AnyRegType]:                           # 1
-    var data: Pointer[T]
-    var size: Int
-    var cap: Int
+from memory.unsafe_pointer import UnsafePointer, initialize_pointee_copy, destroy_pointee
 
-    fn __init__(inout self, size: Int, value: T):   # 2
-        self.cap = size * 2
-        self.size = size
-        self.data = Pointer[T].alloc(self.cap)      # 4
+struct GenericArray[ElementType: CollectionElement]:
+    var data: UnsafePointer[ElementType]
+    var size: Int
+
+    fn __init__(inout self, *elements: ElementType):
+        self.size = len(elements)
+        self.data = UnsafePointer[ElementType].alloc(self.size)
         for i in range(self.size):
-            self.data.store(i, value)               # 5
-              
-    fn __getitem__(self, i: Int) -> T:
-        return self.data.load(i)            # 7
+            initialize_pointee_move(self.data.offset(i), elements[i])
 
     fn __del__(owned self):
-        self.data.free()                    # 6
+        for i in range(self.size):
+            destroy_pointee(self.data.offset(i))
+        self.data.free()
 
-fn main():
-    var v = Array[Float32](4, 3.14)         # 3
-    print(v[0], v[1], v[2], v[3])
-    # => 3.1400001049041748 3.1400001049041748 3.1400001049041748 3.1400001049041748
+    fn __getitem__(self, i: Int) raises -> ref [__lifetime_of(self)] ElementType:
+        if (i < self.size):
+            return self.data[i]
+        else:
+            raise Error("Out of bounds")
+
+fn main() raises:
+    var array = GenericArray[Int](1, 2, 3, 4)
+    for i in range(array.size):
+        print(array[i], end=" ")  # => 1 2 3 4
+    

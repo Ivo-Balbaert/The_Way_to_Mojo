@@ -26,7 +26,7 @@ struct Foo:
 fn main():
     print(alignof[UInt64]())  # => 8
     print(alignof[Foo]())     # 1 => 4
-    print(bitwidthof[Foo]())  # 2 => 64
+    print(bitwidthof[UInt64]())  # 2 => 64
     print(simdwidthof[DType.uint64]()) # 3 => 4
     print(simdbitwidth())     # 4 => 256
     print(simdbytewidth())  # 5 => 32

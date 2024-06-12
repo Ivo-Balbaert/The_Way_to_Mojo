@@ -1,6 +1,5 @@
 from tensor import Tensor
 from algorithm import vectorize
-from math import mul
 from time import now
 from memory import memcpy
 
@@ -29,7 +28,7 @@ struct SquareMatrix[dtype: DType = DType.float32, dim: Int = 4]():
         var fpath = fname
         if fpath.count('.') < 2:
             fpath += '.data'
-        fpath = fpath.replace(".","_" + self.mat.spec().__str__() + ".")
+        fpath = fpath.replace(".","_"+self.mat.spec().__str__()+".")
         if fpath.find('/'):
             fpath = './'+fpath
         return fpath
@@ -38,7 +37,7 @@ struct SquareMatrix[dtype: DType = DType.float32, dim: Int = 4]():
     fn load[dtype: DType,dim: Int](fpath:String) raises -> Tensor[dtype]:
         var load_mat = Tensor[dtype].fromfile(fpath)
         var new_tensor = Tensor[dtype](dim,dim)
-        memcpy(new_tensor.data(),load_mat.data(),load_mat.num_elements())
+        memcpy(new_tensor.unsafe_ptr(),load_mat.unsafe_ptr(),load_mat.num_elements())
         _ = load_mat
         return new_tensor
 
@@ -57,7 +56,8 @@ fn multiply(sm: SquareMatrix, val: SIMD[sm.dtype, 1]) -> Tensor[sm.dtype]:
     @parameter
     fn vectorize_multiply[simd_width: Int](idx: Int) -> None:
         result_tensor.store[simd_width](
-            idx, mul[sm.dtype, simd_width](sm.mat.load[simd_width](idx), val)
+            # idx, mul[sm.dtype, simd_width](sm.mat.load[simd_width](idx), val)
+            idx, (sm.mat.load[simd_width](idx) * val)
         )
 
     vectorize[vectorize_multiply, simd_width](sm.mat.num_elements())
@@ -92,7 +92,7 @@ fn main() raises:
     print(load_mat)
 
 
-# =>
+# => Former result:
 # Tensor([[5.0, 5.0, 5.0, 5.0],
 # [5.0, 5.0, 5.0, 5.0],
 # [5.0, 5.0, 5.0, 5.0],
@@ -133,4 +133,49 @@ fn main() raises:
 
 # File saved: ./saved_matrix_4x4xfloat32.data
 # Loading Tensor from file: ./saved_matrix_4x4xfloat32.data
+
+# => New result:
+# [Running] mojo keyword_params.mojo
+# Tensor([[5.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0],
+# [5.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0]], dtype=float32, shape=4x4)
+# Tensor([[12.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0],
+# [12.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0]], dtype=float32, shape=4x4)
+# Tensor([[10.0, 0.0, 0.0, 0.0],
+# [10.0, 0.0, 0.0, 0.0],
+# [10.0, 0.0, 0.0, 0.0],
+# [10.0, 0.0, 0.0, 0.0]], dtype=float64, shape=4x4)
+# Tensor([[1.0, 0.0, 0.0],
+# [0.0, 1.0, 0.0],
+# [0.0, 0.0, 1.0]], dtype=float64, shape=3x3)
+# Tensor([[1.5, 0.0, 0.0],
+# [0.0, 1.5, 0.0],
+# [0.0, 0.0, 1.5]], dtype=float64, shape=3x3)
+# Tensor([[5.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0],
+# [5.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0]], dtype=float32, shape=4x4)
+
+# Keyword argument in __getitem__()
+# 0.0
+# Tensor([[500.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0],
+# [500.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0]], dtype=float32, shape=4x4)
+# Tensor([[5.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0],
+# [5.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0]], dtype=float32, shape=4x4)
+# File saved: ./saved_matrix_4x4xfloat32.data
+# Loading Tensor from file: ./saved_matrix_4x4xfloat32.data
+
+# Tensor([[5.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0],
+# [5.0, 0.0, 0.0, 0.0],
+# [0.0, 0.0, 0.0, 0.0]], dtype=float32, shape=4x4)
+
+# [Done] exited with code=0 in 0.206 seconds
 

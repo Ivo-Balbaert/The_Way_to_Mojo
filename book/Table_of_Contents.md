@@ -40,6 +40,7 @@
 ### 2.10.4 How to work with a Jupyter notebook locally in VS Code 
 ### 2.10.5 Using a Docker file (?? updating)
 ### 2.10.6 PyCharm plugin
+### 2.10.7 Cloud setup in one click
 ## 2.11 Compiling and executing a simple program
 
 # 3 Starting to program
@@ -222,10 +223,10 @@
 ## 11.4 Working with files
 
 # 12 – Working with Pointers
-## 12.1 - What is a pointer?
-## 12.2 - Defining and using pointers
-## 12.3 - Writing safe pointer code
-## 12.4 - Working with DTypePointers
+## 12.1 What is a pointer?
+## 12.2 Defining and using pointers
+## 12.3 Working with DTypePointers
+## 12.4 Converting an UnsafePointer to an Int
 ## 12.5 Random numbers
 
 # 13 Traits
@@ -260,10 +261,12 @@
 ## 15.1 - @value
 ## 15.2 - @register_passable
 ## 15.3 - @parameter if
-## 15.4 - @parameter runs a function at compile-time
-## 15.5 - @staticmethod
-## 15.6 - @always_inline
-## 15.7 - @unroll
+## 15.4 - @parameter for
+## 15.5 - @parameter 
+### 15.5.1 Closure
+### 15.5.2 Running a function at compile-time
+## 15.6 - @staticmethod
+## 15.7 - @always_inline
 
 # 22 MLIR - The basis of Mojo
 ## 22.1 Mojo is built on top of MLIR
@@ -290,7 +293,6 @@
 # 25.1 - Mojo and C 
 ## 25.1.1 Calling functions from the C standard library
 ### 25.1.1.1 Mojo calls C via external_call
-### 25.1.1.2 Mojo calls C via a function pointer
 
 # 30 – Projects
 ## 30.1 - Calculating PI

@@ -150,8 +150,6 @@ The sort module in package algorithms implements different sorting functions. He
 
 See `sorting1.mojo`:
 ```py
-from algorithm.sort import sort
-
 fn main():
     var v = List[Int](108)   # 108 is the first item in the List
 
@@ -325,6 +323,12 @@ struct Coord:
     var x: Int
     var y: Int
 
+fn return_tuple() -> (Int, Int):    # 5
+    return (1, 2)
+
+def return_two(i: Int) -> (Int, Int):
+  return i, i + 1
+
 fn main():
     var t1 = (1, 2, 3)          # type is inferred because of (), same as: var t1 = Tuple(1, 2, 3)  
     var tup = (42, "Mojo", 3.14)
@@ -334,9 +338,8 @@ fn main():
 
     var x = (Coord(5, 10), 5.5)     # 4
     print(return_tuple().get[1, Int]())  # => 2
-    
-fn return_tuple() -> (Int, Int):    # 5
-    return (1, 2)
+
+    a, b = return_two(5) # returns (5, 6)
 ```
 
 > Try out: Can you guess what an empty tuple would look like? Print out its length.
@@ -355,15 +358,15 @@ alias IntOrString = Variant[Int, String]   # 1
 
 fn to_string(inout x: IntOrString) -> String:
     if x.isa[String]():                    # 2
-        return x.get[String]()[]
+        return x.unsafe_get[String]()[]
     # x.isa[Int]()
-    return x.get[Int]()[]
+    return x.unsafe_get[Int]()[]
 
 fn print_value(value: Variant[Int, Float64], end: StringLiteral) -> None:
     if value.isa[Int]():
-        print(value.get[Int]()[], end=end)
+        print(value.unsafe_get[Int]()[], end=end)
     else:
-        print(value.get[Float64]()[], end=end)
+        print(value.unsafe_get[Float64]()[], end=end)
 
 fn main():
     # They have to be mutable for now, and implement CollectionElement
@@ -374,11 +377,11 @@ fn main():
     if random.random_ui64(0, 1):
         who_knows.set[String]("I'm actually a string too!")
 
-    print(to_string(an_int))    # => 4
-    print(to_string(a_string))  # => I'm a string!
-    print(to_string(who_knows)) # => 0
+    print(to_string(an_int))    # =>  4
+    print(to_string(a_string))  # =>I'm a string!
+    print(to_string(who_knows)) # =>0
 
-    var a = List[Variant[Int, Float64]](1, 2.5, 3, 4.5, 5) # 2A
+    var a = List[Variant[Int, Float64]](1, 2.5, 3, 4.5, 5)  # 2A
     var b = List[Variant[Int, StringLiteral]](1, "Hi", 3, "Hello", 5)   # 2B
     print("List(", end="")
     for i in range(len(a) - 1):
@@ -571,18 +574,18 @@ fn main():
 Here is a simple example of using a tensor to represent an RGB image and convert it to grayscale. Both image and gray_scale_image are Tensors:
 See `tensor1.mojo`:
 ```py
-from tensor import Tensor, TensorSpec, TensorShape, rand
+from tensor import Tensor, TensorSpec, TensorShape
 from utils.index import Index
 
 var height = 256
 var width = 256
 var channels = 3
 
-
 fn main():
     # Create the tensor of dimensions height, width, channels
     # and fill with random values - rand creates a Tensor
-    var image = rand[DType.int64](height, width, channels)
+    var tshape = TensorShape(height, width, channels)
+    var image = Tensor[DType.int64].rand(tshape)
     # Declare the grayscale image.
     var spec = TensorSpec(DType.int64, height, width)
     var gray_scale_image = Tensor[DType.int64](spec)

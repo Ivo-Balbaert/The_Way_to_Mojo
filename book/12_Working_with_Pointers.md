@@ -15,6 +15,11 @@ We already encountered some examples of Pointer use, particularly in § 7 when d
 
 >Note: If you work with pointers in Mojo, this is unsafe and can cause undefined behavior (UB). Also you have to free their memory explicitly with `pointer.free()`
 
+Pointer --> renamed to LegacyPointer
+UnsafePointer
+Reference
+
+
 ## 12.1 - What is a pointer?
 A pointer to a variable contains the memory address of that variable, it _points to_ the variable. So it is a  reference to a memory location, which can be on the stack or on the heap (For a good discussion about these two types of memory, see [Stack vs Heap](https://hackr.io/blog/stack-vs-heap)). 
 In other words: a pointer stores an address to any type, allowing you to allocate, load and modify single instances or arrays of the type on the heap.
@@ -56,128 +61,6 @@ fn main() raises:
 # 42
 # 1
 # 1  - 2  - 0  -
-```
-
-See `pointers1.mojo`:  
-```py
-from memory import memset_zero
-```
-
-Create a struct Coord that we will use as the type for the pointer.  
-Then in line 1, we define a pointer p1 to point to a Coord instance, and we allocate 2 bytes in memory for the 2 Uint8 fields (same for p2). 
-
-```py
-@register_passable
-struct Coord:
-    var x: UInt8 
-    var y: UInt8
-
-fn main():
-    var p1 = Pointer[Coord].alloc(2)        # 1
-    var p2 = Pointer[Coord].alloc(2)
-```
-
-All the values in the allocated memory will be garbage. We need to manually zero them if there is a chance we might read the value before writing it, otherwise it'll be undefined behavior (UB). This is done with the `memset_zero` function from module memory.
-
-
-```py
-fn main():
-    # ...
-    memset_zero(p1, 2)                 # 2 
-    memset_zero(p2, 2)
-```
-As we see in lines 3 and 4, we can test if two pointers are equal with ==. A pointer that has been allocated tests True in an if statement.  
-
-```py
-fn main():
-    # ...
-    if p1:                             # 3
-        print("p1 is not null") # => p1 is not null
-    print("p1 and p2 are equal:", p1 == p2) 
-    # 4 => p1 and p2 are equal: False
-    print("p1 and p2 are not equal:", p1 != p2) 
-    # => p1 and p2 are not equal: True
-```
-
-If we want to use the struct instance with `p1[0]`, we must annotate the struct with @register_passable:
-
-```py
-@register_passable
-struct Coord:
-    var x: UInt8 
-    var y: UInt8
-```
-
-Then we can write:
-```py
-fn main():
-    # ...
-    var coord = p1[0]
-    print(coord.x) # => 0
-```
-
-We can set the values, but p1[0] hasn't been modified. This is because coord is an identifier to memory on the stack or in a register. 
-```py
-fn main():
-    # ...
-    coord.x = 5
-    coord.y = 5
-    print(coord.x) # => 5
-    print(p1[0].x) # => 0
-```
-
-We need to write the data with `store`:
-```py
-fn main():
-    # ...
-    p1.store(0, coord)
-    print(p1[0].x) # => 5
-```
-
-Let's add 5 to it and store it at offset 1, and then print both the records:
-```py
-fn main():
-    # ...
-    coord.x += 5
-    coord.y += 5
-    p1.store(1, coord)
-    for i in range(2):
-        print(p1[i].x)
-        print(p1[i].y)
-    # =>
-    # 5
-    # 5
-    # 10
-    # 10
-```
-
-Here is an example to show how easy it is to get undefined behavior:  
-```py
-    var third_coord = p1.load(2)
-    print(third_coord.x)  # => 7
-    print(third_coord.y)  # => 7
-```
-
-The values printed out are garbage values, we've done something potentially very dangerous that will cause undefined behavior, and allow attackers to access data they shouldn't.
-
-Let's do arithmetic with the pointer p1:
-```py
- p1 += 2
-    for i in range(2):
-        print(p1[i].x)
-        print(p1[i].y)
-# =>
-# 21
-# 86
-# 0
-# 0
-```
-The values printed out are garbage!
-Let's move back to where we were and free the memory, if we forget to free the memory, that will cause a memory leak if this code runs a lot:
-
-```py
-    p1 -= 2
-    p1.free()
 ```
 
 (idioms:
@@ -253,63 +136,8 @@ Line 1 allocates memory (1 byte) from the heap to store an integer value using t
 We store a value into the pointer location using the function initialize_pointee_move in line 2.  
 Then we retrieve the stored value from the pointer using the deference operator [] in line 3.
 
-## 12.3 - Writing safe pointer code
-As we saw in the previous §, it's easy to make mistakes when working with pointers. So let's make the code of our struct more robust to reduce the surface area of potential errors. We enclose our struct Coord in another struct Coords which contains a data field that is a Pointer[Coord]. Then we can build in safeguards, for example in the __getitem__ method we make sure that the index stays within the bounds of the length of Coords.
 
-See `pointers2.mojo`:
-```py
-from memory import memset_zero
-
-@value
-@register_passable
-struct Coord:
-    var x: UInt8 
-    var y: UInt8
-
-struct Coords:
-    var data: Pointer[Coord]
-    var length: Int
-
-    fn __init__(inout self, length: Int) raises:
-        self.data = Pointer[Coord].alloc(length)
-        memset_zero(self.data, length)
-        self.length = length
-
-    fn __getitem__(self, index: Int) raises -> Coord:
-        if index > self.length - 1:
-            raise Error("Trying to access index out of bounds")
-        return self.data.load(index)
-
-    fn __setitem__(inout self, index: Int, value: Coord) raises:
-        if index >= self.length:
-            raise Error("Trying to access index out of bounds")
-        self.data.store(index, value)
-    
-    fn __del__(owned self):
-        return self.data.free()
-
-fn main() raises:
-    var coords = Coords(5)
-
-    var coord1 = Coord(1, 2)
-    var coord2 = Coord(3, 4)
-    var coord3 = Coord(5, 6)
-    coords[0] = coord1
-    coords[1] = coord2
-    print(coords[0].x, coords[0].y, coords[1].x, coords[1].y,) # => 1 2 3 4
-
-    coords[1] = coord3
-    print(coords[0].x, coords[0].y, coords[1].x, coords[1].y,) # => 1 2 5 6
-
-    var coords = Coords(5)
-    print(coords[5].x)
-
-# =>
-# Unhandled exception caught during execution: Trying to access index out of bounds
-# mojo: error: execution exited with a non-zero result: 1
-```
-
-## 12.4 - Working with DTypePointers
+## 12.3 - Working with DTypePointers
 Much faster than Pointer!
     Pointer: data.load(i) / data.store(i)
 	DTypePointer: data.load[width=], data.store
@@ -480,6 +308,17 @@ We can loop through and set the values, one row at a time with SIMD using the ab
 
 Because it's returning a SIMD[DType.u8, 8], we can also modify the column value using __setitem__ from the SIMD implementation (line 3).  
 As another example, lets take the fourth row, doubling it, and then writing that to the first row (line 4).
+
+
+## 12.4 Converting an UnsafePointer to an Int
+See `unsafe_ptr_int.mojo`:
+```py
+fn main():
+    var ptr = UnsafePointer[Int].alloc(1)
+    var ptr_uint64 = UInt64(int(ptr))
+    print(ptr_uint64)  # => 94264536539136
+    ptr.free()
+```
 
 ## 12.5 Random numbers
 (Also examples in § 5.4 and § 9.6)
