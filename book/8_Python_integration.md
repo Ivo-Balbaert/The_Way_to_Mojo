@@ -367,7 +367,34 @@ fn main() raises:
     print(s1.upper())  # => XXBAAA
 ```
 
-#### 8.4.2.3 Using numpy and matplotlib together
+#### 8.4.2.3 Iterating over Python collections
+The for loop supports iterating over Python collection types. Each item retrieved by the loop is a PythonObject wrapper around the Python object, so you don't need to dereference it like in Mojo collection for loops.
+
+The following is a simple example of iterating over a mixed-type Python list.
+See `iterate_python.mojo`:
+```py
+from python import Python
+
+fn main() raises:
+    # Create a mixed-type Python list
+    var py_list = Python.evaluate("[42, 'cat', 3.14159]")
+    for py_obj in py_list:  # Each element is of type "PythonObject"
+        print(py_obj)
+    # =>
+    # 42
+    # cat
+    # 3.14159
+```
+
+To iterate over a Python dict, there are two techniques:
+* iterate directly using the dictionary, which produces a sequence of its keys (see line 1).
+* use the items() method, which produces a sequence of 2-tuple objects. Within the loop body, you can then access the key and value by index (see line 2).
+
+```py
+
+```
+
+#### 8.4.2.4 Using numpy and matplotlib together
 Here we use these two Python modules, and we use a PythonObject (see line 4) to create our data, which we transform through a few numpy functions and then pass to matplotlib for our graph.
 The comments below show you when you are in Python land, and when in Mojo land!
 
@@ -410,7 +437,7 @@ As we see in line 9, plot_from_mojo is a Mojo function that takes a PythonObject
 In line 10 we import matplotlib. In line 11, the values (or results) come from numpy. The Python object class is ndarray: `print(values.__class__.__name__)` # => ndarray. The matplotlib Python functions plot (line 11) and show (line 12) are then used to display the [plot](see !!)
 
 
-#### 8.4.2.4 Combining numpy and SIMD
+#### 8.4.2.5 Combining numpy and SIMD
 See `py_mojo_simd.mojo`:
 ```py
 from python import Python, PythonObject

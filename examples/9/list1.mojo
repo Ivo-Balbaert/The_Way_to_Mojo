@@ -9,6 +9,11 @@ fn main():
     for idx in range(len(lst)):  # 3B
         print(lst[idx], end=", ")  # => 8, 10, 20,
     print()
+
+    for n in lst:   # 3C
+        print(n[], end=", ")  # => 8, 10, 20,
+    print()
+
     print(lst[0])  # => 8
     lst[1] = 42  # 5
     print(lst[1])  # => 42

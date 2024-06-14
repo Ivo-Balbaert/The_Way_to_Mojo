@@ -20,6 +20,9 @@ def calc(a, b):
 In this code, the types of `a` and `b` are `object`, as is the return type.
 This is great for high level programming and scripting, but is not always great for systems programming.  
 
+24.4.0: def functions take arguments as borrowed by default (consistent with fn functions) but will make a local copy of the value only if the argument is mutated in the body of the function.
+
+
 Mojo additionally provides an `fn` declaration, which is like a "strict mode" for def.
 With fn, explicit specification of argument types (except for the `self` argument in struct methods, see § 7), parameters, and the return value is mandatory.
 Also arguments are so-called `borrowed`, they are *immutable references*. This means that argument values by default cannot be changed in the body of the function. 

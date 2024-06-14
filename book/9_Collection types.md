@@ -4,6 +4,14 @@ These include basic collection types like List, Dict, Set and Optional, with whi
 The collection types are *generic types*: while a given collection can only hold a specific type of value (such as Int or Float64), you specify the type at compile time using a parameter. For example, you can create a List of Int values like this: `var l = List[Int](1, 2, 3, 4)`
 In this case, Mojo can infer the type, so you can write: `var l = List(1, 2, 3, 4)`
 
+# 9.0 Using for loops with collections.
+The for loop from § 5.2 is not limited to integer sequences. As we'll see in the next sections, it can be used to iterate over all collections.  
+
+Here is the internal mechanism:
+The for loop can iterate over any type that implements an __iter__() method. Such a type is called an *iterable*.  
+When its __iter__() method is called, the iterable must return an *iterator*. This is a type that defines __next__() and __len__() methods.  When its __next__() method is called, the iterator must return the next element in a sequence. This next element is assigned to the variable coming before the in keyword. The iterator keeps track of the state, so that the for loop advances to the next element when next is called.  
+The loop index variable gets assigned a Reference to each item, not the item itself. You can then access the item using the dereference operator [].
+
 Let's start with the List types.
 
 ## 9.1 List
@@ -122,6 +130,9 @@ The `reserve` method lets you change the capacity (line 10). If it's greater tha
 The `resize` method discards elements if smaller than current size, or fills in the second argument as values if larger (line 11).
 The `clear` method deallocates all items in the list and the size is set to 0 (the memory itself is not set to zeros).
 
+The `for idx in range(len(lst)):` construct can be used to iterate over a List, because a List can use an index to get its elements.  
+As shown in line 3C, we can also iterate directly over the List with `for n in lst:`, which is much more readable!
+
 If we do a for-loop over a List, we get References (see §  ) to the items, not the items themselves. To get the items, we can use the dereference operator `[]`.
 
 *Try out* the insert and extend methods.
@@ -227,6 +238,11 @@ fn main() raises:
 
 It also has a __contains__, find and update method.
 
+To iterate over a Dict's elements, there are two methods:  
+(1) Iterate directly using the Dict, which produces a sequence of the dictionary's keys, see line 0A
+(2) Invoke the Dict's items() method, which produces a sequence of DictEntry objects. Within the loop body, you can then access the key and value fields of the entry ,see line 0B
+
+
 **Working with attributes**
 Mojo provides the __getattr__ and __setattr__ methods, which can be used to make a dynamic definition of attributes. Here is an example where these are used:
 See `attributes.mojo`:
@@ -268,12 +284,14 @@ fn main():
     var we_like = i_like.intersection(you_like)
 
     print("We both like:")
-    for item in we_like:
+    for item in we_like:      # 1
         print("-", item[])
     # We both like:
     # - ice cream
     # - tacos
 ```
+
+In line 1, we iterate over the set with `for item in we_like: `, as we did with the List in § 9.1.
 
 ## 9.4 Optional
 This type represents a value that may or may not be present. In the last case, it has value `None`.

@@ -331,3 +331,21 @@ The version `@always_inline("nodebug")` works the same, but doesn't include debu
 Example: see § 11.3 / § 15.7
 See matmul
 
+## 15.8 - @deprecated
+Mojo now supports adding a @deprecated decorator on structs, functions, traits, aliases, and global variables. The decorator marks the attached declaration as deprecated and causes a warning to be emitted when the deprecated declaration is referenced in user code. The decorator requires a deprecation message, specified as a string literal.
+
+```py
+@deprecated("Foo is deprecated, use Bar instead")
+struct Foo:
+    pass
+
+fn outdated_api(x: Foo): # warning: Foo is deprecated, use Bar instead
+    pass
+
+@deprecated("use another function!")
+fn bar():
+    pass
+
+fn techdebt():
+    bar() # warning: use another function!
+```

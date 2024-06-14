@@ -713,7 +713,7 @@ The string value is heap-allocated, but the String contains a List field, which 
 
 One way to make a String is to convert a StringLiteral value with `String(value)`, as in line 3. This works exactly the same as the `var s9: String = "Mojo🔥"` in the previous line. Both work because String has a constructor __init__(inout self, strlit: StringLiteral).
 
-Implicit conversion of an integer to a string works in Mojo (see line 5), because String has a constructor __init__(inout self, num: Int).
+Implicit conversion of an integer to a string works in Mojo (see line 5), because String has a constructor __init__(inout self, num: Int). In any other cases, use the str() method to explicitly convert to a String.
 
 Strings are 0-index based, and the i-th ASCII character can be read with `s[i]` (see line 4). The `ord` function gives the corresponding ASCII value of the character. You can work with Unicode characters by working with slices (see line 11).
 

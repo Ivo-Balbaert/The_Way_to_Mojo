@@ -63,8 +63,11 @@ __getitem__	enables indexing on an object: a[i]
 __setitem__	a[i] = val
 
 __call__	()
-__len__		len, size (Sized trait)
+
 __iter__  	to implement a for loop
+__next__	
+__len__		len, size (Sized trait)
+
 __enter__	enter a with-context
 __exit__	exit a with-context
 

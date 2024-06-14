@@ -101,6 +101,11 @@ else:
     ...
 ```
 
+The elif and else branches are optional.
+
+It can be a single-line statement like this:
+`if temp_celsius > 20: print("It is warm.")`
+
 (In a __init__) You can also use constructs like:  
 `self.height = height if height > 0 else 1`
 
@@ -129,7 +134,8 @@ warning: if statement with constant condition 'if True'
        ^
 ```
 
-if can be used in one line as an expression.
+if can be used in one line as a conditional expression (ternary operator).
+> syntax:  true_result if boolean_expression else false_result,
 See `if_expr.mojo`:
 ```py
 fn main():
@@ -163,11 +169,16 @@ def main():
 
 The loop in line 1 goes from start 9 to end 0, step -3. The end value 0 is not included, so a range(n) goes from 0 to n-1.
 
-for can have an optional else: block, executed exactly once when the iteration is finished.
+for can have an optional else: block, executed exactly once when the iteration is finished, even when there are no items to iterate over.
 
-for is based on something called an iterator.
-In the most simple term, an iterator is something that returns an element when its next method is called. The expression that comes after in within the for loop statement must resolve to an iterable. 
-!! What comes after in must be an interable. An iterable is anything that returns an iterator when its iter method is called. In effect, when the for loop is executed, it calls the iterable’s iter method which returns the iterator the for loop works with. For each repetition of the loop, the iterator’s next is called and its result assigned to the variable coming before the in keyword. The iterator must keep track of the state so that the for loop advances to the next element when next is called.
+**Skipping and exiting early from loops**  
+break or return can be used to jump out of a loop; in that case the else: branch is not executed.
+continue can be used to stop the current loop iteration and continue with the next iteration.
+This also works the same way for while-loops (§ 5.3).
+
+The use of for is not limited to going (or iterating) through integer intervals. 
+Its use is much more general: the for loop iterates over a sequence, executing a code block for each element in the sequence. 
+In this example, the sequence is a `range` function, which generates a sequence of integers.
 
 ## 5.3 Using while loops
 Just like in Python, you can make a loop with a condition through `while`:
@@ -185,9 +196,6 @@ fn main():
 
 You can add an optional else: block (see line 1) which executes exactly once when the condition becomes False:
 
-**Skipping and exiting early from loops**  
-break can be used to jump out of a loop.
-continue can be used to stop the current loop iteration and continue with the next iteration.
 
 ## 5.4 Catching exceptions with try-except-finally
 !! better move to § 9.4 or § 10.1

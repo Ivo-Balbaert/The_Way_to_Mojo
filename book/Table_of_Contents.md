@@ -175,8 +175,9 @@
 ### 8.4.2 Working with Python objects
 #### 8.4.2.1 How to work with big integers in Mojo
 #### 8.4.2.2 Using Pythonobjects for floats and strings
-#### 8.4.2.3 Using numpy and matplotlib together
-#### 8.4.2.4 Combining numpy and SIMD
+#### 8.4.2.3 Iterating over Python collections
+#### 8.4.2.4 Using numpy and matplotlib together
+#### 8.4.2.5 Combining numpy and SIMD
 ## 8.5 Importing local Python modules
 # 8.6 Installing Python for interaction with Mojo
 
