@@ -272,7 +272,7 @@ System information:
 
 ## 10.3 Testing 
 ### 10.3.1 Module testing 
-We already discussed assert_equal in § 3.5. But this module implements various a whole set of testing utilities.
+We already discussed assert_equal in § 3.5. But this module implements a whole set of testing utilities.
 
 See `testing1.mojo`:
 ```py
@@ -333,9 +333,12 @@ Likewise, there are `assert_equal(val1, val2)` and `assert_not_equal(val1, val2)
 
 ### 10.3.2 Test functions
 The test-utilities defined in the previous section are meant to be used in *test functions*. 
-* These must be of the def type, because they can raise an error. 
+* The def type is most appropriate, because they can raise an error, but fn functions are also allowed. 
 * They take no arguments
 * Their name must be like `test_*`, where * is a description of the purpose of the test.
+* Returns either None or a value of type object.
+* Raises an error to indicate test failure.
+* Is defined at the module scope, not as a Mojo struct method.
 
 Here is an example test function:  
 ```py
@@ -346,10 +349,51 @@ def test_equality():
     assert_equal(42, 42)
 ```
 
+
 ### 10.3.3 Test runner
 The Mojo CLI has a built-in *test runner* `mojo test` that can be used to test Mojo programs.
-*Test files* are any mojo files with `test` in the filename, such as test_users_controller.mojo or user_model_tests.mojo.
-The test runner recursively searches the `test` directory for any files . For example, given the following directory structure:
+*Test files* are any mojo files with `test` in the filename, such as test_users_controller.mojo or user_model_tests.mojo. 
+
+Here is an example of a test file:
+See `test_quickstart.mojo`:
+```py
+from testing import assert_equal
+
+def inc(n: Int) -> Int:
+    return n + 1
+
+def test_inc_zero():
+    # This test contains an intentional logical error to show an example of
+    # what a test failure looks like at runtime.
+    assert_equal(inc(0), 0)
+
+def test_inc_one():
+    assert_equal(inc(1), 2)
+```
+
+We can run this test file with the command: `mojo test test_quickstart.mojo`, and it will display this output:  
+```
+Testing Time: 1.109s
+
+Total Discovered Tests: 2
+
+Passed : 1 (50.00%)
+Failed : 1 (50.00%)
+Skipped: 0 (0.00%)
+
+******************** Failure: '/home/ivo/mojo/test/test_quickstart.mojo::test_inc_zero()' ********************
+
+Unhandled exception caught during execution
+
+Error: At /home/ivo/mojo/test/test_quickstart.mojo:9:17: AssertionError: `left == right` comparison failed:
+   left: 1
+  right: 0
+
+********************
+```
+
+These test files must be stored in a `test` directory and its subfolders.
+The test runner recursively searches this `test` directory for any test files. For example, given the following directory structure:
 ```
 test/
   test_users_controller.mojo
@@ -358,9 +402,35 @@ test/
     user_model_tests.mojo
 ```
 
-Mojo will search for test_users_controller.mojo and user_model_tests.mojo for tests, but not factories.mojo. It then executes the test functions in these test files.
+Mojo finds test_users_controller.mojo and user_model_tests.mojo for tests, but not factories.mojo. It then executes the test functions in these test files.
 
-!! Test out, concrete example
+A typical folder structure for a Mojo project and its tests would be:  
+
+.
+├── src
+│   ├── example.mojo
+│   └── my_math
+│       ├── __init__.mojo
+│       └── utils.mojo
+└── test
+    └── my_math
+        ├── test_dec.mojo
+        └── test_inc.mojo
+
+src contains the project's code.  
+
+From the project root directory, you could execute all of the tests in the test directory with this command: `mojo test -I src test`
+(The -I option appends additional paths to the list of directories searched to import Mojo modules and packages.)
+
+To run one test file: `mojo test -I src test/my_math/test_dec.mojo`.
+To run one test function: `mojo test -I src 'test/my_math/test_dec.mojo::test_dec_valid()'`
+
+You can get a list of all tests defined with: `mojo test --co test`.
+
+All this functionality together comprises Mojo's *unit-test framework*.
+
+> Note: The framework also supports testing code examples in the docstrings of your API references by using ```mojo. 
+
 
 ## 10.4 Other assert statements
 Both constrained and debug_assert are built-in.

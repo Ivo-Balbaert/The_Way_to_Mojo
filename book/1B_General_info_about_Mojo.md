@@ -79,6 +79,8 @@ Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native suppo
     Modular version 24.2.0-c2427bc5-release
     mojo 24.2.0 (c2427bc5) / max 24.2.0 (c2427bc5)
 * 2024 May 2 - mojo 24.3.0 (9882e19d)
+* 2024 Jun 7 - mojo 24.4.0
+
 
 Goals / Roadmap:
 * 2024 : Windows version
@@ -101,12 +103,11 @@ GH = GitHub
 2023 Sep: more than 120K+ developers have signed up to the Mojo download and 19K+ developers actively discuss Mojo on Discord and GitHub.
 * See image mojo-eco.png
 
-TIOBE-index:
-First time registered: Nov 2023: position 184 
-                       Dec 2023: 174
-
 [Tiobe-index](https://www.tiobe.com/tiobe-index/)
-* 2023 Nov: 1st rating of Mojo, starting at position  .
+* First time registered: Nov 2023: position 184 
+* Dec 2023: 174
+* Jun 2024: Mojo appears in the position range from #51 to #100
+
 
 ## 1B.5 Business and support model
 The company *Modular* is funded by VC (Venture Capital).  
