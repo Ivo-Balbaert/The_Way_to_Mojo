@@ -251,6 +251,8 @@ fn main():
 What happens if double doesn't have a default value? 
 
 ## 6.4 Functions with a variable number of arguments.
+!! Have you ever wondered why how the built-in print function can take any number of arguments? This works because print is a so-called *variadic function*, a function which can take a variable number of arguments.
+
 ### 6.4.1 Using variadic arguments
 You can pass a variable number of values if you prefix an argument with a *, like in the following example (see line 1):
 
@@ -359,7 +361,7 @@ Keyword-only arguments are necessary in the following case, where the first argu
 the user can pass any number of Float64 values, optionally followed by the keyword argument ascending . For example: ``var a = sort(1.1, 6.5, 4.3, ascending=False)`.
 If a function accepts variadic arguments, any arguments defined after the variadic arguments are treated as keyword-only.
 
-
+Variadic arguments makes it possible to provide easy-to-use APIs by allowing any number of arguments to be passed directly to the function instead of having to wrap them up in a list or dictionary.
 
 ## 6.5 Argument passing: control and memory ownership
 There are three keywords to modify how arguments are passed to functions:
@@ -548,6 +550,9 @@ fn main():
 ```
 
 ## 6.6 Overloading functions
+!! Developers all know that naming code items is hard. 
+" For example, a function to add two numbers would be best called add. However, we may need to add two integers, one integer and a float, and so on. In some programming languages, that would have resulted in convoluted names such as add_ints, add_int_float and so on. Thankfully, Mojo provides a feature called function overloading. This feature allows us to define the same name to multiple functions as long as their argument types, parameter types or number of arguments are different. "
+
 Like in Python, you can define def functions in Mojo without specifying argument data types and Mojo will handle them dynamically. This is nice when you want expressive APIs that just work by accepting arbitrary inputs and let *dynamic dispatch* decide how to handle the data.
 
 However, when you want to ensure type safety, Mojo also offers full support for overloaded functions, a feature that does not exist in Python.  
@@ -583,10 +588,15 @@ fn main():
  
 ```
 
+Exercise:
+Write a function so that you can add an int and a float16, in that order.
+```
+fn add(a: Int, b:Float16) -> Int:
+    return int(a + b)
+```
+
 Why does version #2 work, because "Hi" and "Suzy!" are of type StringLiteral, not String?
 It works because StringLiteral can be implicitly casted to String. String includes an overloaded version of its constructor (__init__()) that accepts a StringLiteral value. Thus, you can also pass a StringLiteral to a function that expects a String. In the last two lines, you have to do an explicit conversion to String.
-
-!! What happens when two
 
 
 *How does resolving an overloaded function call works?*
@@ -605,6 +615,23 @@ We can follow up on this error to corect it in lines 4 or 5.
 >Remark: If a function needs to work with many types, defining all these versions can be a lot of work. A better solution is to work with a *generic* or *parametric* type, see § !!
 
 >Note: you can also overload functions based on parameter types.
+See `overloading_parameters.mojo`:
+```py
+fn add[a: Int, b: Int]() -> Int:
+    return a + b
+
+
+fn add[a: Bool, b: Bool]() -> Int:
+    var ai: Int = 1 if a else 0
+    var bi: Int = 1 if b else 0
+    return ai + bi
+
+
+fn main():
+    print(add[Int(1), Int(2)]())  # => 3
+    print(add[True, False]())  # => 1
+```
+
 
 
 ## 6.7 Running functions at compile-time and run-time
@@ -698,6 +725,11 @@ fn main():
 The inner function (called `nested` here) can only be called from the outer function in which it is nested. So it is like a helper function for the outer function only.
 
 ## 6.8B Closures
+So far we have seen that we can pass arguments to functions and they would use those arguments within their body. There is another technique for functions to get values from outside of the function body, which is commonly known as *closure*.
+
+In a closure, we define a function that captures values outside of its function body. The values that are captured must be defined before the definition of the function itself. Another constraint is that the data type of the captured values must implement __copyinit__, as the value of the variable is copied over to the function.
+
+
 *Capturing* means that if there were any variables in context, the closure would know their values. Closures capture by default, even if it's not capturing anything. 
 In the following example there are no variables to be captured.
 
@@ -721,7 +753,7 @@ fn main():
     call_it()  # => inner
 ```
 
-### 6.8B.2 Example of a capturing closure
+### 6.8B.2 Example of a capturing closure at run-time
 See `closure2.mojo`:
 ```py
 fn outer(f: fn() escaping -> Int):   # 3
@@ -741,6 +773,23 @@ You can see that we captured the a variable (line 1) in the inner closure (line 
 
 The keyword `escaping` is necessary in line 3.
 
+Here is another example of a capturing closure:
+See `run_time_closure.mojo`:
+```py
+fn exec_rt_closure(x: Int, bin_op_cl: fn(Int) escaping -> Int) -> Int:
+    var result: Int = 0
+    for i in range(10):
+        result += bin_op_cl(x)
+    return result
+
+fn main():
+    var rt_y: Int = 5
+    fn ander(x: Int) -> Int: 
+        return x & rt_y
+    print(exec_rt_closure(12, ander)) # => 40
+```
+
+The closure shown above is known as a runtime closure. The type of the closure is fn() escaping → T. Note that the captured values are owned by the closure. Runtime closure can be passed as argument to other functions.
 
 ## 6.9 Callbacks through parameters
 See `callbacks_params.mojo`:
@@ -825,7 +874,77 @@ fn main():
 
 When would you use pass and when `...`? A good thumb rule is to use pass where you know that there is no need for an implementation and use `...`​ when you are expecting some implementation in the future.
 
+## 6.11 Higher-order functions
+### 6.11.1 Assigning a function to a variable
+The type of the variable is determined by the function’s signature, i.e., it is a combination of the argument types and return type of the function.
 
+In the following code listing, you can see the variable my_fn_var is of type fn(Int, Int) → Int and is assigned a function with the same signature as the type of my_fn_var. 
+Notice that Mojo can infer this type (see line 1)
+Another thing to note is that the assigned function does not have the trailing (), which is usual in a function call. This is because we are not calling the function adder, instead we are binding the function to the variable my_fn_var. In fact, we do not want to call adder at that point of time.
+
+See `assign_function_var.mojo`:
+```py
+fn adder(a: Int, b: Int) -> Int: 
+    return a + b
+
+fn main():
+#    var my_fn_var: fn(Int, Int) -> Int = adder
+    var my_fn_var = adder    # 1
+
+    print(my_fn_var(4, 3)) # => 7
+```
+
+In the example, we see that we defined a function adder and then assigned that function to a variable. We later execute that variable as if it is a function.
+
+### 6.11.2 Higher-order functions
+The ability to assign a function to a variable allows us to implement some interesting use cases. We can pass a function as an argument to another function. We can also return a function as the result from another function. A function that can take a function as an argument, or can return a function as the result is called a higher-order function.
+
+There are some interesting uses of higher-order functions, such as the ability to define generic functions that takes any function as an argument and executes the given function based on some condition, or inside a loop, and so on.
+
+#### 6.11.2.1 A function that takes another function as argument
+See `higher_order_func1.mojo`:
+```py
+fn adder(a: Int, b: Int) -> Int: 
+    return a + b
+
+fn suber(a: Int, b: Int) -> Int: 
+    return a - b
+
+fn exec(x: Int, y: Int, bin_op: fn(Int, Int) -> Int) -> Int:
+    var result: Int = 0
+    for i in range(10):
+        result += bin_op(x, y)
+    return result
+
+fn main():
+    print(exec(10, 5, adder)) # => 150
+    print(exec(10, 5, suber)) # => 50
+```
+
+In this code listing we see that the function exec is a higher-order function that takes another function as argument. The exec function executes the passed-in function within a loop to calculate a result. We can pass two different functions to the same exec function, and the exec will treat both the passed functions the same way. In this way we have built a generic function that does not need to know what the passed-in does, instead it just executes them and calculates results.
+
+#### 6.11.2.2 A function that is passed as a parameter to another function
+Functions can also passed as parameters to another function. The main difference is that the functions are then passed at compile-time instead of at runtime. In our example, two versions of `exec_param`, one with adder and one with suber, are separately compiled. 
+
+See `higher_order_func2.mojo`:
+```py
+fn adder(a: Int, b: Int) -> Int:
+    return a + b
+
+fn suber(a: Int, b: Int) -> Int:
+    return a - b
+
+fn exec_param[bin_op: fn (Int, Int) -> Int](x: Int, y: Int) -> Int:
+    var result: Int = 0
+    for i in range(10):
+        result += bin_op(x, y)
+    return result
+
+
+fn main():
+    print(exec_param[adder](10, 5))  # => 150
+    print(exec_param[suber](10, 5))  # => 50
+```
 
 
 **Exercises**

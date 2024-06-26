@@ -19,6 +19,45 @@ Pointer --> renamed to LegacyPointer
 UnsafePointer
 Reference
 
+The whole chapter should be rewritten around
+## 12.0 - Unsafe pointers
+See https://docs.modular.com/mojo/manual/pointers
+
+It is a generic type.  
+The value pointed to by a pointer is sometimes called a pointee.
+
+This pointer type is inherently unsafe. When using unsafe pointers, you're responsible for ensuring that the memory it points to gets allocated and freed correctly. If this doesn't happen correctly, all kinds (?? double free, memry leak, dangling, ...) of undefined behavior can occur in the program.            
+
+See `unsafe_ptr.mojo`:
+```py
+
+```
+
+States of a pointer:
+- Uninitialized: `var ptr: UnsafePointer[Int]`
+- Null. A null pointer has an address of 0, indicating an invalid pointer:
+    `ptr = UnsafePointer[Int]()`
+- Pointing to allocated, uninitialized memory: `ptr = UnsafePointer[Int].alloc(1)`
+- Pointing to initialized memory: 
+```py
+initialize_pointee_copy(ptr, value)
+# or
+initalize_pointee_move(ptr, value^)
+# or 
+ptr = UnsafePointer[Int].address_of(value)
+```
+- Destroying or removing values:
+```py
+  move_from_pointee(ptr)
+  destroy_pointee(ptr)
+  move_pointee(src, dst)
+```
+
+- Dangling:  after freeing the pointers memory.
+
+Bitcasting a pointer returns a new pointer that has the same memory location, but a new data type, see `read_chunks`.
+
+
 
 ## 12.1 - What is a pointer?
 A pointer to a variable contains the memory address of that variable, it _points to_ the variable. So it is a  reference to a memory location, which can be on the stack or on the heap (For a good discussion about these two types of memory, see [Stack vs Heap](https://hackr.io/blog/stack-vs-heap)). 
@@ -142,6 +181,8 @@ Much faster than Pointer!
     Pointer: data.load(i) / data.store(i)
 	DTypePointer: data.load[width=], data.store
 A DTypePointer stores an address with a given DType, allowing you to allocate, load and modify data with convenient access to SIMD operations.
+
+strided load/store and gather/scatter: see manual
 
 See `dtypepointer1.mojo`:
 ```py

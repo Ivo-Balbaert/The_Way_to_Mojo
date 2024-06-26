@@ -135,9 +135,12 @@
 ## 6.8A Nested functions
 ## 6.8B Closures
 ### 6.8B.1 Example of a closure
-### 6.8B.2 Example of a capturing closure
+### 6.8B.2 Example of a capturing closure at run-time
 ## 6.9 Callbacks through parameters
 ## 6.10 Using pass and ...
+## 6.11 Higher-order functions
+#### 6.11.2.1 A function that takes another function as argument
+#### 6.11.2.2 A function that is passed as a parameter to another function
 
 # 7 Structs
 ## 7.1 First example
@@ -264,8 +267,8 @@
 ## 15.3 - @parameter if
 ## 15.4 - @parameter for
 ## 15.5 - @parameter 
-### 15.5.1 Closure
-### 15.5.2 Running a function at compile-time
+### 15.5.1 Running a function at compile-time
+### 15.5.2 A compile-time closure
 ## 15.6 - @staticmethod
 ## 15.7 - @always_inline
 

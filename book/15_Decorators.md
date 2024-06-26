@@ -252,14 +252,13 @@ Examples: see `nbody.mojo`:
 ```
 
 ## 15.5 - @parameter
-### 15.5.1 Closure
 This decorator is also used on nested functions that capture runtime values, creating "parametric" capturing closures.
 Examples: 
 * § 23, where @parameter is used together with vectorize, see vectorize1.mojo
 * § 24, where @parameter is used together with parallelize
 * matmul.mojo § 30.3
 
-### 15.5.2 Running a function at compile-time
+### 15.5.1 Running a function at compile-time
 @parameter can also run a function at compile-time, as shown here:
 See `parameter2.mojo`:
 ```py
@@ -284,6 +283,28 @@ fn add_print():
 
 fn main():
     add_print()
+```
+
+### 15.5.2 A compile-time closure
+The runtime closure shown in § 6.8B cannot be passed as a parameter to other functions. In order to pass a closure as a parameter to other functions, we need to use a compile-time closure. Such closures are decorated by @parameter. The type of the closure is fn() capturing → T. The following example demonstrates such a compile-time closure.
+
+See `compile_time_closure.mojo`:
+```py
+fn exec_ct_closure[bin_op_cl: fn (Int) capturing -> Int](x: Int) -> Int:
+    var result: Int = 0
+    for i in range(10):
+        result += bin_op_cl(x)
+    return result
+
+
+fn main():
+    var ct_y: Int = 10
+
+    @parameter
+    fn multer(x: Int) -> Int:
+        return x * ct_y
+
+    print(exec_ct_closure[multer](10))  # => 1000
 ```
 
 ## 15.6 - @staticmethod
