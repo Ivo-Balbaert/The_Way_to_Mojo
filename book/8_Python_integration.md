@@ -3,6 +3,12 @@ Mojo's long-term goal is to become a superset of Python. It allows us already to
 You can use Python for what it's good at, especially graph plotting and GUIs and for things that do not yet exist or are more difficult to rewrite in Mojo.
 That way, a Python project can be gradually migrated to Mojo.
 
+Though they share the same syntax, Mojo and Python are semantically two completely different languages. Python has a huge ecosystem behind it, built over many decades. Mojo allows the developer to leverage this huge ecosystem, with its Python integration capability.
+
+All of the Python integration is encapsulated in a module named *python*. 
+The integration of Mojo with Python is built on a key insight that from a practical point of view, all Python objects can be represented with a single type. In Mojo it is represented by the *PythonObject* struct. Mojo uses the actual CPython interpreter for interoperability. The usage of CPython in Mojo enables high fidelity integration with Python, and ensures that the Python objects behave as expected.
+
+
 Mojo aims to vastly improve the experience of writing a performant library, so you don't need to write C/C++ underneath Python for performance and hardware optimizations.
 
 Calling Mojo from Python is not yet ready (2024 May). (The common Python dev won't be excited by Mojo until they start getting libraries that are much more performant than what they're used to, with code they can actually step into and understand).
@@ -150,6 +156,9 @@ fn main() raises:
     var x = Python.evaluate('5 + 10')          # 1 - this is of type `PythonObject`
     print(x)   # => 15
 
+    var str_fn = Python.evaluate("str") # 1B
+    print(str_fn("ABC") <= str_fn("XYZ"))
+
     var py = Python() # type `PythonObject`
     var py_string = py.evaluate("'This string was built' + ' inside of python'")
     print(py_string)  # => This string was built inside of python
@@ -184,6 +193,8 @@ Apparently, Mojo warns you that `Python.evaluate` could raise an error, that Moj
 
 The rhs (right hand side) of lines 1 and 2 are of type `PythonObject`. PythonObject is a Mojo type that can store Python objects of any class (see: https://docs.modular.com/mojo/stdlib/python/object.html#init__).  
 (The _ = are needed to avoid the warning: 'PythonObject' value is unused)
+
+In line 1B, we see that you can even use Python.evaluate to access Python’s built-in functions.
 
 All the Python keywords can be accessed by importing `builtins`:
 ```py
@@ -501,7 +512,18 @@ Then in line 8, we apply the Mojo cos function to the SIMD array.
 **Exercise**
 Add the code to plot the result: see `py_mojo_simd.mojo`
 
+#### 8.4.2.6 Working with useful Python functions
+See `python_functions.mojo`:
+```py
+from python import Python
 
+fn main() raises:
+    var a_list = Python.list()
+    a_list.append("First element")
+    a_list.append("Second element")
+    print(a_list)  # => ['First element', 'Second element']
+    print(Python.type(a_list))  # => <class 'list'>
+```
 
 ## 8.5 Importing local Python modules
 This works just like in the preceding sections for existing Python modules. In the following example, the local Python module `simple_interop.py` is imported through Mojo in line 1. Then in line 2, its `test_interop_func` is called:

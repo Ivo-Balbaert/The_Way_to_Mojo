@@ -1,5 +1,7 @@
 # 22 MLIR - The basis of Mojo
 
+" Mojo supports ahead-of-time compilation. This means that we can run Mojo compiler over our source code to generate the machine code that gets executed on the computer. For a developer it may look as if Mojo reads the source code and directly generates the machine code. However, like many modern compilers, Mojo creates an intermediate representation of our source code before it generates the machine code. This intermediate representation (IR) is a simplified form of the program, which is easier to optimize and reason about. Many compilers use IRs that are custom built for the language supported by the compiler. Mojo does not have its own IR infrastructure, instead it uses Multi-Level Intermediate Representation (MLIR). Unlike other language IRs, MLIR is designed to be extensible and is capable of supporting many programming languages and different types of processors. "
+
 ## 22.1 Mojo is built on top of MLIR
 MLIR = Multi-Level (Machine Learning) Intermediate Representation
 Mojo lowers to MLIR and LLVM.
@@ -34,7 +36,40 @@ MLIR is an intermediate representation of a program, resembling an assembly lang
 More importantly, MLIR is modular and extensible. MLIR is composed of an ever-growing number of *dialects*. Each dialect defines operations and optimizations: for example, the ['math' dialect](https://mlir.llvm.org/docs/Dialects/MathOps/) provides mathematical operations such as sine and cosine, the ['amdgpu' dialect](https://mlir.llvm.org/docs/Dialects/AMDGPU/) provides operations specific to AMD processors, and so on.  
 Each of MLIR's dialects can interoperate with the others. This is why MLIR is said to unlock heterogeneous compute: as newer, faster processors and architectures are developed, new MLIR dialects are implemented to generate optimal code for those environments. Any new MLIR dialect can be translated seamlessly into other dialects, so as more get added, all existing MLIR becomes more powerful.  
 
+The extensibility of MLIR revolves around the ability to define custom dialects and operations within it. Dialects can be thought of as a namespace for a set of operations representing a particular aspect of a program. Operations represent a computation or a level of abstraction. Operations take operands (think of them as arguments) and produces results. Operations also take attributes, which are compile-time values such as constants. Attributes, operands and results have types associated with them. There is much more to MLIR than described here, but it is out of scope of this book.
+
+Though MLIR comes with its own textual representation that is used by the MLIR compiler infrastructure, Mojo exposes MLIR elements through its own syntax.
+
 This means that our own custom types, such as the `OurBool` type we'll create below, can be used to provide programmers with a high-level, Python-like interface. But under the covers, Mojo and MLIR will optimize our convenient, high-level types for each new processor that appears in the future.
+
+Mojo’s MLIR elements start with __mlir. There are three different elements: 
+__mlir_attr  
+__mlir_type  
+__mlir_op
+
+### 22.2.1 __mlir_attr
+As the name suggests, __mlir_attr provides the ability to define a MLIR attribute (similar to a compile-time constant) along with its data type.
+```
+alias _0 = __mlir_attr.`0:i1`
+```
+Here we are declaring an alias with an MLIR constant value 0 of MLIR type i1, which is 1 bit. If we do not provide i1, it will be assumed to be i64.
+
+### 22.2.2 __mlir_type
+The __mlir_type provides ability to refer to a given MLIR type.
+```
+var value: List[__mlir_type.i1]
+```
+Here we are declaring a list with contents of type i1.
+
+### 22.2.3 __mlir_op
+The __mlir_op provides ability to refer to a MLIR operation.
+```
+s += String(Int(__mlir_op.`index.castu`[_type=__mlir_type.index](i[])))
+```
+Here we are executing a casting operation from i1 to index type. Since Mojo’s Int type has a constructor that takes in MLIR index type, we are able to instantiate an Int value. Note that MLIR operation has the form <dialect>.<op>:
+Here it is `index.castu`, specifying the castu operation from the index dialect.
+
+Since MOJO does not allow its identifiers to have . in the name, we have to use backticks `` to be able to use a non-standard identifier.
 
 ## 22.3 Defining a bool type with MLIR
 (Bool example: extract verbatim from notebook BoolMLIR.ipynb)
@@ -244,3 +279,29 @@ fn main() raises:
 
    varplus = U24[600]() + U24[650]()
 ```
+
+## 22.7 Constructing a bitlist with MLIR
+See `mlir_bitlist.mojo`:
+```py
+alias _0 = __mlir_attr.`0:i1`
+alias _1 = __mlir_attr.`1:i1`
+
+struct BitList(Stringable):
+
+    var value: List[__mlir_type.i1]
+
+    fn __init__(inout self, *values: __mlir_type.i1):
+        self.value = List[__mlir_type.i1]()
+        for i in values:
+            self.value.append(i)
+    
+    fn __str__(self) -> String:
+        var s = String("0b")
+        for i in self.value:
+            s += String(Int(__mlir_op.`index.castu`[_type=__mlir_type.index](i[])))
+        return s
+
+fn main():
+    print(BitList(_0, _1, _0, _1)) # => 0b0101
+```
+

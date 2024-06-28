@@ -181,6 +181,7 @@
 #### 8.4.2.3 Iterating over Python collections
 #### 8.4.2.4 Using numpy and matplotlib together
 #### 8.4.2.5 Combining numpy and SIMD
+#### 8.4.2.6 Working with useful Python functions
 ## 8.5 Importing local Python modules
 # 8.6 Installing Python for interaction with Mojo
 
@@ -275,10 +276,14 @@
 # 22 MLIR - The basis of Mojo
 ## 22.1 Mojo is built on top of MLIR
 ## 22.2 What is MLIR?
+### 22.2.1 __mlir_attr
+### 22.2.2 __mlir_type
+### 22.2.3 __mlir_op
 ## 22.3 Defining a bool type with MLIR
 ## 22.4 Copying data with raw pointers
 ## 22.5 Calling gmtime from C
 ## 22.6 Custom bitwidth integers
+## 22.7 Constructing a bitlist with MLIR
 
 # 23 - Vectorization
 ## 23.1 Vectorize SIMD cosine

@@ -5,6 +5,9 @@ fn main() raises:
     var x = Python.evaluate('5 + 10')   # 1
     print(x)   # => 15
 
+    var str_fn = Python.evaluate("str") # 1B
+    print(str_fn("ABC") <= str_fn("XYZ"))
+
     var py = Python()
     var py_string = py.evaluate("'This string was built' + ' inside of python'")
     print(py_string)  # => This string was built inside of python
