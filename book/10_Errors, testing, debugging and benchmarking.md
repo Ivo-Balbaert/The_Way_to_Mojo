@@ -554,8 +554,12 @@ fn main():
 
 ## 10.6 Module benchmark
 The class allows you to benchmark a given function (passed as a parameter) with:  
-`benchmark.run[function]()`
+`var report = benchmark.run[function]()`
+
+`report.mean` then gives the mean execution time in s, 
 and to print out a report with: `report.print()`.
+To get the output for another time-unit:  `report.print(Unit.ms)`
+
 Import it through `from benchmark import Unit, benchmark` or just `import benchmark`.
 
 Here is a simple example to get started:
@@ -676,6 +680,10 @@ The 3rd example demonstrates the maximum number of iterations (max_iters) here 5
 As the 1st parameter, you can also set up the number of warmup iterations (num_warmup).  
 As the 3rd parameter, you can also set up the minimum running time (min_time_ns).
 
+?? Calculation with GFlops: see matmul.mojo
+     var secs = benchmark.run[test_fn]().mean()
+     var gflops = ((2 * M * N * K) / secs) / 1e9
+    
 
 ## 10.7 Debugging in VSCode
 For more info see [Debugger](https://docs.modular.com/mojo/tools/debugging).

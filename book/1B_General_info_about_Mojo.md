@@ -80,7 +80,7 @@ Currently, the Mojo SDK is for Linux only (Ubuntu 16.04 or higher). Native suppo
     mojo 24.2.0 (c2427bc5) / max 24.2.0 (c2427bc5)
 * 2024 May 2 - mojo 24.3.0 (9882e19d)
 * 2024 Jun 7 - mojo 24.4.0
-
+* 2024 Oct 3 - Mojo 24.5 is now bundled within MAX - Magic as new package/environment manager 
 
 Goals / Roadmap:
 * 2024 : Windows version
@@ -104,9 +104,11 @@ GH = GitHub
 * See image mojo-eco.png
 
 [Tiobe-index](https://www.tiobe.com/tiobe-index/)
-* First time registered: Nov 2023: position 184 
-* Dec 2023: 174
+* First time registered: Nov 2023: # **184** 
+* Dec 2023  # **174**
 * Jun 2024: Mojo appears in the position range from #51 to #100
+* Oct 2024: # **49** (0.15 %)
+"The cry for fast, data crunching languages is also visible elsewhere in the TIOBE index. The language Mojo, which is a mix of Python and Swift, but much faster, enters the top 50 for the first time. The fact that this language is only 1 year old and already showing up, makes it a very promising language." Tiobe is a well-known language popularity contest.  Entering its top 50 in a year is really something.  This puts it at/above (on their index) a collection of languages including F#, Bash, Elm, Forth, Groovy, Hack, OCaml, OpenCL, Smalltalk, SystemVerilog, Tcl, Zig, etc
 
 
 ## 1B.5 Business and support model
@@ -137,3 +139,4 @@ The company *Modular* is funded by VC (Venture Capital).
 * Mojo may become the lingua franca of the programming world.
 * Mojo is SIMD first (see § 4.4)
 * A Python you can trust
+* Enable Mojo as "Python" to replace C++ and Rust and CUDA code

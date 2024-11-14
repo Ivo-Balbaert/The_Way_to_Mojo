@@ -12,9 +12,20 @@ var a = 5
 var b = "String literals may not concatenate"
 print(a + b)
 
+In Mojo, all values have an associated data type. Most of these types are nominal types, defined by a struct. These types are nominal (or "named") because type equality is determined by the type's name, not its structure. 
+Some types that aren't defined as structs include functions, which are typed based on their signatures, 
+and NoneType, which is a type with one instance, the None object, used to signal "no value" source (https://docs.modular.com/mojo/manual/types).
+
+The most common types are built-in types, which are always available and don't need to be imported. These include types for numeric values, strings, boolean values, and others. The standard library also includes many more types that you can import as needed, including collection types, utilities for interacting with the filesystem and getting system information, and so on source (https://docs.modular.com/mojo/manual/types).
+
+The Mojo standard library also includes a set of basic collection types that can be used to build more complex data structures. These include List, Dict, Set, and Optional. The collection types are generic types: while a given collection can only hold a specific type of value (such as Int or Float64), you specify the type at compile time using a parameter source (https://docs.modular.com/mojo/manual/types#collection-types).
+
+
+
 
 All data values have a corresponding data *type*.
-Mojo's basic types are defined as built-ins, defined in the package `builtin`. They are automatically imported in code. These include the Bool, Int, IntLiteral, FloatLiteral, String and StringLiteral types, which we'll discuss in this section. They are all defined as a struct (see § 7).
+Mojo's basic types are defined as built-ins, defined in the package `builtin`. 
+??They are automatically imported in code (not anymore since v 24.5). These include the Bool, Int, IntLiteral, FloatLiteral, String and StringLiteral types, which we'll discuss in this section. They are all defined as a struct (see § 7).
 
 Composite types contain one or more values and will be discussed in § 9 and beyond. These values can be of the same type (homogeneous) or of different types (heterogeneous).
 
@@ -44,7 +55,8 @@ The bitwidth for the following aliases is determined as: 32-bit on 32-bit machin
 
 For example: `DType.uint8` can be used in code whenever you need an unsigned integer type of bitwidth 8.
 
->Note that DType.float64 isn't a type, it's a value that describes a data type. You can't create a variable with the type DType.float64. You can create a variable with the type SIMD[DType.float64, 1] (or Float64, which is the same thing).
+>Note that DType.float64 isn't a type, it's a value that describes a data type. You can't create a variable with the type DType.float64. You can create a variable with the type 
+SIMD[DType.float64, 1] (or Float64, which is the same thing).
 ```
 var f : DType.float64    # error: expected a type, not a value
 var f : Float64          # ok
@@ -300,7 +312,7 @@ then b.__radd__(a) will run instead if __radd__ is defined for b.
 
 In the following example, we define _radd_ for the struct MyNumber, so that we can add its value to a FloatLiteral (note that the struct instance is the rhs in the expression `2.0 + num`):
 Here is an example  demonstrating both iadd and radd methods:
-Example: see `riadd.mojo`:
+Example: see `ri    add.mojo`:
 ```py
 struct MyFloat:
     var val: FloatLiteral
@@ -387,11 +399,11 @@ fn main():
 
 
 ## 4.4 SIMD
+?? needs parametric struct type (§ 16)
 Mojo relies heavily on using [SIMD](https://en.wikipedia.org/wiki/Single_instruction,_multiple_data) in calculations to enhance performance. All math functions work on SIMD items. That's why the `SIMD` type is also defined as a struct in its own module `builtin.simd`. 
 
 ### 4.4.1 Defining SIMD vectors
 Mojo can use SIMD (Single Instruction, Multiple Data) on modern hardware that contains special registers. These registers allow you to do the same operation on all elements of a 'vector' in a single instruction, greatly improving performance. So SIMD works on a number of items *in parallel*. Moreover, it is fast because the vector registers are the fastest kind of memory access at the hardware level.
-
 
 The type of a value that can be processed by a SIMD-register is called *register-passable* and is of type `AnyRegType`.
 
@@ -515,9 +527,6 @@ So if you have some values of a certain type (e.g. float32) to process with SIMD
 to process the maximum amount of values simultaneously.
 (the SIMD type defaults to the architectural SIMD width of the type, so the above is equivalent to just `SIMD[DType.float32]`)
 Line 4 tells us that this amount is 8.
-Mojo makes it easy for us, the above expression does the same as:  
-`SIMD[DType.float32]`
-We use this in line 5 to declare a SIMD vector with as size the default type width, which is indeed 8 (line 6).
 
 ### 4.4.3 Using element type and group size as compile-time constants
 Using the alias keyword, we can define the SIMD element type and group size as compile-time constants, as in the code below:
@@ -562,6 +571,7 @@ Hint: Use a loop: for i in range(4):
 
 
 ### 4.4.4  Splat, join and cast
+!! Splat doesn't exist anymore (since 24.5), rsqrt now in max library
 The `splat` method sets all elements of the SIMD vector to the given value (it 'broadcasts' the value), like in the following example in line 1:
 
 See `simd_methods.mojo`:
@@ -610,6 +620,7 @@ For a SIMD vector `a = SIMD[DType.float32, 2](1, 2)` and another vector with ele
 
 (See also Vectorization: § 20.5.6)
 
+See also:  joy of mojo:     conditional_simd_operations.mojo
 
 ## 4.4B Complex numbers
 The built-in defined module complex defines a type `ComplexSIMD` and methods to work with complex numbers.

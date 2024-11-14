@@ -207,7 +207,7 @@ A trait representing file system paths. The type must implement the __fspath__()
 This describes a type that has an integer length (such as a string or array); it must implement the len() method (__len__()). 
 
 ### 13.3.12 Stringable
-This trait confirms that a type that can be converted to a string, with String(value) or str(value). This also means it can be printed with print(). It must implement the __str__() function.
+This trait confirms that a type can be converted to a string, with String(value) or str(value). This also means it can be printed with print(). It must implement the __str__() function.
 Nearly all of the standard library types are Stringable.
 
 

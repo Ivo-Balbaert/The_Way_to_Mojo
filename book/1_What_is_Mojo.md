@@ -150,8 +150,10 @@ Here are the killer features of Mojo:
 0- progressive/static typing: Leverage types for better performance and error checking.
 1- fast compilation  
 2- fast execution (runtime performance): ZERO COST ABSTRACTIONS: Take control of storage by inline-allocating values into structures. Mojo includes a *high-performance concurrent runtime*. 
-3- automatic memory management:  OWNERSHIP model + BORROW CHECKER: Take advantage of memory safety without the rough edges.
+3- automatic memory management:  
+OWNERSHIP model + BORROW CHECKER: Take advantage of memory safety without the rough edges.
 Mojo has no reference counter and no garbage collector.
+Mojo destructs a value on last use.
 
 >Note: Mojo is also designed for systems programming, so you can do manual memory management in Mojo:
 * It provides a manual management system using pointers similar to C++ and Rust.
@@ -179,3 +181,9 @@ Mojo is also better to tackle climate-change: a Mojo program uses only 10% of th
 - Static and dynamic, strong / weak:
     http://legi.grenoble-inp.fr/people/Pierre.Augier/mojo-the-point-of-view-of-a-researcher-using-python.html#tiobe
 
+2024 Nov 11:
+" Mojo today is great at very specific and important high performance systems programming tasks and is about to be great for GPU programming.
+
+With the features that the team is building for Python/Mojo interop, we think Mojo will be a very powerful way to extend python modules in a way that is much better than writing hybrid Python/C/C++ modules. "
+
+Mojo is to Python as C++ is to C

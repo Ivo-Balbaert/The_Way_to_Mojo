@@ -393,18 +393,21 @@ Often data is not known at compile-time, but only at run-time, for example becau
 Later (see !!) we'll see that code can also be run at compile-time, to do what is called *meta-programming*. This enables Mojo to do simulate some types of dynamic programming.
 
 ## 3.8 Variables, types and addresses
+!! explicit (var) and implicit (like in Python) variables - different scoping !!
+
 ### 3.8.1 Using def and fn
 We'll now go back to discussing the last code snippet of § 2.
 
 See `first.mojo`:
 ```py
 fn main():
-    var n: Int = 1      # 1
+    var n: Int = 1      # 1 
     n += 1              # 2
     print(n)            # => 2
 ```
 
 In line 1 a variable `n` is declared with the keyword `var`, which means it is a real mutable variable whose value can change. The typing `n: Int` is optional, Mojo has type inference.
+The line can be reduced to: `n = 1`.
 
 Like in Python, `main()` has no parameters and no return value.
 
@@ -422,6 +425,8 @@ def main():
 So both forms of function can be used in Mojo, but they have a different meaning: 
 * `def` functions are dynamic, flexible and types are optional; using `var` is also not necessary.
 * `fn` is meant for stricter code: it enforces strongly-typed and memory-safe behavior
+
+Mojo 24.5 has relaxed the requirement of using var within fn functions, making fn more similar to def functions, while still maintaining its unique capabilities.
 
 Supporting both `def` and `fn` makes it easier to port Python functions to Mojo.
 
@@ -472,7 +477,7 @@ Trying to use a variable before it is initialized gives an error, see line 2.
 
 See also as a more elaborate example: bookstore.mojo
 
-Here is another example using where main() calls another function domath(), which uses explicit typing and inference:
+Here is another example where main() calls another function domath(), which uses explicit typing and inference:
 See `var.mojo`:
 ```py
 fn do_math():
@@ -539,8 +544,6 @@ These variables will be totally independent of each other. Shadowing prevents un
 In `def function_scopes()` the variables are NOT declared with var. The inner num variable in line 2 updates the value of the outer num variable, as you see in the last printed output. In this case, variables follow *function scoping* as in Python. 
 
 ### 3.8.4 Global variables
-!! doesn't work as of 2024-04-20:
-https://github.com/modularml/mojo/issues/1573
 Mojo also supports *global variables*:  
 See `global_vars.mojo`:
 ```py
@@ -552,33 +555,44 @@ fn main():
     print(str)  # => Hello from Mojo!
 ```
 
-!! 2024-04-20: Output is 
-0
+Output is :
+n= 42
+str= Hello from Mojo!
 
 
-The current design of Mojo does not support the use of global variables inside functions, except for main (see https://github.com/modularml/mojo/discussions/448)
+?? The current design of Mojo does not support the use of global variables inside functions, except for main (see https://github.com/modularml/mojo/discussions/448)
 
 Also alias is heavily used at the global level (see § 4.4).
 
-### 3.8.5 Variable addresses
+### 3.8.5 The address of a variable
 (!! Include images for the pointers)
 Mojo variables are much more like C variables than like Python variables: a name in Mojo is attached to an object.
 
 See `variable_addresses.mojo`:
 ```py
-from memory.unsafe import Pointer
+from memory.unsafe_pointer import UnsafePointer
 
-def print_pointer(ptr: Pointer):
+
+def print_pointer(ptr: UnsafePointer):
     print(ptr.__int__())
+
 
 def main():
     a = 1
-    p1 = Pointer.address_of(a)  
-    print_pointer(p1)           # => 140726871503576
+    p1 = UnsafePointer.address_of(a)  # => 140726871503576
+    print_pointer(p1)
 
     a = 2
-    p2 = Pointer.address_of(a)
-    print_pointer(p2)           # => 140726871503576
+    p2 = UnsafePointer.address_of(a)
+    print_pointer(p2)  # => 140726871503576
+
+    b = "mojo"
+    p = UnsafePointer.address_of(b)  # => 140722059283008
+    print_pointer(p)
+
+    c = b  # <- this copies the String object "mojo"
+    p = UnsafePointer.address_of(c)  # => 140722059283024
+    print_pointer(p)
 ```
 This means that there is only one integer variable a, which has been modified in-place with the statement a = 2. In contrast, in equivalent Python code:
 
@@ -595,11 +609,11 @@ In Python, references are everywhere (the names are references, elements in a li
 
 ```py
     a = "mojo"
-    p = Pointer.address_of(a) # => 140722059283008
+    p = UnsafePointer.address_of(a) # => 140722059283008
     print_pointer(p)
 
     b = a  # <- this copies the String object "mojo"
-    p = Pointer.address_of(b) # => 140722059283024
+    p = UnsafePointer.address_of(b) # => 140722059283024
     print_pointer(p)
 ```
 

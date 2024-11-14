@@ -9,6 +9,10 @@ Pointers are a fundamental concept in many low-level systems programming languag
 
 In Mojo, pointers are used with care to avoid potential errors. For example, the language provides an `UnsafePointer` type that cannot be copied, which helps prevent issues like dangling pointers or memory leaks. Mojo also allows you to define functions that take `owned` arguments, enabling you to transfer ownership of a pointer to another function.
 
+Why unsafe?
+--> You have to manually manage its memory (allocation and freeing), it does not support lifetimes,  and it does no bound checking so you can get all classes of memory bugs that exist and C and C++
+
+
 To do low-level things and get the best performance, we need direct access to memory locations, just like C and other low-level languages. Mojo gives you the power to do whatever you want with pointers.
 
 We already encountered some examples of Pointer use, particularly in § 7 when defining Structs.
@@ -349,6 +353,8 @@ We can loop through and set the values, one row at a time with SIMD using the ab
 
 Because it's returning a SIMD[DType.u8, 8], we can also modify the column value using __setitem__ from the SIMD implementation (line 3).  
 As another example, lets take the fourth row, doubling it, and then writing that to the first row (line 4).
+
+See also: conditional_simd_operations.mojo : getting values via indexing!
 
 
 ## 12.4 Converting an UnsafePointer to an Int

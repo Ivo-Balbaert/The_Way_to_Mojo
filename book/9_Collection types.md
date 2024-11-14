@@ -15,6 +15,7 @@ The loop index variable gets assigned a Reference to each item, not the item its
 Let's start with the List types.
 
 ## 9.1 List
+
 ### 9.1.1 ListLiteral
 This is implemented in module `builtin_list` in package `builtin`. 
 It is literally a list of values (possibly of different type), separated by commas and enclosed in [].
@@ -51,7 +52,7 @@ Look at the complete programs with Tensors to see DimList used.
 
 ### 9.1.4 List
 (see also § 4.3.1.1, 4.5.2, 7.9.2)
-This is really the most useful list-like type. It lives in the `collections.list` module.
+This is really the most useful list-like type, it is Mojo's Vector type. It lives in the `collections.list` module. 
 
 List is a dynamically-sized array of elements; it dynamically allocates memory in the heap to store elements, resizing when needed.  
 List elements need to conform to the *CollectionElement* trait, which just means that the items must be copyable and movable. Most of the common standard library primitives, like Int, String, and SIMD conform to this trait.  
@@ -365,7 +366,8 @@ fn main():
 A tuple can contain struct instances, as shown in line 4. In line 5, we see a function that returns a tuple.
 
 ## 9.6 Variant 
-This type is used to implement a run-time sum (variant) types. It is imported with `from utils import Variant`.
+This type is used to implement a run-time sum (variant) type; it's a dynamic type. It is imported with:  
+`from utils import Variant`.
 The following code shows some of its possibilities:
 
 See `variant.mojo`:
@@ -395,9 +397,9 @@ fn main():
     if random.random_ui64(0, 1):
         who_knows.set[String]("I'm actually a string too!")
 
-    print(to_string(an_int))    # =>  4
-    print(to_string(a_string))  # =>I'm a string!
-    print(to_string(who_knows)) # =>0
+    print(to_string(an_int))    # => 4
+    print(to_string(a_string))  # => I'm a string!
+    print(to_string(who_knows)) # => 0
 
     var a = List[Variant[Int, Float64]](1, 2.5, 3, 4.5, 5)  # 2A
     var b = List[Variant[Int, StringLiteral]](1, "Hi", 3, "Hello", 5)   # 2B

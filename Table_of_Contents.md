@@ -22,7 +22,7 @@
 ### 2.1.2 Compiler
 ### 2.1.3 Runtime
 ### 2.1.4 Standard library
-## 2.2 Installing the Modular and Mojo toolkit
+## 2.2 Installing the Magic and Mojo toolkit
 ### 2.2.1 On Windows
 ### 2.2.2 On MacOS 
 ### 2.2.3 On Linux Ubuntu 20-22 (or WSL2 on Windows)
@@ -154,16 +154,10 @@
 ## 7.6 Using a large struct instance as function argument
 ## 7.7 Using inout with structs
 ## 7.8 Transfer struct arguments with owned and ^
-## 7.9 Compile-time metaprogramming in Mojo
-### 7.9.1 Parametric types in structs and functions
-### 7.9.2 Parametric structs   
-### 7.9.3 How to create a custom parametric type: Array
-### 7.9.4 Parametric functions and methods
-### 7.9.5 Programming compile-time logic
-## 7.10 Static methods
-## 7.11 Lifetimes
-### 7.11.1 Types that cannot be instantiated
-### 7.11.2 Non-movable and non-copyable types
+## 7.9 Static methods
+## 7.10 Lifetimes
+### 7.10.1 Types that cannot be instantiated
+### 7.10.2 Non-movable and non-copyable types
 
 # 8 Python integration
 ## 8.1 Comparing the same program in Python and Mojo
@@ -272,6 +266,16 @@
 ### 15.5.2 A compile-time closure
 ## 15.6 - @staticmethod
 ## 15.7 - @always_inline
+
+# 16 - Compile-time metaprogramming
+## 16.1 Compile-time metaprogramming in Mojo
+### 16.1.1 Parametric types in structs and functions
+### 16.1.2 Parametric structs   
+### 16.1.3 How to create a custom parametric type: Array
+### 16.1.4 Parametric functions and methods
+### 16.1.5 Programming compile-time logic
+
+
 
 # 22 MLIR - The basis of Mojo
 ## 22.1 Mojo is built on top of MLIR

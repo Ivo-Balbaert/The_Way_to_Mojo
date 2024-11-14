@@ -1,3 +1,6 @@
+from sys.ffi import external_call
+
+
 fn main():
     print("before exit")  # => before exit
     _ = exit(-2)

@@ -382,6 +382,8 @@ This will eventually be implemented. For now you can use this function:
 
 See `exit.mojo`:
 ```py
+from sys.ffi import external_call
+
 fn main():
     print("before exit")  # => before exit
     _ = exit(-2)          # exit the program
@@ -399,5 +401,3 @@ before exit
 
 [Done] exited with code=254 in 0.391 seconds
 ```
-
-`external_call` is a function defined in module sys.ffi.

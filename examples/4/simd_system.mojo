@@ -8,5 +8,5 @@ fn main():
     print(simdwidthof[DType.uint64]())  # 3 => 4
     print(simdwidthof[DType.float32]())  # 4 => 8
 
-    var a = SIMD[DType.float32](42)  # 5
+    var a = SIMD[DType.float32, 8](42)  # 5
     print(len(a))  # 6 => 8

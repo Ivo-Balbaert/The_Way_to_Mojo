@@ -53,6 +53,7 @@ The only difference is that we used fn functions in the Mojo version, so all var
 
 ## 30.3 - Implementing the prefix-sum algorithm   <--
 See https://mzaks.medium.com/faster-prefix-sum-computation-with-simd-and-mojo-39bdc25e49b3
+https://github.com/mzaks/mojo-prefix-sum
 
 This algoritm is also known as `cumulative sum over a list` (cumsum in numpy): 
 iterate over a list, and for each element:

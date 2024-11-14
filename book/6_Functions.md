@@ -1,5 +1,4 @@
 # 6 Functions
-
 As we've seen, in Mojo you can both use `def` or `fn` functions, unlike in Python. Choose the one which you think is best for the project at hand.
 
 A key trick in Mojo is that you can opt in at any time to a faster and safer 'mode' as a developer, by using `fn` instead of `def` to create your function. In the `fn` mode Mojo can create optimized machine code to implement your function.

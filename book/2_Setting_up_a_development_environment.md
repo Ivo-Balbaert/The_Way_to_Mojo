@@ -1,5 +1,4 @@
 # 2 - Setting up a development environment
-
 You can execute code in the [Online Playground](https://docs.modular.com/mojo/playground) or install it locally, see §2.2.
 
 
@@ -32,20 +31,26 @@ Structure of compiler: video 2023 LLVM Dev Mtg:
 OrcJit is used for Just in Time compilation, but also for generating static archive .a file. The system linker then transforms this into an executable file.
 
 ### 2.1.3 Runtime
-- for Python code: calls the CPython interpreter, which talks toh the Mojo compiler !!
+- for Python code: calls the CPython interpreter, which talks toh the Mojo compiler 
 - a built-in GC to clean up Python objects, based on reference counting
 
 
+On a new Ubuntu system, make sure to install:
+`sudo apt-get install -y git gcc g++ zlib1g-dev libtinfo-dev`
+
 ### 2.1.4 Standard library**   
-Mojo has a growing standard library called `MojoStdlib` or SDK, which already contains a growing number of *packages*, such as algorithm, benchmark, list, os, tensor, testing, and so on.
+Mojo has a growing standard library called stdlib or SDK, which already contains a growing number of *packages*, such as algorithm, benchmark, list, os, tensor, testing, and so on.
 
 It is documented here [here](https://docs.modular.com/mojo/lib).
 
 A package is a collection of modules that serve the same purpose,
+
+??
 example: the math package contains the bit, math, numerics, and polynomial modules
-The packages are built as binaries into the SDK to improve startup speed.
+The packages are built as binaries into the SDK to improve startup speed. (??)
 Package and module names are lowercase (like Python).
 
+?? update
 Version 24.2.0 (2024 Mar 29) ships with the following 20 packages, containing 83 modules:
 
 * algorithm
@@ -72,66 +77,114 @@ Version 24.2.0 (2024 Mar 29) ships with the following 20 packages, containing 83
 !! adapt
 
 
+## 2.2 Installing the Mojo toolkit
+To do this, we first need to install [Magic](https://docs.modular.com/magic). 
+This is a a virtual environment and package manager based on conda. It allows you to create fully contained projects, where the package dependencies and environment settings are magically managed for you.
 
-## 2.2 Installing the Modular and Mojo toolkit
-### 2.2.1 On Windows
-This is currently (!!) still in a testing phase.
+Magic uses links.  While magic is "adding" max+mojo to every project (that you ask it to), it is not installing the whole SDK to each project. There is a system cache of all packages installed for all the projects and there are links to the cache. 
 
-### 2.2.2 On MacOS 
+### 2.2.1 Installing Magic
+Install Magic in seconds with the following command: `curl -ssL https://magic.modular.com | bash`
+
+This produces the output:  
+```
+Installing the latest version of Magic...
+######################################################################## 100.0%
+Done. The 'magic' binary is in '/home/ivo-balbaert/.modular/bin'
+
+Two more steps:
+
+1. To use 'magic', run this command so it's in your PATH:
+
+source /home/ivo-balbaert/.bashrc 
+
+2. To build with MAX and Mojo, go to http://modul.ar/get-started
+```
+
+The source command ensures that the magic command is system-wide usable.
+
+Try `$ magic -h` to see what it can do and `$ magic -V` to check which version is installed.
+
+$ magic -V
+magic 0.3.1 - (based on pixi 0.29.0)
+
+Update the tool with: $ magic self-update
+
+Enable auto-completion with: 
+BASHRC=$( [ -f "$HOME/.bash_profile" ] && echo "$HOME/.bash_profile" || echo "$HOME/.bashrc" )
+echo 'eval "$(magic completion --shell bash)"' >> "$BASHRC"ggg
+source "$BASHRC"
+
+Create a `mojo` folder which will contain all our mojo projects, and cd in it. 
+
+Create a Mojo project named `mojo-project1` with magic init: `magic init mojo-project1 --format mojoproject`
+```
+ Created /home/ivo-balbaert/mojo/mojo-project1/mojoproject.toml
+✔ Added max >=24.5.0,<25
+```
+
+Mojo is a subset of the Max project, so Mojo is now installed!
+The project is by default git ready.
+
+It contains a `mojoproject.toml` file:
+```
+[project]
+channels = ["conda-forge", "https://conda.modular.com/max"]
+description = "Add a short description here"
+name = "mojo-project1"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+max = ">=24.5.0,<25"
+```
+
+The `.magic` subfolder (initial size 2.2 Gb) contains all dependencies.
+The folder `$HOME/mojo/mojo-project1/.magic/envs/default/lib/mojo` contains amongst others the Mojo stdlib package.
+
+Enter the environment shell for this project with `magic shell`. 
+`(mojo-project1) ivo-balbaert@ivo-balbaert-MEG-Z690-Aegis-Ti5-MS-B939:~/mojo/mojo-project1$`
+       ^
+       |
+   you're in your project environment
+
+Running `mojo --version` to get: mojo 24.5.0 (e8aacb95)
+
+[magic.lock](https://docs.modular.com/magic#the-magiclock-file) 
+
+
+`mojo build using_main.mojo` 
+/usr/bin/ld: cannot find -lz: No such file or directory
+/usr/bin/ld: cannot find -ltinfo: No such file or directory
+collect2: error: ld returned 1 exit status
+mojo: error: failed to link executable
+
+Solution: see sudo install above
+
+Run `exit` to get back to the OS shell.
+
+*Global install:*
+As of magic v0.4, you can! Run magic global install max -c conda-forge -c https://conda.modular.com/max/ --expose mojo then mojo is globally exposed mojo --version outputs mojo 24.5.0 (e8aacb95)
+
+
+!!! There is no difference between OS's anymore !!!
+
+### 2.2.2 On Windows
+#### 2.2.2.1 Native Windows
+This version is currently (!!) still in a testing phase.
+
+#### 2.2.2.2 Using the Windows Subsystem for Linux (WSL2)
+1- On Windows: From Microsoft Store: Install Ubuntu 24.04 for WSL and open it.
+2- Install VS Code, the WSL extension, and the [Mojo extension](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo).
+
+### 2.2.3 On MacOS 
 See [Mojo website](https://docs.modular.com/mojo/manual/get-started/index.html)
 
-### 2.2.3 On Linux Ubuntu 20-22 (or WSL2 on Windows)
-2023 Aug 26: Mojo can be used on Windows with a Linux container (like WSL) or remote system.
-
+### 2.2.3 On Linux Ubuntu 
 For installation on ArchLinux, see:
 https://gist.github.com/Sharktheone/79da849c96db13f21eefa2be9430d9ec
-
-STEPS:
-For an up to date version, [see](https://docs.modular.com/mojo/manual/get-started/)
-
-1- Install VS Code, the WSL extension, and the [Mojo extension](https://marketplace.visualstudio.com/items?itemName=modular-mojotools.vscode-mojo).
-2- On Windows: Install Ubuntu 22.04 for WSL and open it.
-3- In the Ubuntu terminal, install the `modular CLI (command-line interface)` with:  
-`curl -s https://get.modular.com | sh -`
-4- Sign in to your Modular account with this command:  
-`modular auth`
-
-Now the `modular` tool is installed:
-Try `$ modular -h` to see what it can do and `$ modular -v` to see which version is installed.
-```
-$ modular -v
-modular 0.7.2 (d0adc668)
-```
-
-Mojo is one of the packages you can install with the modular tool (the MAX inference engine is another one): 
-5- Install the Mojo SDK:  `modular install mojo`
-
-Àll went well if you see the output ending with `🔥 Mojo installed! 🔥`
-
-Now run the following command in Bash:
-```
-  MOJO_PATH=$(modular config mojo.path) \
-  && BASHRC=$( [ -f "$HOME/.bash_profile" ] && echo "$HOME/.bash_profile" || echo "$HOME/.bashrc" ) \
-  && echo 'export MODULAR_HOME="'$HOME'/.modular"' >> "$BASHRC" \
-  && echo 'export PATH="'$MOJO_PATH'/bin:$PATH"' >> "$BASHRC" \
-  && source "$BASHRC"
-```
-
-An environment variable `MODULAR_HOME` with value `$HOME/.modular` was made.
-An environment variable `MOJO_PATH` with value `$MODULAR_HOME/pkg/packages.modular.com_mojo`
-`MOJO_PATH/bin` which contains the `mojo` tool, the lsp-server, an lldb tool, a crashpad handler,etc., is added to the PATH variable.
-`$HOME/.modular/pkg/packages.modular.com_mojo/lib/mojo` contains the pre-compiles Mojo packages.
-
-!! Alternatively you can enter the following code manually at the end of your .profile and/or .bashrc script:
-```
-# Mojo
-export MODULAR_HOME="$HOME/.modular"
-export PATH="$MODULAR_HOME/pkg/packages.modular.com_mojo/bin:$PATH"
-# export PATH="$MODULAR_HOME/pkg/packages.modular.com_max/bin:$PATH"
-```
-
-You can see the environment variables with the `env` command and the PATH with `echo $PATH`.
-Check also `echo $MODULAR_HOME` and `echo $MOJO_PATH`.
 
 For tool help, enter 'mojo --help'.
 For more docs, see https://docs.modular.com/mojo.
@@ -229,6 +282,7 @@ Resolving deltas: 100% (142374/142374), done.
 ```
 
 ## 2.9 The Mojo configuration file
+?? irrelevant
 There is a configuration file at `/home/username/.modular/modular.cfg`, which contains a number of mainly path environment variables, which can be edited. 
 For example:  
 `import_path`, which has as default value /home/username/.modular/pkg/packages.modular.com_mojo/lib/mojo. This contains the path where Mojo searches for packages used in code. You can add your own package folder(s) to the default value (separated by a ;).
